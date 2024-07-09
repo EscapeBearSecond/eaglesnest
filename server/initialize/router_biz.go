@@ -1,7 +1,7 @@
 package initialize
 
 import (
-	"47.103.136.241/goprojects/gin-vue-admin/server/router"
+	"47.103.136.241/goprojects/curesan/server/router"
 	"github.com/gin-gonic/gin"
 )
 

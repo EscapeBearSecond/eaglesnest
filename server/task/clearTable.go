@@ -1,7 +1,7 @@
 package task
 
 import (
-	"47.103.136.241/goprojects/gin-vue-admin/server/model/common"
+	"47.103.136.241/goprojects/curesan/server/model/common"
 	"errors"
 	"fmt"
 	"time"
@@ -9,11 +9,11 @@ import (
 	"gorm.io/gorm"
 )
 
-//@author: [songzhibin97](https://github.com/songzhibin97)
-//@function: ClearTable
-//@description: 清理数据库表数据
-//@param: db(数据库对象) *gorm.DB, tableName(表名) string, compareField(比较字段) string, interval(间隔) string
-//@return: error
+// @author: [songzhibin97](https://github.com/songzhibin97)
+// @function: ClearTable
+// @description: 清理数据库表数据
+// @param: db(数据库对象) *gorm.DB, tableName(表名) string, compareField(比较字段) string, interval(间隔) string
+// @return: error
 
 func ClearTable(db *gorm.DB) error {
 	var ClearTableDetail []common.ClearDB

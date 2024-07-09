@@ -1,9 +1,9 @@
 package core
 
 import (
-	"47.103.136.241/goprojects/gin-vue-admin/server/core/internal"
-	"47.103.136.241/goprojects/gin-vue-admin/server/global"
-	"47.103.136.241/goprojects/gin-vue-admin/server/utils"
+	"47.103.136.241/goprojects/curesan/server/core/internal"
+	"47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curesan/server/utils"
 	"fmt"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"

@@ -1,8 +1,8 @@
 package internal
 
 import (
-	"47.103.136.241/goprojects/gin-vue-admin/server/config"
-	"47.103.136.241/goprojects/gin-vue-admin/server/global"
+	"47.103.136.241/goprojects/curesan/server/config"
+	"47.103.136.241/goprojects/curesan/server/global"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"

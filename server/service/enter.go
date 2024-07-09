@@ -1,8 +1,8 @@
 package service
 
 import (
-	"47.103.136.241/goprojects/gin-vue-admin/server/service/example"
-	"47.103.136.241/goprojects/gin-vue-admin/server/service/system"
+	"47.103.136.241/goprojects/curesan/server/service/example"
+	"47.103.136.241/goprojects/curesan/server/service/system"
 )
 
 type ServiceGroup struct {

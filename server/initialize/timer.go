@@ -1,12 +1,12 @@
 package initialize
 
 import (
-	"47.103.136.241/goprojects/gin-vue-admin/server/task"
+	"47.103.136.241/goprojects/curesan/server/task"
 	"fmt"
 
 	"github.com/robfig/cron/v3"
 
-	"47.103.136.241/goprojects/gin-vue-admin/server/global"
+	"47.103.136.241/goprojects/curesan/server/global"
 )
 
 func Timer() {
@@ -26,12 +26,12 @@ func Timer() {
 
 		// 其他定时任务定在这里 参考上方使用方法
 
-		//_, err := global.GVA_Timer.AddTaskByFunc("定时任务标识", "corn表达式", func() {
+		// _, err := global.GVA_Timer.AddTaskByFunc("定时任务标识", "corn表达式", func() {
 		//	具体执行内容...
 		//  ......
-		//}, option...)
-		//if err != nil {
+		// }, option...)
+		// if err != nil {
 		//	fmt.Println("add timer error:", err)
-		//}
+		// }
 	}()
 }

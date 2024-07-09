@@ -1,11 +1,11 @@
 package system
 
 import (
-	"47.103.136.241/goprojects/gin-vue-admin/server/global"
-	"47.103.136.241/goprojects/gin-vue-admin/server/model/common/request"
-	"47.103.136.241/goprojects/gin-vue-admin/server/model/system"
-	systemReq "47.103.136.241/goprojects/gin-vue-admin/server/model/system/request"
-	"47.103.136.241/goprojects/gin-vue-admin/server/utils"
+	"47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curesan/server/model/common/request"
+	"47.103.136.241/goprojects/curesan/server/model/system"
+	systemReq "47.103.136.241/goprojects/curesan/server/model/system/request"
+	"47.103.136.241/goprojects/curesan/server/utils"
 	"bytes"
 	"encoding/json"
 	"fmt"

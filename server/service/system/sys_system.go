@@ -1,17 +1,17 @@
 package system
 
 import (
-	"47.103.136.241/goprojects/gin-vue-admin/server/config"
-	"47.103.136.241/goprojects/gin-vue-admin/server/global"
-	"47.103.136.241/goprojects/gin-vue-admin/server/model/system"
-	"47.103.136.241/goprojects/gin-vue-admin/server/utils"
+	"47.103.136.241/goprojects/curesan/server/config"
+	"47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curesan/server/model/system"
+	"47.103.136.241/goprojects/curesan/server/utils"
 	"go.uber.org/zap"
 )
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: GetSystemConfig
-//@description: 读取配置文件
-//@return: conf config.Server, err error
+// @author: [piexlmax](https://github.com/piexlmax)
+// @function: GetSystemConfig
+// @description: 读取配置文件
+// @return: conf config.Server, err error
 
 type SystemConfigService struct{}
 
@@ -20,11 +20,11 @@ func (systemConfigService *SystemConfigService) GetSystemConfig() (conf config.S
 }
 
 // @description   set system config,
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: SetSystemConfig
-//@description: 设置配置文件
-//@param: system model.System
-//@return: err error
+// @author: [piexlmax](https://github.com/piexlmax)
+// @function: SetSystemConfig
+// @description: 设置配置文件
+// @param: system model.System
+// @return: err error
 
 func (systemConfigService *SystemConfigService) SetSystemConfig(system system.System) (err error) {
 	cs := utils.StructToMap(system.Config)
@@ -35,10 +35,10 @@ func (systemConfigService *SystemConfigService) SetSystemConfig(system system.Sy
 	return err
 }
 
-//@author: [SliverHorn](https://github.com/SliverHorn)
-//@function: GetServerInfo
-//@description: 获取服务器信息
-//@return: server *utils.Server, err error
+// @author: [SliverHorn](https://github.com/SliverHorn)
+// @function: GetServerInfo
+// @description: 获取服务器信息
+// @return: server *utils.Server, err error
 
 func (systemConfigService *SystemConfigService) GetServerInfo() (server *utils.Server, err error) {
 	var s utils.Server

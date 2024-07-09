@@ -3,7 +3,7 @@ package system
 import (
 	"context"
 
-	"47.103.136.241/goprojects/gin-vue-admin/server/service/system"
+	"47.103.136.241/goprojects/curesan/server/service/system"
 	adapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"

@@ -9,21 +9,21 @@ import (
 	"strings"
 	"time"
 
-	"47.103.136.241/goprojects/gin-vue-admin/server/global"
-	"47.103.136.241/goprojects/gin-vue-admin/server/utils"
+	"47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curesan/server/utils"
 	"go.uber.org/zap"
 )
 
 type Local struct{}
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@author: [ccfish86](https://github.com/ccfish86)
-//@author: [SliverHorn](https://github.com/SliverHorn)
-//@object: *Local
-//@function: UploadFile
-//@description: 上传文件
-//@param: file *multipart.FileHeader
-//@return: string, string, error
+// @author: [piexlmax](https://github.com/piexlmax)
+// @author: [ccfish86](https://github.com/ccfish86)
+// @author: [SliverHorn](https://github.com/SliverHorn)
+// @object: *Local
+// @function: UploadFile
+// @description: 上传文件
+// @param: file *multipart.FileHeader
+// @return: string, string, error
 
 func (*Local) UploadFile(file *multipart.FileHeader) (string, string, error) {
 	// 读取文件后缀
@@ -66,14 +66,14 @@ func (*Local) UploadFile(file *multipart.FileHeader) (string, string, error) {
 	return filepath, filename, nil
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@author: [ccfish86](https://github.com/ccfish86)
-//@author: [SliverHorn](https://github.com/SliverHorn)
-//@object: *Local
-//@function: DeleteFile
-//@description: 删除文件
-//@param: key string
-//@return: error
+// @author: [piexlmax](https://github.com/piexlmax)
+// @author: [ccfish86](https://github.com/ccfish86)
+// @author: [SliverHorn](https://github.com/SliverHorn)
+// @object: *Local
+// @function: DeleteFile
+// @description: 删除文件
+// @param: key string
+// @return: error
 
 func (*Local) DeleteFile(key string) error {
 	p := global.GVA_CONFIG.Local.StorePath + "/" + key

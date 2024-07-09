@@ -1,13 +1,13 @@
 package {{ .Snake}}
 
 import (
-	gvaGlobal "47.103.136.241/goprojects/gin-vue-admin/server/global"
-	"47.103.136.241/goprojects/gin-vue-admin/server/model/system"
-	"47.103.136.241/goprojects/gin-vue-admin/server/plugin/plugin-tool/utils"
+	gvaGlobal "47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curesan/server/model/system"
+	"47.103.136.241/goprojects/curesan/server/plugin/plugin-tool/utils"
 {{- if .HasGlobal }}
-	"47.103.136.241/goprojects/gin-vue-admin/server/plugin/{{ .Snake}}/global"
+	"47.103.136.241/goprojects/curesan/server/plugin/{{ .Snake}}/global"
 {{- end }}
-	"47.103.136.241/goprojects/gin-vue-admin/server/plugin/{{ .Snake}}/router"
+	"47.103.136.241/goprojects/curesan/server/plugin/{{ .Snake}}/router"
 	"github.com/gin-gonic/gin"
 )
 

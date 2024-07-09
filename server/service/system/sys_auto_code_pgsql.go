@@ -1,8 +1,8 @@
 package system
 
 import (
-	"47.103.136.241/goprojects/gin-vue-admin/server/global"
-	"47.103.136.241/goprojects/gin-vue-admin/server/model/system/response"
+	"47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curesan/server/model/system/response"
 )
 
 var AutoCodePgsql = new(autoCodePgsql)
@@ -120,8 +120,8 @@ WHERE
   AND TABLE_NAME = ?;
 `
 	var entities []response.Column
-	//sql = strings.ReplaceAll(sql, "@table_catalog", dbName)
-	//sql = strings.ReplaceAll(sql, "@table_name", tableName)
+	// sql = strings.ReplaceAll(sql, "@table_catalog", dbName)
+	// sql = strings.ReplaceAll(sql, "@table_name", tableName)
 	db := global.GVA_DB
 	if businessDB != "" {
 		db = global.GVA_DBList[businessDB]

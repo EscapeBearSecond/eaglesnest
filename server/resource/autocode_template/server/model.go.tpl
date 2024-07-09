@@ -3,7 +3,7 @@ package {{.Package}}
 
 import (
 	{{- if .GvaModel }}
-	"47.103.136.241/goprojects/gin-vue-admin/server/global"
+	"47.103.136.241/goprojects/curesan/server/global"
 	{{- end }}
 	{{- if or .HasTimer }}
 	"time"

@@ -1,9 +1,9 @@
 package system
 
 import (
-	"47.103.136.241/goprojects/gin-vue-admin/server/global"
-	"47.103.136.241/goprojects/gin-vue-admin/server/model/common/response"
-	"47.103.136.241/goprojects/gin-vue-admin/server/model/system/request"
+	"47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curesan/server/model/common/response"
+	"47.103.136.241/goprojects/curesan/server/model/system/request"
 	"go.uber.org/zap"
 
 	"github.com/gin-gonic/gin"

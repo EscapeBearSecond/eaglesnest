@@ -1,7 +1,7 @@
 package system
 
 import (
-	"47.103.136.241/goprojects/gin-vue-admin/server/config"
+	"47.103.136.241/goprojects/curesan/server/config"
 )
 
 // 配置文件结构体

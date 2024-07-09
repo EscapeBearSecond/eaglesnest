@@ -8,15 +8,15 @@ import (
 	"strings"
 	"time"
 
-	systemReq "47.103.136.241/goprojects/gin-vue-admin/server/model/system/request"
-	"47.103.136.241/goprojects/gin-vue-admin/server/utils/ast"
+	systemReq "47.103.136.241/goprojects/curesan/server/model/system/request"
+	"47.103.136.241/goprojects/curesan/server/utils/ast"
 
-	"47.103.136.241/goprojects/gin-vue-admin/server/model/system/response"
+	"47.103.136.241/goprojects/curesan/server/model/system/response"
 
-	"47.103.136.241/goprojects/gin-vue-admin/server/global"
-	"47.103.136.241/goprojects/gin-vue-admin/server/model/common/request"
-	"47.103.136.241/goprojects/gin-vue-admin/server/model/system"
-	"47.103.136.241/goprojects/gin-vue-admin/server/utils"
+	"47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curesan/server/model/common/request"
+	"47.103.136.241/goprojects/curesan/server/model/system"
+	"47.103.136.241/goprojects/curesan/server/utils"
 
 	"go.uber.org/zap"
 )
@@ -124,7 +124,7 @@ func (autoCodeHistoryService *AutoCodeHistoryService) RollBack(info *systemReq.R
 		if err != nil {
 			global.GVA_LOG.Error("file move err ", zap.Error(err))
 		}
-		//_ = utils.DeLFile(path)
+		// _ = utils.DeLFile(path)
 	}
 	// 清除注入
 	for _, v := range strings.Split(md.InjectionMeta, ";") {

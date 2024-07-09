@@ -1,8 +1,8 @@
 package system
 
 import (
-	"47.103.136.241/goprojects/gin-vue-admin/server/api/v1"
-	"47.103.136.241/goprojects/gin-vue-admin/server/middleware"
+	"47.103.136.241/goprojects/curesan/server/api/v1"
+	"47.103.136.241/goprojects/curesan/server/middleware"
 	"github.com/gin-gonic/gin"
 )
 

@@ -1,10 +1,10 @@
 package system
 
 import (
-	"47.103.136.241/goprojects/gin-vue-admin/server/global"
-	"47.103.136.241/goprojects/gin-vue-admin/server/model/system"
-	"47.103.136.241/goprojects/gin-vue-admin/server/model/system/request"
-	"47.103.136.241/goprojects/gin-vue-admin/server/model/system/response"
+	"47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curesan/server/model/system"
+	"47.103.136.241/goprojects/curesan/server/model/system/request"
+	"47.103.136.241/goprojects/curesan/server/model/system/response"
 	"errors"
 	"gorm.io/gorm"
 )

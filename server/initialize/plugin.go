@@ -3,9 +3,9 @@ package initialize
 import (
 	"fmt"
 
-	"47.103.136.241/goprojects/gin-vue-admin/server/global"
-	"47.103.136.241/goprojects/gin-vue-admin/server/plugin/email"
-	"47.103.136.241/goprojects/gin-vue-admin/server/utils/plugin"
+	"47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curesan/server/plugin/email"
+	"47.103.136.241/goprojects/curesan/server/utils/plugin"
 	"github.com/gin-gonic/gin"
 )
 

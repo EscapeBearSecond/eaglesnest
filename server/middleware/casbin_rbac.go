@@ -4,10 +4,10 @@ import (
 	"strconv"
 	"strings"
 
-	"47.103.136.241/goprojects/gin-vue-admin/server/global"
-	"47.103.136.241/goprojects/gin-vue-admin/server/model/common/response"
-	"47.103.136.241/goprojects/gin-vue-admin/server/service"
-	"47.103.136.241/goprojects/gin-vue-admin/server/utils"
+	"47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curesan/server/model/common/response"
+	"47.103.136.241/goprojects/curesan/server/service"
+	"47.103.136.241/goprojects/curesan/server/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,7 +17,7 @@ var casbinService = service.ServiceGroupApp.SystemServiceGroup.CasbinService
 func CasbinHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		waitUse, _ := utils.GetClaims(c)
-		//获取请求的PATH
+		// 获取请求的PATH
 		path := c.Request.URL.Path
 		obj := strings.TrimPrefix(path, global.GVA_CONFIG.System.RouterPrefix)
 		// 获取请求方法

@@ -1,7 +1,7 @@
 package example
 
 import (
-	"47.103.136.241/goprojects/gin-vue-admin/server/global"
+	"47.103.136.241/goprojects/curesan/server/global"
 )
 
 // file struct, 文件结构体

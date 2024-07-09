@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"47.103.136.241/goprojects/gin-vue-admin/server/global"
+	"47.103.136.241/goprojects/curesan/server/global"
 	"github.com/mojocn/base64Captcha"
 	"go.uber.org/zap"
 )

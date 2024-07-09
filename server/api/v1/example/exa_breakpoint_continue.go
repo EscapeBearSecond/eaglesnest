@@ -6,12 +6,12 @@ import (
 	"mime/multipart"
 	"strconv"
 
-	"47.103.136.241/goprojects/gin-vue-admin/server/model/example"
+	"47.103.136.241/goprojects/curesan/server/model/example"
 
-	"47.103.136.241/goprojects/gin-vue-admin/server/global"
-	"47.103.136.241/goprojects/gin-vue-admin/server/model/common/response"
-	exampleRes "47.103.136.241/goprojects/gin-vue-admin/server/model/example/response"
-	"47.103.136.241/goprojects/gin-vue-admin/server/utils"
+	"47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curesan/server/model/common/response"
+	exampleRes "47.103.136.241/goprojects/curesan/server/model/example/response"
+	"47.103.136.241/goprojects/curesan/server/utils"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )

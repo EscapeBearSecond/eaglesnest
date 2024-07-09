@@ -3,9 +3,9 @@ package initialize
 import (
 	"os"
 
-	"47.103.136.241/goprojects/gin-vue-admin/server/global"
-	"47.103.136.241/goprojects/gin-vue-admin/server/model/example"
-	"47.103.136.241/goprojects/gin-vue-admin/server/model/system"
+	"47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curesan/server/model/example"
+	"47.103.136.241/goprojects/curesan/server/model/system"
 
 	"go.uber.org/zap"
 	"gorm.io/gorm"

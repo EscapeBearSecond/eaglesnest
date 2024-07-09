@@ -3,18 +3,18 @@ package example
 import (
 	"errors"
 
-	"47.103.136.241/goprojects/gin-vue-admin/server/global"
-	"47.103.136.241/goprojects/gin-vue-admin/server/model/example"
+	"47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curesan/server/model/example"
 	"gorm.io/gorm"
 )
 
 type FileUploadAndDownloadService struct{}
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: FindOrCreateFile
-//@description: 上传文件时检测当前文件属性，如果没有文件则创建，有则返回文件的当前切片
-//@param: fileMd5 string, fileName string, chunkTotal int
-//@return: file model.ExaFile, err error
+// @author: [piexlmax](https://github.com/piexlmax)
+// @function: FindOrCreateFile
+// @description: 上传文件时检测当前文件属性，如果没有文件则创建，有则返回文件的当前切片
+// @param: fileMd5 string, fileName string, chunkTotal int
+// @return: file model.ExaFile, err error
 
 func (e *FileUploadAndDownloadService) FindOrCreateFile(fileMd5 string, fileName string, chunkTotal int) (file example.ExaFile, err error) {
 	var cfile example.ExaFile
@@ -32,11 +32,11 @@ func (e *FileUploadAndDownloadService) FindOrCreateFile(fileMd5 string, fileName
 	return cfile, err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: CreateFileChunk
-//@description: 创建文件切片记录
-//@param: id uint, fileChunkPath string, fileChunkNumber int
-//@return: error
+// @author: [piexlmax](https://github.com/piexlmax)
+// @function: CreateFileChunk
+// @description: 创建文件切片记录
+// @param: id uint, fileChunkPath string, fileChunkNumber int
+// @return: error
 
 func (e *FileUploadAndDownloadService) CreateFileChunk(id uint, fileChunkPath string, fileChunkNumber int) error {
 	var chunk example.ExaFileChunk
@@ -47,11 +47,11 @@ func (e *FileUploadAndDownloadService) CreateFileChunk(id uint, fileChunkPath st
 	return err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: DeleteFileChunk
-//@description: 删除文件切片记录
-//@param: fileMd5 string, fileName string, filePath string
-//@return: error
+// @author: [piexlmax](https://github.com/piexlmax)
+// @function: DeleteFileChunk
+// @description: 删除文件切片记录
+// @param: fileMd5 string, fileName string, filePath string
+// @return: error
 
 func (e *FileUploadAndDownloadService) DeleteFileChunk(fileMd5 string, filePath string) error {
 	var chunks []example.ExaFileChunk

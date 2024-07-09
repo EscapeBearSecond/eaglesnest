@@ -3,18 +3,18 @@ package system
 import (
 	"errors"
 
-	"47.103.136.241/goprojects/gin-vue-admin/server/global"
-	"47.103.136.241/goprojects/gin-vue-admin/server/model/system"
+	"47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curesan/server/model/system"
 	"gorm.io/gorm"
 )
 
 type BaseMenuService struct{}
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: DeleteBaseMenu
-//@description: 删除基础路由
-//@param: id float64
-//@return: err error
+// @author: [piexlmax](https://github.com/piexlmax)
+// @function: DeleteBaseMenu
+// @description: 删除基础路由
+// @param: id float64
+// @return: err error
 
 var BaseMenuServiceApp = new(BaseMenuService)
 
@@ -52,11 +52,11 @@ func (baseMenuService *BaseMenuService) DeleteBaseMenu(id int) (err error) {
 	return errors.New("此菜单存在子菜单不可删除")
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: UpdateBaseMenu
-//@description: 更新路由
-//@param: menu model.SysBaseMenu
-//@return: err error
+// @author: [piexlmax](https://github.com/piexlmax)
+// @function: UpdateBaseMenu
+// @description: 更新路由
+// @param: menu model.SysBaseMenu
+// @return: err error
 
 func (baseMenuService *BaseMenuService) UpdateBaseMenu(menu system.SysBaseMenu) (err error) {
 	var oldMenu system.SysBaseMenu
@@ -124,11 +124,11 @@ func (baseMenuService *BaseMenuService) UpdateBaseMenu(menu system.SysBaseMenu) 
 	return err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: GetBaseMenuById
-//@description: 返回当前选中menu
-//@param: id float64
-//@return: menu system.SysBaseMenu, err error
+// @author: [piexlmax](https://github.com/piexlmax)
+// @function: GetBaseMenuById
+// @description: 返回当前选中menu
+// @param: id float64
+// @return: menu system.SysBaseMenu, err error
 
 func (baseMenuService *BaseMenuService) GetBaseMenuById(id int) (menu system.SysBaseMenu, err error) {
 	err = global.GVA_DB.Preload("MenuBtn").Preload("Parameters").Where("id = ?", id).First(&menu).Error

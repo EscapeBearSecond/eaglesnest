@@ -1,6 +1,6 @@
 package request
 
-import "47.103.136.241/goprojects/gin-vue-admin/server/model/common/request"
+import "47.103.136.241/goprojects/curesan/server/model/common/request"
 
 type SysAutoHistory struct {
 	request.PageInfo

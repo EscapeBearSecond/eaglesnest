@@ -1,9 +1,9 @@
 package initialize
 
 import (
-	"47.103.136.241/goprojects/gin-vue-admin/server/config"
-	"47.103.136.241/goprojects/gin-vue-admin/server/global"
-	"47.103.136.241/goprojects/gin-vue-admin/server/initialize/internal"
+	"47.103.136.241/goprojects/curesan/server/config"
+	"47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curesan/server/initialize/internal"
 	_ "github.com/go-sql-driver/mysql"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

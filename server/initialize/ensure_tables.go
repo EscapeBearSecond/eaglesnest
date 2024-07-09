@@ -1,9 +1,9 @@
 package initialize
 
 import (
-	"47.103.136.241/goprojects/gin-vue-admin/server/model/example"
-	sysModel "47.103.136.241/goprojects/gin-vue-admin/server/model/system"
-	"47.103.136.241/goprojects/gin-vue-admin/server/service/system"
+	"47.103.136.241/goprojects/curesan/server/model/example"
+	sysModel "47.103.136.241/goprojects/curesan/server/model/system"
+	"47.103.136.241/goprojects/curesan/server/service/system"
 	"context"
 	adapter "github.com/casbin/gorm-adapter/v3"
 	"gorm.io/gorm"

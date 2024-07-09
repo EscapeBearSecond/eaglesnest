@@ -1,6 +1,6 @@
 package example
 
-import "47.103.136.241/goprojects/gin-vue-admin/server/service"
+import "47.103.136.241/goprojects/curesan/server/service"
 
 type ApiGroup struct {
 	CustomerApi

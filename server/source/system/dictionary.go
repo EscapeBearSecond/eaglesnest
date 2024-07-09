@@ -1,8 +1,8 @@
 package system
 
 import (
-	sysModel "47.103.136.241/goprojects/gin-vue-admin/server/model/system"
-	"47.103.136.241/goprojects/gin-vue-admin/server/service/system"
+	sysModel "47.103.136.241/goprojects/curesan/server/model/system"
+	"47.103.136.241/goprojects/curesan/server/service/system"
 	"context"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"

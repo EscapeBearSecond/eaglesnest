@@ -4,14 +4,14 @@ import (
 	"github.com/qiniu/qmgo"
 	"sync"
 
-	"47.103.136.241/goprojects/gin-vue-admin/server/utils/timer"
+	"47.103.136.241/goprojects/curesan/server/utils/timer"
 	"github.com/songzhibin97/gkit/cache/local_cache"
 
 	"golang.org/x/sync/singleflight"
 
 	"go.uber.org/zap"
 
-	"47.103.136.241/goprojects/gin-vue-admin/server/config"
+	"47.103.136.241/goprojects/curesan/server/config"
 
 	"github.com/redis/go-redis/v9"
 	"github.com/spf13/viper"

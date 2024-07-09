@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"47.103.136.241/goprojects/gin-vue-admin/server/global"
+	"47.103.136.241/goprojects/curesan/server/global"
 	"runtime"
 	"time"
 
@@ -52,10 +52,10 @@ type Disk struct {
 	UsedPercent int    `json:"usedPercent"`
 }
 
-//@author: [SliverHorn](https://github.com/SliverHorn)
-//@function: InitCPU
-//@description: OS信息
-//@return: o Os, err error
+// @author: [SliverHorn](https://github.com/SliverHorn)
+// @function: InitCPU
+// @description: OS信息
+// @return: o Os, err error
 
 func InitOS() (o Os) {
 	o.GOOS = runtime.GOOS
@@ -66,10 +66,10 @@ func InitOS() (o Os) {
 	return o
 }
 
-//@author: [SliverHorn](https://github.com/SliverHorn)
-//@function: InitCPU
-//@description: CPU信息
-//@return: c Cpu, err error
+// @author: [SliverHorn](https://github.com/SliverHorn)
+// @function: InitCPU
+// @description: CPU信息
+// @return: c Cpu, err error
 
 func InitCPU() (c Cpu, err error) {
 	if cores, err := cpu.Counts(false); err != nil {
@@ -85,10 +85,10 @@ func InitCPU() (c Cpu, err error) {
 	return c, nil
 }
 
-//@author: [SliverHorn](https://github.com/SliverHorn)
-//@function: InitRAM
-//@description: RAM信息
-//@return: r Ram, err error
+// @author: [SliverHorn](https://github.com/SliverHorn)
+// @function: InitRAM
+// @description: RAM信息
+// @return: r Ram, err error
 
 func InitRAM() (r Ram, err error) {
 	if u, err := mem.VirtualMemory(); err != nil {
@@ -101,10 +101,10 @@ func InitRAM() (r Ram, err error) {
 	return r, nil
 }
 
-//@author: [SliverHorn](https://github.com/SliverHorn)
-//@function: InitDisk
-//@description: 硬盘信息
-//@return: d Disk, err error
+// @author: [SliverHorn](https://github.com/SliverHorn)
+// @function: InitDisk
+// @description: 硬盘信息
+// @return: d Disk, err error
 
 func InitDisk() (d []Disk, err error) {
 	for i := range global.GVA_CONFIG.DiskList {

@@ -1,7 +1,7 @@
 package internal
 
 import (
-	"47.103.136.241/goprojects/gin-vue-admin/server/config"
+	"47.103.136.241/goprojects/curesan/server/config"
 	"fmt"
 	"go.uber.org/zap"
 	"gorm.io/gorm/logger"

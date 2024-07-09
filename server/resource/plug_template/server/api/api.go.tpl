@@ -1,10 +1,10 @@
 package api
 
 import (
-	"47.103.136.241/goprojects/gin-vue-admin/server/global"
-	"47.103.136.241/goprojects/gin-vue-admin/server/model/common/response"
-{{ if .NeedModel }}	"47.103.136.241/goprojects/gin-vue-admin/server/plugin/{{ .Snake}}/model" {{ end }}
-	"47.103.136.241/goprojects/gin-vue-admin/server/plugin/{{ .Snake}}/service"
+	"47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curesan/server/model/common/response"
+{{ if .NeedModel }}	"47.103.136.241/goprojects/curesan/server/plugin/{{ .Snake}}/model" {{ end }}
+	"47.103.136.241/goprojects/curesan/server/plugin/{{ .Snake}}/service"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )

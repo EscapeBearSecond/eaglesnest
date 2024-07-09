@@ -5,18 +5,18 @@ import (
 
 	"go.uber.org/zap"
 
-	"47.103.136.241/goprojects/gin-vue-admin/server/global"
-	"47.103.136.241/goprojects/gin-vue-admin/server/model/system"
-	"47.103.136.241/goprojects/gin-vue-admin/server/utils"
+	"47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curesan/server/model/system"
+	"47.103.136.241/goprojects/curesan/server/utils"
 )
 
 type JwtService struct{}
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: JsonInBlacklist
-//@description: 拉黑jwt
-//@param: jwtList model.JwtBlacklist
-//@return: err error
+// @author: [piexlmax](https://github.com/piexlmax)
+// @function: JsonInBlacklist
+// @description: 拉黑jwt
+// @param: jwtList model.JwtBlacklist
+// @return: err error
 
 func (jwtService *JwtService) JsonInBlacklist(jwtList system.JwtBlacklist) (err error) {
 	err = global.GVA_DB.Create(&jwtList).Error
@@ -27,11 +27,11 @@ func (jwtService *JwtService) JsonInBlacklist(jwtList system.JwtBlacklist) (err 
 	return
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: IsBlacklist
-//@description: 判断JWT是否在黑名单内部
-//@param: jwt string
-//@return: bool
+// @author: [piexlmax](https://github.com/piexlmax)
+// @function: IsBlacklist
+// @description: 判断JWT是否在黑名单内部
+// @param: jwt string
+// @return: bool
 
 func (jwtService *JwtService) IsBlacklist(jwt string) bool {
 	_, ok := global.BlackCache.Get(jwt)
@@ -41,22 +41,22 @@ func (jwtService *JwtService) IsBlacklist(jwt string) bool {
 	// return !isNotFound
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: GetRedisJWT
-//@description: 从redis取jwt
-//@param: userName string
-//@return: redisJWT string, err error
+// @author: [piexlmax](https://github.com/piexlmax)
+// @function: GetRedisJWT
+// @description: 从redis取jwt
+// @param: userName string
+// @return: redisJWT string, err error
 
 func (jwtService *JwtService) GetRedisJWT(userName string) (redisJWT string, err error) {
 	redisJWT, err = global.GVA_REDIS.Get(context.Background(), userName).Result()
 	return redisJWT, err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: SetRedisJWT
-//@description: jwt存入redis并设置过期时间
-//@param: jwt string, userName string
-//@return: err error
+// @author: [piexlmax](https://github.com/piexlmax)
+// @function: SetRedisJWT
+// @description: jwt存入redis并设置过期时间
+// @param: jwt string, userName string
+// @return: err error
 
 func (jwtService *JwtService) SetRedisJWT(jwt string, userName string) (err error) {
 	// 此处过期时间等于jwt过期时间

@@ -1,9 +1,9 @@
 package {{.Package}}
 
 import (
-	"47.103.136.241/goprojects/gin-vue-admin/server/global"
-	"47.103.136.241/goprojects/gin-vue-admin/server/model/{{.Package}}"
-    {{.Package}}Req "47.103.136.241/goprojects/gin-vue-admin/server/model/{{.Package}}/request"
+	"47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curesan/server/model/{{.Package}}"
+    {{.Package}}Req "47.103.136.241/goprojects/curesan/server/model/{{.Package}}/request"
     {{- if .AutoCreateResource }}
     "gorm.io/gorm"
     {{- end}}

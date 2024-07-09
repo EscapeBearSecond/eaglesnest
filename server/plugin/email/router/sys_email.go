@@ -1,8 +1,8 @@
 package router
 
 import (
-	"47.103.136.241/goprojects/gin-vue-admin/server/middleware"
-	"47.103.136.241/goprojects/gin-vue-admin/server/plugin/email/api"
+	"47.103.136.241/goprojects/curesan/server/middleware"
+	"47.103.136.241/goprojects/curesan/server/plugin/email/api"
 	"github.com/gin-gonic/gin"
 )
 

@@ -1,7 +1,7 @@
 package core
 
 import (
-	"47.103.136.241/goprojects/gin-vue-admin/server/core/internal"
+	"47.103.136.241/goprojects/curesan/server/core/internal"
 	"flag"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -11,8 +11,8 @@ import (
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
 
-	"47.103.136.241/goprojects/gin-vue-admin/server/global"
-	_ "47.103.136.241/goprojects/gin-vue-admin/server/packfile"
+	"47.103.136.241/goprojects/curesan/server/global"
+	_ "47.103.136.241/goprojects/curesan/server/packfile"
 )
 
 // Viper //

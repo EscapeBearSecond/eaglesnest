@@ -4,18 +4,18 @@ import (
 	"errors"
 	"fmt"
 
-	"47.103.136.241/goprojects/gin-vue-admin/server/global"
-	"47.103.136.241/goprojects/gin-vue-admin/server/model/common/request"
-	"47.103.136.241/goprojects/gin-vue-admin/server/model/system"
+	"47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curesan/server/model/common/request"
+	"47.103.136.241/goprojects/curesan/server/model/system"
 
 	"gorm.io/gorm"
 )
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: CreateApi
-//@description: 新增基础api
-//@param: api model.SysApi
-//@return: err error
+// @author: [piexlmax](https://github.com/piexlmax)
+// @function: CreateApi
+// @description: 新增基础api
+// @param: api model.SysApi
+// @return: err error
 
 type ApiService struct{}
 
@@ -28,11 +28,11 @@ func (apiService *ApiService) CreateApi(api system.SysApi) (err error) {
 	return global.GVA_DB.Create(&api).Error
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: DeleteApi
-//@description: 删除基础api
-//@param: api model.SysApi
-//@return: err error
+// @author: [piexlmax](https://github.com/piexlmax)
+// @function: DeleteApi
+// @description: 删除基础api
+// @param: api model.SysApi
+// @return: err error
 
 func (apiService *ApiService) DeleteApi(api system.SysApi) (err error) {
 	var entity system.SysApi
@@ -50,11 +50,11 @@ func (apiService *ApiService) DeleteApi(api system.SysApi) (err error) {
 	return nil
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: GetAPIInfoList
-//@description: 分页获取数据,
-//@param: api model.SysApi, info request.PageInfo, order string, desc bool
-//@return: list interface{}, total int64, err error
+// @author: [piexlmax](https://github.com/piexlmax)
+// @function: GetAPIInfoList
+// @description: 分页获取数据,
+// @param: api model.SysApi, info request.PageInfo, order string, desc bool
+// @return: list interface{}, total int64, err error
 
 func (apiService *ApiService) GetAPIInfoList(api system.SysApi, info request.PageInfo, order string, desc bool) (list interface{}, total int64, err error) {
 	limit := info.PageSize
@@ -106,32 +106,32 @@ func (apiService *ApiService) GetAPIInfoList(api system.SysApi, info request.Pag
 	return apiList, total, err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: GetAllApis
-//@description: 获取所有的api
-//@return:  apis []model.SysApi, err error
+// @author: [piexlmax](https://github.com/piexlmax)
+// @function: GetAllApis
+// @description: 获取所有的api
+// @return:  apis []model.SysApi, err error
 
 func (apiService *ApiService) GetAllApis() (apis []system.SysApi, err error) {
 	err = global.GVA_DB.Find(&apis).Error
 	return
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: GetApiById
-//@description: 根据id获取api
-//@param: id float64
-//@return: api model.SysApi, err error
+// @author: [piexlmax](https://github.com/piexlmax)
+// @function: GetApiById
+// @description: 根据id获取api
+// @param: id float64
+// @return: api model.SysApi, err error
 
 func (apiService *ApiService) GetApiById(id int) (api system.SysApi, err error) {
 	err = global.GVA_DB.First(&api, "id = ?", id).Error
 	return
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: UpdateApi
-//@description: 根据id更新api
-//@param: api model.SysApi
-//@return: err error
+// @author: [piexlmax](https://github.com/piexlmax)
+// @function: UpdateApi
+// @description: 根据id更新api
+// @param: api model.SysApi
+// @return: err error
 
 func (apiService *ApiService) UpdateApi(api system.SysApi) (err error) {
 	var oldA system.SysApi
@@ -161,11 +161,11 @@ func (apiService *ApiService) UpdateApi(api system.SysApi) (err error) {
 	return global.GVA_DB.Save(&api).Error
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: DeleteApisByIds
-//@description: 删除选中API
-//@param: apis []model.SysApi
-//@return: err error
+// @author: [piexlmax](https://github.com/piexlmax)
+// @function: DeleteApisByIds
+// @description: 删除选中API
+// @param: apis []model.SysApi
+// @return: err error
 
 func (apiService *ApiService) DeleteApisByIds(ids request.IdsReq) (err error) {
 	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {

@@ -12,7 +12,7 @@ import (
 
 // 自动为 gorm.go 注册一个自动迁移
 func AddRegisterTablesAst(path, funcName, pk, varName, dbName, model string) {
-	modelPk := fmt.Sprintf("47.103.136.241/goprojects/gin-vue-admin/server/model/%s", pk)
+	modelPk := fmt.Sprintf("47.103.136.241/goprojects/curesan/server/model/%s", pk)
 	src, err := os.ReadFile(path)
 	if err != nil {
 		fmt.Println(err)
@@ -116,7 +116,7 @@ func addAutoMigrate(astBody *ast.BlockStmt, dbname string, pk string, model stri
 			}
 		}
 		return true
-		//然后判断 pk.model是否存在 如果存在直接跳出 如果不存在 则向已经找到的方法调用语句的node里面push一条
+		// 然后判断 pk.model是否存在 如果存在直接跳出 如果不存在 则向已经找到的方法调用语句的node里面push一条
 	})
 
 	if flag {

@@ -1,4 +1,4 @@
-# 47.103.136.241/goprojects/gin-vue-admin/server Global Configuration
+# 47.103.136.241/goprojects/curesan/server Global Configuration
 
 # jwt configuration
 jwt:
@@ -10,7 +10,7 @@ jwt:
 zap:
   level: info
   format: console
-  prefix: "[47.103.136.241/goprojects/gin-vue-admin/server]"
+  prefix: "[47.103.136.241/goprojects/curesan/server]"
   director: log
   show-line: true
   encode-level: LowercaseColorLevelEncoder
@@ -72,7 +72,7 @@ captcha:
   open-captcha-timeout: 3600 # open-captcha大于0时才生效
 
 # mysql connect configuration
-# 未初始化之前请勿手动修改数据库信息！！！如果一定要手动初始化请看（https://gin-vue-admin.com/docs/first_master）
+# 未初始化之前请勿手动修改数据库信息！！！如果一定要手动初始化请看（https://curesan.com/docs/first_master）
 mysql:
   path: ""
   port: ""
@@ -86,7 +86,7 @@ mysql:
   log-zap: false
 
 # pgsql connect configuration
-# 未初始化之前请勿手动修改数据库信息！！！如果一定要手动初始化请看（https://gin-vue-admin.com/docs/first_master）
+# 未初始化之前请勿手动修改数据库信息！！！如果一定要手动初始化请看（https://curesan.com/docs/first_master）
 pgsql:
   path: ""
   port: ""
@@ -165,7 +165,7 @@ tencent-cos:
   secret-id: your-secret-id
   secret-key: your-secret-key
   base-url: https://gin.vue.admin
-  path-prefix: 47.103.136.241/goprojects/gin-vue-admin/server
+  path-prefix: 47.103.136.241/goprojects/curesan/server
 
 # aws s3 configuration (minio compatible)
 aws-s3:
@@ -177,7 +177,7 @@ aws-s3:
   secret-id: your-secret-id
   secret-key: your-secret-key
   base-url: https://gin.vue.admin
-  path-prefix: 47.103.136.241/goprojects/gin-vue-admin/server
+  path-prefix: 47.103.136.241/goprojects/curesan/server
 
 # huawei obs configuration
 hua-wei-obs:

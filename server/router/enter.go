@@ -1,8 +1,8 @@
 package router
 
 import (
-	"47.103.136.241/goprojects/gin-vue-admin/server/router/example"
-	"47.103.136.241/goprojects/gin-vue-admin/server/router/system"
+	"47.103.136.241/goprojects/curesan/server/router/example"
+	"47.103.136.241/goprojects/curesan/server/router/system"
 )
 
 type RouterGroup struct {

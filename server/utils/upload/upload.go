@@ -3,7 +3,7 @@ package upload
 import (
 	"mime/multipart"
 
-	"47.103.136.241/goprojects/gin-vue-admin/server/global"
+	"47.103.136.241/goprojects/curesan/server/global"
 )
 
 // OSS 对象存储接口

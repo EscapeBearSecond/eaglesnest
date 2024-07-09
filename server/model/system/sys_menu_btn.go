@@ -1,6 +1,6 @@
 package system
 
-import "47.103.136.241/goprojects/gin-vue-admin/server/global"
+import "47.103.136.241/goprojects/curesan/server/global"
 
 type SysBaseMenuBtn struct {
 	global.GVA_MODEL

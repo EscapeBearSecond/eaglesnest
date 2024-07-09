@@ -1,7 +1,7 @@
 package internal
 
 import (
-	"47.103.136.241/goprojects/gin-vue-admin/server/global"
+	"47.103.136.241/goprojects/curesan/server/global"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"os"

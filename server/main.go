@@ -4,9 +4,9 @@ import (
 	_ "go.uber.org/automaxprocs"
 	"go.uber.org/zap"
 
-	"47.103.136.241/goprojects/gin-vue-admin/server/core"
-	"47.103.136.241/goprojects/gin-vue-admin/server/global"
-	"47.103.136.241/goprojects/gin-vue-admin/server/initialize"
+	"47.103.136.241/goprojects/curesan/server/core"
+	"47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curesan/server/initialize"
 )
 
 //go:generate go env -w GO111MODULE=on
@@ -14,7 +14,7 @@ import (
 //go:generate go mod tidy
 //go:generate go mod download
 
-// @title                       Gin-Vue-Admin Swagger API接口文档
+// @title                       curesan Swagger API接口文档
 // @version                     v2.6.5
 // @description                 使用gin+vue进行极速开发的全栈开发基础平台
 // @securityDefinitions.apikey  ApiKeyAuth

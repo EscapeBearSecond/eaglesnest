@@ -1,4 +1,4 @@
-module 47.103.136.241/goprojects/gin-vue-admin/server
+module 47.103.136.241/goprojects/curesan/server
 
 go 1.22
 

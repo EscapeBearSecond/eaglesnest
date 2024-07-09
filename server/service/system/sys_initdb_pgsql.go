@@ -6,13 +6,13 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"47.103.136.241/goprojects/gin-vue-admin/server/config"
+	"47.103.136.241/goprojects/curesan/server/config"
 	"github.com/gookit/color"
 
-	"47.103.136.241/goprojects/gin-vue-admin/server/utils"
+	"47.103.136.241/goprojects/curesan/server/utils"
 
-	"47.103.136.241/goprojects/gin-vue-admin/server/global"
-	"47.103.136.241/goprojects/gin-vue-admin/server/model/system/request"
+	"47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curesan/server/model/system/request"
 	"github.com/gofrs/uuid/v5"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

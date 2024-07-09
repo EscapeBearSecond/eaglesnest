@@ -1,6 +1,6 @@
 package initialize
 
-import "47.103.136.241/goprojects/gin-vue-admin/server/utils"
+import "47.103.136.241/goprojects/curesan/server/utils"
 
 func init() {
 	_ = utils.RegisterRule("PageVerify",
