@@ -16,7 +16,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// @author: [piexlmax](https://github.com/piexlmax)
+// @author: DingYG
 // @function: UpdateCasbin
 // @description: 更新casbin权限
 // @param: authorityId string, casbinInfos []request.CasbinInfo
@@ -47,7 +47,7 @@ func (casbinService *CasbinService) UpdateCasbin(AuthorityID uint, casbinInfos [
 	return nil
 }
 
-// @author: [piexlmax](https://github.com/piexlmax)
+// @author: DingYG
 // @function: UpdateCasbinApi
 // @description: API更新随动
 // @param: oldPath string, newPath string, oldMethod string, newMethod string
@@ -66,7 +66,7 @@ func (casbinService *CasbinService) UpdateCasbinApi(oldPath string, newPath stri
 	return err
 }
 
-// @author: [piexlmax](https://github.com/piexlmax)
+// @author: DingYG
 // @function: GetPolicyPathByAuthorityId
 // @description: 获取权限列表
 // @param: authorityId string
@@ -85,7 +85,7 @@ func (casbinService *CasbinService) GetPolicyPathByAuthorityId(AuthorityID uint)
 	return pathMaps
 }
 
-// @author: [piexlmax](https://github.com/piexlmax)
+// @author: DingYG
 // @function: ClearCasbin
 // @description: 清除匹配的权限
 // @param: v int, p ...string
@@ -97,7 +97,7 @@ func (casbinService *CasbinService) ClearCasbin(v int, p ...string) bool {
 	return success
 }
 
-// @author: [piexlmax](https://github.com/piexlmax)
+// @author: DingYG
 // @function: RemoveFilteredPolicy
 // @description: 使用数据库方法清理筛选的politicy 此方法需要调用FreshCasbin方法才可以在系统中即刻生效
 // @param: db *gorm.DB, authorityId string
@@ -107,7 +107,7 @@ func (casbinService *CasbinService) RemoveFilteredPolicy(db *gorm.DB, authorityI
 	return db.Delete(&gormadapter.CasbinRule{}, "v0 = ?", authorityId).Error
 }
 
-// @author: [piexlmax](https://github.com/piexlmax)
+// @author: DingYG
 // @function: SyncPolicy
 // @description: 同步目前数据库的policy 此方法需要调用FreshCasbin方法才可以在系统中即刻生效
 // @param: db *gorm.DB, authorityId string, rules [][]string
@@ -121,7 +121,7 @@ func (casbinService *CasbinService) SyncPolicy(db *gorm.DB, authorityId string, 
 	return casbinService.AddPolicies(db, rules)
 }
 
-// @author: [piexlmax](https://github.com/piexlmax)
+// @author: DingYG
 // @function: AddPolicies
 // @description: 添加匹配的权限
 // @param: v int, p ...string
@@ -146,7 +146,7 @@ func (CasbinService *CasbinService) FreshCasbin() (err error) {
 	return err
 }
 
-// @author: [piexlmax](https://github.com/piexlmax)
+// @author: DingYG
 // @function: Casbin
 // @description: 持久化到数据库  引入自定义规则
 // @return: *casbin.Enforcer

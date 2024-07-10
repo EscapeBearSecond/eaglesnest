@@ -52,24 +52,6 @@ func (i *InitDB) MssqlEmptyDsn() string {
 	return "sqlserver://" + i.UserName + ":" + i.Password + "@" + i.Host + ":" + i.Port + "?database=" + i.DBName + "&encrypt=disable"
 }
 
-// ToMysqlConfig 转换 config.Mysql
-// Author [SliverHorn](https://github.com/SliverHorn)
-func (i *InitDB) ToMysqlConfig() config.Mysql {
-	return config.Mysql{
-		GeneralDB: config.GeneralDB{
-			Path:         i.Host,
-			Port:         i.Port,
-			Dbname:       i.DBName,
-			Username:     i.UserName,
-			Password:     i.Password,
-			MaxIdleConns: 10,
-			MaxOpenConns: 100,
-			LogMode:      "error",
-			Config:       "charset=utf8mb4&parseTime=True&loc=Local",
-		},
-	}
-}
-
 // ToPgsqlConfig 转换 config.Pgsql
 // Author [SliverHorn](https://github.com/SliverHorn)
 func (i *InitDB) ToPgsqlConfig() config.Pgsql {

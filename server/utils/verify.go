@@ -16,4 +16,5 @@ var (
 	OldAuthorityVerify     = Rules{"OldAuthorityId": {NotEmpty()}}
 	ChangePasswordVerify   = Rules{"Password": {NotEmpty()}, "NewPassword": {NotEmpty()}}
 	SetUserAuthorityVerify = Rules{"AuthorityId": {NotEmpty()}}
+	CreateAreaVerify       = Rules{"AreaName": {NotEmpty(), Gt("2"), Le("20")}, "AreaIP": {Gt("0")}}
 )

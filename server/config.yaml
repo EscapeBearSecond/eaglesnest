@@ -107,28 +107,14 @@ mongo:
     password: ""
     socket-timeout-ms: 0
     username: ""
-mysql:
-    prefix: ""
-    port: "3306"
-    config: charset=utf8mb4&parseTime=True&loc=Local
-    db-name: gva
-    username: root
-    password: "292378"
-    path: 127.0.0.1
-    engine: ""
-    log-mode: error
-    max-idle-conns: 10
-    max-open-conns: 100
-    singular: false
-    log-zap: false
 pgsql:
     prefix: ""
     port: "5432"
     config: sslmode=disable TimeZone=Asia/Shanghai
-    db-name: gva
+    db-name: curescan
     username: postgres
     password: "njzyadmin"
-    path: 127.0.0.1
+    path: 139.224.191.13
     engine: ""
     log-mode: error
     max-idle-conns: 10

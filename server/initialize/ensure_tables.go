@@ -1,6 +1,7 @@
 package initialize
 
 import (
+	"47.103.136.241/goprojects/curesan/server/model/curescan"
 	"47.103.136.241/goprojects/curesan/server/model/example"
 	sysModel "47.103.136.241/goprojects/curesan/server/model/system"
 	"47.103.136.241/goprojects/curesan/server/service/system"
@@ -58,6 +59,8 @@ func (e *ensureTables) MigrateTable(ctx context.Context) (context.Context, error
 		example.ExaCustomer{},
 		example.ExaFileChunk{},
 		example.ExaFileUploadAndDownload{},
+
+		curescan.Area{},
 	}
 	for _, t := range tables {
 		_ = db.AutoMigrate(&t)

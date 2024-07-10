@@ -20,12 +20,10 @@ type _gorm struct{}
 func (g *_gorm) Config(prefix string, singular bool) *gorm.Config {
 	var general config.GeneralDB
 	switch global.GVA_CONFIG.System.DbType {
-	case "mysql":
-		general = global.GVA_CONFIG.Mysql.GeneralDB
 	case "pgsql":
 		general = global.GVA_CONFIG.Pgsql.GeneralDB
 	default:
-		general = global.GVA_CONFIG.Mysql.GeneralDB
+		general = global.GVA_CONFIG.Pgsql.GeneralDB
 	}
 	return &gorm.Config{
 		Logger: logger.New(NewWriter(general, log.New(os.Stdout, "\r\n", log.LstdFlags)), logger.Config{

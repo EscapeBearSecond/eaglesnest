@@ -2,6 +2,10 @@ package utils
 
 import (
 	"errors"
+	"fmt"
+	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
+	"net"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -14,11 +18,11 @@ type RulesMap map[string]Rules
 
 var CustomizeMap = make(map[string]Rules)
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: RegisterRule
-//@description: 注册自定义规则方案建议在路由初始化层即注册
-//@param: key string, rule Rules
-//@return: err error
+// @author: DingYG
+// @function: RegisterRule
+// @description: 注册自定义规则方案建议在路由初始化层即注册
+// @param: key string, rule Rules
+// @return: err error
 
 func RegisterRule(key string, rule Rules) (err error) {
 	if CustomizeMap[key] != nil {
@@ -29,10 +33,10 @@ func RegisterRule(key string, rule Rules) (err error) {
 	}
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: NotEmpty
-//@description: 非空 不能为其对应类型的0值
-//@return: string
+// @author: DingYG
+// @function: NotEmpty
+// @description: 非空 不能为其对应类型的0值
+// @return: string
 
 func NotEmpty() string {
 	return "notEmpty"
@@ -48,72 +52,72 @@ func RegexpMatch(rule string) string {
 	return "regexp=" + rule
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: Lt
-//@description: 小于入参(<) 如果为string array Slice则为长度比较 如果是 int uint float 则为数值比较
-//@param: mark string
-//@return: string
+// @author: DingYG
+// @function: Lt
+// @description: 小于入参(<) 如果为string array Slice则为长度比较 如果是 int uint float 则为数值比较
+// @param: mark string
+// @return: string
 
 func Lt(mark string) string {
 	return "lt=" + mark
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: Le
-//@description: 小于等于入参(<=) 如果为string array Slice则为长度比较 如果是 int uint float 则为数值比较
-//@param: mark string
-//@return: string
+// @author: DingYG
+// @function: Le
+// @description: 小于等于入参(<=) 如果为string array Slice则为长度比较 如果是 int uint float 则为数值比较
+// @param: mark string
+// @return: string
 
 func Le(mark string) string {
 	return "le=" + mark
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: Eq
-//@description: 等于入参(==) 如果为string array Slice则为长度比较 如果是 int uint float 则为数值比较
-//@param: mark string
-//@return: string
+// @author: DingYG
+// @function: Eq
+// @description: 等于入参(==) 如果为string array Slice则为长度比较 如果是 int uint float 则为数值比较
+// @param: mark string
+// @return: string
 
 func Eq(mark string) string {
 	return "eq=" + mark
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: Ne
-//@description: 不等于入参(!=)  如果为string array Slice则为长度比较 如果是 int uint float 则为数值比较
-//@param: mark string
-//@return: string
+// @author: DingYG
+// @function: Ne
+// @description: 不等于入参(!=)  如果为string array Slice则为长度比较 如果是 int uint float 则为数值比较
+// @param: mark string
+// @return: string
 
 func Ne(mark string) string {
 	return "ne=" + mark
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: Ge
-//@description: 大于等于入参(>=) 如果为string array Slice则为长度比较 如果是 int uint float 则为数值比较
-//@param: mark string
-//@return: string
+// @author: DingYG
+// @function: Ge
+// @description: 大于等于入参(>=) 如果为string array Slice则为长度比较 如果是 int uint float 则为数值比较
+// @param: mark string
+// @return: string
 
 func Ge(mark string) string {
 	return "ge=" + mark
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: Gt
-//@description: 大于入参(>) 如果为string array Slice则为长度比较 如果是 int uint float 则为数值比较
-//@param: mark string
-//@return: string
+// @author: DingYG
+// @function: Gt
+// @description: 大于入参(>) 如果为string array Slice则为长度比较 如果是 int uint float 则为数值比较
+// @param: mark string
+// @return: string
 
 func Gt(mark string) string {
 	return "gt=" + mark
 }
 
 //
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: Verify
-//@description: 校验方法
-//@param: st interface{}, roleMap Rules(入参实例，规则map)
-//@return: err error
+// @author: DingYG
+// @function: Verify
+// @description: 校验方法
+// @param: st interface{}, roleMap Rules(入参实例，规则map)
+// @return: err error
 
 func Verify(st interface{}, roleMap Rules) (err error) {
 	compareMap := map[string]bool{
@@ -164,11 +168,11 @@ func Verify(st interface{}, roleMap Rules) (err error) {
 	return nil
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: compareVerify
-//@description: 长度和数字的校验方法 根据类型自动校验
-//@param: value reflect.Value, VerifyStr string
-//@return: bool
+// @author: DingYG
+// @function: compareVerify
+// @description: 长度和数字的校验方法 根据类型自动校验
+// @param: value reflect.Value, VerifyStr string
+// @return: bool
 
 func compareVerify(value reflect.Value, VerifyStr string) bool {
 	switch value.Kind() {
@@ -187,11 +191,11 @@ func compareVerify(value reflect.Value, VerifyStr string) bool {
 	}
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: isBlank
-//@description: 非空校验
-//@param: value reflect.Value
-//@return: bool
+// @author: DingYG
+// @function: isBlank
+// @description: 非空校验
+// @param: value reflect.Value
+// @return: bool
 
 func isBlank(value reflect.Value) bool {
 	switch value.Kind() {
@@ -211,11 +215,11 @@ func isBlank(value reflect.Value) bool {
 	return reflect.DeepEqual(value.Interface(), reflect.Zero(value.Type()).Interface())
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: compare
-//@description: 比较函数
-//@param: value interface{}, VerifyStr string
-//@return: bool
+// @author: DingYG
+// @function: compare
+// @description: 比较函数
+// @param: value interface{}, VerifyStr string
+// @return: bool
 
 func compare(value interface{}, VerifyStr string) bool {
 	VerifyStrArr := strings.Split(VerifyStr, "=")
@@ -291,4 +295,33 @@ func compare(value interface{}, VerifyStr string) bool {
 
 func regexpMatch(rule, matchStr string) bool {
 	return regexp.MustCompile(rule).MatchString(matchStr)
+}
+
+var validate = newValidate()
+
+// BindAndValid
+// 绑定并验证
+func BindAndValid(c *gin.Context, v interface{}) (bool, error) {
+	err := c.ShouldBind(v)
+	if err != nil {
+		return false, err
+	}
+	err = validate.Struct(v)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+func newValidate() *validator.Validate {
+	return validator.New(validator.WithRequiredStructEnabled())
+}
+
+func ValidateIP(raws []string) error {
+	for _, raw := range raws {
+		if net.ParseIP(raw) == nil {
+			return errors.New(fmt.Sprintf("%s 不是一个正确的IP地址", raw))
+		}
+	}
+	return nil
 }

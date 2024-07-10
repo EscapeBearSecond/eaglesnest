@@ -13,12 +13,10 @@ import (
 
 func Gorm() *gorm.DB {
 	switch global.GVA_CONFIG.System.DbType {
-	case "mysql":
-		return GormMysql()
 	case "pgsql":
 		return GormPgSql()
 	default:
-		return GormMysql()
+		return GormPgSql()
 	}
 }
 
