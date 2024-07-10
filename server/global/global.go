@@ -2,6 +2,7 @@ package global
 
 import (
 	"github.com/qiniu/qmgo"
+	"github.com/redis/go-redis/v9"
 	"sync"
 
 	"47.103.136.241/goprojects/curesan/server/utils/timer"
@@ -13,7 +14,6 @@ import (
 
 	"47.103.136.241/goprojects/curesan/server/config"
 
-	"github.com/redis/go-redis/v9"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
 )

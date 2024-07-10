@@ -127,7 +127,7 @@ pgsql:
     config: sslmode=disable TimeZone=Asia/Shanghai
     db-name: gva
     username: postgres
-    password: "292378"
+    password: "njzyadmin"
     path: 127.0.0.1
     engine: ""
     log-mode: error
