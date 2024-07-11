@@ -14,5 +14,5 @@ type Area struct {
 }
 
 func (Area) TableName() string {
-	return "curescan_area"
+	return "cs_area"
 }

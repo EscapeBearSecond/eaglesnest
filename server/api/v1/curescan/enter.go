@@ -6,6 +6,7 @@ import (
 
 type ApiGroup struct {
 	AreaApi
+	TemplateApi
 }
 
 var (
