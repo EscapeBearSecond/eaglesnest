@@ -62,7 +62,7 @@ func (a *AreaService) GetAreaList(area curescan.Area, page request.PageInfo, ord
 	}
 	db = db.Limit(limit).Offset(offset)
 	OrderStr := "id desc"
-	if desc {
+	if order != "" {
 		orderMap := make(map[string]bool)
 		orderMap["id"] = true
 		orderMap["area_name"] = true

@@ -10,5 +10,6 @@ type ApiGroup struct {
 }
 
 var (
-	areaService = service.ServiceGroupApp.CurescanServiceGroup.AreaService
+	areaService     = service.ServiceGroupApp.CurescanServiceGroup.AreaService
+	templateService = service.ServiceGroupApp.CurescanServiceGroup.TemplateService
 )
