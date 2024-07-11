@@ -11,12 +11,14 @@ require (
 	github.com/fsnotify/fsnotify v1.6.0
 	github.com/fvbock/endless v0.0.0-20170109170031-447134032cb6
 	github.com/gin-gonic/gin v1.9.1
+	github.com/go-playground/validator/v10 v10.22.0
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/gofrs/uuid/v5 v5.0.0
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/gookit/color v1.5.4
 	github.com/huaweicloud/huaweicloud-sdk-go-obs v3.21.8+incompatible
 	github.com/jordan-wright/email v0.0.0-20200824153738-3f5bafa1cd84
+	github.com/lib/pq v1.10.2
 	github.com/mholt/archiver/v4 v4.0.0-alpha.8
 	github.com/mojocn/base64Captcha v1.3.6
 	github.com/otiai10/copy v1.7.0
@@ -41,8 +43,7 @@ require (
 	golang.org/x/crypto v0.22.0
 	golang.org/x/sync v0.5.0
 	golang.org/x/text v0.14.0
-	gorm.io/driver/mysql v1.5.6
-	gorm.io/driver/postgres v1.5.7
+	gorm.io/driver/postgres v1.5.9
 	gorm.io/gorm v1.25.10
 	nhooyr.io/websocket v1.8.7
 )
@@ -74,7 +75,6 @@ require (
 	github.com/go-openapi/swag v0.22.5 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
-	github.com/go-playground/validator/v10 v10.22.0 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 // indirect
 	github.com/golang-sql/sqlexp v0.1.0 // indirect
@@ -149,6 +149,7 @@ require (
 	google.golang.org/protobuf v1.33.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
+	gorm.io/driver/mysql v1.5.6 // indirect
 	gorm.io/driver/sqlserver v1.5.1 // indirect
 	gorm.io/plugin/dbresolver v1.4.1 // indirect
 	modernc.org/libc v1.24.1 // indirect

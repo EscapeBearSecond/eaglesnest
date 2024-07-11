@@ -113,8 +113,8 @@ pgsql:
     config: sslmode=disable TimeZone=Asia/Shanghai
     db-name: curescan
     username: postgres
-    password: "njzyadmin"
-    path: 139.224.191.13
+    password: "292378"
+    path: 127.0.0.1
     engine: ""
     log-mode: error
     max-idle-conns: 10
