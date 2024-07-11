@@ -7,9 +7,11 @@ import (
 type ApiGroup struct {
 	AreaApi
 	TemplateApi
+	AssetApi
 }
 
 var (
 	areaService     = service.ServiceGroupApp.CurescanServiceGroup.AreaService
 	templateService = service.ServiceGroupApp.CurescanServiceGroup.TemplateService
+	assetService    = service.ServiceGroupApp.CurescanServiceGroup.AssetService
 )

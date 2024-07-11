@@ -97,6 +97,7 @@ func Routers() *gin.Engine {
 		exampleRouter.InitFileUploadAndDownloadRouter(PrivateGroup) // 文件上传下载功能路由
 		curescanRouter.InitAreaRouter(PublicGroup)
 		curescanRouter.InitTemplateRouter(PublicGroup)
+		curescanRouter.InitAssetRouter(PublicGroup)
 	}
 
 	// 插件路由安装

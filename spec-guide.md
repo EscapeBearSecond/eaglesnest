@@ -42,3 +42,13 @@ git push -u origin dev
 # 非第一次推送
 git push
 ```
+
+## 开发环境部署
+
+```bash
+# 前端
+# 代码提交到git仓库后，登录云服务器，进入 /goprojects/src/curescan， 执行 git pull -u origin dev 拉取仓库代码即可
+# 如果 vue项目已经停掉，需要重启，通过命令 setsid nohup npm run serve > output.log 2>&1 & 重启
+# 后端
+# 进入目录，通过命令 lsof -i :8888找到PID，kill -9 PID，重新运行
+```
