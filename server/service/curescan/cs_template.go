@@ -12,6 +12,7 @@ import (
 type TemplateService struct {
 }
 
+// CreateTemplate 创建模板，不允许重复的模板名称。
 func (t *TemplateService) CreateTemplate(template *curescan.Template) error {
 	if !errors.Is(global.GVA_DB.Select("template_name").First(&curescan.Template{}, "template_name = ?", template.TemplateName).Error, gorm.ErrRecordNotFound) {
 		return errors.New("模板已存在，请查看模板名是否正确")
@@ -19,10 +20,12 @@ func (t *TemplateService) CreateTemplate(template *curescan.Template) error {
 	return global.GVA_DB.Create(template).Error
 }
 
+// DeleteTemplate 根据模板ID删除模板
 func (t *TemplateService) DeleteTemplate(id int) error {
 	return global.GVA_DB.Delete(&curescan.Template{}, id).Error
 }
 
+// GetTemplateById 根据模板ID获取模板详情信息，包括模板内容
 func (t *TemplateService) GetTemplateById(id int) (*curescan.Template, error) {
 	var template curescan.Template
 	err := global.GVA_DB.Select("id", "template_name", "template_type", "template_desc", "template_content",
@@ -36,6 +39,7 @@ func (t *TemplateService) GetTemplateById(id int) (*curescan.Template, error) {
 	return &template, nil
 }
 
+// GetTemplateList 获取模板列表，该方法返回除模板内容外的所有信息。如果想要获取模板内容，需要调用GetTemplateById方法。
 func (t *TemplateService) GetTemplateList(template curescan.Template, page request.PageInfo, order string, desc bool) (list interface{}, total int64, err error) {
 	limit := page.PageSize
 	offset := page.PageSize * (page.Page - 1)
@@ -71,6 +75,7 @@ func (t *TemplateService) GetTemplateList(template curescan.Template, page reque
 	return templates, total, err
 }
 
+// UpdateTemplate 更新模板信息，更新后的模板名称不允许重复
 func (t *TemplateService) UpdateTemplate(template *curescan.Template) error {
 	var existingRecord curescan.Template
 	err := global.GVA_DB.Select("id", "template_name").Where("template_name=?", template.TemplateName).First(&existingRecord).Error

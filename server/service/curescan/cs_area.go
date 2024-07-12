@@ -12,6 +12,7 @@ import (
 type AreaService struct {
 }
 
+// CreateArea 创建一个新的区域，不允许有重复的区域名称。
 func (a *AreaService) CreateArea(area *curescan.Area) error {
 	if !errors.Is(global.GVA_DB.Select("area_name").First(&curescan.Area{}, "area_name=?", area.AreaName).Error, gorm.ErrRecordNotFound) {
 		return errors.New("存在相同区域名称，不允许创建")
@@ -20,10 +21,12 @@ func (a *AreaService) CreateArea(area *curescan.Area) error {
 	return global.GVA_DB.Create(&area).Error
 }
 
+// DeleteArea 根据区域ID删除区域，该删除是逻辑删除，通过将deleted_at字段置为删除时间。
 func (a *AreaService) DeleteArea(id int) error {
 	return global.GVA_DB.Delete(&curescan.Area{}, id).Error
 }
 
+// UpdateArea 更新区域信息，更新后的区域名称不允许重复。
 func (a *AreaService) UpdateArea(area *curescan.Area) error {
 	var existingRecord curescan.Area
 	err := global.GVA_DB.Select("id", "area_name").Where("area_name=?", area.AreaName).First(&existingRecord).Error
@@ -39,6 +42,7 @@ func (a *AreaService) UpdateArea(area *curescan.Area) error {
 	return global.GVA_DB.Save(&area).Error
 }
 
+// GetAreaById 根据区域ID获取区域详情。
 func (a *AreaService) GetAreaById(id int) (*curescan.Area, error) {
 	var area curescan.Area
 	err := global.GVA_DB.Select("id", "area_name", "area_desc", "area_ip",
@@ -52,6 +56,9 @@ func (a *AreaService) GetAreaById(id int) (*curescan.Area, error) {
 	return &area, nil
 }
 
+// GetAreaList 获取区域列表，该方法会根据页码信息和排序信息返回分页后的区域信息。调用该方法需要传递的参数有4个，第一个为过滤信息，也就是要查询的区域信息或关键字；
+// 第二个参数是分页信息；第三个参数是排序字段，第四个参数是是否倒序。如查询区域名称为“南京”，且要按照ID字段倒序排序，则参数 area.AreaName="南京", page.Page=1,
+// page.PageInfo=10, order="id", desc=true
 func (a *AreaService) GetAreaList(area curescan.Area, page request.PageInfo, order string, desc bool) (list interface{}, total int64, err error) {
 	limit := page.PageSize
 	offset := page.PageSize * (page.Page - 1)
