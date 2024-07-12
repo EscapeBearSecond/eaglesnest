@@ -4,4 +4,5 @@ type RouterGroup struct {
 	AreaRouter
 	TemplateRouter
 	AssetRouter
+	PolicyRouter
 }

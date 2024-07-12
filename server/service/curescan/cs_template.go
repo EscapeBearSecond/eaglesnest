@@ -13,7 +13,7 @@ type TemplateService struct {
 }
 
 func (t *TemplateService) CreateTemplate(template *curescan.Template) error {
-	if !errors.Is(global.GVA_DB.First(&curescan.Template{}, "template_name = ?", template.TemplateName).Error, gorm.ErrRecordNotFound) {
+	if !errors.Is(global.GVA_DB.Select("template_name").First(&curescan.Template{}, "template_name = ?", template.TemplateName).Error, gorm.ErrRecordNotFound) {
 		return errors.New("模板已存在，请查看模板名是否正确")
 	}
 	return global.GVA_DB.Create(template).Error
@@ -25,7 +25,8 @@ func (t *TemplateService) DeleteTemplate(id int) error {
 
 func (t *TemplateService) GetTemplateById(id int) (*curescan.Template, error) {
 	var template curescan.Template
-	err := global.GVA_DB.Where("id = ?", id).First(&template).Error
+	err := global.GVA_DB.Select("id", "template_name", "template_type", "template_desc", "template_content",
+		"created_at", "updated_at", "deleted_at").Where("id = ?", id).First(&template).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("目标数据不存在")
@@ -74,6 +75,9 @@ func (t *TemplateService) UpdateTemplate(template *curescan.Template) error {
 	var existingRecord curescan.Template
 	err := global.GVA_DB.Select("id", "template_name").Where("template_name=?", template.TemplateName).First(&existingRecord).Error
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return global.GVA_DB.Save(&template).Error
+		}
 		return err
 	}
 	if existingRecord.ID != template.ID {

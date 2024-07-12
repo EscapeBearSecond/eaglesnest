@@ -10,7 +10,7 @@ type Area struct {
 	global.GvaModel
 	AreaName string         `json:"areaName" gorm:"type:varchar(20);not null;index;column:area_name;"`
 	AreaIP   pq.StringArray `json:"areaIP" gorm:"type:text[];not null;column:area_ip;"`
-	AreaDesc string         `json:"areaDesc" gorm:"type:text;column:area_desc;"`
+	AreaDesc string         `json:"areaDesc" gorm:"type:varchar(100);column:area_desc;"`
 }
 
 func (Area) TableName() string {

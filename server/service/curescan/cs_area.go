@@ -13,7 +13,7 @@ type AreaService struct {
 }
 
 func (a *AreaService) CreateArea(area *curescan.Area) error {
-	if !errors.Is(global.GVA_DB.First(&curescan.Area{}, "area_name=?", area.AreaName).Error, gorm.ErrRecordNotFound) {
+	if !errors.Is(global.GVA_DB.Select("area_name").First(&curescan.Area{}, "area_name=?", area.AreaName).Error, gorm.ErrRecordNotFound) {
 		return errors.New("存在相同区域名称，不允许创建")
 	}
 
@@ -26,8 +26,11 @@ func (a *AreaService) DeleteArea(id int) error {
 
 func (a *AreaService) UpdateArea(area *curescan.Area) error {
 	var existingRecord curescan.Area
-	err := global.GVA_DB.Where("area_name=?", area.AreaName).First(&existingRecord).Error
+	err := global.GVA_DB.Select("id", "area_name").Where("area_name=?", area.AreaName).First(&existingRecord).Error
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return global.GVA_DB.Save(&area).Error
+		}
 		return err
 	}
 	if existingRecord.ID != area.ID {
@@ -38,7 +41,8 @@ func (a *AreaService) UpdateArea(area *curescan.Area) error {
 
 func (a *AreaService) GetAreaById(id int) (*curescan.Area, error) {
 	var area curescan.Area
-	err := global.GVA_DB.Where("id=?", id).First(&area).Error
+	err := global.GVA_DB.Select("id", "area_name", "area_desc", "area_ip",
+		"created_at", "updated_at", "deleted_at").Where("id=?", id).First(&area).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("目标数据不存在")

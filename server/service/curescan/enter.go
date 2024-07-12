@@ -4,4 +4,5 @@ type ServiceGroup struct {
 	AreaService
 	TemplateService
 	AssetService
+	PolicyService
 }

@@ -1,14 +1,15 @@
 package curescan
 
 import (
+	"fmt"
+	"strconv"
+
 	"47.103.136.241/goprojects/curesan/server/global"
 	"47.103.136.241/goprojects/curesan/server/model/common/response"
 	"47.103.136.241/goprojects/curesan/server/model/curescan"
 	"47.103.136.241/goprojects/curesan/server/model/curescan/request"
 	"47.103.136.241/goprojects/curesan/server/utils"
-	"fmt"
 	"github.com/gin-gonic/gin"
-	"strconv"
 )
 
 type TemplateApi struct {

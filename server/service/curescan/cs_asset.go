@@ -14,10 +14,11 @@ func (a *AssetService) BatchAdd(assets []*curescan.Asset) error {
 	return global.GVA_DB.Model(&curescan.Asset{}).CreateInBatches(assets, 100).Error
 }
 
-func (a *AssetService) GetAreaList(asset curescan.Asset, page request.PageInfo, order string, desc bool) (list interface{}, total int64, err error) {
+func (a *AssetService) GetAssetList(asset curescan.Asset, page request.PageInfo, order string, desc bool) (list interface{}, total int64, err error) {
 	limit := page.PageSize
 	offset := page.PageSize * (page.Page - 1)
-	db := global.GVA_DB.Model(&curescan.Asset{})
+	db := global.GVA_DB.Select("id", "asset_name", "asset_ip", "asset_area", "asset_type", "open_ports", "system_type",
+		"created_at", "updated_at", "deleted_at").Model(&curescan.Asset{})
 	var assets []curescan.Asset
 	if asset.AssetName != "" {
 		db = db.Where("asset_name LIKE ?", "%"+asset.AssetName+"%")

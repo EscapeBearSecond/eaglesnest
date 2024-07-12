@@ -98,6 +98,8 @@ func Routers() *gin.Engine {
 		curescanRouter.InitAreaRouter(PublicGroup)
 		curescanRouter.InitTemplateRouter(PublicGroup)
 		curescanRouter.InitAssetRouter(PublicGroup)
+		curescanRouter.InitPolicyRouter(PublicGroup)
+
 	}
 
 	// 插件路由安装
