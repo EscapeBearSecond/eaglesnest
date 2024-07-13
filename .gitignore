@@ -27,7 +27,6 @@ yarn-error.log*
 /server/latest_log
 /server/__debug_bin*
 /server/.air.toml
-/server/tmp
 
 *.iml
 web/.pnpm-debug.log
