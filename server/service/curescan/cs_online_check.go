@@ -8,7 +8,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"strconv"
 )
 
 type OnlineCheckService struct {
@@ -31,23 +30,14 @@ func (o *OnlineCheckService) ParseFileTo(file *os.File) ([]*curescan.OnlineCheck
 	for err == nil || errors.Is(err, csv.ErrFieldCount) {
 		one := &curescan.OnlineCheck{}
 		one.IP = record[0]
-		if record[1] == "是" {
-			one.Active = true
-		} else {
-			one.Active = false
-		}
+		one.Active = record[1]
 		if len(record) == filedCount {
 			one.System = record[2]
-			i, err := strconv.ParseInt(record[3], 10, 64)
-			if err != nil {
-				one.TTL = 0
-			} else {
-				one.TTL = int(i)
-			}
+			one.TTL = record[3]
 
 		} else {
 			one.System = ""
-			one.TTL = 0
+			one.TTL = ""
 		}
 		data = append(data, one)
 		record, err = reader.Read()
