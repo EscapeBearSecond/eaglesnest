@@ -5,4 +5,5 @@ type ServiceGroup struct {
 	TemplateService
 	AssetService
 	PolicyService
+	OnlineCheckService
 }

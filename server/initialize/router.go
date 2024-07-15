@@ -99,7 +99,7 @@ func Routers() *gin.Engine {
 		curescanRouter.InitTemplateRouter(PublicGroup)
 		curescanRouter.InitAssetRouter(PublicGroup)
 		curescanRouter.InitPolicyRouter(PublicGroup)
-
+		curescanRouter.InitOnlineCheckRouter(PublicGroup)
 	}
 
 	// 插件路由安装

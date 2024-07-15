@@ -9,11 +9,13 @@ type ApiGroup struct {
 	TemplateApi
 	AssetApi
 	PolicyApi
+	OnlineCheckApi
 }
 
 var (
-	areaService     = service.ServiceGroupApp.CurescanServiceGroup.AreaService
-	templateService = service.ServiceGroupApp.CurescanServiceGroup.TemplateService
-	assetService    = service.ServiceGroupApp.CurescanServiceGroup.AssetService
-	policyService   = service.ServiceGroupApp.CurescanServiceGroup.PolicyService
+	areaService        = service.ServiceGroupApp.CurescanServiceGroup.AreaService
+	templateService    = service.ServiceGroupApp.CurescanServiceGroup.TemplateService
+	assetService       = service.ServiceGroupApp.CurescanServiceGroup.AssetService
+	policyService      = service.ServiceGroupApp.CurescanServiceGroup.PolicyService
+	onlineCheckService = service.ServiceGroupApp.CurescanServiceGroup.OnlineCheckService
 )

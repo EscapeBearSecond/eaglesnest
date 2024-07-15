@@ -5,4 +5,5 @@ type RouterGroup struct {
 	TemplateRouter
 	AssetRouter
 	PolicyRouter
+	OnlineCheckRouter
 }
