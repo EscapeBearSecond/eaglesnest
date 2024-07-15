@@ -21,3 +21,19 @@ func TestOnlineCheckService_ParseFileTo(t *testing.T) {
 		fmt.Println(i, *datum)
 	}
 }
+
+func TestPortScanService_ParseFileTo(t *testing.T) {
+	PortScanService := PortScanService{}
+	file, err := os.Open("./portScan.csv")
+	defer file.Close()
+	if err != nil {
+		panic(err)
+	}
+	data, err := PortScanService.ParseFileTo(file)
+	if err != nil {
+		panic(err)
+	}
+	for i, datum := range data {
+		fmt.Println(i, *datum)
+	}
+}

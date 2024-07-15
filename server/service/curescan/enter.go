@@ -6,4 +6,5 @@ type ServiceGroup struct {
 	AssetService
 	PolicyService
 	OnlineCheckService
+	PortScanService
 }

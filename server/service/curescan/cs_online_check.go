@@ -14,8 +14,8 @@ import (
 type OnlineCheckService struct {
 }
 
-func (o *OnlineCheckService) BatchAdd(data []curescan.OnlineCheck) error {
-	return global.GVA_DB.Model(&curescan.Asset{}).CreateInBatches(data, 100).Error
+func (o *OnlineCheckService) BatchAdd(data []*curescan.OnlineCheck) error {
+	return global.GVA_DB.Model(&curescan.OnlineCheck{}).CreateInBatches(data, 100).Error
 }
 
 // ParseFileTo 从传入的os.File类型的文件中解析CSV数据，并将结果转换为curescan.OnlineCheck类型的切片返回
