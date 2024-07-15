@@ -16,6 +16,7 @@ type Policy struct {
 	PortScan       bool           `json:"portScan" gorm:"column:port_scan;type:bool;comment:端口扫描"`
 	PortScanConfig string         `json:"portScanConfig" gorm:"column:port_scan_config;type:text;comment:端口扫描配置"`
 	Templates      pq.Int64Array  `json:"templates" gorm:"column:templates;type:int8[];comment:模板"`
+	IgnoredIP      pq.StringArray `json:"ignoredIP" gorm:"column:ignored_ip;type:text[];comment:忽略的IP"`
 }
 
 func (Policy) TableName() string {

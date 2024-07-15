@@ -15,6 +15,7 @@ type CreatePolicy struct {
 	PortScan       bool     `json:"portScan"`
 	PortScanConfig string   `json:"portScanConfig"`
 	Templates      []int64  `json:"templates"`
+	IgnoredIP      []string `json:"ignoredIP"`
 }
 
 type UpdatePolicy struct {

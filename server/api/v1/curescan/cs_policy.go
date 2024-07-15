@@ -64,6 +64,7 @@ func (p *PolicyApi) CreatePolicy(c *gin.Context) {
 		PortScan:       createPolicy.PortScan,
 		PortScanConfig: createPolicy.PortScanConfig,
 		Templates:      createPolicy.Templates,
+		IgnoredIP:      createPolicy.IgnoredIP,
 	}
 	err = policyService.CreatePolicy(&modelPolicy)
 	if err != nil {
