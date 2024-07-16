@@ -6,4 +6,6 @@ type RouterGroup struct {
 	AssetRouter
 	PolicyRouter
 	OnlineCheckRouter
+	PortScanRouter
+	TaskRouter
 }

@@ -7,4 +7,5 @@ type ServiceGroup struct {
 	PolicyService
 	OnlineCheckService
 	PortScanService
+	TaskService
 }

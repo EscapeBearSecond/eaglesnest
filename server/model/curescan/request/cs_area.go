@@ -7,14 +7,14 @@ import (
 
 type CreateArea struct {
 	AreaName string   `json:"areaName"`
-	AreaIP   []string `json:"areaIP"`
+	AreaIP   []string `json:"areaIp"`
 	AreaDesc string   `json:"areaDesc"`
 }
 
 type UpdateArea struct {
 	ID       uint     `json:"id"`
 	AreaName string   `json:"areaName"`
-	AreaIP   []string `json:"areaIP"`
+	AreaIP   []string `json:"areaIp"`
 	AreaDesc string   `json:"areaDesc"`
 }
 

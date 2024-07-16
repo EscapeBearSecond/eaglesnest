@@ -11,6 +11,7 @@ type ApiGroup struct {
 	PolicyApi
 	OnlineCheckApi
 	PortScanApi
+	TaskApi
 }
 
 var (
@@ -20,4 +21,5 @@ var (
 	policyService      = service.ServiceGroupApp.CurescanServiceGroup.PolicyService
 	onlineCheckService = service.ServiceGroupApp.CurescanServiceGroup.OnlineCheckService
 	portScanService    = service.ServiceGroupApp.CurescanServiceGroup.PortScanService
+	taskService        = service.ServiceGroupApp.CurescanServiceGroup.TaskService
 )
