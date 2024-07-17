@@ -61,6 +61,12 @@ func (e *ensureTables) MigrateTable(ctx context.Context) (context.Context, error
 		example.ExaFileUploadAndDownload{},
 
 		curescan.Area{},
+		curescan.Asset{},
+		curescan.Task{},
+		curescan.Policy{},
+		curescan.OnlineCheck{},
+		curescan.PortScan{},
+		curescan.Template{},
 	}
 	for _, t := range tables {
 		_ = db.AutoMigrate(&t)
