@@ -1,11 +1,13 @@
 package global
 
 import (
-	"github.com/qiniu/qmgo"
-	"github.com/redis/go-redis/v9"
 	"sync"
 
+	"github.com/qiniu/qmgo"
+	"github.com/redis/go-redis/v9"
+
 	"47.103.136.241/goprojects/curesan/server/utils/timer"
+	eagleeye "47.103.136.241/goprojects/eagleeye/pkg/sdk"
 	"github.com/songzhibin97/gkit/cache/local_cache"
 
 	"golang.org/x/sync/singleflight"
@@ -29,9 +31,9 @@ var (
 	GVA_LOG                 *zap.Logger
 	GVA_Timer               timer.Timer = timer.NewTimerTask()
 	GVA_Concurrency_Control             = &singleflight.Group{}
-
-	BlackCache local_cache.Cache
-	lock       sync.RWMutex
+	EagleeyeEngine          *eagleeye.EagleeyeEngine
+	BlackCache              local_cache.Cache
+	lock                    sync.RWMutex
 )
 
 // GetGlobalDBByDBName 通过名称获取db list中的db

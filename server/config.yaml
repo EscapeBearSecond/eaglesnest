@@ -12,7 +12,7 @@ autocode:
     server-api: /api/v1/%s
     server-plug: /plugin/%s
     server-initialize: /initialize
-    root: C:\Users\bear\go\vscode\curesan
+    root: C:\Users\bear\go\src\curesan
     web-table: /view
     web: /web/src
     server-service: /service/%s

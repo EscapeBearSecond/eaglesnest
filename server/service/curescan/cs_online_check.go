@@ -1,13 +1,15 @@
 package curescan
 
 import (
-	"47.103.136.241/goprojects/curesan/server/global"
-	"47.103.136.241/goprojects/curesan/server/model/common/request"
-	"47.103.136.241/goprojects/curesan/server/model/curescan"
 	"encoding/csv"
 	"errors"
 	"fmt"
 	"os"
+	"strconv"
+
+	"47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curesan/server/model/common/request"
+	"47.103.136.241/goprojects/curesan/server/model/curescan"
 )
 
 type OnlineCheckService struct {
@@ -30,14 +32,19 @@ func (o *OnlineCheckService) ParseFileTo(file *os.File) ([]*curescan.OnlineCheck
 	for err == nil || errors.Is(err, csv.ErrFieldCount) {
 		one := &curescan.OnlineCheck{}
 		one.IP = record[0]
-		one.Active = record[1]
+		if record[1] == "是" {
+			one.Active = true
+		} else {
+			one.Active = false
+		}
 		if len(record) == filedCount {
 			one.System = record[2]
-			one.TTL = record[3]
+			ttl, _ := strconv.ParseInt(record[3], 10, 64)
+			one.TTL = int(ttl)
 
 		} else {
 			one.System = ""
-			one.TTL = ""
+			one.TTL = 0
 		}
 		data = append(data, one)
 		record, err = reader.Read()
