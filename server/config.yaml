@@ -113,7 +113,7 @@ pgsql:
     config: sslmode=disable TimeZone=Asia/Shanghai
     db-name: curescan
     username: postgres
-    password: "njzyadmin"
+    password: "292378"
     path: 127.0.0.1
     engine: ""
     log-mode: error
@@ -157,7 +157,7 @@ tencent-cos:
     path-prefix: 47.103.136.241/goprojects/curesan/server
 zap:
     level: info
-    prefix: '[治煜]'
+    prefix: "[治煜]"
     format: json
     director: log
     encode-level: LowercaseLevelEncoder

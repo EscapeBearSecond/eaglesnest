@@ -54,16 +54,25 @@ func (p *PolicyApi) CreatePolicy(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+	policyConfig, _ := json.Marshal(createPolicy.PolicyConfig)
+	onlineConfg, _ := json.Marshal(createPolicy.OnlineConfig)
+	portScanConfg, _ := json.Marshal(createPolicy.PortScanConfig)
+	scanType := make([]string, len(createPolicy.PolicyConfig))
+	templates := make([]int64, 0)
+	for i := 0; i < len(createPolicy.PolicyConfig); i++ {
+		scanType[i] = createPolicy.PolicyConfig[i].Kind
+		templates = append(templates, createPolicy.PolicyConfig[i].Templates...)
+	}
 	var modelPolicy = curescan.Policy{
 		PolicyName:     createPolicy.PolicyName,
 		PolicyDesc:     createPolicy.PolicyDesc,
-		ScanType:       createPolicy.ScanType,
-		PolicyConfig:   createPolicy.PolicyConfig,
-		OnlineCheck:    createPolicy.OnlineCheck,
-		OnlineConfig:   createPolicy.OnlineConfig,
-		PortScan:       createPolicy.PortScan,
-		PortScanConfig: createPolicy.PortScanConfig,
-		Templates:      createPolicy.Templates,
+		ScanType:       scanType,
+		PolicyConfig:   string(policyConfig),
+		OnlineCheck:    createPolicy.OnlineConfig.Use,
+		OnlineConfig:   string(onlineConfg),
+		PortScan:       createPolicy.PortScanConfig.Use,
+		PortScanConfig: string(portScanConfg),
+		Templates:      templates,
 		IgnoredIP:      createPolicy.IgnoredIP,
 	}
 	err = policyService.CreatePolicy(&modelPolicy)
@@ -86,19 +95,28 @@ func (p *PolicyApi) UpdatePolicy(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+	policyConfig, _ := json.Marshal(updatePolicy.PolicyConfig)
+	onlineConfg, _ := json.Marshal(updatePolicy.OnlineConfig)
+	portScanConfg, _ := json.Marshal(updatePolicy.PortScanConfig)
+	scanType := make([]string, len(updatePolicy.PolicyConfig))
+	templates := make([]int64, 0)
+	for i := 0; i < len(updatePolicy.PolicyConfig); i++ {
+		scanType[i] = updatePolicy.PolicyConfig[i].Kind
+		templates = append(templates, updatePolicy.PolicyConfig[i].Templates...)
+	}
 	var modelPolicy = curescan.Policy{
 		GvaModel: global.GvaModel{
 			ID: updatePolicy.ID,
 		},
 		PolicyName:     updatePolicy.PolicyName,
 		PolicyDesc:     updatePolicy.PolicyDesc,
-		ScanType:       updatePolicy.ScanType,
-		PolicyConfig:   updatePolicy.PolicyConfig,
-		OnlineCheck:    updatePolicy.OnlineCheck,
-		OnlineConfig:   updatePolicy.OnlineConfig,
-		PortScan:       updatePolicy.PortScan,
-		PortScanConfig: updatePolicy.PortScanConfig,
-		Templates:      updatePolicy.Templates,
+		ScanType:       scanType,
+		PolicyConfig:   string(policyConfig),
+		OnlineCheck:    updatePolicy.OnlineConfig.Use,
+		OnlineConfig:   string(onlineConfg),
+		PortScan:       updatePolicy.PortScanConfig.Use,
+		PortScanConfig: string(portScanConfg),
+		Templates:      templates,
 	}
 	err = policyService.UpdatePolicy(&modelPolicy)
 	if err != nil {

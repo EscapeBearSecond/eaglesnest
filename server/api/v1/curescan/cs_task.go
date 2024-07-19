@@ -11,6 +11,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"strconv"
+	"47.103.136.241/goprojects/eagleeye/pkg/types"
+	eagleeye "47.103.136.241/goprojects/eagleeye/pkg/sdk"
 )
 
 type TaskApi struct {
@@ -144,7 +146,14 @@ func (t *TaskApi) GetTaskById(c *gin.Context) {
 }
 
 func (t *TaskApi) ExecuteTask(c *gin.Context) {
-
+	options := &types.Options{}
+	engine, err := eagleeye.NewEngine(eagleeye.WithDirectory("./results"))
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	defer engine.Close()
+	fmt.Println(options)
 }
 
 func (t *TaskApi) MigrateTable(c *gin.Context) {

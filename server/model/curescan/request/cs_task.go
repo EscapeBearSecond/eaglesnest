@@ -13,7 +13,6 @@ type CreateTask struct {
 	PolicyID   uint     `json:"policyId"`
 	TaskPlan   int      `json:"taskPlan"`
 	PlanConfig string   `json:"planConfig"`
-	Executions uint     `json:"executions"`
 }
 
 type UpdateTask struct {
