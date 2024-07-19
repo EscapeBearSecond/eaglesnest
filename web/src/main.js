@@ -16,11 +16,17 @@ import auth from '@/directive/auth'
 import { store } from '@/pinia'
 import App from './App.vue'
 import { initDom } from './utils/positionToCode'
+import Pagination from './components/Pagination';
+import AdvancedTable from './components/AdvancedTable'
 
 initDom()
 
 const app = createApp(App)
 app.config.productionTip = false
+
+app.component('Pagination', Pagination)
+app.component('AdvancedTable', AdvancedTable)
+
 
 app
     .use(run)

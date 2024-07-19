@@ -109,19 +109,19 @@
               type="primary"
               link
               icon="plus"
-              @click="addMenu(scope.row.ID)"
+              @click="addMenu(scope.row.id)"
             >添加子菜单</el-button>
             <el-button
               type="primary"
               link
               icon="edit"
-              @click="editMenu(scope.row.ID)"
+              @click="editMenu(scope.row.id)"
             >编辑</el-button>
             <el-button
               type="primary"
               link
               icon="delete"
-              @click="deleteMenu(scope.row.ID)"
+              @click="deleteMenu(scope.row.id)"
             >删除</el-button>
           </template>
         </el-table-column>
@@ -544,7 +544,7 @@ const rules = reactive({
 
 const page = ref(1)
 const total = ref(0)
-const pageSize = ref(999)
+const pageSize = ref(10)
 const tableData = ref([])
 const searchInfo = ref({})
 // 查询
