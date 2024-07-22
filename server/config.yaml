@@ -12,7 +12,7 @@ autocode:
     server-api: /api/v1/%s
     server-plug: /plugin/%s
     server-initialize: /initialize
-    root: C:\Users\bear\go\vscode\curesan
+    root: C:\Users\bear\go\src\curesan
     web-table: /view
     web: /web/src
     server-service: /service/%s
@@ -157,7 +157,7 @@ tencent-cos:
     path-prefix: 47.103.136.241/goprojects/curesan/server
 zap:
     level: info
-    prefix: '[治煜]'
+    prefix: "[治煜]"
     format: json
     director: log
     encode-level: LowercaseLevelEncoder
