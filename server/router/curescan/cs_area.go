@@ -20,7 +20,7 @@ func (a *AreaRouter) InitAreaRouter(Router *gin.RouterGroup) {
 		areaRouter.DELETE(":id", areaRouterApi.DeleteAreaByID) // 删除选中Area
 
 		// apiRouterWithoutRecord.POST("getAllAreas", areaRouterApi.GetAllApis) // 获取所有Area
-		areaRouter.GET("", areaRouterApi.GetAreaList) // 获取Area列表
+		areaRouter.POST("list", areaRouterApi.GetAreaList) // 获取Area列表
 
 	}
 }

@@ -12,6 +12,7 @@ import (
 	request2 "47.103.136.241/goprojects/curesan/server/model/common/request"
 	"47.103.136.241/goprojects/curesan/server/model/curescan"
 	"47.103.136.241/goprojects/curesan/server/model/curescan/request"
+	"47.103.136.241/goprojects/curesan/server/model/curescan/response"
 	"47.103.136.241/goprojects/eagleeye/pkg/types"
 	"gorm.io/gorm"
 )
@@ -106,6 +107,7 @@ func (s *TaskService) GetTaskList(task curescan.Task, page request2.PageInfo, or
 }
 
 func (s *TaskService) ExecuteTask(id int) error {
+	var taskResult response.TaskResult
 	task, err := s.GetTaskById(id)
 	if err != nil {
 		return err
@@ -148,31 +150,27 @@ func (s *TaskService) ExecuteTask(id int) error {
 		RateLimit:   portScanConfig.RateLimit,
 		Ports:       portScanConfig.Ports,
 		ResultCallback: func(c context.Context, result *types.PortResult) error {
+			if len(result.Items) == 0 {
+				return nil
+			}
 			var data []*curescan.PortScan
-			var currentIP string
-			var ports []int64
-			for _, result := range result.Items {
-				fmt.Printf("IP: %s, Port: %d\n", result.IP, result.Port)
-				ip := result.IP
-				port := int64(result.Port)
-				if currentIP == "" {
-					currentIP = ip
-				} else if currentIP != ip {
-					data = append(data, &curescan.PortScan{
-						IP:      currentIP,
-						Ports:   ports,
-						TaskID:  uint(id),
-						EntryID: result.EntryID,
-					})
-					currentIP = ip
-					ports = nil
-				}
-				ports = append(ports, port)
+			ipPortMap := make(map[string][]int64)
+
+			for _, item := range result.Items {
+				ip := item.IP
+				port := int64(item.Port)
+				ipPortMap[ip] = append(ipPortMap[ip], port)
 			}
-			err := portScanService.BatchAdd(data)
-			if err != nil {
-				panic(err)
+
+			for ip, ports := range ipPortMap {
+				data = append(data, &curescan.PortScan{
+					IP:      ip,
+					Ports:   ports,
+					TaskID:  uint(id),
+					EntryID: result.Items[0].EntryID,
+				})
 			}
+			taskResult.PortScanList = data
 			return nil
 		},
 	}
@@ -195,7 +193,8 @@ func (s *TaskService) ExecuteTask(id int) error {
 					EntryID: result.EntryID,
 				})
 			}
-			return onlineCheckService.BatchAdd(data)
+			taskResult.OnlineCheckList = data
+			return nil
 		},
 	}
 	jobs := make([]types.JobOptions, len(jobConfig))
@@ -250,7 +249,33 @@ func (s *TaskService) ExecuteTask(id int) error {
 		return err
 	}
 	go func() {
-		entry.Run(context.Background())
+		task.Status = 1
+		err := s.UpdateTask(task)
+		if err != nil {
+			fmt.Println("更新任务状态时出错: ", err.Error())
+		}
+		err = entry.Run(context.Background())
+		if err != nil {
+			fmt.Printf("任务执行出错: %s\n", err.Error())
+
+			task.Status = 3
+
+		}
+		// 任务执行成功
+		err = portScanService.BatchAdd(taskResult.PortScanList)
+		if err != nil {
+			fmt.Println("端口扫描-插入数据库时出错: ", err.Error())
+		}
+		err = onlineCheckService.BatchAdd(taskResult.OnlineCheckList)
+		if err != nil {
+			fmt.Println("在线检测-插入数据库时出错: ", err.Error())
+		}
+		task.Status = 2
+		err = s.UpdateTask(task)
+		if err != nil {
+			fmt.Println("更新任务状态时出错: ", err.Error())
+		}
+
 	}()
 	return nil
 }

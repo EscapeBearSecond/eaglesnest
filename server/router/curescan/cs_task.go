@@ -13,14 +13,11 @@ func (t *TaskRouter) InitTaskRouter(Router *gin.RouterGroup) {
 
 	taskRouterApi := v1.ApiGroupApp.CurescanApiGroup.TaskApi
 	{
-		taskRouter.POST("", taskRouterApi.CreateTask) // 创建Area
-		// areaRouter.POST("deleteArea", areaRouterApi.DeleteApi)               // 删除Area
-		taskRouter.GET(":id", taskRouterApi.GetTaskById)   // 获取单条Area消息
-		taskRouter.PUT("", taskRouterApi.UpdateTask)       // 更新Area
-		taskRouter.DELETE(":id", taskRouterApi.DeleteTask) // 删除选中Area
-
-		// apiRouterWithoutRecord.POST("getAllAreas", areaRouterApi.GetAllApis) // 获取所有Area
-		taskRouter.GET("", taskRouterApi.GetTaskList) // 获取Area列表
+		taskRouter.POST("", taskRouterApi.CreateTask)      // 创建Task
+		taskRouter.GET(":id", taskRouterApi.GetTaskById)   // 获取单条Task消息
+		taskRouter.PUT("", taskRouterApi.UpdateTask)       // 更新Task
+		taskRouter.DELETE(":id", taskRouterApi.DeleteTask) // 删除选中Task
+		taskRouter.POST("list", taskRouterApi.GetTaskList) // 获取Task列表
 		taskRouter.GET("migrate", taskRouterApi.MigrateTable)
 		taskRouter.POST("execute/:id", taskRouterApi.ExecuteTask)
 

@@ -16,7 +16,7 @@ func (p *PolicyRouter) InitPolicyRouter(Router *gin.RouterGroup) {
 		policyRouter.POST("", policyRouterApi.CreatePolicy)
 		policyRouter.PUT("", policyRouterApi.UpdatePolicy)
 		policyRouter.DELETE(":id", policyRouterApi.DeletePolicy)
-		policyRouter.GET("", policyRouterApi.GetPolicyList)
+		policyRouter.POST("list", policyRouterApi.GetPolicyList)
 		policyRouter.GET(":id", policyRouterApi.GetPolicyById)
 	}
 }

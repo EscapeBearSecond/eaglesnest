@@ -9,7 +9,7 @@ type Task struct {
 	global.GvaModel
 	TaskName   string         `gorm:"column:task_name;type:varchar(50);not null;uniqueIndex;comment:任务名称"`
 	TaskDesc   string         `gorm:"column:task_desc;type:varchar(100);comment:任务描述"`
-	Status     int            `gorm:"column:status;type:int2;comment:执行状态"`
+	Status     int            `gorm:"column:status;type:int2;comment:执行状态"` // 执行状态 0 创建、1 执行中、2 执行完成、3 执行失败
 	TargetIP   pq.StringArray `gorm:"column:target_ip;type:text[];comment:目标IP"`
 	PolicyID   uint           `gorm:"column:policy_id;type:int8;comment:策略ID"`
 	TaskPlan   int            `gorm:"column:task_plan;type:int2;comment:任务计划"`

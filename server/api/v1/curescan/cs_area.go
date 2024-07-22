@@ -1,6 +1,8 @@
 package curescan
 
 import (
+	"strconv"
+
 	"47.103.136.241/goprojects/curesan/server/global"
 	"47.103.136.241/goprojects/curesan/server/model/common/response"
 	"47.103.136.241/goprojects/curesan/server/model/curescan"
@@ -8,7 +10,6 @@ import (
 	"47.103.136.241/goprojects/curesan/server/utils"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-	"strconv"
 )
 
 type AreaApi struct {
