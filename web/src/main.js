@@ -25,7 +25,7 @@ const app = createApp(App)
 app.config.productionTip = false
 
 app.component('Pagination', Pagination)
-app.component('AdvancedTable', AdvancedTable)
+app.component('advance-table', AdvancedTable)
 
 
 app
