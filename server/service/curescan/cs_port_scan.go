@@ -1,12 +1,14 @@
 package curescan
 
 import (
-	"47.103.136.241/goprojects/curesan/server/global"
-	"47.103.136.241/goprojects/curesan/server/model/common/request"
-	"47.103.136.241/goprojects/curesan/server/model/curescan"
 	"encoding/csv"
 	"fmt"
 	"os"
+	"strconv"
+
+	"47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curesan/server/model/common/request"
+	"47.103.136.241/goprojects/curesan/server/model/curescan"
 )
 
 type PortScanService struct {
@@ -23,14 +25,14 @@ func (o *PortScanService) ParseFileTo(file *os.File) ([]*curescan.PortScan, erro
 	_, err := reader.Read()
 	//filedCount := len(record)
 	var currentIP string
-	var ports []string
+	var ports []int64
 	if err != nil {
 		return data, err
 	}
 	records, err := reader.ReadAll()
 	for _, record := range records {
 		ip := record[0]
-		port := record[1]
+		port, _ := strconv.ParseInt(record[1], 10, 64)
 		if currentIP == "" {
 			currentIP = ip
 		} else if currentIP != ip {

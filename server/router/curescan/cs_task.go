@@ -22,6 +22,7 @@ func (t *TaskRouter) InitTaskRouter(Router *gin.RouterGroup) {
 		// apiRouterWithoutRecord.POST("getAllAreas", areaRouterApi.GetAllApis) // 获取所有Area
 		taskRouter.GET("", taskRouterApi.GetTaskList) // 获取Area列表
 		taskRouter.GET("migrate", taskRouterApi.MigrateTable)
+		taskRouter.POST("execute/:id", taskRouterApi.ExecuteTask)
 
 	}
 }
