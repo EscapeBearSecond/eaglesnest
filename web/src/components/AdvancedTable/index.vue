@@ -6,13 +6,11 @@
     header-align="center"
     @select="onTableSelect"
     @select-all="onTableSelectAll" 
-    border
-    stripe 
-    style=""
-    :style="{'thead-tr-height': '20px', 'width': '100%'}">
-    <template #empty>
+    :fit="true"
+    :style="{'thead-tr-height': '20px', 'width': '100%', 'overflow-x': 'hidden'}">
+    <!-- <template #empty>
       <el-empty description="未查询到相关数据" />
-    </template>
+    </template> -->
     <el-table-column
       v-if="index"
       type="index"
@@ -53,7 +51,7 @@
       <template #default="scope">
           <template v-for="(btn, index) in statusData">
               <template v-if="btn.visible ? btn.visible(scope, btn) : true">
-                  <el-button :type="btn.type" @click="btn.handleClick && btn.handleClick(scope)" :key="index">{{  btn.name }}</el-button>
+                  <el-button :icon="btn.icon ? btn.icon : ''" :type="btn.type" @click="btn.handleClick && btn.handleClick(scope)" :key="index">{{  btn.name }}</el-button>
               </template>
           </template>
       </template>
@@ -122,4 +120,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
+ .hide-scrollbar .el-table__body-wrapper {
+  overflow-x: hidden !important;
+}
 </style>
