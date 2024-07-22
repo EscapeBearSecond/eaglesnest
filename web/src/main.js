@@ -16,8 +16,8 @@ import auth from '@/directive/auth'
 import { store } from '@/pinia'
 import App from './App.vue'
 import { initDom } from './utils/positionToCode'
-import Pagination from './components/Pagination';
-import AdvancedTable from './components/AdvancedTable'
+import Pagination from '@/components/Pagination/index.vue';
+import AdvancedTable from '@/components/AdvancedTable/index.vue'
 
 initDom()
 
