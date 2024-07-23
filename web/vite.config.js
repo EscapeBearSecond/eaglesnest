@@ -2,7 +2,6 @@ import legacyPlugin from '@vitejs/plugin-legacy'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
-import { viteLogo } from './src/core/config'
 import Banner from 'vite-plugin-banner'
 import * as path from 'path'
 import * as dotenv from 'dotenv'
@@ -29,8 +28,6 @@ export default ({
       process.env[k] = envConfig[k]
     }
   }
-
-  viteLogo(process.env)
 
   const timestamp = Date.parse(new Date())
 
