@@ -1,5 +1,6 @@
 <script setup>
 import { ref, reactive } from 'vue' 
+import assetForm from "./components/assetForm.vue"
 const searchInfo = reactive({
     assetName:''
 })
@@ -28,7 +29,28 @@ const statusData = reactive([
 
 const addDialogFlag = ref(false)
 const dialogTitle = ref('新增资产')
+const addForm = reactive({
+  assetName:"",
+  assetIP:"",
+  assetArea:"",
+  assetType:"",
+  manufacturer:"",
+  desc:"",
+})
+const labelPosition = ref('left')
+const itemLabelPosition = ref('top')
 
+const rules = reactive({
+  assetName: [
+    { required: true, message: '请输入资产名称', trigger: 'blur' }
+  ],
+  IP: [
+    { required: true, message: '请输入资产IP', trigger: 'blur' }
+  ]
+});
+const onCancel = () => {
+  addDialogFlag.value = false
+}
 const onSubmit = (searchInfo) => {}
 
 const onReset = () => {
@@ -40,9 +62,7 @@ const  createAsset = ()=> {
 }
 const  handleDel = (e) => { console.log(e);}
 
-const pagination = (listQuery)=> {
-
-}
+const pagination = (listQuery)=> {}
 </script>
 <template>
     <div>
@@ -86,13 +106,20 @@ const pagination = (listQuery)=> {
         </advance-table>
       </div>
       <el-dialog
-    v-model="addDialogFlag"
-    :title="dialogTitle"
-    style="padding-left:50px"
-    @update:modelValue="val => addDialogFlag = val"
-  >
+        v-model="addDialogFlag"
+        :title="dialogTitle"
+        style="padding: 10px 50px;"
+        @update:modelValue="val => addDialogFlag = val"
+      >
     <div>
-      新增资产
+      <asset-form 
+        :form="formData"
+        :rules="formRules"
+        :label-position="labelPosition"
+        :item-label-position="itemLabelPosition"
+        @submit="onSubmit"
+        @cancel="onCancel"
+      />
     </div>
   </el-dialog>
   </div>
