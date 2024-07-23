@@ -3,7 +3,7 @@ module 47.103.136.241/goprojects/curesan/server
 go 1.22
 
 require (
-	47.103.136.241/goprojects/eagleeye v0.0.0-20240718142455-61aa46d26b95
+	47.103.136.241/goprojects/eagleeye v0.0.0-20240723024509-efa18041dc8e
 	github.com/aliyun/aliyun-oss-go-sdk v2.2.7+incompatible
 	github.com/aws/aws-sdk-go v1.44.307
 	github.com/casbin/casbin/v2 v2.87.1

@@ -25,6 +25,7 @@ var (
 	templateService    = &TemplateService{}
 	portScanService    = &PortScanService{}
 	onlineCheckService = &OnlineCheckService{}
+	jobResultService   = &JobResultService{}
 )
 
 func (s *TaskService) CreateTask(task *curescan.Task) error {
@@ -116,11 +117,11 @@ func (s *TaskService) ExecuteTask(id int) error {
 	if err != nil {
 		return err
 	}
-	var onlineConfg request.OnlineConfig
+	var onlineConfig request.OnlineConfig
 	var portScanConfig request.PortScanConfig
 	var jobConfig []request.JobConfig
 	if policy.OnlineCheck {
-		err = json.Unmarshal([]byte(policy.OnlineConfig), &onlineConfg)
+		err = json.Unmarshal([]byte(policy.OnlineConfig), &onlineConfig)
 		if err != nil {
 			return err
 		}
@@ -175,12 +176,12 @@ func (s *TaskService) ExecuteTask(id int) error {
 		},
 	}
 	options.HostDiscovery = types.HostDiscoveryOptions{
-		Use:         onlineConfg.Use,
-		Timeout:     onlineConfg.Timeout,
-		Count:       onlineConfg.Count,
-		Format:      onlineConfg.Format,
-		Concurrency: onlineConfg.Concurrency,
-		RateLimit:   onlineConfg.RateLimit,
+		Use:         onlineConfig.Use,
+		Timeout:     onlineConfig.Timeout,
+		Count:       onlineConfig.Count,
+		Format:      onlineConfig.Format,
+		Concurrency: onlineConfig.Concurrency,
+		RateLimit:   onlineConfig.RateLimit,
 		ResultCallback: func(c context.Context, result *types.PingResult) error {
 			var data []*curescan.OnlineCheck
 			for _, result := range result.Items {
@@ -197,51 +198,10 @@ func (s *TaskService) ExecuteTask(id int) error {
 			return nil
 		},
 	}
-	jobs := make([]types.JobOptions, len(jobConfig))
-	for i, job := range jobConfig {
-		jobs[i].Name = job.Name
-		jobs[i].Kind = job.Kind
-		jobs[i].Concurrency = job.Concurrency
-		jobs[i].Count = job.Count
-		jobs[i].Format = job.Format
-		jobs[i].RateLimit = job.RateLimit
-		jobs[i].ResultCallback = func(c context.Context, result *types.JobResult) error {
-			params := []string{}
-			for _, result := range result.Items {
-				params = append(params, fmt.Sprintf("%#v\n", result))
-			}
-			fmt.Printf("漏洞扫描: %v\n", params)
-			return nil
-		}
-		// TODO: 考虑并发
-		for _, template := range job.Templates {
-			template, err := templateService.GetTemplateById(int(template))
-			if err != nil {
-				continue
-			}
-			// 创建文件夹和文件
-			dir := path.Join(global.GVA_CONFIG.AutoCode.Root, "templates", job.Name)
-			_, err = os.Stat(dir)
-			if os.IsNotExist(err) {
-				err = os.MkdirAll(dir, os.ModePerm)
-				if err != nil {
-					return fmt.Errorf("加载模板出错: %s", err.Error())
-				}
-			}
-			filePath := path.Join(dir, template.TemplateName+".yaml")
-			_, err = os.Stat(filePath)
-			if os.IsNotExist(err) {
-				file, err := os.OpenFile(filePath, os.O_CREATE|os.O_WRONLY, os.ModePerm)
-				if err != nil {
-					return fmt.Errorf("加载模板出错: %s", err.Error())
-				}
-				defer file.Close()
-				_, err = file.Write([]byte(template.TemplateContent))
-				if err != nil {
-					return fmt.Errorf("加载模板出错: %s", err.Error())
-				}
-			}
-		}
+	jobs, err := s.GenerateJob(id, jobConfig, &taskResult)
+	if err != nil {
+		return err
+
 	}
 	options.Jobs = jobs
 	entry, err := global.EagleeyeEngine.NewEntry(options)
@@ -256,26 +216,104 @@ func (s *TaskService) ExecuteTask(id int) error {
 		}
 		err = entry.Run(context.Background())
 		if err != nil {
-			fmt.Printf("任务执行出错: %s\n", err.Error())
-
+			global.GVA_LOG.Error("任务执行出错: " + err.Error())
 			task.Status = 3
-
 		}
+		// result := entry.Result()
 		// 任务执行成功
 		err = portScanService.BatchAdd(taskResult.PortScanList)
 		if err != nil {
-			fmt.Println("端口扫描-插入数据库时出错: ", err.Error())
+			global.GVA_LOG.Error("端口扫描-插入数据库时出错: " + err.Error())
 		}
 		err = onlineCheckService.BatchAdd(taskResult.OnlineCheckList)
 		if err != nil {
-			fmt.Println("在线检测-插入数据库时出错: ", err.Error())
+			global.GVA_LOG.Error("在线检测-插入数据库时出错: " + err.Error())
+		}
+		err = jobResultService.BatchAdd(taskResult.JobResultList)
+		if err != nil {
+			fmt.Println("err:", err.Error())
+			global.GVA_LOG.Error("任务结果-插入数据库时出错: " + err.Error())
 		}
 		task.Status = 2
 		err = s.UpdateTask(task)
 		if err != nil {
-			fmt.Println("更新任务状态时出错: ", err.Error())
+			global.GVA_LOG.Error("更新任务状态出错: " + err.Error())
+
 		}
 
 	}()
 	return nil
+}
+
+func (s *TaskService) GenerateJob(id int, jobConfig []request.JobConfig, taskResult *response.TaskResult) ([]types.JobOptions, error) {
+	jobs := make([]types.JobOptions, len(jobConfig))
+	for i, job := range jobConfig {
+		dir := path.Join(global.GVA_CONFIG.AutoCode.Root, "templates", job.Name)
+		jobs[i].Name = job.Name
+		jobs[i].Kind = job.Kind
+		jobs[i].Concurrency = job.Concurrency
+		jobs[i].Count = job.Count
+		jobs[i].Format = job.Format
+		jobs[i].RateLimit = job.RateLimit
+		jobs[i].ResultCallback = func(c context.Context, result *types.JobResult) error {
+			var data []*curescan.JobResultItem
+			for _, item := range result.Items {
+				fmt.Printf("Name: %s, Kind: %s, Host: %s, Port: %s, Scheme: %s, URL: %s, Path: %s, Matched: %s, ExtractedResults: %s, Description: %s, TemplateID: %s, TemplateName: %s, TaskID: %d, EntryID: %s\n", result.Name, result.Kind, item.Host, item.Port, item.Scheme, item.URL, item.Path, item.Matched, item.ExtractedResults, item.Description, item.EntryID, item.TemplateID, item.TemplateName)
+				var item = &curescan.JobResultItem{
+					Name:             result.Name,
+					Kind:             result.Kind,
+					TemplateID:       item.EntryID,
+					TemplateName:     item.TemplateName,
+					Host:             item.Host,
+					Type:             item.Type,
+					Severity:         item.Severity,
+					Port:             item.Port,
+					Scheme:           item.Scheme,
+					URL:              item.URL,
+					Path:             item.Path,
+					Matched:          item.Matched,
+					ExtractedResults: item.ExtractedResults,
+					Description:      item.Description,
+					TaskID:           uint(id),
+					EntryID:          result.EntryID,
+				}
+				data = append(data, item)
+			}
+			taskResult.JobResultList = data
+			fmt.Println("job result:", len(taskResult.JobResultList))
+			return nil
+		}
+		jobs[i].Template = dir
+		// TODO: 考虑并行
+		// 加载模板
+		for _, template := range job.Templates {
+			template, err := templateService.GetTemplateById(int(template))
+			if err != nil {
+				continue
+			}
+			// 创建文件夹和文件
+			// dir := path.Join(global.GVA_CONFIG.AutoCode.Root, "templates", job.Name)
+			_, err = os.Stat(dir)
+			if os.IsNotExist(err) {
+				err = os.MkdirAll(dir, os.ModePerm)
+				if err != nil {
+					return nil, fmt.Errorf("加载模板出错: %s", err.Error())
+				}
+			}
+			filePath := path.Join(dir, template.TemplateName+".yaml")
+			_, err = os.Stat(filePath)
+			if os.IsNotExist(err) {
+				file, err := os.OpenFile(filePath, os.O_CREATE|os.O_WRONLY, os.ModePerm)
+				if err != nil {
+					return nil, fmt.Errorf("加载模板出错: %s", err.Error())
+				}
+				_, err = file.Write([]byte(template.TemplateContent))
+				file.Close()
+				if err != nil {
+					return nil, fmt.Errorf("加载模板出错: %s", err.Error())
+				}
+			}
+		}
+	}
+	return jobs, nil
 }

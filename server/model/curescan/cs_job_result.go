@@ -4,6 +4,8 @@ import "47.103.136.241/goprojects/curesan/server/global"
 
 type JobResultItem struct {
 	global.GvaModel
+	Name             string   `json:"name" gorm:"type:text;column:name;comment:任务名称"`
+	Kind             string   `json:"kind" gorm:"type:text;column:kind;comment:任务类型"`
 	TemplateID       string   `json:"templateId" gorm:"type:text;column:template_id;comment:模板ID"`
 	TemplateName     string   `json:"templateName" gorm:"type:text;column:template_name;comment:模板名称"`
 	Type             string   `json:"type" gorm:"type:text;column:type;comment:模板类型"`
@@ -22,11 +24,4 @@ type JobResultItem struct {
 
 func (JobResultItem) TableName() string {
 	return "cs_job_result"
-}
-
-type JobResult struct {
-	EntryID string           `json:"-"`
-	Name    string           `json:"name"`
-	Kind    string           `json:"kind"`
-	Items   []*JobResultItem `json:"items"`
 }
