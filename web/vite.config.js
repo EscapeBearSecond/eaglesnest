@@ -41,12 +41,18 @@ export default ({
   const esbuild = {}
 
   const rollupOptions = {
-    output: {
-      entryFileNames: 'assets/087AC4D233B64EB0[name].[hash].js',
-      chunkFileNames: 'assets/087AC4D233B64EB0[name].[hash].js',
-      assetFileNames: 'assets/087AC4D233B64EB0[name].[hash].[ext]',
-    },
+    // output: {
+    //   entryFileNames: 'assets/087AC4D233B64EB0[name].[hash].js',
+    //   chunkFileNames: 'assets/087AC4D233B64EB0[name].[hash].js',
+    //   assetFileNames: 'assets/087AC4D233B64EB0[name].[hash].[ext]',
+    // },
+  output: {
+    entryFileNames: 'assets/[name].[hash].js',
+    chunkFileNames: 'assets/[name].[hash].js',
+    assetFileNames: 'assets/[name].[hash].[ext]',
   }
+  }
+  
 
   const config = {
     base: '/', // index.html文件所在位置
