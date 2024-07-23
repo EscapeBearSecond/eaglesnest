@@ -14,7 +14,6 @@ import { svgBuilder } from 'vite-auto-import-svg'
 import { AddSecret } from './vitePlugin/secret'
 // @see https://cn.vitejs.dev/config/
 export default ({
-  command,
   mode
 }) => {
   AddSecret("09467f8e8bf912e5ac1b5ddd3f0a5af6")
