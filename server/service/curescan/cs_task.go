@@ -6,8 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"go.uber.org/zap"
-	"os"
-	"path"
 
 	"47.103.136.241/goprojects/curesan/server/global"
 	request2 "47.103.136.241/goprojects/curesan/server/model/common/request"
@@ -251,7 +249,7 @@ func (s *TaskService) ExecuteTask(id int) error {
 func (s *TaskService) GenerateJob(id int, jobConfig []request.JobConfig, taskResult *response.TaskResult) ([]types.JobOptions, error) {
 	jobs := make([]types.JobOptions, len(jobConfig))
 	for i, job := range jobConfig {
-		dir := path.Join(global.GVA_CONFIG.AutoCode.Root, "templates", job.Name)
+		// dir := path.Join(global.GVA_CONFIG.AutoCode.Root, "templates", job.Name)
 		jobs[i].Name = job.Name
 		jobs[i].Kind = job.Kind
 		jobs[i].Concurrency = job.Concurrency
@@ -261,7 +259,6 @@ func (s *TaskService) GenerateJob(id int, jobConfig []request.JobConfig, taskRes
 		jobs[i].ResultCallback = func(c context.Context, result *types.JobResult) error {
 			var data []*curescan.JobResultItem
 			for _, item := range result.Items {
-				fmt.Printf("Name: %s, Kind: %s, Host: %s, Port: %s, Scheme: %s, URL: %s, Path: %s, Matched: %s, ExtractedResults: %s, Description: %s, TemplateID: %s, TemplateName: %s, TaskID: %d, EntryID: %s\n", result.Name, result.Kind, item.Host, item.Port, item.Scheme, item.URL, item.Path, item.Matched, item.ExtractedResults, item.Description, item.EntryID, item.TemplateID, item.TemplateName)
 				var item = &curescan.JobResultItem{
 					Name:             result.Name,
 					Kind:             result.Kind,
@@ -283,40 +280,54 @@ func (s *TaskService) GenerateJob(id int, jobConfig []request.JobConfig, taskRes
 				data = append(data, item)
 			}
 			taskResult.JobResultList = data
-			fmt.Println("job result:", len(taskResult.JobResultList))
 			return nil
 		}
-		jobs[i].Template = dir
+		jobs[i].GetTemplates = func() []*types.RawTemplate {
+			var rawTemplates []*types.RawTemplate
+			templates, err := templateService.GetTemplatesByIds(job.Templates)
+			if err != nil {
+				return nil
+			}
+			for _, template := range templates {
+				rawTemplates = append(rawTemplates, &types.RawTemplate{
+					ID:       template.TemplateName,
+					Original: template.TemplateContent,
+				})
+			}
+			return rawTemplates
+		}
+		return jobs, nil
+		// jobs[i].Template = dir
 		// TODO: 考虑并行
 		// 加载模板
-		for _, template := range job.Templates {
-			template, err := templateService.GetTemplateById(int(template))
-			if err != nil {
-				continue
-			}
-			// 创建文件夹和文件
-			// dir := path.Join(global.GVA_CONFIG.AutoCode.Root, "templates", job.Name)
-			_, err = os.Stat(dir)
-			if os.IsNotExist(err) {
-				err = os.MkdirAll(dir, os.ModePerm)
-				if err != nil {
-					return nil, fmt.Errorf("加载模板出错: %s", err.Error())
-				}
-			}
-			filePath := path.Join(dir, template.TemplateName+".yaml")
-			_, err = os.Stat(filePath)
-			if os.IsNotExist(err) {
-				file, err := os.OpenFile(filePath, os.O_CREATE|os.O_WRONLY, os.ModePerm)
-				if err != nil {
-					return nil, fmt.Errorf("加载模板出错: %s", err.Error())
-				}
-				_, err = file.Write([]byte(template.TemplateContent))
-				file.Close()
-				if err != nil {
-					return nil, fmt.Errorf("加载模板出错: %s", err.Error())
-				}
-			}
-		}
+		// for _, template := range job.Templates {
+		// 	template, err := templateService.GetTemplateById(int(template))
+		// 	if err != nil {
+		// 		continue
+		// 	}
+		// 	// 创建文件夹和文件
+		// 	// dir := path.Join(global.GVA_CONFIG.AutoCode.Root, "templates", job.Name)
+		// 	_, err = os.Stat(dir)
+		// 	if os.IsNotExist(err) {
+		// 		err = os.MkdirAll(dir, os.ModePerm)
+		// 		if err != nil {
+		// 			return nil, fmt.Errorf("加载模板出错: %s", err.Error())
+		// 		}
+		// 	}
+		// 	filePath := path.Join(dir, template.TemplateName+".yaml")
+		// 	_, err = os.Stat(filePath)
+		// 	if os.IsNotExist(err) {
+		// 		file, err := os.OpenFile(filePath, os.O_CREATE|os.O_WRONLY, os.ModePerm)
+		// 		if err != nil {
+		// 			return nil, fmt.Errorf("加载模板出错: %s", err.Error())
+		// 		}
+		// 		_, err = file.Write([]byte(template.TemplateContent))
+		// 		file.Close()
+		// 		if err != nil {
+		// 			return nil, fmt.Errorf("加载模板出错: %s", err.Error())
+		// 		}
+		// 	}
+		// }
 	}
 	return jobs, nil
 }

@@ -39,6 +39,16 @@ func (t *TemplateService) GetTemplateById(id int) (*curescan.Template, error) {
 	return &template, nil
 }
 
+func (t *TemplateService) GetTemplatesByIds(ids []int) ([]*curescan.Template, error) {
+	var templates []*curescan.Template
+	err := global.GVA_DB.Select("id", "template_name", "template_type", "template_desc", "template_content",
+		"created_at", "updated_at", "deleted_at").Where("id in (?)", ids).Find(&templates).Error
+	if err != nil {
+		return nil, err
+	}
+	return templates, nil
+}
+
 // GetTemplateList 获取模板列表，该方法返回除模板内容外的所有信息。如果想要获取模板内容，需要调用GetTemplateById方法。
 func (t *TemplateService) GetTemplateList(template curescan.Template, page request.PageInfo, order string, desc bool) (list interface{}, total int64, err error) {
 	limit := page.PageSize
