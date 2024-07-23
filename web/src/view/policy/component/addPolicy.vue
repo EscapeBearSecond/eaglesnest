@@ -2,7 +2,7 @@
     <el-form :model="localForm" :rules="localRules" ref="ruleFormRef" label-width="100px" class="demo-ruleForm">
       <el-form-item v-for="(item, index) in localForm" :key="index" :label="item.label" :prop="item.prop">
         <el-input v-if="item.type === 'input'" :type="item.type" v-model="localForm[item.prop]"></el-input>
-        <el-input v-else-if="item.type === 'password'" type="password" v-model="localForm[item.prop]" autocomplete="off"></el-input>
+
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm">提交</el-button>

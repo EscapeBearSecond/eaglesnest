@@ -1,7 +1,7 @@
 <script setup>
  import { ref, reactive } from 'vue'
  import { getPolicyList, createPolicy } from '@/api/policy'
- import AddPolicy from "./addPolicy.vue"
+ import AddPolicy from "../component/addPolicy.vue"
    // 搜索组件初始数据
 
    // 定义列表头部
