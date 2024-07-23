@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"go.uber.org/zap"
 	"os"
 	"path"
 
@@ -209,38 +210,40 @@ func (s *TaskService) ExecuteTask(id int) error {
 		return err
 	}
 	go func() {
-		task.Status = 1
-		err := s.UpdateTask(task)
+		err := global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+			task.Status = 1
+			err := s.UpdateTask(task)
+			if err != nil {
+				return err
+			}
+			err = entry.Run(context.Background())
+			if err != nil {
+				return err
+			}
+			// result := entry.Result()
+			// 任务执行成功
+			err = portScanService.BatchAdd(taskResult.PortScanList)
+			if err != nil {
+				return err
+			}
+			err = onlineCheckService.BatchAdd(taskResult.OnlineCheckList)
+			if err != nil {
+				return err
+			}
+			err = jobResultService.BatchAdd(taskResult.JobResultList)
+			if err != nil {
+				return err
+			}
+			return nil
+		})
 		if err != nil {
-			fmt.Println("更新任务状态时出错: ", err.Error())
-		}
-		err = entry.Run(context.Background())
-		if err != nil {
-			global.GVA_LOG.Error("任务执行出错: " + err.Error())
+			global.GVA_LOG.Error("任务执行失败", zap.Error(err))
 			task.Status = 3
+		} else {
+			task.Status = 2
 		}
-		// result := entry.Result()
-		// 任务执行成功
-		err = portScanService.BatchAdd(taskResult.PortScanList)
-		if err != nil {
-			global.GVA_LOG.Error("端口扫描-插入数据库时出错: " + err.Error())
-		}
-		err = onlineCheckService.BatchAdd(taskResult.OnlineCheckList)
-		if err != nil {
-			global.GVA_LOG.Error("在线检测-插入数据库时出错: " + err.Error())
-		}
-		err = jobResultService.BatchAdd(taskResult.JobResultList)
-		if err != nil {
-			fmt.Println("err:", err.Error())
-			global.GVA_LOG.Error("任务结果-插入数据库时出错: " + err.Error())
-		}
-		task.Status = 2
-		err = s.UpdateTask(task)
-		if err != nil {
-			global.GVA_LOG.Error("更新任务状态出错: " + err.Error())
-
-		}
-
+		s.UpdateTask(task)
+		return
 	}()
 	return nil
 }
