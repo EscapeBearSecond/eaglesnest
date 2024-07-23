@@ -2,7 +2,6 @@ import legacyPlugin from '@vitejs/plugin-legacy'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
-import { viteLogo } from './src/core/config'
 import Banner from 'vite-plugin-banner'
 import * as path from 'path'
 import * as dotenv from 'dotenv'
@@ -15,7 +14,6 @@ import { svgBuilder } from 'vite-auto-import-svg'
 import { AddSecret } from './vitePlugin/secret'
 // @see https://cn.vitejs.dev/config/
 export default ({
-  command,
   mode
 }) => {
   AddSecret("09467f8e8bf912e5ac1b5ddd3f0a5af6")
@@ -30,8 +28,6 @@ export default ({
     }
   }
 
-  viteLogo(process.env)
-
   const timestamp = Date.parse(new Date())
 
   const optimizeDeps = {}
@@ -44,12 +40,18 @@ export default ({
   const esbuild = {}
 
   const rollupOptions = {
-    output: {
-      entryFileNames: 'assets/087AC4D233B64EB0[name].[hash].js',
-      chunkFileNames: 'assets/087AC4D233B64EB0[name].[hash].js',
-      assetFileNames: 'assets/087AC4D233B64EB0[name].[hash].[ext]',
-    },
+    // output: {
+    //   entryFileNames: 'assets/087AC4D233B64EB0[name].[hash].js',
+    //   chunkFileNames: 'assets/087AC4D233B64EB0[name].[hash].js',
+    //   assetFileNames: 'assets/087AC4D233B64EB0[name].[hash].[ext]',
+    // },
+  output: {
+    entryFileNames: 'assets/[name].[hash].js',
+    chunkFileNames: 'assets/[name].[hash].js',
+    assetFileNames: 'assets/[name].[hash].[ext]',
   }
+  }
+  
 
   const config = {
     base: '/', // index.html文件所在位置

@@ -1,5 +1,3 @@
-# gin-vue-admin web 
-
 ## Project setup
 ```
 npm install
