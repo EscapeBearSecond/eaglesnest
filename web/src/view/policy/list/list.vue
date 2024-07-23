@@ -1,7 +1,7 @@
 <script setup>
  import { ref, reactive } from 'vue'
  import { getPolicyList, createPolicy } from '@/api/policy'
- import AddPolicy from "../component/addPolicy.vue"
+ import AddPolicy from "./component/addPolicy.vue"
    // 搜索组件初始数据
 
    // 定义列表头部
@@ -71,6 +71,9 @@
    const addForm = reactive({
       policyName: '',
       policyDesc: '',
+      headlessFlg: '',
+      scanType: '',
+      scanRate: '',
       policyConfig: [{
          "name": "",
          "kind": "",
@@ -168,13 +171,9 @@
       <el-dialog
          v-model="dialogFormVisible"
          :title="dialogTitle"
+         style="padding-left:50px"
       >
-      <AddPolicy 
-      :form="addForm"
-      :rules="policyFormRef"
-      @submit="enterDialog"
-      @reset="resetPlicyData"
-       ></AddPolicy>
+      <AddPolicy></AddPolicy>
       </el-dialog>      
    </div>
 </template>
