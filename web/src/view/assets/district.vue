@@ -1,0 +1,123 @@
+<script setup>
+import { ref, reactive } from 'vue' 
+const searchInfo = reactive({
+    areaName:''
+})
+const tableColumns = reactive([
+       { label:'名称', prop:'areaName'},
+       { label:'IP范围', prop:'areaIP'},
+       { label:'备注', prop:'areaDesc'},
+    ])
+const tableData = ref([])
+const listQuery = reactive({
+      total: 0,
+      page: 1,
+      pageSize: 10
+   })
+const statusData = reactive([
+   {
+      name: "修改",
+      type: "primary",
+      icon: "edit",
+      handleClick: (scope) => handleEdit(scope.row), 
+  },
+  {
+      name: "删除",
+      type: "primary",
+      icon: "delete",
+      handleClick: (scope) => handleDel(scope.row), 
+  }
+])
+
+const addDialogFlag = ref(false)
+const dialogTitle = ref('新增区域')
+const addForm = reactive({
+  areaName:"",
+  areaIP:"",
+  areaDesc:"",
+})
+const labelPosition = ref('left')
+const itemLabelPosition = ref('top')
+
+const rules = reactive({
+  assetName: [
+    { required: true, message: '请输入资产名称', trigger: 'blur' }
+  ],
+  IP: [
+    { required: true, message: '请输入资产IP', trigger: 'blur' }
+  ]
+});
+const onCancel = () => {
+  addDialogFlag.value = false
+}
+const onSubmit = (searchInfo) => {}
+
+const onReset = () => {
+  searchInfo.areaName.value = ""
+}
+
+const  createAsset = ()=> { 
+  addDialogFlag.value = true;
+}
+const  handleDel = (e) => { console.log(e);}
+const  handleEdit = (e) => { console.log(e);}
+
+const pagination = (listQuery)=> {}
+</script>
+<template>
+    <div>
+      <div class="gva-search-box">
+         <el-form
+         ref="searchForm"
+         :inline="true"
+         :model="searchInfo"
+         >
+         <el-form-item label="名称">
+            <el-input
+               v-model="searchInfo.areaName"
+               placeholder="区域名称"
+            />
+         </el-form-item>
+         <el-form-item>
+            <el-button
+               type="primary"
+               icon="search"
+               @click="onSubmit"
+            >查询</el-button>
+            <el-button
+               icon="refresh"
+               @click="onReset"
+            >重置</el-button>
+         </el-form-item>
+        </el-form>
+      </div>
+      <div class="gva-table-box">
+        <div class="gva-btn-list">
+          <el-button type="primary" icon="plus" @click="createAsset">新增区域</el-button>
+        </div>
+        <advance-table
+          :columns = "tableColumns"
+          :tableData="tableData"
+          :listQuery="listQuery"
+          :statusData="statusData"
+          :pagination="pagination"
+          :index= "true"
+        >
+        </advance-table>
+      </div>
+      <el-dialog
+        v-model="addDialogFlag"
+        :title="dialogTitle"
+        style="padding: 10px 50px;"
+        @update:modelValue="val => addDialogFlag = val"
+      >
+    <div>
+        这里是新增弹框
+    </div>
+  </el-dialog>
+  </div>
+
+</template>
+<style lang='scss' scoped>
+  
+</style>

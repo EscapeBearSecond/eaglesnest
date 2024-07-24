@@ -1,3 +1,28 @@
+<script setup>
+  import { ref } from 'vue';
+  
+  const props = defineProps({
+    form: Object,
+    rules: Object,
+    labelPosition: String,
+    itemLabelPosition: String,
+  });
+  
+  const emits = defineEmits(['submit', 'cancel']);
+  
+  const formRef = ref(null);
+  const localForm = ref({ ...props.form });
+  
+  const submitForm = () => {
+    formRef.value.validate((valid) => {
+      if (valid) {
+        // 处理新增 or 修改的数据
+      } else {
+        console.log('Error submit!');
+      }
+    });
+  };
+</script>
 <template>
     <div>
       <el-form
@@ -36,29 +61,3 @@
       </el-form>
     </div>
   </template>
-  
-  <script setup>
-  import { ref } from 'vue';
-  
-  const props = defineProps({
-    form: Object,
-    rules: Object,
-    labelPosition: String,
-    itemLabelPosition: String,
-  });
-  
-  const emits = defineEmits(['submit', 'cancel']);
-  
-  const formRef = ref(null);
-  const localForm = ref({ ...props.form });
-  
-  const submitForm = () => {
-    formRef.value.validate((valid) => {
-      if (valid) {
-        emits('submit', localForm.value);
-      } else {
-        console.log('Error submit!');
-      }
-    });
-  };
-  </script>
