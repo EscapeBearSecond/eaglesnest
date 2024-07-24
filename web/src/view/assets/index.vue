@@ -1,6 +1,8 @@
 <script setup>
 import { ref, reactive } from 'vue' 
-import districtForm from "./components/assetForm.vue"
+import districtForm from "./components/districtForm.vue"
+import { createArea } from "@/api/area"
+
 
 const searchInfo = reactive({
     areaName:''
@@ -33,20 +35,20 @@ const statusData = reactive([
 
 const addDialogFlag = ref(false)
 const dialogTitle = ref('新增区域')
-const addForm = reactive({
+const formData = reactive({
   areaName:"",
-  areaIP:"",
+  areaIpStr:"",
   areaDesc:"",
 })
 const labelPosition = ref('left')
 const itemLabelPosition = ref('top')
 
 const rules = reactive({
-  assetName: [
-    { required: true, message: '请输入资产名称', trigger: 'blur' }
+  areaName: [
+    { required: true, message: '请输入区域名称', trigger: 'blur' }
   ],
-  IP: [
-    { required: true, message: '请输入资产IP', trigger: 'blur' }
+  areaIpStr: [
+    { required: true, message: '请输入区域IP范围', trigger: 'blur' }
   ]
 });
 const onCancel = () => {
@@ -58,12 +60,40 @@ const onReset = () => {
   searchInfo.areaName.value = ""
 }
 
-const  createAsset = ()=> { 
+const createAsset = ()=> { 
   addDialogFlag.value = true;
 }
-const  handleDel = (e) => { console.log(e);}
-const  handleEdit = (e) => { console.log(e);}
 
+function getIpArr(e) {
+    if(e.includes(',')) {
+        return e.splt(',')
+    }else {
+      return [e]
+    }
+}
+
+const handleDel = (e) => { console.log(e);}
+const handleEdit = (e) => { console.log(e);}
+const onSubmitDialog = (formValues) => {
+  console.log('表单数据：', formValues);
+  let data = {}
+  data.areaIp = []
+  data.areaName = formValues.areaName
+  data.areaDesc = formValues.areaDesc
+  data.areaIp =  getIpArr(formValues.areaIpStr)
+  console.log(1111111, data)
+  // 执行保存逻辑
+  createArea(data).then(res=> {
+    if(res.code == 0 ) {
+      ElMessage({
+        type: 'error',
+        message: '新增成功！',
+        showClose: true,
+      })
+      onCancel()
+    }
+  })
+};
 const pagination = (listQuery)=> {}
 </script>
 <template>
@@ -110,16 +140,17 @@ const pagination = (listQuery)=> {}
       <el-dialog
         v-model="addDialogFlag"
         :title="dialogTitle"
-        style="padding: 10px 50px;"
+        style="padding:50px;"
+        width="35%"
         @update:modelValue="val => addDialogFlag = val"
       >
     <div>
       <district-form 
         :form="formData"
-        :rules="formRules"
+        :rules="rules"
         :label-position="labelPosition"
         :item-label-position="itemLabelPosition"
-        @submit="onSubmit"
+        @submit="onSubmitDialog"
         @cancel="onCancel"
       />
     </div>
