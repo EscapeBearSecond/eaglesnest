@@ -39,8 +39,8 @@
         <el-form-item label="区域名称" :label-position="itemLabelPosition" prop="areaName">
           <el-input v-model="localForm.areaName" />
         </el-form-item>
-        <el-form-item label="IP范围" :label-position="itemLabelPosition" prop="areaIP">
-            <el-input type="textarea" :rows="6" v-model="localForm.areaIP" placeholder="支持：10.0.0.1/24, 10.0.0.1 ~ 10.0.0.255" />
+        <el-form-item label="IP范围" :label-position="itemLabelPosition" prop="areaIpStr">
+            <el-input type="textarea" :rows="6" v-model="localForm.areaIpStr" placeholder="参考：10.0.0.1/24, 10.0.0.1 ~ 10.0.0.255 多个地址段请用逗号分隔" />
         </el-form-item>
         <el-form-item label="备注" :label-position="itemLabelPosition">
           <el-input v-model="localForm.areaDesc" />

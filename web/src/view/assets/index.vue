@@ -1,6 +1,8 @@
 <script setup>
 import { ref, reactive } from 'vue' 
 import districtForm from "./components/districtForm.vue"
+import { createArea } from "@/api/area"
+
 
 const searchInfo = reactive({
     areaName:''
@@ -35,7 +37,7 @@ const addDialogFlag = ref(false)
 const dialogTitle = ref('新增区域')
 const formData = reactive({
   areaName:"",
-  areaIP:"",
+  areaIpStr:"",
   areaDesc:"",
 })
 const labelPosition = ref('left')
@@ -45,7 +47,7 @@ const rules = reactive({
   areaName: [
     { required: true, message: '请输入区域名称', trigger: 'blur' }
   ],
-  areaIP: [
+  areaIpStr: [
     { required: true, message: '请输入区域IP范围', trigger: 'blur' }
   ]
 });
@@ -61,11 +63,36 @@ const onReset = () => {
 const createAsset = ()=> { 
   addDialogFlag.value = true;
 }
+
+function getIpArr(e) {
+    if(e.includes(',')) {
+        return e.splt(',')
+    }else {
+      return [e]
+    }
+}
+
 const handleDel = (e) => { console.log(e);}
 const handleEdit = (e) => { console.log(e);}
 const onSubmitDialog = (formValues) => {
   console.log('表单数据：', formValues);
+  let data = {}
+  data.areaIp = []
+  data.areaName = formValues.areaName
+  data.areaDesc = formValues.areaDesc
+  data.areaIp =  getIpArr(formValues.areaIpStr)
+  console.log(1111111, data)
   // 执行保存逻辑
+  createArea(data).then(res=> {
+    if(res.code == 0 ) {
+      ElMessage({
+        type: 'error',
+        message: '新增成功！',
+        showClose: true,
+      })
+      onCancel()
+    }
+  })
 };
 const pagination = (listQuery)=> {}
 </script>
