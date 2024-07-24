@@ -72,7 +72,6 @@ func (t *TemplateApi) ImportTemplateContent(c *gin.Context) {
 	}
 	var buffer = make([]byte, fileHeader.Size)
 	n, err := file.Read(buffer)
-	fmt.Println("文件长度：", n)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -123,7 +122,6 @@ func (t *TemplateApi) GetTemplateList(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	fmt.Println(searchTemplate.PageInfo)
 	err = utils.Verify(searchTemplate.PageInfo, utils.PageInfoVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
@@ -169,4 +167,51 @@ func (t *TemplateApi) UpdateTemplate(c *gin.Context) {
 		return
 	}
 	response.Ok(c)
+}
+
+func (t *TemplateApi) ImportTemplates(c *gin.Context) {
+	form, err := c.MultipartForm()
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	files := form.File["file"]
+	errorStrings := make([]string, 0)
+	strings := form.Value["templateType"]
+	templateType := strings[0]
+	templates := make([]*curescan.Template, 0)
+	for _, fh := range files {
+		var buffer = make([]byte, fh.Size)
+		file, err := fh.Open()
+		if err != nil {
+			errorStrings = append(errorStrings, fmt.Sprintf("open file [%s] error, err: [%s]", fh.Filename, err.Error()))
+			file.Close()
+			continue
+		}
+		n, err := file.Read(buffer)
+		if err != nil {
+			errorStrings = append(errorStrings, fmt.Sprintf("read file [%s] error, err: [%s]", fh.Filename, err.Error()))
+			file.Close()
+			continue
+		}
+		if int64(n) != fh.Size {
+			errorStrings = append(errorStrings, fmt.Sprintf("file [%s] missing, source file size: %d, read size: %d", fh.Filename, fh.Size, n))
+			file.Close()
+			continue
+		}
+		template := &curescan.Template{}
+		tmp, _ := strconv.ParseUint(templateType, 10, 64)
+		template.TemplateType = uint(tmp)
+		template.TemplateName = fh.Filename
+		template.TemplateContent = string(buffer)
+		templates = append(templates, template)
+		file.Close()
+	}
+	err = templateService.BatchAdd(templates)
+	if err != nil {
+		response.FailWithDetailed(errorStrings, err.Error(), c)
+		return
+	}
+	response.Ok(c)
+
 }

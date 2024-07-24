@@ -301,16 +301,12 @@ var validate = newValidate()
 
 // BindAndValid
 // 绑定并验证
-func BindAndValid(c *gin.Context, v interface{}) (bool, error) {
+func BindAndValid(c *gin.Context, v interface{}) error {
 	err := c.ShouldBind(v)
 	if err != nil {
-		return false, err
+		return err
 	}
-	err = validate.Struct(v)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
+	return validate.Struct(v)
 }
 
 func newValidate() *validator.Validate {
@@ -319,9 +315,27 @@ func newValidate() *validator.Validate {
 
 func ValidateIP(raws []string) error {
 	for _, raw := range raws {
-		if net.ParseIP(raw) == nil {
-			return errors.New(fmt.Sprintf("%s 不是一个正确的IP地址", raw))
+		if !validateIp(raw) {
+			ipRange := strings.Split(raw, "-")
+			if len(ipRange) == 2 {
+				if !validateIp(ipRange[0]) || !validateIp(ipRange[1]) {
+					return fmt.Errorf("%s 不是一个正确的IP或IP范围", raw)
+				}
+			} else {
+				return fmt.Errorf("%s 不是一个正确的IP或IP范围", raw)
+			}
 		}
 	}
 	return nil
+}
+
+func validateIp(ip string) bool {
+	if net.ParseIP(ip) == nil {
+		fmt.Println("ip is not valid", ip)
+		if _, _, err := net.ParseCIDR(ip); err != nil {
+			fmt.Println("ipcidr is not valid", ip)
+			return false
+		}
+	}
+	return true
 }

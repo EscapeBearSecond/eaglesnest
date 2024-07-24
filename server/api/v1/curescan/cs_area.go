@@ -17,6 +17,11 @@ type AreaApi struct {
 
 func (csa *AreaApi) CreateArea(c *gin.Context) {
 	var createArea request.CreateArea
+	// err := utils.BindAndValid(c, &createArea)
+	// if err != nil {
+	// 	response.FailWithMessage(err.Error(), c)
+	// 	return
+	// }
 	err := c.ShouldBindJSON(&createArea)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)

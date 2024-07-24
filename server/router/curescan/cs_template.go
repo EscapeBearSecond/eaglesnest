@@ -19,10 +19,11 @@ func (t *TemplateRouter) InitTemplateRouter(Router *gin.RouterGroup) {
 		templateRouter.GET(":id", templateRouterApi.GetTemplateById)   // 获取单条Template消息
 		templateRouter.PUT("", templateRouterApi.UpdateTemplate)       // 更新Template
 		templateRouter.DELETE(":id", templateRouterApi.DeleteTemplate) // 删除选中Template
-		templateRouter.POST("/importTemplateContent", templateRouterApi.ImportTemplateContent)
+		templateRouter.POST("importTemplateContent", templateRouterApi.ImportTemplateContent)
 
 		// apiRouterWithoutRecord.POST("getAllTemplates", TemplateRouterApi.GetAllApis) // 获取所有Template
 		templateRouter.POST("list", templateRouterApi.GetTemplateList) // 获取Template列表
+		templateRouter.POST("imports", templateRouterApi.ImportTemplates)
 
 	}
 }

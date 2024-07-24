@@ -39,7 +39,7 @@ func (t *TemplateService) GetTemplateById(id int) (*curescan.Template, error) {
 	return &template, nil
 }
 
-func (t *TemplateService) GetTemplatesByIds(ids []int) ([]*curescan.Template, error) {
+func (t *TemplateService) GetTemplatesByIds(ids []int64) ([]*curescan.Template, error) {
 	var templates []*curescan.Template
 	err := global.GVA_DB.Select("id", "template_name", "template_type", "template_desc", "template_content",
 		"created_at", "updated_at", "deleted_at").Where("id in (?)", ids).Find(&templates).Error
@@ -99,4 +99,8 @@ func (t *TemplateService) UpdateTemplate(template *curescan.Template) error {
 		return errors.New("模板名称已被占用，不允许修改")
 	}
 	return global.GVA_DB.Save(&template).Error
+}
+
+func (t *TemplateService) BatchAdd(templates []*curescan.Template) error {
+	return global.GVA_DB.Model(&curescan.Template{}).CreateInBatches(templates, 100).Error
 }

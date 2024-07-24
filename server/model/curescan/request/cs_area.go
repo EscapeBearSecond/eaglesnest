@@ -7,7 +7,7 @@ import (
 
 type CreateArea struct {
 	AreaName string   `json:"areaName"`
-	AreaIP   []string `json:"areaIp"`
+	AreaIP   []string `json:"areaIp" validate:"required,dive,ip_addr"`
 	AreaDesc string   `json:"areaDesc"`
 }
 
