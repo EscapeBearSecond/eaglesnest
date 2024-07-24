@@ -1,7 +1,6 @@
 <script setup>
 import { ref, reactive } from 'vue' 
-import districtForm from "./components/assetForm.vue"
-
+import basicform from "./component/form.vue" 
 
 const searchInfo = reactive({
     areaName:''
@@ -96,7 +95,7 @@ const pagination = (listQuery)=> {}
       </div>
       <div class="gva-table-box">
         <div class="gva-btn-list">
-          <el-button type="primary" icon="plus" @click="createAsset">新增区域</el-button>
+          <el-button type="primary" icon="plus" @click="createAsset">新增模板</el-button>
         </div>
         <advance-table
           :columns = "tableColumns"
@@ -111,11 +110,12 @@ const pagination = (listQuery)=> {}
       <el-dialog
         v-model="addDialogFlag"
         :title="dialogTitle"
-        style="padding: 10px 50px;"
+        style="padding:50px;"
+        width="35%"
         @update:modelValue="val => addDialogFlag = val"
       >
     <div>
-      <district-form 
+      <basicform 
         :form="formData"
         :rules="formRules"
         :label-position="labelPosition"
