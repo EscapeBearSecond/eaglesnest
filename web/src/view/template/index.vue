@@ -1,15 +1,15 @@
 <script setup>
 import { ref, reactive } from 'vue' 
-import districtForm from "./components/assetForm.vue"
+import basicform from "./component/form.vue" 
 
 const searchInfo = reactive({
     areaName:''
 })
 const tableColumns = reactive([
-       { label:'名称', prop:'areaName'},
-       { label:'IP范围', prop:'areaIP'},
-       { label:'备注', prop:'areaDesc'},
-    ])
+    { label:'名称', prop:'templateName'},
+    { label:'类型', prop:'templateType'},
+    { label:'备注', prop:'templateDesc'},
+])
 const tableData = ref([])
 const listQuery = reactive({
       total: 0,
@@ -32,21 +32,21 @@ const statusData = reactive([
 ])
 
 const addDialogFlag = ref(false)
-const dialogTitle = ref('新增区域')
-const addForm = reactive({
-  areaName:"",
-  areaIP:"",
-  areaDesc:"",
+const dialogTitle = ref('新增模板')
+const formData = reactive({
+  templateName:"",
+  templateContent:"",
+  templateType:"",
 })
 const labelPosition = ref('left')
 const itemLabelPosition = ref('top')
 
-const rules = reactive({
-  assetName: [
-    { required: true, message: '请输入资产名称', trigger: 'blur' }
+const formRules = reactive({
+  templateName: [
+    { required: true, message: '请输入模板名称', trigger: 'blur' }
   ],
-  IP: [
-    { required: true, message: '请输入资产IP', trigger: 'blur' }
+  templateType: [
+    { required: true, message: '请选择模板类型', trigger: 'blur' }
   ]
 });
 const onCancel = () => {
@@ -55,7 +55,7 @@ const onCancel = () => {
 const onSubmit = (searchInfo) => {}
 
 const onReset = () => {
-  searchInfo.areaName.value = ""
+  searchInfo.templateName.value = ""
 }
 
 const  createAsset = ()=> { 
@@ -76,8 +76,8 @@ const pagination = (listQuery)=> {}
          >
          <el-form-item label="名称">
             <el-input
-               v-model="searchInfo.areaName"
-               placeholder="区域名称"
+               v-model="searchInfo.templateName"
+               placeholder="模板名称"
             />
          </el-form-item>
          <el-form-item>
@@ -95,7 +95,7 @@ const pagination = (listQuery)=> {}
       </div>
       <div class="gva-table-box">
         <div class="gva-btn-list">
-          <el-button type="primary" icon="plus" @click="createAsset">新增区域</el-button>
+          <el-button type="primary" icon="plus" @click="createAsset">新增模板</el-button>
         </div>
         <advance-table
           :columns = "tableColumns"
@@ -110,11 +110,12 @@ const pagination = (listQuery)=> {}
       <el-dialog
         v-model="addDialogFlag"
         :title="dialogTitle"
-        style="padding: 10px 50px;"
+        style="padding:50px;"
+        width="35%"
         @update:modelValue="val => addDialogFlag = val"
       >
     <div>
-      <district-form 
+      <basicform 
         :form="formData"
         :rules="formRules"
         :label-position="labelPosition"
