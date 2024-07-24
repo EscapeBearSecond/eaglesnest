@@ -1,14 +1,16 @@
 <script setup>
 import { ref, reactive } from 'vue' 
-import districtForm from "./components/assetForm.vue"
-
+import assetForm from "./components/assetForm.vue"
 const searchInfo = reactive({
-    areaName:''
+    assetName:''
 })
 const tableColumns = reactive([
-       { label:'名称', prop:'areaName'},
-       { label:'IP范围', prop:'areaIP'},
-       { label:'备注', prop:'areaDesc'},
+       { label:'名称', prop:'assetName'},
+       { label:'IP', prop:'assetIP'},
+       { label:'归属', prop:'assetArea'},
+       { label:'类型', prop:'assetType'},
+       { label:'价值', prop:'manufacturer'},
+       { label:'备注', prop:'desc'},
     ])
 const tableData = ref([])
 const listQuery = reactive({
@@ -17,26 +19,23 @@ const listQuery = reactive({
       pageSize: 10
    })
 const statusData = reactive([
-   {
-      name: "修改",
-      type: "primary",
-      icon: "edit",
-      handleClick: (scope) => handleEdit(scope.row), 
-  },
   {
       name: "删除",
       type: "primary",
-      icon: "delete",
+      icon: "edit",
       handleClick: (scope) => handleDel(scope.row), 
   }
 ])
 
 const addDialogFlag = ref(false)
-const dialogTitle = ref('新增区域')
+const dialogTitle = ref('新增资产')
 const addForm = reactive({
-  areaName:"",
-  areaIP:"",
-  areaDesc:"",
+  assetName:"",
+  assetIP:"",
+  assetArea:"",
+  assetType:"",
+  manufacturer:"",
+  desc:"",
 })
 const labelPosition = ref('left')
 const itemLabelPosition = ref('top')
@@ -55,14 +54,13 @@ const onCancel = () => {
 const onSubmit = (searchInfo) => {}
 
 const onReset = () => {
-  searchInfo.areaName.value = ""
+  searchInfo.assetName.value = ""
 }
 
 const  createAsset = ()=> { 
   addDialogFlag.value = true;
 }
 const  handleDel = (e) => { console.log(e);}
-const  handleEdit = (e) => { console.log(e);}
 
 const pagination = (listQuery)=> {}
 </script>
@@ -76,8 +74,8 @@ const pagination = (listQuery)=> {}
          >
          <el-form-item label="名称">
             <el-input
-               v-model="searchInfo.areaName"
-               placeholder="区域名称"
+               v-model="searchInfo.assetName"
+               placeholder="资产名称"
             />
          </el-form-item>
          <el-form-item>
@@ -95,7 +93,7 @@ const pagination = (listQuery)=> {}
       </div>
       <div class="gva-table-box">
         <div class="gva-btn-list">
-          <el-button type="primary" icon="plus" @click="createAsset">新增区域</el-button>
+          <el-button type="primary" icon="plus" @click="createAsset">新增资产</el-button>
         </div>
         <advance-table
           :columns = "tableColumns"
@@ -114,7 +112,7 @@ const pagination = (listQuery)=> {}
         @update:modelValue="val => addDialogFlag = val"
       >
     <div>
-      <district-form 
+      <asset-form 
         :form="formData"
         :rules="formRules"
         :label-position="labelPosition"
