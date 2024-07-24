@@ -2,11 +2,12 @@
 import { ref, reactive } from 'vue' 
 import districtForm from "./components/districtForm.vue"
 import { createArea } from "@/api/area"
-
+import { ElMessage } from 'element-plus'
 
 const searchInfo = reactive({
     areaName:''
 })
+
 const tableColumns = reactive([
        { label:'名称', prop:'areaName'},
        { label:'IP范围', prop:'areaIP'},
@@ -54,7 +55,13 @@ const rules = reactive({
 const onCancel = () => {
   addDialogFlag.value = false
 }
-const onSubmit = (searchInfo) => {}
+const onSubmit = (searchInfo) => {
+  ElMessage({
+      type: 'error',
+      message: '新增成功！',
+      showClose: true,
+    })
+}
 
 const onReset = () => {
   searchInfo.areaName.value = ""
@@ -84,7 +91,7 @@ const onSubmitDialog = (formValues) => {
   console.log(1111111, data)
   // 执行保存逻辑
   createArea(data).then(res=> {
-    if(res.code == 0 ) {
+    if(res.code == 0) {
       ElMessage({
         type: 'error',
         message: '新增成功！',
