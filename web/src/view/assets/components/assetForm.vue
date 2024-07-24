@@ -17,6 +17,7 @@
     formRef.value.validate((valid) => {
       if (valid) {
         // 处理新增 or 修改的数据
+        emits('submit', localForm.value);
       } else {
         console.log('Error submit!');
       }
@@ -34,16 +35,16 @@
         ref="formRef"
       >
         <!-- Form items -->
-        <el-form-item label="资产名称" :label-position="itemLabelPosition">
+        <el-form-item label="资产名称" :label-position="itemLabelPosition" prop="assetName">
           <el-input v-model="localForm.assetName" />
         </el-form-item>
-        <el-form-item label="资产IP/范围" :label-position="itemLabelPosition">
+        <el-form-item label="资产IP/范围" :label-position="itemLabelPosition" prop="assetIP">
           <el-input v-model="localForm.assetIP" />
         </el-form-item>
-        <el-form-item label="所属区域" :label-position="itemLabelPosition">
+        <el-form-item label="所属区域" :label-position="itemLabelPosition" prop="assetArea">
           <el-input v-model="localForm.assetArea" />
         </el-form-item>
-        <el-form-item label="资产类型" :label-position="itemLabelPosition">
+        <el-form-item label="资产类型" :label-position="itemLabelPosition" prop="assetType">
           <el-input v-model="localForm.assetType" />
         </el-form-item>
         <el-form-item label="资产价值" :label-position="itemLabelPosition">

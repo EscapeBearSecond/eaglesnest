@@ -1,6 +1,6 @@
 <script setup>
 import { ref, reactive } from 'vue' 
-import districtForm from "./components/assetForm.vue"
+import districtForm from "./components/districtForm.vue"
 
 const searchInfo = reactive({
     areaName:''
@@ -33,7 +33,7 @@ const statusData = reactive([
 
 const addDialogFlag = ref(false)
 const dialogTitle = ref('新增区域')
-const addForm = reactive({
+const formData = reactive({
   areaName:"",
   areaIP:"",
   areaDesc:"",
@@ -42,11 +42,11 @@ const labelPosition = ref('left')
 const itemLabelPosition = ref('top')
 
 const rules = reactive({
-  assetName: [
-    { required: true, message: '请输入资产名称', trigger: 'blur' }
+  areaName: [
+    { required: true, message: '请输入区域名称', trigger: 'blur' }
   ],
-  IP: [
-    { required: true, message: '请输入资产IP', trigger: 'blur' }
+  areaIP: [
+    { required: true, message: '请输入区域IP范围', trigger: 'blur' }
   ]
 });
 const onCancel = () => {
@@ -58,12 +58,15 @@ const onReset = () => {
   searchInfo.areaName.value = ""
 }
 
-const  createAsset = ()=> { 
+const createAsset = ()=> { 
   addDialogFlag.value = true;
 }
-const  handleDel = (e) => { console.log(e);}
-const  handleEdit = (e) => { console.log(e);}
-
+const handleDel = (e) => { console.log(e);}
+const handleEdit = (e) => { console.log(e);}
+const onSubmitDialog = (formValues) => {
+  console.log('表单数据：', formValues);
+  // 执行保存逻辑
+};
 const pagination = (listQuery)=> {}
 </script>
 <template>
@@ -110,16 +113,17 @@ const pagination = (listQuery)=> {}
       <el-dialog
         v-model="addDialogFlag"
         :title="dialogTitle"
-        style="padding: 10px 50px;"
+        style="padding:50px;"
+        width="35%"
         @update:modelValue="val => addDialogFlag = val"
       >
     <div>
       <district-form 
         :form="formData"
-        :rules="formRules"
+        :rules="rules"
         :label-position="labelPosition"
         :item-label-position="itemLabelPosition"
-        @submit="onSubmit"
+        @submit="onSubmitDialog"
         @cancel="onCancel"
       />
     </div>
