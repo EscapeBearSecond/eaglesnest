@@ -6,19 +6,19 @@ import (
 )
 
 type CreateTask struct {
-	TaskName string   `json:"taskName"`
-	TaskDesc string   `json:"taskDesc"`
-	Status   int      `json:"status"`
-	TargetIP []string `json:"targetIp"`
-	PolicyID uint     `json:"policyId"`
-	TaskPlan int      `json:"taskPlan"`
-	PlanConfig
+	TaskName   string     `json:"taskName"`
+	TaskDesc   string     `json:"taskDesc"`
+	Status     int        `json:"status"`
+	TargetIP   []string   `json:"targetIp"`
+	PolicyID   uint       `json:"policyId"`
+	TaskPlan   int        `json:"taskPlan"`
+	PlanConfig PlanConfig `json:"planConfig"`
 }
 
 type PlanConfig struct {
 	Date      string `json:"date"`
 	Time      string `json:"time"`
-	Frequency int    `json:"frequency"` // 0:每天 1:每周 2:每月
+	Frequency int    `json:"frequency"` // 1:每天 2:每周 3:每月
 }
 
 type UpdateTask struct {

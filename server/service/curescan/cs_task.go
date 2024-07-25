@@ -50,15 +50,15 @@ func (s *TaskService) CreateTask(createTask *request.CreateTask) error {
 		return err
 	}
 	// task是立即执行的任务
-	if createTask.PlanConfig.Frequency == 0 {
+	if createTask.TaskPlan == 1 {
 		return s.ExecuteTask(int(task.ID))
 	}
 	// 稍后执行
-	if createTask.PlanConfig.Frequency == 1 {
+	if createTask.TaskPlan == 2 {
 		return nil
 	}
 	// 定时计划
-	if createTask.PlanConfig.Frequency == 2 {
+	if createTask.TaskPlan == 3 {
 		_, err = global.GVA_Timer.AddTaskByFunc("cornName", "@daily", func() {}, "taskName", nil)
 		if err != nil {
 			return err
@@ -273,6 +273,7 @@ func (s *TaskService) ExecuteTask(id int) error {
 			task.Status = 2
 		}
 		s.UpdateTask(task)
+		global.GVA_LOG.Info("任务执行成功", zap.Int("id", id), zap.String("taskName", task.TaskName))
 	}()
 	return nil
 }
