@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
+
 	"go.uber.org/zap"
 
 	"47.103.136.241/goprojects/curesan/server/global"
@@ -59,12 +61,35 @@ func (s *TaskService) CreateTask(createTask *request.CreateTask) error {
 	}
 	// 定时计划
 	if createTask.TaskPlan == 3 {
-		_, err = global.GVA_Timer.AddTaskByFunc("cornName", "@daily", func() {}, "taskName", nil)
+		_, err = global.GVA_Timer.AddTaskByFunc("cornName", "@daily", func() { s.ExecuteTask(int(task.ID)) }, "taskName", nil)
 		if err != nil {
 			return err
 		}
 	}
 	return nil
+}
+
+func (s *TaskService) generateCorn(date, timeStr string, frequency int) (string, error) {
+	layout := "2006-01-02 15:04:05"
+	dateTimeStr := fmt.Sprintf("%s %s", date, timeStr)
+	dateTime, err := time.Parse(layout, dateTimeStr)
+	if err != nil {
+		return "", fmt.Errorf("解析日期时间出错: %v", err.Error())
+	}
+	// 生成corn表达式
+	var cronExpr string
+	switch frequency {
+	case 1:
+		cronExpr = fmt.Sprintf("0 %d %d %d * ?", dateTime.Second(), dateTime.Minute(), dateTime.Hour(), dateTime.Day())
+	case 2:
+		dayOfWeek := int(dateTime.Weekday())
+		cronExpr = fmt.Sprintf("0 %d %d ? * %d", dateTime.Second(), dateTime.Minute(), dateTime.Hour(), dayOfWeek)
+	case 3:
+		cronExpr = fmt.Sprintf("0 %d %d * * ?", dateTime.Second(), dateTime.Minute(), dateTime.Hour())
+	default:
+		return "", fmt.Errorf("不支持的频率: %d", frequency)
+	}
+	return cronExpr, nil
 }
 
 func (s *TaskService) UpdateTask(task *curescan.Task) error {
