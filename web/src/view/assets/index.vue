@@ -1,8 +1,8 @@
 <script setup>
 import { ref, reactive } from 'vue' 
 import districtForm from "./components/districtForm.vue"
-import { getAreaList, createArea, editArea } from "@/api/area"
-import { ElMessage } from 'element-plus'
+import { getAreaList, createArea, editArea, delArea } from "@/api/area"
+import { ElMessage, ElMessageBox  } from 'element-plus'
 
 
 const searchInfo = reactive({
@@ -98,8 +98,31 @@ function getIpArr(e) {
 
 const handleDel = (row) => { 
   console.log(row);
-  // 在这里添加删除逻辑
-  // 例如调用API删除区域
+  ElMessageBox.confirm(
+    '是否删除该条数据?',
+    '提示：',
+    {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  )
+    .then(() => {
+      delArea({id: row.id}).then(res=> {
+          if(res.code == 0) {
+            ElMessage({
+              type: 'success',
+              message: '删除成功！',
+            })
+          }
+      })
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '已取消删除.',
+      })
+    })
 }
 
 const handleEdit = (row) => {
@@ -107,10 +130,6 @@ const handleEdit = (row) => {
     if (!row || !row.id) {
       throw new Error('无效的行数据');
     }
-
-    console.log('Handling edit for row:', row);
-    
-
     editData.id = row.id;
     editData.areaName = row.areaName;
     editData.areaIpStr = row.areaIP.join(',');

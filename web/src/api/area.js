@@ -23,3 +23,11 @@ export const getAreaList = (data) => {
       data
     })
 }
+
+export const delArea = (data) => {
+  return service({
+    url: `/area/${data.id}`,
+    method: 'put',
+    data
+  })
+}
