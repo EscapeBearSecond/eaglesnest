@@ -6,13 +6,12 @@
     rules: Object,
     labelPosition: String,
     itemLabelPosition: String,
-  });
-  
+  });  
   const emits = defineEmits(['submit', 'cancel']);
   
   const formRef = ref(null);
-  const localForm = ref({ ...props.form });
-  
+  const localForm = ref({ ...props.form });  
+
   const submitForm = () => {
     formRef.value.validate((valid) => {
       if (valid) {
@@ -24,6 +23,7 @@
       }
     });
   };
+  
 </script>
 <template>
     <div>
