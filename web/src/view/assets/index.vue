@@ -62,6 +62,7 @@ const onCancel = () => {
 
 const onSubmit = async () => {
   try {
+    listQuery.page = 1
     await getTableData();
     ElMessage({
       type: 'success',
@@ -97,7 +98,6 @@ function getIpArr(e) {
 }
 
 const handleDel = (row) => { 
-  console.log(row);
   ElMessageBox.confirm(
     '是否删除该条数据?',
     '提示：',
@@ -122,8 +122,8 @@ const handleDel = (row) => {
         type: 'info',
         message: '已取消删除.',
       })
-    })
-}
+    });
+};
 
 const handleEdit = (row) => {
   try {
