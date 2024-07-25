@@ -370,12 +370,6 @@ function resetEditData() {
         <el-form-item label="备注" :label-position="itemLabelPosition">
           <el-input v-model="editData.areaDesc" />
         </el-form-item>
-  
-        <!-- Buttons -->
-        <el-form-item>
-          <el-button type="primary" @click="onEditSubmitDialog">保存</el-button>
-          <el-button @click="onEditCancel">取消</el-button>
-        </el-form-item>
       </el-form>
     </el-drawer>
   </div>

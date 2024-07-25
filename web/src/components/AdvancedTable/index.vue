@@ -61,7 +61,7 @@
     v-if="listQuery && pagination"
     :total="listQuery.total"
     :page="listQuery.page"
-    :limit="listQuery.pageSize"
+    :pagesize="listQuery.pageSize"
     :fix-foot="listQuery.fixFoot"
     @pagination="handlePagination"
   />
