@@ -6,13 +6,13 @@ import (
 )
 
 type CreateTask struct {
-	TaskName   string     `json:"taskName"`
-	TaskDesc   string     `json:"taskDesc"`
-	Status     int        `json:"status"`
-	TargetIP   []string   `json:"targetIp"`
-	PolicyID   uint       `json:"policyId"`
-	TaskPlan   int        `json:"taskPlan"`
-	PlanConfig PlanConfig `json:"planConfig"`
+	TaskName   string   `json:"taskName"`
+	TaskDesc   string   `json:"taskDesc"`
+	Status     int      `json:"status"`
+	TargetIP   []string `json:"targetIp"`
+	PolicyID   uint     `json:"policyId"`
+	TaskPlan   int      `json:"taskPlan"`
+	PlanConfig string   `json:"planConfig"`
 }
 
 type PlanConfig struct {

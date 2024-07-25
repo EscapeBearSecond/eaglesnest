@@ -15,6 +15,7 @@ import (
 	"47.103.136.241/goprojects/curesan/server/model/curescan/request"
 	"47.103.136.241/goprojects/curesan/server/model/curescan/response"
 	"47.103.136.241/goprojects/eagleeye/pkg/types"
+	"github.com/robfig/cron/v3"
 	"gorm.io/gorm"
 )
 
@@ -30,15 +31,15 @@ var (
 )
 
 func (s *TaskService) CreateTask(createTask *request.CreateTask) error {
-	bytes, err := json.Marshal(&createTask.PlanConfig)
-	if err != nil {
-		return err
-	}
+	// bytes, err := json.Marshal(&createTask.PlanConfig)
+	// if err != nil {
+	// 	return err
+	// }
 	var task = curescan.Task{
 		TaskName:   createTask.TaskName,
 		TaskDesc:   createTask.TaskDesc,
 		TaskPlan:   createTask.TaskPlan,
-		PlanConfig: string(bytes),
+		PlanConfig: createTask.PlanConfig,
 		PolicyID:   createTask.PolicyID,
 		Status:     createTask.Status,
 		TargetIP:   createTask.TargetIP,
@@ -47,11 +48,11 @@ func (s *TaskService) CreateTask(createTask *request.CreateTask) error {
 		return errors.New("存在相同任务名称，不允许创建")
 	}
 
-	err = global.GVA_DB.Create(&task).Error
+	err := global.GVA_DB.Create(&task).Error
 	if err != nil {
 		return err
 	}
-	// task是立即执行的任务
+	// 立即执行
 	if createTask.TaskPlan == 1 {
 		return s.ExecuteTask(int(task.ID))
 	}
@@ -61,7 +62,7 @@ func (s *TaskService) CreateTask(createTask *request.CreateTask) error {
 	}
 	// 定时计划
 	if createTask.TaskPlan == 3 {
-		_, err = global.GVA_Timer.AddTaskByFunc("cornName", "@daily", func() { s.ExecuteTask(int(task.ID)) }, "taskName", nil)
+		_, err = global.GVA_Timer.AddTaskByFunc(task.TaskName+time.Now().GoString(), createTask.PlanConfig, func() { s.ExecuteTask(int(task.ID)) }, task.TaskName, cron.WithSeconds())
 		if err != nil {
 			return err
 		}
@@ -271,6 +272,7 @@ func (s *TaskService) ExecuteTask(id int) error {
 			if err != nil {
 				return err
 			}
+			global.GVA_LOG.Info("任务开始执行...", zap.String("taskName", task.TaskName))
 			err = entry.Run(context.Background())
 			if err != nil {
 				return err
@@ -292,7 +294,7 @@ func (s *TaskService) ExecuteTask(id int) error {
 			return nil
 		})
 		if err != nil {
-			global.GVA_LOG.Error("任务执行失败", zap.Error(err))
+			global.GVA_LOG.Error("任务执行失败", zap.String("taskName", task.TaskName), zap.Error(err))
 			task.Status = 3
 		} else {
 			task.Status = 2
