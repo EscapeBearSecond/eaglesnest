@@ -27,12 +27,44 @@ var (
 	jobResultService   = &JobResultService{}
 )
 
-func (s *TaskService) CreateTask(task *curescan.Task) error {
+func (s *TaskService) CreateTask(createTask *request.CreateTask) error {
+	bytes, err := json.Marshal(&createTask.PlanConfig)
+	if err != nil {
+		return err
+	}
+	var task = curescan.Task{
+		TaskName:   createTask.TaskName,
+		TaskDesc:   createTask.TaskDesc,
+		TaskPlan:   createTask.TaskPlan,
+		PlanConfig: string(bytes),
+		PolicyID:   createTask.PolicyID,
+		Status:     createTask.Status,
+		TargetIP:   createTask.TargetIP,
+	}
 	if !errors.Is(global.GVA_DB.Select("task_name").First(&curescan.Task{}, "task_name=?", task.TaskName).Error, gorm.ErrRecordNotFound) {
 		return errors.New("存在相同任务名称，不允许创建")
 	}
 
-	return global.GVA_DB.Create(&task).Error
+	err = global.GVA_DB.Create(&task).Error
+	if err != nil {
+		return err
+	}
+	// task是立即执行的任务
+	if createTask.PlanConfig.Frequency == 0 {
+		return s.ExecuteTask(int(task.ID))
+	}
+	// 稍后执行
+	if createTask.PlanConfig.Frequency == 1 {
+		return nil
+	}
+	// 定时计划
+	if createTask.PlanConfig.Frequency == 2 {
+		_, err = global.GVA_Timer.AddTaskByFunc("cornName", "@daily", func() {}, "taskName", nil)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (s *TaskService) UpdateTask(task *curescan.Task) error {
@@ -241,7 +273,6 @@ func (s *TaskService) ExecuteTask(id int) error {
 			task.Status = 2
 		}
 		s.UpdateTask(task)
-		return
 	}()
 	return nil
 }
@@ -297,37 +328,6 @@ func (s *TaskService) GenerateJob(id int, jobConfig []request.JobConfig, taskRes
 			return rawTemplates
 		}
 		return jobs, nil
-		// jobs[i].Template = dir
-		// TODO: 考虑并行
-		// 加载模板
-		// for _, template := range job.Templates {
-		// 	template, err := templateService.GetTemplateById(int(template))
-		// 	if err != nil {
-		// 		continue
-		// 	}
-		// 	// 创建文件夹和文件
-		// 	// dir := path.Join(global.GVA_CONFIG.AutoCode.Root, "templates", job.Name)
-		// 	_, err = os.Stat(dir)
-		// 	if os.IsNotExist(err) {
-		// 		err = os.MkdirAll(dir, os.ModePerm)
-		// 		if err != nil {
-		// 			return nil, fmt.Errorf("加载模板出错: %s", err.Error())
-		// 		}
-		// 	}
-		// 	filePath := path.Join(dir, template.TemplateName+".yaml")
-		// 	_, err = os.Stat(filePath)
-		// 	if os.IsNotExist(err) {
-		// 		file, err := os.OpenFile(filePath, os.O_CREATE|os.O_WRONLY, os.ModePerm)
-		// 		if err != nil {
-		// 			return nil, fmt.Errorf("加载模板出错: %s", err.Error())
-		// 		}
-		// 		_, err = file.Write([]byte(template.TemplateContent))
-		// 		file.Close()
-		// 		if err != nil {
-		// 			return nil, fmt.Errorf("加载模板出错: %s", err.Error())
-		// 		}
-		// 	}
-		// }
 	}
 	return jobs, nil
 }

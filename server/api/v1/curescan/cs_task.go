@@ -29,22 +29,26 @@ func (t *TaskApi) CreateTask(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	var ips = createTask.TargetIP
-	err = utils.ValidateIP(ips)
+	err = utils.ValidateIP(createTask.TargetIP)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	var modelTask = curescan.Task{
-		TaskName:   createTask.TaskName,
-		TaskDesc:   createTask.TaskDesc,
-		TaskPlan:   createTask.TaskPlan,
-		PlanConfig: createTask.PlanConfig,
-		PolicyID:   createTask.PolicyID,
-		Status:     createTask.Status,
-		TargetIP:   ips,
-	}
-	err = taskService.CreateTask(&modelTask)
+	// bytes, err := json.Marshal(&createTask.PlanConfig)
+	// if err != nil {
+	// 	response.FailWithMessage(err.Error(), c)
+	// 	return
+	// }
+	// var modelTask = curescan.Task{
+	// 	TaskName:   createTask.TaskName,
+	// 	TaskDesc:   createTask.TaskDesc,
+	// 	TaskPlan:   createTask.TaskPlan,
+	// 	PlanConfig: string(bytes),
+	// 	PolicyID:   createTask.PolicyID,
+	// 	Status:     createTask.Status,
+	// 	TargetIP:   ips,
+	// }
+	err = taskService.CreateTask(&createTask)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -96,6 +100,11 @@ func (t *TaskApi) UpdateTask(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+	bytes, err := json.Marshal(&updateTask.PlanConfig)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	var modelTask = curescan.Task{
 		GvaModel: global.GvaModel{
 			ID: updateTask.ID,
@@ -103,7 +112,7 @@ func (t *TaskApi) UpdateTask(c *gin.Context) {
 		TaskName:   updateTask.TaskName,
 		TaskDesc:   updateTask.TaskDesc,
 		TaskPlan:   updateTask.TaskPlan,
-		PlanConfig: updateTask.PlanConfig,
+		PlanConfig: string(bytes),
 		PolicyID:   updateTask.PolicyID,
 		Status:     updateTask.Status,
 		TargetIP:   ips,
