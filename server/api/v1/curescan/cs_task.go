@@ -195,3 +195,17 @@ func (t *TaskApi) MigrateTable(c *gin.Context) {
 	fmt.Println(string(b))
 	response.Ok(c)
 }
+
+func (t *TaskApi) StopTask(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	err = taskService.StopTask(int(id))
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	response.Ok(c)
+}

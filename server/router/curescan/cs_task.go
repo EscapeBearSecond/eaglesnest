@@ -20,6 +20,6 @@ func (t *TaskRouter) InitTaskRouter(Router *gin.RouterGroup) {
 		taskRouter.POST("list", taskRouterApi.GetTaskList) // 获取Task列表
 		taskRouter.GET("migrate", taskRouterApi.MigrateTable)
 		taskRouter.POST("execute/:id", taskRouterApi.ExecuteTask)
-
+		taskRouter.POST("stop/:id", taskRouterApi.StopTask)
 	}
 }

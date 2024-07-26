@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
 	"time"
 
 	"go.uber.org/zap"
@@ -273,6 +274,7 @@ func (s *TaskService) ExecuteTask(id int) error {
 				return err
 			}
 			global.GVA_LOG.Info("任务开始执行...", zap.String("taskName", task.TaskName))
+			global.GVA_REDIS.Set(context.Background(), "task_"+strconv.Itoa(id), entry.EntryID, -1)
 			err = entry.Run(context.Background())
 			if err != nil {
 				return err
@@ -358,4 +360,20 @@ func (s *TaskService) GenerateJob(id int, jobConfig []request.JobConfig, taskRes
 		return jobs, nil
 	}
 	return jobs, nil
+}
+
+func (s *TaskService) StopTask(id int) error {
+	if err := global.GVA_REDIS.Get(context.Background(), "task_"+strconv.Itoa(id)).Err(); err != nil {
+		return errors.New("任务未执行或已结束")
+	}
+	entryID := global.GVA_REDIS.Get(context.Background(), "task_"+strconv.Itoa(id)).Val()
+	entry := global.EagleeyeEngine.Entry(entryID)
+	if entry == nil {
+		return errors.New("任务未开始或已结束")
+	}
+	if err := entry.Stop(); err != nil {
+		return errors.New("任务未开始或已结束")
+	}
+	global.GVA_LOG.Info("任务已停止", zap.Int("id", id))
+	return nil
 }
