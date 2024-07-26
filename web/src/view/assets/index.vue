@@ -1,6 +1,5 @@
 <script setup>
-import { ref, reactive } from 'vue' 
-import districtForm from "./components/districtForm.vue"
+import { ref, reactive } from 'vue'
 import { getAreaList, createArea, editArea, delArea } from "@/api/area"
 import { ElMessage, ElMessageBox  } from 'element-plus'
 
