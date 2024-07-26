@@ -181,16 +181,24 @@ func (s *TaskService) GetTaskList(task curescan.Task, page request2.PageInfo, or
 	return tasks, total, err
 }
 
+// ExecuteTask 执行任务 
 func (s *TaskService) ExecuteTask(id int) error {
+	// 接收回调中的任务结果
 	var taskResult response.TaskResult
+
+	// 获取任务
 	task, err := s.GetTaskById(id)
 	if err != nil {
 		return err
 	}
+	
+	// 得到任务关联的策略
 	policy, err := policyService.GetPolicyById(int(task.PolicyID))
 	if err != nil {
 		return err
 	}
+
+	// 解析策略
 	var onlineConfig request.OnlineConfig
 	var portScanConfig request.PortScanConfig
 	var jobConfig []request.JobConfig
@@ -213,6 +221,7 @@ func (s *TaskService) ExecuteTask(id int) error {
 		}
 	}
 
+	// 构造任务参数
 	options := &types.Options{}
 	options.Targets = task.TargetIP
 	options.ExcludeTargets = policy.IgnoredIP
@@ -272,35 +281,43 @@ func (s *TaskService) ExecuteTask(id int) error {
 			return nil
 		},
 	}
-	jobs, err := s.GenerateJob(id, jobConfig, &taskResult)
+	jobs, err := s.generateJob(id, jobConfig, &taskResult)
 	if err != nil {
 		return err
 
 	}
 	options.Jobs = jobs
+
 	entry, err := global.EagleeyeEngine.NewEntry(options)
 	if err != nil {
 		return err
 	}
+
+	// 处理任务
 	go s.processTask(task, entry, &taskResult)
 	return nil
 }
 
+// processTask 处理任务的执行流程
 func (s *TaskService) processTask(task *curescan.Task, entry *eagleeye.EagleeyeEntry, taskResult *response.TaskResult) {
+	// 使用数据库事务处理整个任务流程
 	err := global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+		// 更新任务状态为执行中
 		task.Status = 1
 		err := s.UpdateTaskWithTransction(tx, task)
 		if err != nil {
 			return err
 		}
 		global.GVA_LOG.Info("任务开始执行...", zap.String("taskName", task.TaskName))
+		// 在Redis中记录任务和entryID的关联
 		global.GVA_REDIS.Set(context.Background(), "task_"+strconv.Itoa(int(task.ID)), entry.EntryID, -1)
+		// 执行任务的入口
 		err = entry.Run(context.Background())
 		if err != nil {
 			return err
 		}
 		// result := entry.Result()
-		// 任务执行成功
+		// 任务执行成功 批量添加任务结果
 		err = portScanService.BatchAddWithTransaction(tx, taskResult.PortScanList)
 		if err != nil {
 			return err
@@ -321,11 +338,13 @@ func (s *TaskService) processTask(task *curescan.Task, entry *eagleeye.EagleeyeE
 	} else {
 		task.Status = 2
 	}
+	// 更新任务状态为 失败或成功
 	s.UpdateTask(task)
 	global.GVA_LOG.Info("任务执行成功", zap.Uint("id", task.ID), zap.String("taskName", task.TaskName))
 }
 
-func (s *TaskService) GenerateJob(id int, jobConfig []request.JobConfig, taskResult *response.TaskResult) ([]types.JobOptions, error) {
+// generateJob 生成任务， 根据任务配置生成任务
+func (s *TaskService) generateJob(id int, jobConfig []request.JobConfig, taskResult *response.TaskResult) ([]types.JobOptions, error) {
 	jobs := make([]types.JobOptions, len(jobConfig))
 	for i, job := range jobConfig {
 		// dir := path.Join(global.GVA_CONFIG.AutoCode.Root, "templates", job.Name)
