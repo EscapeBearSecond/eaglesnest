@@ -15,7 +15,6 @@ import (
 	"47.103.136.241/goprojects/curesan/server/model/curescan"
 	"47.103.136.241/goprojects/curesan/server/model/curescan/request"
 	"47.103.136.241/goprojects/curesan/server/model/curescan/response"
-	eagleeye "47.103.136.241/goprojects/eagleeye/pkg/sdk"
 	"47.103.136.241/goprojects/eagleeye/pkg/types"
 	"github.com/robfig/cron/v3"
 	"gorm.io/gorm"
@@ -64,7 +63,10 @@ func (s *TaskService) CreateTask(createTask *request.CreateTask) error {
 	}
 	// 定时计划
 	if createTask.TaskPlan == 3 {
-		_, err = global.GVA_Timer.AddTaskByFunc(task.TaskName+time.Now().GoString(), createTask.PlanConfig, func() { s.ExecuteTask(int(task.ID)) }, task.TaskName, cron.WithSeconds())
+		cronName := task.TaskName
+		// cronName := task.TaskName + time.Now().GoString()
+		// global.GVA_REDIS.Set(context.Background(), "cron_"+strconv.Itoa(int(task.ID)), cronName, -1)
+		_, err = global.GVA_Timer.AddTaskByFunc(cronName, createTask.PlanConfig, func() { s.ExecuteTask(int(task.ID)) }, task.TaskName, cron.WithSeconds())
 		if err != nil {
 			return err
 		}
@@ -181,7 +183,7 @@ func (s *TaskService) GetTaskList(task curescan.Task, page request2.PageInfo, or
 	return tasks, total, err
 }
 
-// ExecuteTask 执行任务 
+// ExecuteTask 执行任务
 func (s *TaskService) ExecuteTask(id int) error {
 	// 接收回调中的任务结果
 	var taskResult response.TaskResult
@@ -191,7 +193,11 @@ func (s *TaskService) ExecuteTask(id int) error {
 	if err != nil {
 		return err
 	}
-	
+
+	if task.Status == 1 {
+		return errors.New("任务正在执行中，请勿重复执行")
+	}
+
 	// 得到任务关联的策略
 	policy, err := policyService.GetPolicyById(int(task.PolicyID))
 	if err != nil {
@@ -288,20 +294,26 @@ func (s *TaskService) ExecuteTask(id int) error {
 	}
 	options.Jobs = jobs
 
-	entry, err := global.EagleeyeEngine.NewEntry(options)
-	if err != nil {
-		return err
+	if task.TaskPlan == 1 || task.TaskPlan == 2 {
+		// 处理任务
+		go s.processTask(task, options, &taskResult)
 	}
-
-	// 处理任务
-	go s.processTask(task, entry, &taskResult)
+	if task.TaskPlan == 3 {
+		cronName := task.TaskName
+		global.GVA_Timer.AddTaskByFunc(cronName, task.PlanConfig, func() { s.processTask(task, options, &taskResult) }, task.TaskName, cron.WithSeconds())
+	}
 	return nil
 }
 
 // processTask 处理任务的执行流程
-func (s *TaskService) processTask(task *curescan.Task, entry *eagleeye.EagleeyeEntry, taskResult *response.TaskResult) {
+func (s *TaskService) processTask(task *curescan.Task, options *types.Options, taskResult *response.TaskResult) {
+	entry, err := global.EagleeyeEngine.NewEntry(options)
+	if err != nil {
+		global.GVA_LOG.Error("创建任务entry失败", zap.String("taskName", task.TaskName), zap.Error(err))
+		return
+	}
 	// 使用数据库事务处理整个任务流程
-	err := global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+	err = global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 		// 更新任务状态为执行中
 		task.Status = 1
 		err := s.UpdateTaskWithTransction(tx, task)
@@ -337,10 +349,10 @@ func (s *TaskService) processTask(task *curescan.Task, entry *eagleeye.EagleeyeE
 		task.Status = 3
 	} else {
 		task.Status = 2
+		global.GVA_LOG.Info("任务执行成功", zap.Uint("id", task.ID), zap.String("taskName", task.TaskName))
 	}
 	// 更新任务状态为 失败或成功
 	s.UpdateTask(task)
-	global.GVA_LOG.Info("任务执行成功", zap.Uint("id", task.ID), zap.String("taskName", task.TaskName))
 }
 
 // generateJob 生成任务， 根据任务配置生成任务
@@ -400,6 +412,11 @@ func (s *TaskService) generateJob(id int, jobConfig []request.JobConfig, taskRes
 }
 
 func (s *TaskService) StopTask(id int) error {
+	// 停止定时任务
+	task, err := s.GetTaskById(id)
+	if err != nil {
+		return err
+	}
 	if err := global.GVA_REDIS.Get(context.Background(), "task_"+strconv.Itoa(id)).Err(); err != nil {
 		return errors.New("任务未执行或已结束")
 	}
@@ -410,6 +427,17 @@ func (s *TaskService) StopTask(id int) error {
 	}
 	if err := entry.Stop(); err != nil {
 		return errors.New("任务未开始或已结束")
+	}
+
+	// 停止定时任务
+	if task.TaskPlan == 3 {
+		// err = global.GVA_REDIS.Get(context.Background(), "cron_"+strconv.Itoa(id)).Err()
+		// if err != nil {
+		// 	return err
+		// }
+		cronName := task.TaskName
+		// cronName := global.GVA_REDIS.Get(context.Background(), "cron_"+strconv.Itoa(id)).Val()
+		global.GVA_Timer.StopCron(cronName)
 	}
 	global.GVA_LOG.Info("任务已停止", zap.Int("id", id))
 	return nil
