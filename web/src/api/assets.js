@@ -1,32 +1,32 @@
 import service from '@/utils/request'
 
-export const createArea = (data) => {
+export const createApi = (data) => {
     return service({
-        url: '/area',
+        url: '/asset/add',
         method: 'post',
         data
     })
 }
 
-export const editArea = (data) => {
+export const editApi = (data) => {
     return service({
-      url: '/area',
+      url: '/asset',
       method: 'put',
       data
     })
 }
 
-export const getAreaList = (data) => {
+export const getListApi = (data) => {
     return service({
-      url: '/area/list',
+      url: '/asset/list',
       method: 'post',
       data
     })
 }
 
-export const delArea = (data) => {
+export const delApi = (data) => {
   return service({
-    url: `/area/${data.id}`,
+    url: `/asset/${data.id}`,
     method: 'del',
     data
   })

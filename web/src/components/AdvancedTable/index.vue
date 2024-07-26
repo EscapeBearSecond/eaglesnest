@@ -19,7 +19,7 @@
       align="center"
     >
       <template #default="scope">
-        {{ scope.$index + 1 + (listQuery.page - 1) * listQuery.limit }}
+        {{ scope.$index + 1 + (listQuery.page - 1) * listQuery.pageSize }}
       </template>
     </el-table-column>
     <el-table-column
@@ -51,7 +51,7 @@
       <template #default="scope">
           <template v-for="(btn, index) in statusData">
               <template v-if="btn.visible ? btn.visible(scope, btn) : true">
-                  <el-button :icon="btn.icon ? btn.icon : ''" :type="btn.type" @click="btn.handleClick && btn.handleClick(scope)" :key="index">{{  btn.name }}</el-button>
+                  <el-button link :icon="btn.icon ? btn.icon : ''" :type="btn.type" @click="btn.handleClick && btn.handleClick(scope)" :key="index">{{  btn.name }}</el-button>
               </template>
           </template>
       </template>
@@ -61,7 +61,7 @@
     v-if="listQuery && pagination"
     :total="listQuery.total"
     :page="listQuery.page"
-    :limit="listQuery.limit"
+    :pagesize="listQuery.pageSize"
     :fix-foot="listQuery.fixFoot"
     @pagination="handlePagination"
   />
@@ -96,8 +96,8 @@ export default defineComponent({
   },
   emits: ['update:tableData', 'update:listQuery'],
   setup(props, { emit }) {
-    const handlePagination = (page, limit) => {
-      emit('update:listQuery', { ...props.listQuery, page, limit });
+    const handlePagination = (page, pageSize) => {
+      emit('update:listQuery', { ...props.listQuery, page, pageSize });
     };
 
     const onTableSelect = (selection, row) => {
