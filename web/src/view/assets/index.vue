@@ -311,7 +311,7 @@ function resetEditData() {
               @click="onSubmitDialog"
             >确 定</el-button>
           </div>
-        </div>
+      </div>
       </template>
         <el-form
         :label-position="labelPosition"
