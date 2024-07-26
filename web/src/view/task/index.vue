@@ -8,8 +8,8 @@
       >
         <el-form-item label="名称">
           <el-input
-            v-model="searchInfo.areaName"
-            placeholder="区域名称"
+            v-model="searchInfo.taskName"
+            placeholder="任务名称"
           />
         </el-form-item>
         <el-form-item>
@@ -283,7 +283,7 @@ const enterDialog = () => {
       switch (dialogType.value) {
         case 'add':
           {
-            const res = await createAuthority(form.value)
+            const res = await createTask(form.value)
             if (res.code === 0) {
               ElMessage({
                 type: 'success',
