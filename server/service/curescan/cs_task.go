@@ -15,6 +15,7 @@ import (
 	"47.103.136.241/goprojects/curesan/server/model/curescan"
 	"47.103.136.241/goprojects/curesan/server/model/curescan/request"
 	"47.103.136.241/goprojects/curesan/server/model/curescan/response"
+	eagleeye "47.103.136.241/goprojects/eagleeye/pkg/sdk"
 	"47.103.136.241/goprojects/eagleeye/pkg/types"
 	"github.com/robfig/cron/v3"
 	"gorm.io/gorm"
@@ -107,6 +108,21 @@ func (s *TaskService) UpdateTask(task *curescan.Task) error {
 		return errors.New("任务名称已被占用，不允许修改")
 	}
 	return global.GVA_DB.Save(&task).Error
+}
+
+func (s *TaskService) UpdateTaskWithTransction(tx *gorm.DB, task *curescan.Task) error {
+	var existingRecord curescan.Task
+	err := tx.Select("id", "task_name").Where("task_name=?", task.TaskName).First(&existingRecord).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return tx.Save(&task).Error
+		}
+		return err
+	}
+	if existingRecord.ID != task.ID {
+		return errors.New("任务名称已被占用，不允许修改")
+	}
+	return tx.Save(&task).Error
 }
 
 func (s *TaskService) DeleteTask(id int) error {
@@ -266,45 +282,47 @@ func (s *TaskService) ExecuteTask(id int) error {
 	if err != nil {
 		return err
 	}
-	go func() {
-		err := global.GVA_DB.Transaction(func(tx *gorm.DB) error {
-			task.Status = 1
-			err := s.UpdateTask(task)
-			if err != nil {
-				return err
-			}
-			global.GVA_LOG.Info("任务开始执行...", zap.String("taskName", task.TaskName))
-			global.GVA_REDIS.Set(context.Background(), "task_"+strconv.Itoa(id), entry.EntryID, -1)
-			err = entry.Run(context.Background())
-			if err != nil {
-				return err
-			}
-			// result := entry.Result()
-			// 任务执行成功
-			err = portScanService.BatchAdd(taskResult.PortScanList)
-			if err != nil {
-				return err
-			}
-			err = onlineCheckService.BatchAdd(taskResult.OnlineCheckList)
-			if err != nil {
-				return err
-			}
-			err = jobResultService.BatchAdd(taskResult.JobResultList)
-			if err != nil {
-				return err
-			}
-			return nil
-		})
-		if err != nil {
-			global.GVA_LOG.Error("任务执行失败", zap.String("taskName", task.TaskName), zap.Error(err))
-			task.Status = 3
-		} else {
-			task.Status = 2
-		}
-		s.UpdateTask(task)
-		global.GVA_LOG.Info("任务执行成功", zap.Int("id", id), zap.String("taskName", task.TaskName))
-	}()
+	go s.processTask(task, entry, &taskResult)
 	return nil
+}
+
+func (s *TaskService) processTask(task *curescan.Task, entry *eagleeye.EagleeyeEntry, taskResult *response.TaskResult) {
+	err := global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+		task.Status = 1
+		err := s.UpdateTaskWithTransction(tx, task)
+		if err != nil {
+			return err
+		}
+		global.GVA_LOG.Info("任务开始执行...", zap.String("taskName", task.TaskName))
+		global.GVA_REDIS.Set(context.Background(), "task_"+strconv.Itoa(int(task.ID)), entry.EntryID, -1)
+		err = entry.Run(context.Background())
+		if err != nil {
+			return err
+		}
+		// result := entry.Result()
+		// 任务执行成功
+		err = portScanService.BatchAddWithTransaction(tx, taskResult.PortScanList)
+		if err != nil {
+			return err
+		}
+		err = onlineCheckService.BatchAddWithTransaction(tx, taskResult.OnlineCheckList)
+		if err != nil {
+			return err
+		}
+		err = jobResultService.BatchAddWithTransaction(tx, taskResult.JobResultList)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		global.GVA_LOG.Error("任务执行失败", zap.String("taskName", task.TaskName), zap.Error(err))
+		task.Status = 3
+	} else {
+		task.Status = 2
+	}
+	s.UpdateTask(task)
+	global.GVA_LOG.Info("任务执行成功", zap.Uint("id", task.ID), zap.String("taskName", task.TaskName))
 }
 
 func (s *TaskService) GenerateJob(id int, jobConfig []request.JobConfig, taskResult *response.TaskResult) ([]types.JobOptions, error) {

@@ -10,6 +10,7 @@ import (
 	"47.103.136.241/goprojects/curesan/server/global"
 	"47.103.136.241/goprojects/curesan/server/model/common/request"
 	"47.103.136.241/goprojects/curesan/server/model/curescan"
+	"gorm.io/gorm"
 )
 
 type OnlineCheckService struct {
@@ -17,6 +18,10 @@ type OnlineCheckService struct {
 
 func (o *OnlineCheckService) BatchAdd(data []*curescan.OnlineCheck) error {
 	return global.GVA_DB.Model(&curescan.OnlineCheck{}).CreateInBatches(data, 100).Error
+}
+
+func (o *OnlineCheckService) BatchAddWithTransaction(tx *gorm.DB, data []*curescan.OnlineCheck) error {
+	return tx.Model(&curescan.OnlineCheck{}).CreateInBatches(data, 100).Error
 }
 
 // ParseFileTo 从传入的os.File类型的文件中解析CSV数据，并将结果转换为curescan.OnlineCheck类型的切片返回

@@ -9,6 +9,7 @@ import (
 	"47.103.136.241/goprojects/curesan/server/global"
 	"47.103.136.241/goprojects/curesan/server/model/common/request"
 	"47.103.136.241/goprojects/curesan/server/model/curescan"
+	"gorm.io/gorm"
 )
 
 type PortScanService struct {
@@ -16,6 +17,10 @@ type PortScanService struct {
 
 func (o *PortScanService) BatchAdd(data []*curescan.PortScan) error {
 	return global.GVA_DB.Model(&curescan.PortScan{}).CreateInBatches(data, 100).Error
+}
+
+func (o *PortScanService) BatchAddWithTransaction(tx *gorm.DB, data []*curescan.PortScan) error {
+	return tx.Model(&curescan.PortScan{}).CreateInBatches(data, 100).Error
 }
 
 // ParseFileTo 从传入的os.File类型的文件中解析CSV数据，并将结果转换为curescan.PortScan类型的切片返回
