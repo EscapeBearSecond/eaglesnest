@@ -1,0 +1,41 @@
+import service from '@/utils/request'
+
+export const createTask = (data) => {
+    return service({
+        url: '/task',
+        method: 'post',
+        data
+    })
+}
+
+export const stopTask = (data) => {
+    return service({
+      url: `/task/${data.id}`,
+      method: 'put',
+      data
+    })
+}
+
+export const getTaskList = (data) => {
+    return service({
+      url: '/area/list',
+      method: 'post',
+      data
+    })
+}
+
+export const reportTask = (data) => {
+    return service({
+      url: `/task/execute/${data.id}`,
+      method: 'post',
+      data
+    })
+}
+
+export const delTask = (data) => {
+  return service({
+    url: `/task/${data.id}`,
+    method: 'del',
+    data
+  })
+}
