@@ -120,7 +120,7 @@
                      <el-input v-model="item.ports" />
                   </el-form-item>
                   <el-form-item label="扫描速度" :label-position="itemLabelPosition" class="sec-lab">
-                     <el-slider v-model="item.temp" range :marks="marks" />
+                     <el-input v-model="item.concurrency" />
                   </el-form-item>
                   <el-form-item label="超时时间" :label-position="itemLabelPosition" class="sec-lab">
                      <el-input v-model="item.timeout" />

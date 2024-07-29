@@ -126,20 +126,11 @@ defineOptions({
   name: 'Authority'
 })
 
-const AuthorityOption = ref([
-  {
-    authorityId: 0,
-    authorityName: '根角色'
-  }
-])
-
 const dialogType = ref('add')
 
-const dialogTitle = ref('新增角色')
+const dialogTitle = ref('新增任务')
 const dialogFormVisible = ref(false)
 const apiDialogFlag = ref(false)
-const copyForm = ref({})
-
 const form = ref({
   taskName:"",
   taskDesc:"",
@@ -308,7 +299,7 @@ const setOptions = () => {
 // 增加角色
 const addAuthority = (parentId) => {
   initForm()
-  dialogTitle.value = '新增角色'
+  dialogTitle.value = '创建任务'
   dialogType.value = 'add'
   form.value.parentId = parentId
   setOptions()
