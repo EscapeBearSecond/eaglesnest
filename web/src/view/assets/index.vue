@@ -21,7 +21,7 @@
 
     </div>
     <el-drawer
-      v-model="addUserDialog"
+      v-model="districtInfoDialog"
       size="45%"
       :show-close="false"
       :close-on-press-escape="false"
@@ -69,20 +69,12 @@
 </template>
 
 <script setup>
-
-import {
-  getUserList,
-  setUserAuthorities,
-  register,
-  deleteUser
-} from '@/api/user'
 import { getAreaList, createArea, editArea, delArea } from "@/api/area"
 
 import { getAuthorityList } from '@/api/authority'
-import WarningBar from '@/components/warningBar/warningBar.vue'
-import { setUserInfo, resetPassword } from '@/api/user.js'
 
-import { nextTick, ref, watch, reactive } from 'vue'
+
+import { ref, watch, reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 defineOptions({
@@ -111,8 +103,6 @@ const setAuthorityOptions = (AuthorityData, optionsData) => {
 }
 
 const page = ref(1)
-const total = ref(0)
-const pageSize = ref(10)
 const tableData = ref([])
 const listQuery = reactive({
    page : 1,
@@ -131,13 +121,13 @@ const statusData = reactive([
       name: "修改",
       type: "primary",
       icon: "Edit",
-      handleClick: (scope) => openEdit(scope.row), 
+      handleClick: (scope) => handleClickUpdate(scope.row), 
   },
   {
       name: "删除",
       type: "danger",
       icon: "Delete",
-      handleClick: (scope) => deleteUserFunc(scope.row), 
+      handleClick: (scope) => handleClickDelete(scope.row), 
   }
 ])
 
@@ -172,32 +162,7 @@ const initPage = async() => {
 
 initPage()
 
-const resetPasswordFunc = (row) => {
-  ElMessageBox.confirm(
-    '是否将此用户密码重置为123456?',
-    '警告',
-    {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning',
-    }
-  ).then(async() => {
-    const res = await resetPassword({
-      ID: row.ID,
-    })
-    if (res.code === 0) {
-      ElMessage({
-        type: 'success',
-        message: res.msg,
-      })
-    } else {
-      ElMessage({
-        type: 'error',
-        message: res.msg,
-      })
-    }
-  })
-}
+
 const setAuthorityIds = () => {
   tableData.value && tableData.value.forEach((user) => {
     user.authorityIds = user.authorities && user.authorities.map(i => {
@@ -206,10 +171,7 @@ const setAuthorityIds = () => {
   })
 }
 
-const chooseImg = ref(null)
-const openHeaderChange = () => {
-  chooseImg.value.open()
-}
+
 
 const authOptions = ref([])
 const setOptions = (authData) => {
@@ -217,13 +179,13 @@ const setOptions = (authData) => {
   setAuthorityOptions(authData, authOptions.value)
 }
 
-const deleteUserFunc = async(row) => {
+const handleClickDelete = async(row) => {
   ElMessageBox.confirm('确定要删除吗?', '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning'
   }).then(async() => {
-    const res = await deleteUser({ id: row.ID })
+    const res = await delArea({ id: row.ID })
     if (res.code === 0) {
       ElMessage.success('删除成功')
       await getTableData()
@@ -290,66 +252,26 @@ function getIpArr(e) {
     }
 }
 
-const addUserDialog = ref(false)
+const districtInfoDialog = ref(false)
 const closeAddUserDialog = () => {
   form.value.resetFields()
   districtInfo.value.headerImg = ''
   districtInfo.value.authorityIds = []
-  addUserDialog.value = false
+  districtInfoDialog.value = false
 }
 
 const dialogFlag = ref('add')
 
 const addUser = () => {
   dialogFlag.value = 'add'
-  addUserDialog.value = true
+  districtInfoDialog.value = true
 }
 
-const tempAuth = {}
-const changeAuthority = async(row, flag, removeAuth) => {
-  if (flag) {
-    if (!removeAuth) {
-      tempAuth[row.ID] = [...row.authorityIds]
-    }
-    return
-  }
-  await nextTick()
-  const res = await setUserAuthorities({
-    ID: row.ID,
-    authorityIds: row.authorityIds
-  })
-  if (res.code === 0) {
-    ElMessage({ type: 'success', message: '角色设置成功' })
-  } else {
-    if (!removeAuth) {
-      row.authorityIds = [...tempAuth[row.ID]]
-      delete tempAuth[row.ID]
-    } else {
-      row.authorityIds = [removeAuth, ...row.authorityIds]
-    }
-  }
-}
-
-const openEdit = (row) => {
+const handleClickUpdate = (row) => {
   row.areaIpStr = row.areaIP.join(',');
   dialogFlag.value = 'edit'
   districtInfo.value = JSON.parse(JSON.stringify(row))
-  addUserDialog.value = true
-}
-
-const switchEnable = async(row) => {
-  districtInfo.value = JSON.parse(JSON.stringify(row))
-  await nextTick()
-  const req = {
-    ...districtInfo.value
-  }
-  const res = await setUserInfo(req)
-  if (res.code === 0) {
-    ElMessage({ type: 'success', message: `${req.enable === 2 ? '禁用' : '启用'}成功` })
-    await getTableData()
-    districtInfo.value.headerImg = ''
-    districtInfo.value.authorityIds = []
-  }
+  districtInfoDialog.value = true
 }
 
 </script>
