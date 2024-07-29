@@ -60,7 +60,7 @@
          <el-form-item label="策略名称" :label-position="itemLabelPosition" prop="taskName">
             <el-input v-model="form.policyName" placeholder="请输入扫描名称" />
          </el-form-item>
-         <div style="margin-left: 32px;">
+         <div style="margin-left: 8px;">
             <label  class="el-form-item__label">策略选项</label>
             <el-collapse v-model="activeNames" style="padding-left: 20px;" accordion>
                <el-collapse-item title="在线检测" name="1">
@@ -109,10 +109,11 @@
                </el-collapse-item>
             </el-collapse>
          </div>
-         <div style="margin: 20px 32px;">
-            <label  class="el-form-item__label">模板选项：</label>
-             <template v-for="(item, index) in form.policyConfig" :key="index">
-                <el-form :ref="tmpForm" :model="time" label-width="80px" >
+         <div style="margin-left: 8px;padding-top: 5px;">
+            <label  class="el-form-item__label">其他选项：</label>
+             <template v-for="(item, index) in form.policyConfig" :key="index" >
+                <label style="display: block;margin-left: 20px;">配置{{ index+1 }}</label>
+                <div style="margin-left: 40px;">
                   <el-form-item label="扫描类型" :label-position="itemLabelPosition" class="sec-lab">
                      <el-input v-model="item.type" />
                   </el-form-item>
@@ -131,7 +132,7 @@
                   <el-form-item label="探活轮次" :label-position="itemLabelPosition" class="sec-lab">
                      <el-input v-model="item.count" />
                   </el-form-item>
-                </el-form>
+                </div>
              </template>
             <el-button type="primary" icon="el-icon-plus" @click="addTmpData">新增模板</el-button>
          </div>
@@ -406,7 +407,17 @@ const marks = ref({
  }
  
  const addTmpData = () => {
-
+  if(form.value.policyConfig.length <= 3) {
+    form.value.policyConfig.push({
+      "name": "",
+      "kind": "",
+      "timeout": "",
+      "count": 0,
+      "format": "",
+      "rateLimit": 0,
+      "concurrency": 0
+    })
+  }
  }
  
  </script>
@@ -425,6 +436,5 @@ const marks = ref({
    height: calc(100vh - 158px);
    overflow: auto;
  }
- 
  </style>
  
