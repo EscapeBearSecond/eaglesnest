@@ -15,6 +15,7 @@ type Task struct {
 	TaskPlan   int            `json:"taskPlan" gorm:"column:task_plan;type:int2;comment:任务计划"` // 任务计划 1 立即执行、2 稍后执行、 3定时执行
 	PlanConfig string         `json:"planConfig" gorm:"column:plan_config;type:text;comment:计划配置"`
 	Executions uint           `json:"executions" gorm:"column:executions;type:int8;comment:执行次数"`
+	EntryID    string         `json:"entryId" gorm:"column:entry_id;type:varchar(255);comment:entry ID"`
 }
 
 func (Task) TableName() string {

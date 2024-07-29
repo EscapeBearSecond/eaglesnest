@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
-	"time"
 
 	"go.uber.org/zap"
 
@@ -32,10 +31,39 @@ var (
 )
 
 func (s *TaskService) CreateTask(createTask *request.CreateTask) error {
-	// bytes, err := json.Marshal(&createTask.PlanConfig)
-	// if err != nil {
-	// 	return err
-	// }
+	task := &curescan.Task{}
+	if createTask.TaskPlan == 1 || createTask.TaskPlan == 2 {
+		// 普通任务创建后的状态为"创建"
+		task.Status = 0
+	} else {
+		// 定时任务创建后的状态为""
+		task.Status = 5
+	}
+	err := global.GVA_DB.Create(&task).Error
+	if err != nil {
+		return err
+	}
+	// 立即执行
+	if createTask.TaskPlan == 1 {
+		return s.ExecuteTask(int(task.ID))
+	}
+	// 稍后执行
+	if createTask.TaskPlan == 2 {
+		return nil
+	}
+	// 定时计划
+	if createTask.TaskPlan == 3 {
+		cronName := task.TaskName
+		_, err = global.GVA_Timer.AddTaskByFunc(cronName, createTask.PlanConfig, func() { s.ExecuteTask(int(task.ID)) }, task.TaskName, cron.WithSeconds())
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (s *TaskService) CreateTaskToDel(createTask *request.CreateTask) error {
+
 	var task = curescan.Task{
 		TaskName:   createTask.TaskName,
 		TaskDesc:   createTask.TaskDesc,
@@ -45,9 +73,9 @@ func (s *TaskService) CreateTask(createTask *request.CreateTask) error {
 		Status:     createTask.Status,
 		TargetIP:   createTask.TargetIP,
 	}
-	if !errors.Is(global.GVA_DB.Select("task_name").First(&curescan.Task{}, "task_name=?", task.TaskName).Error, gorm.ErrRecordNotFound) {
-		return errors.New("存在相同任务名称，不允许创建")
-	}
+	// if !errors.Is(global.GVA_DB.Select("task_name").First(&curescan.Task{}, "task_name=?", task.TaskName).Error, gorm.ErrRecordNotFound) {
+	// 	return errors.New("存在相同任务名称，不允许创建")
+	// }
 
 	err := global.GVA_DB.Create(&task).Error
 	if err != nil {
@@ -64,37 +92,17 @@ func (s *TaskService) CreateTask(createTask *request.CreateTask) error {
 	// 定时计划
 	if createTask.TaskPlan == 3 {
 		cronName := task.TaskName
-		// cronName := task.TaskName + time.Now().GoString()
-		// global.GVA_REDIS.Set(context.Background(), "cron_"+strconv.Itoa(int(task.ID)), cronName, -1)
+		task.Status = 5
+		err = s.UpdateTask(&task)
+		if err != nil {
+			return err
+		}
 		_, err = global.GVA_Timer.AddTaskByFunc(cronName, createTask.PlanConfig, func() { s.ExecuteTask(int(task.ID)) }, task.TaskName, cron.WithSeconds())
 		if err != nil {
 			return err
 		}
 	}
 	return nil
-}
-
-func (s *TaskService) generateCorn(date, timeStr string, frequency int) (string, error) {
-	layout := "2006-01-02 15:04:05"
-	dateTimeStr := fmt.Sprintf("%s %s", date, timeStr)
-	dateTime, err := time.Parse(layout, dateTimeStr)
-	if err != nil {
-		return "", fmt.Errorf("解析日期时间出错: %v", err.Error())
-	}
-	// 生成corn表达式
-	var cronExpr string
-	switch frequency {
-	case 1:
-		cronExpr = fmt.Sprintf("0 %d %d %d * ?", dateTime.Second(), dateTime.Minute(), dateTime.Hour(), dateTime.Day())
-	case 2:
-		dayOfWeek := int(dateTime.Weekday())
-		cronExpr = fmt.Sprintf("0 %d %d ? * %d", dateTime.Second(), dateTime.Minute(), dateTime.Hour(), dayOfWeek)
-	case 3:
-		cronExpr = fmt.Sprintf("0 %d %d * * ?", dateTime.Second(), dateTime.Minute(), dateTime.Hour())
-	default:
-		return "", fmt.Errorf("不支持的频率: %d", frequency)
-	}
-	return cronExpr, nil
 }
 
 func (s *TaskService) UpdateTask(task *curescan.Task) error {
@@ -185,7 +193,6 @@ func (s *TaskService) GetTaskList(task curescan.Task, page request2.PageInfo, or
 
 // ExecuteTask 执行任务
 func (s *TaskService) ExecuteTask(id int) error {
-	fmt.Println("准备执行任务...")
 	// 接收回调中的任务结果
 	var taskResult response.TaskResult
 
@@ -314,16 +321,30 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 		return
 	}
 	// 使用数据库事务处理整个任务流程
+	var newTask *curescan.Task
 	err = global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 		// 更新任务状态为执行中
 		task.Status = 1
-		err := s.UpdateTaskWithTransction(tx, task)
+		newTask = &curescan.Task{
+			Status:     task.Status,
+			TaskName:   task.TaskName,
+			TaskDesc:   task.TaskDesc,
+			TargetIP:   task.TargetIP,
+			PolicyID:   task.PolicyID,
+			TaskPlan:   task.TaskPlan,
+			PlanConfig: task.PlanConfig,
+			EntryID:    entry.EntryID,
+		}
 		if err != nil {
 			return err
 		}
-		global.GVA_LOG.Info("任务开始执行...", zap.String("taskName", task.TaskName))
+		err = tx.Create(newTask).Error
+		if err != nil {
+			return err
+		}
+		global.GVA_LOG.Info("任务开始执行...", zap.String("taskName", newTask.TaskName))
 		// 在Redis中记录任务和entryID的关联
-		global.GVA_REDIS.Set(context.Background(), "task_"+strconv.Itoa(int(task.ID)), entry.EntryID, -1)
+		global.GVA_REDIS.Set(context.Background(), "task_"+strconv.Itoa(int(newTask.ID)), entry.EntryID, -1)
 		// 执行任务的入口
 		err = entry.Run(context.Background())
 		if err != nil {
@@ -346,14 +367,14 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 		return nil
 	})
 	if err != nil {
-		global.GVA_LOG.Error("任务执行失败", zap.String("taskName", task.TaskName), zap.Error(err))
-		task.Status = 3
+		global.GVA_LOG.Error("任务执行失败", zap.String("taskName", newTask.TaskName), zap.Error(err))
+		newTask.Status = 3
 	} else {
-		task.Status = 2
-		global.GVA_LOG.Info("任务执行成功", zap.Uint("id", task.ID), zap.String("taskName", task.TaskName))
+		newTask.Status = 2
+		global.GVA_LOG.Info("任务执行成功", zap.String("taskName", newTask.TaskName))
 	}
 	// 更新任务状态为 失败或成功
-	s.UpdateTask(task)
+	s.UpdateTask(newTask)
 }
 
 // generateJob 生成任务， 根据任务配置生成任务
