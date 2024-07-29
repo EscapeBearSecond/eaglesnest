@@ -20,64 +20,14 @@
       </advance-table>
 
     </div>
-    <el-drawer
-      v-model="districtInfoDialog"
-      size="45%"
-      :show-close="false"
-      :close-on-press-escape="false"
-      :close-on-click-modal="false"
-    >
-      <template #header>
-        <div class="flex justify-between items-center">
-          <span class="text-lg">区域</span>
-          <div>
-            <el-button @click="closeAddUserDialog">取 消</el-button>
-            <el-button
-              type="primary"
-              @click="enterAddUserDialog"
-            >确 定</el-button>
-          </div>
-        </div>
-      </template>
-
-      <el-form
-        ref="form"
-        :rules="rules"
-        :model="districtInfo"
-        label-width="80px"
-      >
-      <el-form-item label="资产名称" :label-position="itemLabelPosition" prop="assetName">
-          <el-input v-model="form.assetName" />
-        </el-form-item>
-        <el-form-item label="资产IP/范围" :label-position="itemLabelPosition" prop="assetIP">
-          <el-input v-model="form.assetIP" />
-        </el-form-item>
-        <el-form-item label="所属区域" :label-position="itemLabelPosition" prop="assetArea">
-          <el-input v-model="form.assetArea" />
-        </el-form-item>
-        <el-form-item label="资产类型" :label-position="itemLabelPosition" prop="assetType">
-          <el-input v-model="form.assetType" />
-        </el-form-item>
-        <el-form-item label="资产价值" :label-position="itemLabelPosition">
-          <el-input v-model="form.manufacturer" />
-        </el-form-item>
-        <el-form-item label="备注" :label-position="itemLabelPosition">
-          <el-input v-model="form.desc" />
-        </el-form-item>
-      </el-form>
-    </el-drawer>
+  
   </div>
 </template>
 
 <script setup>
-import { getListApi, createApi, delApi } from "@/api/assets"
-import { getAreaList } from "@/api/area"
-
-import { getAuthorityList } from '@/api/authority'
-
+import { getListApi } from "@/api/assets"
 
 import { ref, reactive } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
 
 defineOptions({
   name: 'Area',
@@ -118,14 +68,7 @@ const handleCurrentChange = (val) => {
 }
 
 // 操作
-const statusData = reactive([
-  // {
-  //     name: "删除",
-  //     type: "danger",
-  //     icon: "Delete",
-  //     handleClick: (scope) => handleClickDelete(scope.row), 
-  // }
-])
+const statusData = reactive([])
 
 const searchInfo = reactive({
     areaName:''
@@ -152,27 +95,6 @@ const initPage = async() => {
 
 initPage()
 
-const handleClickDelete = async(row) => {
-  ElMessageBox.confirm('确定要删除吗?', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning'
-  }).then(async() => {
-    const res = await delApi({ id: row.ID })
-    if (res.code === 0) {
-      ElMessage.success('删除成功')
-      await getTableData()
-    }
-  })
-}
-
-// 弹窗相关
-const districtInfo = ref({
-  areaName:"",
-  areaIpStr:"",
-  areaDesc:"",
-})
-
 const tableColumns = reactive([
     { label:'名称', prop:'assetName'},
     { label:'IP', prop:'assetIP'},
@@ -181,67 +103,6 @@ const tableColumns = reactive([
     { label:'价值', prop:'manufacturer'},
     { label:'备注', prop:'desc'},
 ])
-
-const rules = ref({
-  assetName: [
-    { required: true, message: '请输入区域名称', trigger: 'blur' },
-  ],
-  assetIp: [
-    { required: true, message: '请输入IP范围', trigger: 'blur' },
-  ],
-  
-})
-const form = ref(null)
-const enterAddUserDialog = async() => {
-  
-  form.value.validate(async valid => {
-    if (valid) {
-      const req = {
-        ...districtInfo.value
-      }
-      req.areaIp = getIpArr(req.areaIpStr)
-      if (dialogFlag.value === 'add') {
-        const res = await createApi(req)
-        if (res.code === 0) {
-          ElMessage({ type: 'success', message: '创建成功' })
-          await getTableData()
-          closeAddUserDialog()
-        }
-      }
-      if (dialogFlag.value === 'edit') {
-        const res = await editArea(req)
-        if (res.code === 0) {
-          ElMessage({ type: 'success', message: '编辑成功' })
-          await getTableData()
-          closeAddUserDialog()
-        }
-      }
-    }
-  })
-}
-
-function getIpArr(e) {
-    if(e.includes(',')) {
-        return e.split(',')
-    }else {
-      return [e]
-    }
-}
-
-const districtInfoDialog = ref(false)
-const closeAddUserDialog = () => {
-  form.value.resetFields()
-  districtInfo.value.headerImg = ''
-  districtInfo.value.authorityIds = []
-  districtInfoDialog.value = false
-}
-
-const dialogFlag = ref('add')
-
-const addForm = () => {
-  dialogFlag.value = 'add'
-  districtInfoDialog.value = true
-}
 
 </script>
 
