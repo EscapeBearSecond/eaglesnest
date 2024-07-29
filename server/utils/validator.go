@@ -332,9 +332,7 @@ func ValidateIP(raws []string) error {
 func validateIp(ip string) bool {
 	ip = strings.Trim(ip, " ")
 	if net.ParseIP(ip) == nil {
-		fmt.Println("ip is not valid", ip)
 		if _, _, err := net.ParseCIDR(ip); err != nil {
-			fmt.Println("ipcidr is not valid", ip)
 			return false
 		}
 	}

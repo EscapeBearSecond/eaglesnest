@@ -185,6 +185,7 @@ func (s *TaskService) GetTaskList(task curescan.Task, page request2.PageInfo, or
 
 // ExecuteTask 执行任务
 func (s *TaskService) ExecuteTask(id int) error {
+	fmt.Println("准备执行任务...")
 	// 接收回调中的任务结果
 	var taskResult response.TaskResult
 

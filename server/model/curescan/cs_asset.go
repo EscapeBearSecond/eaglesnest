@@ -8,7 +8,7 @@ import (
 type Asset struct {
 	global.GvaModel
 	AssetName    string        `json:"assetName" gorm:"type:varchar(255);column:asset_name;comment:资产名称"`
-	AssetIP      string        `json:"assetIP" gorm:"type:varchar(255);column:asset_ip;comment:资产IP"`
+	AssetIP      string        `json:"assetiP" gorm:"type:varchar(255);column:asset_ip;comment:资产IP"`
 	AssetArea    uint          `json:"assetArea" gorm:"type:int8;column:asset_area;comment:资产所属区域"`
 	AssetType    string        `json:"assetType" gorm:"type:varchar(255);column:asset_type;comment:资产类型"`
 	OpenPorts    pq.Int64Array `json:"openPorts" gorm:"type:int8[];column:open_ports;comment:开放端口"`

@@ -15,5 +15,6 @@ func (a *AssetRouter) InitAssetRouter(Router *gin.RouterGroup) {
 	{
 		assetRouter.GET("", assetRouterApi.MigrateTable)
 		assetRouter.POST("/batchAdd", assetRouterApi.BatchAdd)
+		assetRouter.POST("/list", assetRouterApi.GetAssetList)
 	}
 }
