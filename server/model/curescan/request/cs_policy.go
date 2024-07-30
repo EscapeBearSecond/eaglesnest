@@ -45,7 +45,7 @@ type JobConfig struct {
 }
 
 type UpdatePolicy struct {
-	ID uint `json:"id"`
+	ID uint `json:"ID"`
 	CreatePolicy
 }
 

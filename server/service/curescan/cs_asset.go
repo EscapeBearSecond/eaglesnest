@@ -1,10 +1,11 @@
 package curescan
 
 import (
+	"fmt"
+
 	"47.103.136.241/goprojects/curesan/server/global"
 	"47.103.136.241/goprojects/curesan/server/model/common/request"
 	"47.103.136.241/goprojects/curesan/server/model/curescan"
-	"fmt"
 )
 
 type AssetService struct {
@@ -22,11 +23,14 @@ func (a *AssetService) BatchAdd(assets []*curescan.Asset) error {
 func (a *AssetService) GetAssetList(asset curescan.Asset, page request.PageInfo, order string, desc bool) (list interface{}, total int64, err error) {
 	limit := page.PageSize
 	offset := page.PageSize * (page.Page - 1)
-	db := global.GVA_DB.Select("id", "asset_name", "asset_ip", "asset_area", "asset_type", "open_ports", "system_type",
+	db := global.GVA_DB.Select("id", "asset_name", "asset_ip", "asset_area", "area_name", "asset_type", "open_ports", "system_type",
 		"ttl", "asset_model", "manufacturer", "created_at", "updated_at", "deleted_at").Model(&curescan.Asset{})
 	var assets []curescan.Asset
 	if asset.AssetName != "" {
 		db = db.Where("asset_name LIKE ?", "%"+asset.AssetName+"%")
+	}
+	if asset.AreaName != "" {
+		db = db.Where("area_name LIKE ?", "%"+asset.AreaName+"%")
 	}
 	if asset.AssetArea != 0 {
 		db = db.Where("asset_area = ?", asset.AssetArea)
@@ -44,6 +48,7 @@ func (a *AssetService) GetAssetList(asset curescan.Asset, page request.PageInfo,
 		orderMap := make(map[string]bool)
 		orderMap["id"] = true
 		orderMap["asset_name"] = true
+		orderMap["area_name"] = true
 		orderMap["asset_area"] = true
 		orderMap["manufacturer"] = true
 		if !orderMap[order] {

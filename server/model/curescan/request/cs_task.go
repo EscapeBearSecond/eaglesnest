@@ -14,7 +14,6 @@ type CreateTask struct {
 	PlanConfig string   `json:"planConfig"`
 }
 
-
 type UpdateTask struct {
 	ID uint `json:"id"`
 	CreateTask
@@ -22,7 +21,7 @@ type UpdateTask struct {
 
 type SearchTask struct {
 	TaskName string `json:"taskName"`
-	Status   int  `json:"status"`
+	Status   int    `json:"status"`
 	TaskPlan []int  `json:"taskPlan"`
 	request.PageInfo
 	OrderKey string `json:"orderKey"` // 排序

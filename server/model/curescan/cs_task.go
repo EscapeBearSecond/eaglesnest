@@ -7,7 +7,7 @@ import (
 
 type Task struct {
 	global.GvaModel
-	TaskName   string         `json:"taskName" gorm:"column:task_name;type:varchar(50);not null;uniqueIndex;comment:任务名称"`
+	TaskName   string         `json:"taskName" gorm:"column:task_name;type:varchar(50);not null;comment:任务名称"`
 	TaskDesc   string         `json:"taskDesc" gorm:"column:task_desc;type:varchar(100);comment:任务描述"`
 	Status     int            `json:"status" gorm:"column:status;type:int2;comment:执行状态"` // 执行状态 0 创建、1 执行中、2 执行完成、3 执行失败
 	TargetIP   pq.StringArray `json:"targetIp" gorm:"column:target_ip;type:text[];comment:目标IP"`
