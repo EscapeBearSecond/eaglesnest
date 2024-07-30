@@ -30,6 +30,48 @@ var (
 	jobResultService   = &JobResultService{}
 )
 
+// 执行方式
+var (
+	// 立即执行
+	ExecuteImmediately = 1
+	// 稍后执行
+	ExecuteLater = 2
+	// 定时执行
+	ExecuteTiming = 3
+)
+
+// 模板类型
+var (
+	// 资产发现
+	AssetDiscovery = 1
+	// 漏洞扫描
+	VulnerabilityScan = 2
+	// 弱口令
+	WeakPassword = 3
+)
+
+// 普通任务状态
+var (
+	// 创建
+	Created = 0
+	// 执行中
+	Running = 1
+	// 成功
+	Success = 2
+	// 失败
+	Failed = 3
+	// 终止
+	Stopped = 4
+)
+
+// 定时任务状态
+var (
+	// 运行
+	TimeRunning = 5
+	// 停止
+	TimeStopped = 6
+)
+
 func (s *TaskService) CreateTask(createTask *request.CreateTask) error {
 	var task = curescan.Task{
 		TaskName:   createTask.TaskName,
@@ -39,27 +81,27 @@ func (s *TaskService) CreateTask(createTask *request.CreateTask) error {
 		PolicyID:   createTask.PolicyID,
 		TargetIP:   createTask.TargetIP,
 	}
-	if createTask.TaskPlan == 1 || createTask.TaskPlan == 2 {
+	if createTask.TaskPlan == ExecuteImmediately || createTask.TaskPlan == ExecuteLater {
 		// 普通任务创建后的状态为"创建"
-		task.Status = 0
+		task.Status = Created
 	} else {
 		// 定时任务创建后的状态为"停止"
-		task.Status = 6
+		task.Status = TimeStopped
 	}
 	err := global.GVA_DB.Create(&task).Error
 	if err != nil {
 		return err
 	}
 	// 立即执行
-	if createTask.TaskPlan == 1 {
+	if createTask.TaskPlan == ExecuteImmediately {
 		return s.ExecuteTask(int(task.ID))
 	}
 	// 稍后执行
-	if createTask.TaskPlan == 2 {
+	if createTask.TaskPlan == ExecuteLater {
 		return nil
 	}
 	// 定时计划
-	if createTask.TaskPlan == 3 {
+	if createTask.TaskPlan == ExecuteTiming {
 		// cronName := task.TaskName
 		err = s.ExecuteTask(int(task.ID))
 		// _, err = global.GVA_Timer.AddTaskByFunc(cronName, createTask.PlanConfig, func() { s.ExecuteTask(int(task.ID)) }, task.TaskName, cron.WithSeconds())
@@ -213,7 +255,7 @@ func (s *TaskService) ExecuteTask(id int) error {
 		return err
 	}
 
-	if task.Status == 1 || task.Status == 5 {
+	if task.Status == Running || task.Status == TimeRunning {
 		return errors.New("任务正在执行中，请勿重复执行")
 	}
 
@@ -311,12 +353,12 @@ func (s *TaskService) ExecuteTask(id int) error {
 	}
 	options.Jobs = jobs
 
-	if task.TaskPlan == 1 || task.TaskPlan == 2 {
+	if task.TaskPlan == ExecuteImmediately || task.TaskPlan == ExecuteLater {
 		// 处理任务
 		go s.processTask(task, options, &taskResult)
 	}
-	if task.TaskPlan == 3 {
-		task.Status = 5
+	if task.TaskPlan == ExecuteTiming {
+		task.Status = TimeRunning
 		s.UpdateTask(task)
 		cronName := task.TaskName
 		global.GVA_Timer.AddTaskByFunc(cronName, task.PlanConfig, func() { s.processTask(task, options, &taskResult) }, task.TaskName, cron.WithSeconds())
@@ -334,8 +376,8 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 		return
 	}
 	// 使用数据库事务处理整个任务流程
-	if task.TaskPlan == 1 || task.TaskPlan == 2 {
-		task.Status = 1
+	if task.TaskPlan == ExecuteImmediately || task.TaskPlan == ExecuteLater {
+		task.Status = Running
 		task.EntryID = entry.EntryID
 		err = s.UpdateTask(task)
 		if err != nil {
@@ -373,26 +415,26 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 		if err != nil {
 			if errors.Is(err, eagleeye.ErrHasBeenStopped) {
 				global.GVA_LOG.Error("任务终止...", zap.String("taskName", task.TaskName), zap.Error(err))
-				task.Status = 4
+				task.Status = Stopped
 			} else {
 				global.GVA_LOG.Error("任务执行失败", zap.String("taskName", task.TaskName), zap.Error(err))
-				task.Status = 3
+				task.Status = Failed
 			}
 		} else {
-			task.Status = 2
+			task.Status = Success
 			global.GVA_LOG.Info("任务执行成功", zap.String("taskName", task.TaskName))
 		}
 		// 更新任务状态为 失败或成功
 		s.UpdateTask(task)
 	}
-	if task.TaskPlan == 3 {
+	if task.TaskPlan == ExecuteTiming {
 		newTask := &curescan.Task{
-			Status:     1,
+			Status:     Running,
 			TaskName:   task.TaskName,
 			TaskDesc:   fmt.Sprintf("%s (该任务由定时任务【%s】生成)", task.TaskDesc, task.TaskName),
 			TargetIP:   task.TargetIP,
 			PolicyID:   task.PolicyID,
-			TaskPlan:   1,
+			TaskPlan:   ExecuteImmediately,
 			PlanConfig: "",
 			EntryID:    entry.EntryID,
 		}
@@ -435,13 +477,13 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 		if err != nil {
 			if errors.Is(err, eagleeye.ErrHasBeenStopped) {
 				global.GVA_LOG.Error("任务终止...", zap.String("taskName", newTask.TaskName), zap.Error(err))
-				newTask.Status = 4
+				newTask.Status = Stopped
 			} else {
 				global.GVA_LOG.Error("任务执行失败", zap.String("taskName", newTask.TaskName), zap.Error(err))
-				newTask.Status = 3
+				newTask.Status = Failed
 			}
 		} else {
-			newTask.Status = 2
+			newTask.Status = Success
 			global.GVA_LOG.Info("任务执行成功", zap.String("taskName", newTask.TaskName))
 		}
 		// 更新任务状态为 失败或成功
@@ -511,7 +553,7 @@ func (s *TaskService) StopTask(id int) error {
 		return err
 	}
 	// 停止普通任务
-	if task.TaskPlan == 1 || task.TaskPlan == 2 {
+	if task.TaskPlan == ExecuteImmediately || task.TaskPlan == ExecuteLater {
 		if err := global.GVA_REDIS.Get(context.Background(), "task_"+strconv.Itoa(id)).Err(); err != nil {
 			return errors.New("任务未执行或已结束")
 		}
@@ -526,7 +568,7 @@ func (s *TaskService) StopTask(id int) error {
 	}
 
 	// 停止定时任务
-	if task.TaskPlan == 3 {
+	if task.TaskPlan == ExecuteTiming {
 		// err = global.GVA_REDIS.Get(context.Background(), "cron_"+strconv.Itoa(id)).Err()
 		// if err != nil {
 		// 	return err
