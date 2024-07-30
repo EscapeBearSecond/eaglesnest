@@ -12,7 +12,7 @@ type CreateArea struct {
 }
 
 type UpdateArea struct {
-	ID       uint     `json:"id"`
+	ID       uint     `json:"ID"`
 	AreaName string   `json:"areaName"`
 	AreaIP   []string `json:"areaIp"`
 	AreaDesc string   `json:"areaDesc"`

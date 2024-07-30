@@ -13,6 +13,7 @@ import (
 	"47.103.136.241/goprojects/curesan/server/model/curescan"
 	"47.103.136.241/goprojects/curesan/server/model/curescan/request"
 	"47.103.136.241/goprojects/curesan/server/model/curescan/response"
+	eagleeye "47.103.136.241/goprojects/eagleeye/pkg/sdk"
 	"47.103.136.241/goprojects/eagleeye/pkg/types"
 	"github.com/robfig/cron/v3"
 	"gorm.io/gorm"
@@ -30,13 +31,20 @@ var (
 )
 
 func (s *TaskService) CreateTask(createTask *request.CreateTask) error {
-	task := &curescan.Task{}
+	var task = curescan.Task{
+		TaskName:   createTask.TaskName,
+		TaskDesc:   createTask.TaskDesc,
+		TaskPlan:   createTask.TaskPlan,
+		PlanConfig: createTask.PlanConfig,
+		PolicyID:   createTask.PolicyID,
+		TargetIP:   createTask.TargetIP,
+	}
 	if createTask.TaskPlan == 1 || createTask.TaskPlan == 2 {
 		// 普通任务创建后的状态为"创建"
 		task.Status = 0
 	} else {
-		// 定时任务创建后的状态为""
-		task.Status = 5
+		// 定时任务创建后的状态为"停止"
+		task.Status = 6
 	}
 	err := global.GVA_DB.Create(&task).Error
 	if err != nil {
@@ -52,8 +60,9 @@ func (s *TaskService) CreateTask(createTask *request.CreateTask) error {
 	}
 	// 定时计划
 	if createTask.TaskPlan == 3 {
-		cronName := task.TaskName
-		_, err = global.GVA_Timer.AddTaskByFunc(cronName, createTask.PlanConfig, func() { s.ExecuteTask(int(task.ID)) }, task.TaskName, cron.WithSeconds())
+		// cronName := task.TaskName
+		err = s.ExecuteTask(int(task.ID))
+		// _, err = global.GVA_Timer.AddTaskByFunc(cronName, createTask.PlanConfig, func() { s.ExecuteTask(int(task.ID)) }, task.TaskName, cron.WithSeconds())
 		if err != nil {
 			return err
 		}
@@ -113,9 +122,9 @@ func (s *TaskService) UpdateTask(task *curescan.Task) error {
 		}
 		return err
 	}
-	if existingRecord.ID != task.ID {
-		return errors.New("任务名称已被占用，不允许修改")
-	}
+	// if existingRecord.ID != task.ID {
+	// 	return errors.New("任务名称已被占用，不允许修改")
+	// }
 	return global.GVA_DB.Save(&task).Error
 }
 
@@ -128,9 +137,9 @@ func (s *TaskService) UpdateTaskWithTransction(tx *gorm.DB, task *curescan.Task)
 		}
 		return err
 	}
-	if existingRecord.ID != task.ID {
-		return errors.New("任务名称已被占用，不允许修改")
-	}
+	// if existingRecord.ID != task.ID {
+	// 	return errors.New("任务名称已被占用，不允许修改")
+	// }
 	return tx.Save(&task).Error
 }
 
@@ -204,7 +213,7 @@ func (s *TaskService) ExecuteTask(id int) error {
 		return err
 	}
 
-	if task.Status == 1 {
+	if task.Status == 1 || task.Status == 5 {
 		return errors.New("任务正在执行中，请勿重复执行")
 	}
 
@@ -308,6 +317,7 @@ func (s *TaskService) ExecuteTask(id int) error {
 	}
 	if task.TaskPlan == 3 {
 		task.Status = 5
+		s.UpdateTask(task)
 		cronName := task.TaskName
 		global.GVA_Timer.AddTaskByFunc(cronName, task.PlanConfig, func() { s.processTask(task, options, &taskResult) }, task.TaskName, cron.WithSeconds())
 	}
@@ -325,16 +335,20 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 	}
 	// 使用数据库事务处理整个任务流程
 	if task.TaskPlan == 1 || task.TaskPlan == 2 {
+		task.Status = 1
+		task.EntryID = entry.EntryID
+		err = s.UpdateTask(task)
+		if err != nil {
+			global.GVA_LOG.Error("任务开始执行失败", zap.String("taskName", task.TaskName), zap.String("error", err.Error()))
+			return
+		}
 		err = global.GVA_DB.Transaction(func(tx *gorm.DB) error {
-			task.Status = 1
-			task.EntryID = entry.EntryID
-			err = s.UpdateTaskWithTransction(tx, task)
+			global.GVA_LOG.Info("任务开始执行...", zap.String("taskName", task.TaskName))
+			// 在Redis中记录任务和entryID的关联
+			err = global.GVA_REDIS.Set(context.Background(), "task_"+strconv.Itoa(int(task.ID)), entry.EntryID, 0).Err()
 			if err != nil {
 				return err
 			}
-			global.GVA_LOG.Info("任务开始执行...", zap.String("taskName", task.TaskName))
-			// 在Redis中记录任务和entryID的关联
-			global.GVA_REDIS.Set(context.Background(), "task_"+strconv.Itoa(int(task.ID)), entry.EntryID, -1)
 			// 执行任务的入口
 			err = entry.Run(context.Background())
 			if err != nil {
@@ -357,8 +371,13 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 			return nil
 		})
 		if err != nil {
-			global.GVA_LOG.Error("任务执行失败", zap.String("taskName", task.TaskName), zap.Error(err))
-			task.Status = 3
+			if errors.Is(err, eagleeye.ErrHasBeenStopped) {
+				global.GVA_LOG.Error("任务终止...", zap.String("taskName", task.TaskName), zap.Error(err))
+				task.Status = 4
+			} else {
+				global.GVA_LOG.Error("任务执行失败", zap.String("taskName", task.TaskName), zap.Error(err))
+				task.Status = 3
+			}
 		} else {
 			task.Status = 2
 			global.GVA_LOG.Info("任务执行成功", zap.String("taskName", task.TaskName))
@@ -367,30 +386,31 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 		s.UpdateTask(task)
 	}
 	if task.TaskPlan == 3 {
-		var newTask *curescan.Task
+		newTask := &curescan.Task{
+			Status:     1,
+			TaskName:   task.TaskName,
+			TaskDesc:   fmt.Sprintf("%s (该任务由定时任务【%s】生成)", task.TaskDesc, task.TaskName),
+			TargetIP:   task.TargetIP,
+			PolicyID:   task.PolicyID,
+			TaskPlan:   1,
+			PlanConfig: "",
+			EntryID:    entry.EntryID,
+		}
+		err = global.GVA_DB.Create(newTask).Error
+		if err != nil {
+			global.GVA_LOG.Error("任务开始执行失败", zap.String("taskName", newTask.TaskName), zap.String("error", err.Error()))
+			return
+		}
 		err = global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 			// 更新任务状态为执行中
-			task.Status = 1
-			newTask = &curescan.Task{
-				Status:     task.Status,
-				TaskName:   task.TaskName,
-				TaskDesc:   fmt.Sprintf("%s (该任务由定时任务【%s】生成)", task.TaskDesc, task.TaskName),
-				TargetIP:   task.TargetIP,
-				PolicyID:   task.PolicyID,
-				TaskPlan:   1,
-				PlanConfig: "",
-				EntryID:    entry.EntryID,
-			}
-			if err != nil {
-				return err
-			}
-			err = tx.Create(newTask).Error
-			if err != nil {
-				return err
-			}
+
 			global.GVA_LOG.Info("任务开始执行...", zap.String("taskName", newTask.TaskName))
 			// 在Redis中记录任务和entryID的关联
-			global.GVA_REDIS.Set(context.Background(), "task_"+strconv.Itoa(int(newTask.ID)), entry.EntryID, -1)
+			err = global.GVA_REDIS.Set(context.Background(), "task_"+strconv.Itoa(int(newTask.ID)), entry.EntryID, 0).Err()
+			if err != nil {
+				return err
+			}
+			// global.GVA_REDIS.Set(context.Background(), "task_"+strconv.Itoa(int(newTask.ID)), entry.EntryID, -1)
 			// 执行任务的入口
 			err = entry.Run(context.Background())
 			if err != nil {
@@ -413,8 +433,13 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 			return nil
 		})
 		if err != nil {
-			global.GVA_LOG.Error("任务执行失败", zap.String("taskName", newTask.TaskName), zap.Error(err))
-			newTask.Status = 3
+			if errors.Is(err, eagleeye.ErrHasBeenStopped) {
+				global.GVA_LOG.Error("任务终止...", zap.String("taskName", newTask.TaskName), zap.Error(err))
+				newTask.Status = 4
+			} else {
+				global.GVA_LOG.Error("任务执行失败", zap.String("taskName", newTask.TaskName), zap.Error(err))
+				newTask.Status = 3
+			}
 		} else {
 			newTask.Status = 2
 			global.GVA_LOG.Info("任务执行成功", zap.String("taskName", newTask.TaskName))
@@ -510,6 +535,6 @@ func (s *TaskService) StopTask(id int) error {
 		// cronName := global.GVA_REDIS.Get(context.Background(), "cron_"+strconv.Itoa(id)).Val()
 		global.GVA_Timer.StopCron(cronName)
 	}
-	global.GVA_LOG.Info("任务已停止", zap.Int("id", id))
+	// global.GVA_LOG.Info("任务已停止", zap.Int("id", id))
 	return nil
 }

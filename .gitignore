@@ -4,6 +4,7 @@
 /templates
 /results
 
+/server/config.yaml
 .DS_Store
 
 # local env files

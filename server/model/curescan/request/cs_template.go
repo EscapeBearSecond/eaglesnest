@@ -20,6 +20,6 @@ type SearchTemplate struct {
 }
 
 type UpdateTemplate struct {
-	ID uint `json:"id"`
+	ID uint `json:"ID"`
 	CreateTemplate
 }

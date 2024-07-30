@@ -9,7 +9,7 @@ import (
 type Area struct {
 	global.GvaModel
 	AreaName string         `json:"areaName" gorm:"type:varchar(20);not null;index;column:area_name;"`
-	AreaIP   pq.StringArray `json:"areaIP" gorm:"type:text[];not null;column:area_ip;"`
+	AreaIP   pq.StringArray `json:"areaIp" gorm:"type:text[];not null;column:area_ip;"`
 	AreaDesc string         `json:"areaDesc" gorm:"type:varchar(100);column:area_desc;"`
 }
 
