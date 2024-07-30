@@ -38,7 +38,7 @@
         :tableData="tableData"
         :listQuery="listQuery"
         :statusData="statusData"
-        :pagination="pagination"
+        :pagination="handlePagination"
         :index="true"
       >
       <template v-slot:customTaskPlan="slotProps">
@@ -322,9 +322,10 @@ const addAuthority = (parentId) => {
 }
 
 
-const pagination = () => {
-  getTableData()
-}
+const handlePagination = (page) => {
+  console.log(`当前页: ${page}`);
+   getTableData()
+};
 
 const handleStop = (row) => {
   ElMessageBox.confirm('此操作将停止该任务, 是否继续?', '提示', {
