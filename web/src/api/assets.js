@@ -27,7 +27,7 @@ export const getListApi = (data) => {
 export const delApi = (data) => {
   return service({
     url: `/asset/${data.id}`,
-    method: 'del',
+    method: 'delete',
     data
   })
 }

@@ -27,7 +27,7 @@ export const getAreaList = (data) => {
 export const delArea = (data) => {
   return service({
     url: `/area/${data.id}`,
-    method: 'del',
+    method: 'delete',
     data
   })
 }

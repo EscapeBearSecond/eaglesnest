@@ -39,6 +39,7 @@
         :listQuery="listQuery"
         :statusData="statusData"
         :pagination="handlePagination"
+        :changePageSize="handleChangePageSize"
         :index="true"
       >
       <template v-slot:customTaskPlan="slotProps">
@@ -324,6 +325,11 @@ const addAuthority = (parentId) => {
 
 const handlePagination = (page) => {
   console.log(`当前页: ${page}`);
+   getTableData()
+};
+
+const handleChangePageSize = (pageSize) => {
+  console.log(`当前页码: ${pageSize}`);
    getTableData()
 };
 

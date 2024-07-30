@@ -93,6 +93,7 @@ export default defineComponent({
     statusWidth: { default: null, type: String },
     index: { default: false, type: Boolean },
     pagination: { default: null, type: Function },
+    changePageSize:{default:null, type:Function},
   },
   emits: ['update:tableData', 'update:listQuery', 'pagination'],
   setup(props, { emit }) {
@@ -113,7 +114,10 @@ export default defineComponent({
     };
 
     const handleSizeChange = (val) => {
-      props.listQuery.value.pageSize = val;
+      props.listQuery.pageSize = val;
+      if (props.changePageSize) {
+        props.changePageSize(val);
+      }
     }
 
     return {
