@@ -2,7 +2,6 @@ package request
 
 import (
 	"47.103.136.241/goprojects/curesan/server/model/common/request"
-	"47.103.136.241/goprojects/curesan/server/model/curescan"
 )
 
 type CreateTask struct {
@@ -15,11 +14,6 @@ type CreateTask struct {
 	PlanConfig string   `json:"planConfig"`
 }
 
-type PlanConfig struct {
-	Date      string `json:"date"`
-	Time      string `json:"time"`
-	Frequency int    `json:"frequency"` // 1:每天 2:每周 3:每月
-}
 
 type UpdateTask struct {
 	ID uint `json:"id"`
@@ -27,7 +21,9 @@ type UpdateTask struct {
 }
 
 type SearchTask struct {
-	curescan.Task
+	TaskName string `json:"taskName"`
+	Status   int  `json:"status"`
+	TaskPlan []int  `json:"taskPlan"`
 	request.PageInfo
 	OrderKey string `json:"orderKey"` // 排序
 	Desc     bool   `json:"desc"`     // 排序方式:升序false(默认)|降序true

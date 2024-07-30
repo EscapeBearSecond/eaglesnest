@@ -10,7 +10,6 @@ import (
 	"go.uber.org/zap"
 
 	"47.103.136.241/goprojects/curesan/server/global"
-	request2 "47.103.136.241/goprojects/curesan/server/model/common/request"
 	"47.103.136.241/goprojects/curesan/server/model/curescan"
 	"47.103.136.241/goprojects/curesan/server/model/curescan/request"
 	"47.103.136.241/goprojects/curesan/server/model/curescan/response"
@@ -152,20 +151,23 @@ func (s *TaskService) GetTaskById(id int) (*curescan.Task, error) {
 	return &task, nil
 }
 
-func (s *TaskService) GetTaskList(task curescan.Task, page request2.PageInfo, order string, desc bool) (list interface{}, total int64, err error) {
+func (s *TaskService) GetTaskList(st request.SearchTask) (list interface{}, total int64, err error) {
+	page := st.PageInfo
+	order := st.OrderKey
+	desc := st.Desc
 	limit := page.PageSize
 	offset := page.PageSize * (page.Page - 1)
 	db := global.GVA_DB.Model(&curescan.Task{}).Select("id", "task_name", "task_desc", "status", "target_ip", "policy_id", "task_plan",
 		"plan_config", "created_at", "updated_at", "deleted_at")
 	var tasks []curescan.Task
-	if task.TaskName != "" {
-		db = db.Where("task_name LIKE ?", "%"+task.TaskName+"%")
+	if st.TaskName != "" {
+		db = db.Where("task_name LIKE ?", "%"+st.TaskName+"%")
 	}
-	if task.TaskPlan != 0 {
-		db = db.Where("task_plan=?", task.TaskPlan)
+	if len(st.TaskPlan) != 0 {
+		db = db.Where("task_plan in (?)", st.TaskPlan)
 	}
-	if task.Status != 0 {
-		db = db.Where("status=?", task.Status)
+	if st.Status != 0 {
+		db = db.Where("status=?", st.Status)
 	}
 	err = db.Count(&total).Error
 	if err != nil {
@@ -264,7 +266,6 @@ func (s *TaskService) ExecuteTask(id int) error {
 				data = append(data, &curescan.PortScan{
 					IP:      ip,
 					Ports:   ports,
-					TaskID:  uint(id),
 					EntryID: result.Items[0].EntryID,
 				})
 			}
@@ -287,7 +288,6 @@ func (s *TaskService) ExecuteTask(id int) error {
 					Active:  result.Active,
 					System:  result.OS,
 					TTL:     result.TTL,
-					TaskID:  uint(id),
 					EntryID: result.EntryID,
 				})
 			}
@@ -295,7 +295,7 @@ func (s *TaskService) ExecuteTask(id int) error {
 			return nil
 		},
 	}
-	jobs, err := s.generateJob(id, jobConfig, &taskResult)
+	jobs, err := s.generateJob(jobConfig, &taskResult)
 	if err != nil {
 		return err
 
@@ -307,6 +307,7 @@ func (s *TaskService) ExecuteTask(id int) error {
 		go s.processTask(task, options, &taskResult)
 	}
 	if task.TaskPlan == 3 {
+		task.Status = 5
 		cronName := task.TaskName
 		global.GVA_Timer.AddTaskByFunc(cronName, task.PlanConfig, func() { s.processTask(task, options, &taskResult) }, task.TaskName, cron.WithSeconds())
 	}
@@ -314,6 +315,8 @@ func (s *TaskService) ExecuteTask(id int) error {
 }
 
 // processTask 处理任务的执行流程
+// 对于普通任务来说, 不需要复制任务, 但是对于定时任务每次执行需要复制一次任务
+// 对于普通任务如果需要复用, 需要重新创建一条任务
 func (s *TaskService) processTask(task *curescan.Task, options *types.Options, taskResult *response.TaskResult) {
 	entry, err := global.EagleeyeEngine.NewEntry(options)
 	if err != nil {
@@ -321,64 +324,109 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 		return
 	}
 	// 使用数据库事务处理整个任务流程
-	var newTask *curescan.Task
-	err = global.GVA_DB.Transaction(func(tx *gorm.DB) error {
-		// 更新任务状态为执行中
-		task.Status = 1
-		newTask = &curescan.Task{
-			Status:     task.Status,
-			TaskName:   task.TaskName,
-			TaskDesc:   task.TaskDesc,
-			TargetIP:   task.TargetIP,
-			PolicyID:   task.PolicyID,
-			TaskPlan:   task.TaskPlan,
-			PlanConfig: task.PlanConfig,
-			EntryID:    entry.EntryID,
-		}
+	if task.TaskPlan == 1 || task.TaskPlan == 2 {
+		err = global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+			task.Status = 1
+			task.EntryID = entry.EntryID
+			err = s.UpdateTaskWithTransction(tx, task)
+			if err != nil {
+				return err
+			}
+			global.GVA_LOG.Info("任务开始执行...", zap.String("taskName", task.TaskName))
+			// 在Redis中记录任务和entryID的关联
+			global.GVA_REDIS.Set(context.Background(), "task_"+strconv.Itoa(int(task.ID)), entry.EntryID, -1)
+			// 执行任务的入口
+			err = entry.Run(context.Background())
+			if err != nil {
+				return err
+			}
+			// result := entry.Result()
+			// 任务执行成功 批量添加任务结果
+			err = portScanService.BatchAddWithTransaction(tx, taskResult.PortScanList)
+			if err != nil {
+				return err
+			}
+			err = onlineCheckService.BatchAddWithTransaction(tx, taskResult.OnlineCheckList)
+			if err != nil {
+				return err
+			}
+			err = jobResultService.BatchAddWithTransaction(tx, taskResult.JobResultList)
+			if err != nil {
+				return err
+			}
+			return nil
+		})
 		if err != nil {
-			return err
+			global.GVA_LOG.Error("任务执行失败", zap.String("taskName", task.TaskName), zap.Error(err))
+			task.Status = 3
+		} else {
+			task.Status = 2
+			global.GVA_LOG.Info("任务执行成功", zap.String("taskName", task.TaskName))
 		}
-		err = tx.Create(newTask).Error
-		if err != nil {
-			return err
-		}
-		global.GVA_LOG.Info("任务开始执行...", zap.String("taskName", newTask.TaskName))
-		// 在Redis中记录任务和entryID的关联
-		global.GVA_REDIS.Set(context.Background(), "task_"+strconv.Itoa(int(newTask.ID)), entry.EntryID, -1)
-		// 执行任务的入口
-		err = entry.Run(context.Background())
-		if err != nil {
-			return err
-		}
-		// result := entry.Result()
-		// 任务执行成功 批量添加任务结果
-		err = portScanService.BatchAddWithTransaction(tx, taskResult.PortScanList)
-		if err != nil {
-			return err
-		}
-		err = onlineCheckService.BatchAddWithTransaction(tx, taskResult.OnlineCheckList)
-		if err != nil {
-			return err
-		}
-		err = jobResultService.BatchAddWithTransaction(tx, taskResult.JobResultList)
-		if err != nil {
-			return err
-		}
-		return nil
-	})
-	if err != nil {
-		global.GVA_LOG.Error("任务执行失败", zap.String("taskName", newTask.TaskName), zap.Error(err))
-		newTask.Status = 3
-	} else {
-		newTask.Status = 2
-		global.GVA_LOG.Info("任务执行成功", zap.String("taskName", newTask.TaskName))
+		// 更新任务状态为 失败或成功
+		s.UpdateTask(task)
 	}
-	// 更新任务状态为 失败或成功
-	s.UpdateTask(newTask)
+	if task.TaskPlan == 3 {
+		var newTask *curescan.Task
+		err = global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+			// 更新任务状态为执行中
+			task.Status = 1
+			newTask = &curescan.Task{
+				Status:     task.Status,
+				TaskName:   task.TaskName,
+				TaskDesc:   fmt.Sprintf("%s (该任务由定时任务【%s】生成)", task.TaskDesc, task.TaskName),
+				TargetIP:   task.TargetIP,
+				PolicyID:   task.PolicyID,
+				TaskPlan:   1,
+				PlanConfig: "",
+				EntryID:    entry.EntryID,
+			}
+			if err != nil {
+				return err
+			}
+			err = tx.Create(newTask).Error
+			if err != nil {
+				return err
+			}
+			global.GVA_LOG.Info("任务开始执行...", zap.String("taskName", newTask.TaskName))
+			// 在Redis中记录任务和entryID的关联
+			global.GVA_REDIS.Set(context.Background(), "task_"+strconv.Itoa(int(newTask.ID)), entry.EntryID, -1)
+			// 执行任务的入口
+			err = entry.Run(context.Background())
+			if err != nil {
+				return err
+			}
+			// result := entry.Result()
+			// 任务执行成功 批量添加任务结果
+			err = portScanService.BatchAddWithTransaction(tx, taskResult.PortScanList)
+			if err != nil {
+				return err
+			}
+			err = onlineCheckService.BatchAddWithTransaction(tx, taskResult.OnlineCheckList)
+			if err != nil {
+				return err
+			}
+			err = jobResultService.BatchAddWithTransaction(tx, taskResult.JobResultList)
+			if err != nil {
+				return err
+			}
+			return nil
+		})
+		if err != nil {
+			global.GVA_LOG.Error("任务执行失败", zap.String("taskName", newTask.TaskName), zap.Error(err))
+			newTask.Status = 3
+		} else {
+			newTask.Status = 2
+			global.GVA_LOG.Info("任务执行成功", zap.String("taskName", newTask.TaskName))
+		}
+		// 更新任务状态为 失败或成功
+		s.UpdateTask(newTask)
+	}
+
 }
 
 // generateJob 生成任务， 根据任务配置生成任务
-func (s *TaskService) generateJob(id int, jobConfig []request.JobConfig, taskResult *response.TaskResult) ([]types.JobOptions, error) {
+func (s *TaskService) generateJob(jobConfig []request.JobConfig, taskResult *response.TaskResult) ([]types.JobOptions, error) {
 	jobs := make([]types.JobOptions, len(jobConfig))
 	for i, job := range jobConfig {
 		// dir := path.Join(global.GVA_CONFIG.AutoCode.Root, "templates", job.Name)
@@ -406,7 +454,6 @@ func (s *TaskService) generateJob(id int, jobConfig []request.JobConfig, taskRes
 					Matched:          item.Matched,
 					ExtractedResults: item.ExtractedResults,
 					Description:      item.Description,
-					TaskID:           uint(id),
 					EntryID:          result.EntryID,
 				}
 				data = append(data, item)
@@ -434,21 +481,23 @@ func (s *TaskService) generateJob(id int, jobConfig []request.JobConfig, taskRes
 }
 
 func (s *TaskService) StopTask(id int) error {
-	// 停止定时任务
 	task, err := s.GetTaskById(id)
 	if err != nil {
 		return err
 	}
-	if err := global.GVA_REDIS.Get(context.Background(), "task_"+strconv.Itoa(id)).Err(); err != nil {
-		return errors.New("任务未执行或已结束")
-	}
-	entryID := global.GVA_REDIS.Get(context.Background(), "task_"+strconv.Itoa(id)).Val()
-	entry := global.EagleeyeEngine.Entry(entryID)
-	if entry == nil {
-		return errors.New("任务未开始或已结束")
-	}
-	if err := entry.Stop(); err != nil {
-		return errors.New("任务未开始或已结束")
+	// 停止普通任务
+	if task.TaskPlan == 1 || task.TaskPlan == 2 {
+		if err := global.GVA_REDIS.Get(context.Background(), "task_"+strconv.Itoa(id)).Err(); err != nil {
+			return errors.New("任务未执行或已结束")
+		}
+		entryID := global.GVA_REDIS.Get(context.Background(), "task_"+strconv.Itoa(id)).Val()
+		entry := global.EagleeyeEngine.Entry(entryID)
+		if entry == nil {
+			return errors.New("任务未开始或已结束")
+		}
+		if err := entry.Stop(); err != nil {
+			return errors.New("任务未开始或已结束")
+		}
 	}
 
 	// 停止定时任务
