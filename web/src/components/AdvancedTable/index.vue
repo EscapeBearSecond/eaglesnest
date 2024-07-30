@@ -59,11 +59,11 @@
   </el-table>
   <pagination
     v-if="listQuery && pagination"
-    :total="listQuery.total"
-    :page="listQuery.page"
-    :pagesize="listQuery.pageSize"
-    :fix-foot="listQuery.fixFoot"
-    @pagination="handlePagination"
+      :page="listQuery.page"
+      :page-size="listQuery.pageSize"
+      :total="listQuery.total"
+      @size-change="handleSizeChange"
+      @current-change="handlePagination"
   />
 </template>
 
@@ -93,12 +93,16 @@ export default defineComponent({
     statusWidth: { default: null, type: String },
     index: { default: false, type: Boolean },
     pagination: { default: null, type: Function },
+    changePageSize:{default:null, type:Function},
   },
-  emits: ['update:tableData', 'update:listQuery'],
+  emits: ['update:tableData', 'update:listQuery', 'pagination'],
   setup(props, { emit }) {
-    const handlePagination = (page, pageSize) => {
-      console.log(111111111111, props.listQuery, page)
-      emit('update:listQuery', { ...props.listQuery, page, pageSize });
+    const handlePagination = (val) => {
+      props.listQuery.page = val;
+      emit('update:listQuery', { ...props.listQuery, page: val });
+      if (props.pagination) {
+        props.pagination(val);
+      }
     };
 
     const onTableSelect = (selection, row) => {
@@ -109,7 +113,15 @@ export default defineComponent({
       props.selectionAll && props.selectionAll(selection);
     };
 
+    const handleSizeChange = (val) => {
+      props.listQuery.pageSize = val;
+      if (props.changePageSize) {
+        props.changePageSize(val);
+      }
+    }
+
     return {
+      handleSizeChange,
       handlePagination,
       onTableSelectAll,
       onTableSelect

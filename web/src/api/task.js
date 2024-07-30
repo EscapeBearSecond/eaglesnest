@@ -35,7 +35,7 @@ export const reportTask = (data) => {
 export const delTask = (data) => {
   return service({
     url: `/task/${data.id}`,
-    method: 'del',
+    method: 'delete',
     data
   })
 }
