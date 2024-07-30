@@ -100,7 +100,6 @@ const tableColumns = reactive([
     { label:'IP', prop:'assetIP'},
     { label:'归属', prop:'assetArea'},
     { label:'类型', prop:'assetType'},
-    { label:'价值', prop:'manufacturer'},
     { label:'备注', prop:'desc'},
 ])
 

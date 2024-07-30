@@ -18,7 +18,7 @@ export const stopTask = (data) => {
 
 export const getTaskList = (data) => {
     return service({
-      url: '/area/list',
+      url: '/task/list',
       method: 'post',
       data
     })
@@ -35,7 +35,7 @@ export const reportTask = (data) => {
 export const delTask = (data) => {
   return service({
     url: `/task/${data.id}`,
-    method: 'del',
+    method: 'delete',
     data
   })
 }

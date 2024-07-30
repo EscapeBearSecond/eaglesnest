@@ -38,9 +38,17 @@
         :tableData="tableData"
         :listQuery="listQuery"
         :statusData="statusData"
-        :pagination="pagination"
+        :pagination="handlePagination"
+        :changePageSize="handleChangePageSize"
         :index="true"
-      ></advance-table>
+      >
+      <template v-slot:customTaskPlan="slotProps">
+        <!-- 自定义的字段 -->
+        <span>
+          <el-tag effect="dark" >{{ getTypeTagName(slotProps.row.taskPlan) }}</el-tag>
+        </span>
+      </template>
+    </advance-table>
      
     </div>
     <!-- 新增角色弹窗 -->
@@ -120,7 +128,7 @@ import {
   reportTask,
 } from '@/api/task.js'
 import { ref } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox, formatter } from 'element-plus'
 
 defineOptions({
   name: 'Authority'
@@ -151,8 +159,11 @@ const tableColumns = ref([
     { label:'名称', prop:'taskName'},
     { label:'描述', prop:'taskDesc'},
     { label:'目标', prop:'targetIp'},
-    { label:'任务计划', prop:'taskPlan'},
-    { label:'状态', prop:'status'},
+    { label:'执行方式', prop:'taskPlan', slot: 'customTaskPlan'},
+    { label:'状态', prop:'status', formatter(row, column) {
+       let res = ['创建中','执行中','已完成', '执行失败']
+       return res[row.status]
+    }},
     { label:'策略', prop:'planConfig'},
 ])
 const rules = ref({
@@ -177,8 +188,6 @@ const rules = ref({
 })
 
 const page = ref(1)
-const total = ref(0)
-const pageSize = ref(999)
 const listQuery = ref({
     page: 1,
     total: 0,
@@ -210,17 +219,24 @@ const searchInfo = ref({})
 
 // 查询
 const getTableData = async() => {
-  const table = await getTaskList({ page: page.value, pageSize: pageSize.value, ...searchInfo.value })
+  const table = await getTaskList({ page: listQuery.value.page, pageSize: listQuery.value.pageSize, ...searchInfo.value })
   if (table.code === 0) {
     tableData.value = table.data.list
-    total.value = table.data.total
-    page.value = table.data.page
-    pageSize.value = table.data.pageSize
+    listQuery.value.total = table.data.total
+    listQuery.value.page= table.data.page
+    listQuery.value.pageSize = table.data.pageSize
   }
+}
+const onSubmit = () => {
+  listQuery.value.page = 1
+  getTableData()
+}
+const onReset = () => {
+  searchInfo.value = {}
+  getTableData
 }
 
 getTableData()
-// 删除角色
 const handleDel = (row) => {
   ElMessageBox.confirm('此操作将永久删除该任务, 是否继续?', '提示', {
     confirmButtonText: '确定',
@@ -307,9 +323,15 @@ const addAuthority = (parentId) => {
 }
 
 
-const pagination = () => {
-  getTableData()
-}
+const handlePagination = (page) => {
+  console.log(`当前页: ${page}`);
+   getTableData()
+};
+
+const handleChangePageSize = (pageSize) => {
+  console.log(`当前页码: ${pageSize}`);
+   getTableData()
+};
 
 const handleStop = (row) => {
   ElMessageBox.confirm('此操作将停止该任务, 是否继续?', '提示', {
@@ -337,6 +359,11 @@ const handleStop = (row) => {
 
 const handleReport =  async(row) =>{
     await reportTask({ id: row.id })
+}
+
+const getTypeTagName = (e) => {
+    let status = ['其他', '立即执行', '稍后执行','定时执行']
+    return status[e]
 }
 
 </script>
