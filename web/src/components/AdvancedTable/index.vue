@@ -97,6 +97,7 @@ export default defineComponent({
   emits: ['update:tableData', 'update:listQuery'],
   setup(props, { emit }) {
     const handlePagination = (page, pageSize) => {
+      console.log(111111111111, props.listQuery, page)
       emit('update:listQuery', { ...props.listQuery, page, pageSize });
     };
 

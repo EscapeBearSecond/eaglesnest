@@ -18,7 +18,7 @@ export const stopTask = (data) => {
 
 export const getTaskList = (data) => {
     return service({
-      url: '/area/list',
+      url: '/task/list',
       method: 'post',
       data
     })
