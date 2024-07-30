@@ -17,6 +17,18 @@
         :pagination="handleCurrentChange"
         :index="true"
       >
+      <template v-slot:customAreaName="slotProps">
+        <!-- 自定义的字段 -->
+        <span> 
+          <el-tag effect="dark" type="warning">{{ getAreaName(slotProps.row.assetArea) }}</el-tag>
+        </span>
+      </template>
+      <template v-slot:customProt="slotProps">
+        <!-- 自定义的字段 -->
+        <span v-for="(val, key) in slotProps.row.openPorts" :key="key" style="margin-left: 2px;"> 
+          <el-tag effect="dark"  type="primary">{{ val }}</el-tag>
+        </span>
+      </template>
       </advance-table>
 
     </div>
@@ -26,6 +38,7 @@
 
 <script setup>
 import { getListApi } from "@/api/assets"
+import { getAreaList } from "@/api/area"
 
 import { ref, reactive } from 'vue'
 
@@ -86,11 +99,21 @@ const getTableData = async() => {
       listQuery.total = table.data.total;
       listQuery.page = table.data.page;
       listQuery.pageSize = table.data.pageSize;
-    }
+    }    
+}
+const areaList = ref([])
+const getAreaData = async() => {
+  const table = await getAreaList({
+      page: 1,
+      pageSize: 100,
+  });
+
+  areaList.value = table.data.list
 }
 
 const initPage = async() => {
   getTableData()
+  getAreaData()
 }
 
 initPage()
@@ -98,15 +121,18 @@ initPage()
 const tableColumns = reactive([
     { label:'名称', prop:'assetName'},
     { label:'IP', prop:'assetIP'},
-    { label:'归属', prop:'assetArea'},
+    { label:'区域', prop:'assetArea', slot: 'customAreaName'},
     { label:'类型', prop:'assetType'},
-    { label:'备注', prop:'desc'},
+    { label:'开放端口', prop:'openPorts', slot: 'customProt'},
 ])
+
+const getAreaName = (e) => {
+  const item = areaList.value.find((item) => item.ID == e);
+  return item ? item.areaName : '未知';
+};
+
 
 </script>
 
 <style lang="scss">
-  .header-img-box {
-    @apply w-52 h-52 border border-solid border-gray-300 rounded-xl flex justify-center items-center cursor-pointer;
- }
 </style>
