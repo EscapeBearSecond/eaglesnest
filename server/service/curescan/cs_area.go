@@ -23,7 +23,15 @@ func (a *AreaService) CreateArea(area *curescan.Area) error {
 
 // DeleteArea 根据区域ID删除区域，该删除是逻辑删除，通过将deleted_at字段置为删除时间。
 func (a *AreaService) DeleteArea(id int) error {
-	return global.GVA_DB.Delete(&curescan.Area{}, id).Error
+	err := global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+		err := tx.Delete(&curescan.Area{}, id).Error
+		if err != nil {
+			return err
+		}
+		err = tx.Model(&curescan.Asset{}).Where("asset_area = ?", id).Update("area_name", "未知").Error
+		return err
+	})
+	return err
 }
 
 // UpdateArea 更新区域信息，更新后的区域名称不允许重复。
