@@ -196,13 +196,14 @@ const handleClickDelete = async(row) => {
 // 弹窗相关
 const districtInfo = ref({
   areaName:"",
+  areaIp:"",
   areaIpStr:"",
   areaDesc:"",
 })
 
 const tableColumns = reactive([
     { label:'区域名称', prop:'areaName'},
-    { label:'IP范围', prop:'areaIP'},
+    { label:'IP范围', prop:'areaIp'},
     { label:'备注', prop:'areaDesc'},
 ])
 
@@ -268,7 +269,8 @@ const addUser = () => {
 }
 
 const handleClickUpdate = (row) => {
-  row.areaIpStr = row.areaIP.join(',');
+  console.log(row)
+  row.areaIpStr = row.areaIp.join(',');
   dialogFlag.value = 'edit'
   districtInfo.value = JSON.parse(JSON.stringify(row))
   districtInfoDialog.value = true
