@@ -6,10 +6,10 @@ import (
 )
 
 type CreateTemplate struct {
-	TemplateName    string
-	TemplateType    uint
-	TemplateDesc    string
-	TemplateContent string
+	TemplateName    string `json:"templateName"`
+	TemplateType    uint   `json:"templateType,string"`
+	TemplateDesc    string `json:"templateDesc"`
+	TemplateContent string `json:"templateContent"`
 }
 
 type SearchTemplate struct {

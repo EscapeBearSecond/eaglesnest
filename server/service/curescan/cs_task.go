@@ -509,7 +509,7 @@ func (s *TaskService) generateJob(jobConfig []request.JobConfig, taskResult *res
 				var item = &curescan.JobResultItem{
 					Name:             result.Name,
 					Kind:             result.Kind,
-					TemplateID:       item.EntryID,
+					TemplateID:       item.TemplateID,
 					TemplateName:     item.TemplateName,
 					Host:             item.Host,
 					Type:             item.Type,

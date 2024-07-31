@@ -7,15 +7,15 @@ import (
 type CreateTask struct {
 	TaskName   string   `json:"taskName"`
 	TaskDesc   string   `json:"taskDesc"`
-	Status     int      `json:"status"`
+	Status     int      `json:"status,string"`
 	TargetIP   []string `json:"targetIp"`
 	PolicyID   uint     `json:"policyId"`
-	TaskPlan   int      `json:"taskPlan"`
+	TaskPlan   int      `json:"taskPlan,string"`
 	PlanConfig string   `json:"planConfig"`
 }
 
 type UpdateTask struct {
-	ID uint `json:"id"`
+	ID uint `json:"ID"`
 	CreateTask
 }
 
