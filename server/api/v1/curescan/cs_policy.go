@@ -9,6 +9,7 @@ import (
 	"47.103.136.241/goprojects/curesan/server/model/common/response"
 	"47.103.136.241/goprojects/curesan/server/model/curescan"
 	"47.103.136.241/goprojects/curesan/server/model/curescan/request"
+	csresponse "47.103.136.241/goprojects/curesan/server/model/curescan/response"
 	"47.103.136.241/goprojects/curesan/server/utils"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -151,8 +152,38 @@ func (p *PolicyApi) GetPolicyById(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	response.OkWithData(policy, c)
-
+	var onlineConfig csresponse.OnlineConfig
+	err = json.Unmarshal([]byte(policy.OnlineConfig), &onlineConfig)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	var portScanConfig csresponse.PortScanConfig
+	err = json.Unmarshal([]byte(policy.PortScanConfig), &portScanConfig)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	var policyConfig []csresponse.JobConfig
+	err = json.Unmarshal([]byte(policy.PolicyConfig), &policyConfig)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	policyDetil := &csresponse.PolicyDetail{
+		GvaModel:       policy.GvaModel,
+		PolicyName:     policy.PolicyName,
+		PolicyDesc:     policy.PolicyDesc,
+		ScanType:       policy.ScanType,
+		PolicyConfig:   policyConfig,
+		OnlineCheck:    policy.OnlineCheck,
+		OnlineConfig:   onlineConfig,
+		PortScan:       policy.PortScan,
+		PortScanConfig: portScanConfig,
+		Templates:      policy.Templates,
+		IgnoredIP:      policy.IgnoredIP,
+	}
+	response.OkWithData(policyDetil, c)
 }
 
 func (p *PolicyApi) GetPolicyList(c *gin.Context) {
