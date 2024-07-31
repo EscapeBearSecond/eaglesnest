@@ -29,7 +29,7 @@
     >
       <template #header>
         <div class="flex justify-between items-center">
-          <span class="text-lg">区域</span>
+          <span class="text-lg">模板</span>
           <div>
             <el-button @click="closeAddDialog">取 消</el-button>
             <el-button
@@ -43,22 +43,22 @@
       <el-form
         ref="form"
         :rules="rules"
-        :model="template"
+        :model="tempFormData"
         label-width="80px"
       >
         <el-form-item
-          label="模板名称"
-          prop="areaName"
+          label="名称"
+          prop="templateName"
         >
-          <el-input v-model="template.templateName" />
+          <el-input v-model="tempFormData.templateName" placeholder="模板名称" />
         </el-form-item>
         <el-form-item
           label="类型"
           prop="templateType"
         >
         <el-select
-          v-model="template.templateType"
-          placeholder="选择模板类型"
+          v-model="tempFormData.templateType"
+          placeholder="类型"
           size="large"
           >
           <el-option
@@ -70,9 +70,10 @@
           </el-select>
         </el-form-item>
         <el-form-item
-          label="模板内容"
+          label="内容"
+          prop="templateContent"
         >
-        <el-input type="textarea" :rows="18" v-model="template.templateContent" />
+        <el-input type="textarea" :rows="18" v-model="tempFormData.templateContent" placeholder="模板内容" />
         </el-form-item>
       </el-form>
     </el-drawer>
@@ -166,7 +167,7 @@ const handleClickDelete = async(row) => {
 }
 
 // 弹窗相关
-const template = ref({
+const tempFormData = ref({
   templateName:"",
   templateType:"",
   templateContent:"",
@@ -177,8 +178,8 @@ const tableColumns = reactive([
     { label:'类型', prop:'templateType'},
 ])
 
-const rules = ref({
-  templateNameme: [
+const rules = reactive({
+  templateName: [
     { required: true, message: '请输入模板名称', trigger: 'blur' },
   ],
   templateType: [
@@ -218,19 +219,9 @@ const enterAddDialog = async() => {
   })
 }
 
-function getIpArr(e) {
-    if(e.includes(',')) {
-        return e.split(',')
-    }else {
-      return [e]
-    }
-}
-
 const templateDialog = ref(false)
 const closeAddDialog = () => {
   form.value.resetFields()
-  template.value.headerImg = ''
-  template.value.authorityIds = []
   templateDialog.value = false
 }
 
