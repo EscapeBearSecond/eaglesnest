@@ -41,7 +41,7 @@ func (t *TemplateService) GetTemplateById(id int) (*curescan.Template, error) {
 	return &template, nil
 }
 
-func (t *TemplateService) GetTemplatesByIds(ids []string) ([]*curescan.Template, error) {
+func (t *TemplateService) GetTemplatesByIds(ids []int64) ([]*curescan.Template, error) {
 	var templates []*curescan.Template
 	err := global.GVA_DB.Select("id", "template_name", "template_type", "template_id", "template_desc", "template_content",
 		"created_at", "updated_at", "deleted_at").Where("id in (?)", ids).Find(&templates).Error

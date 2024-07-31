@@ -58,7 +58,7 @@ func (p *PolicyApi) CreatePolicy(c *gin.Context) {
 	onlineConfg, _ := json.Marshal(createPolicy.OnlineConfig)
 	portScanConfg, _ := json.Marshal(createPolicy.PortScanConfig)
 	scanType := make([]string, len(createPolicy.PolicyConfig))
-	templates := make([]string, 0)
+	templates := make([]int64, 0)
 	for i := 0; i < len(createPolicy.PolicyConfig); i++ {
 		scanType[i] = createPolicy.PolicyConfig[i].Kind
 		templates = append(templates, createPolicy.PolicyConfig[i].Templates...)
@@ -99,7 +99,7 @@ func (p *PolicyApi) UpdatePolicy(c *gin.Context) {
 	onlineConfg, _ := json.Marshal(updatePolicy.OnlineConfig)
 	portScanConfg, _ := json.Marshal(updatePolicy.PortScanConfig)
 	scanType := make([]string, len(updatePolicy.PolicyConfig))
-	templates := make([]string, 0)
+	templates := make([]int64, 0)
 	for i := 0; i < len(updatePolicy.PolicyConfig); i++ {
 		scanType[i] = updatePolicy.PolicyConfig[i].Kind
 		templates = append(templates, updatePolicy.PolicyConfig[i].Templates...)

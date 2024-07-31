@@ -41,7 +41,7 @@ type JobConfig struct {
 	Format      string   `json:"format"`
 	RateLimit   int      `json:"rateLimit"`
 	Concurrency int      `json:"concurrency"`
-	Templates   []string `json:"templates"`
+	Templates   []int64 `json:"templates"`
 }
 
 type UpdatePolicy struct {

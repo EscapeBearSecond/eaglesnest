@@ -233,7 +233,7 @@ func (t *TemplateApi) ImportTemplates(c *gin.Context) {
 }
 
 func (t *TemplateApi) LLL(c *gin.Context) {
-	templates, err := templateService.GetTemplatesByIds([]string{"130"})
+	templates, err := templateService.GetTemplatesByIds([]int64{130})
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return

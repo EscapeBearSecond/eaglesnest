@@ -15,7 +15,7 @@ type Policy struct {
 	OnlineConfig   string         `json:"onlineConfig" gorm:"column:online_config;type:text;comment:在线检测配置"`
 	PortScan       bool           `json:"portScan" gorm:"column:port_scan;type:bool;comment:端口扫描"`
 	PortScanConfig string         `json:"portScanConfig" gorm:"column:port_scan_config;type:text;comment:端口扫描配置"`
-	Templates      pq.StringArray  `json:"templates" gorm:"column:templates;type:int8[];comment:模板"`
+	Templates      pq.Int64Array  `json:"templates" gorm:"column:templates;type:int8[];comment:模板"`
 	IgnoredIP      pq.StringArray `json:"ignoredIp" gorm:"column:ignored_ip;type:text[];comment:忽略的IP"`
 }
 
