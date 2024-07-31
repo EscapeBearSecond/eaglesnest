@@ -1,11 +1,12 @@
 package curescan
 
 import (
-	"47.103.136.241/goprojects/curesan/server/global"
-	"47.103.136.241/goprojects/curesan/server/model/common/request"
-	"47.103.136.241/goprojects/curesan/server/model/curescan"
 	"errors"
 	"fmt"
+
+	"47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curesan/server/model/curescan"
+	request2 "47.103.136.241/goprojects/curesan/server/model/curescan/request"
 	"gorm.io/gorm"
 )
 
@@ -17,6 +18,7 @@ func (t *TemplateService) CreateTemplate(template *curescan.Template) error {
 	if !errors.Is(global.GVA_DB.Select("template_name").First(&curescan.Template{}, "template_name = ?", template.TemplateName).Error, gorm.ErrRecordNotFound) {
 		return errors.New("模板已存在，请查看模板名是否正确")
 	}
+
 	return global.GVA_DB.Create(template).Error
 }
 
@@ -50,10 +52,19 @@ func (t *TemplateService) GetTemplatesByIds(ids []int64) ([]*curescan.Template, 
 }
 
 // GetTemplateList 获取模板列表，该方法返回除模板内容外的所有信息。如果想要获取模板内容，需要调用GetTemplateById方法。
-func (t *TemplateService) GetTemplateList(template curescan.Template, page request.PageInfo, order string, desc bool) (list interface{}, total int64, err error) {
+func (t *TemplateService) GetTemplateList(searchTemplate request2.SearchTemplate) (list interface{}, total int64, err error) {
+	template := searchTemplate.Template
+	page := searchTemplate.PageInfo
+	order := searchTemplate.OrderKey
+	desc := searchTemplate.Desc
 	limit := page.PageSize
 	offset := page.PageSize * (page.Page - 1)
-	db := global.GVA_DB.Model(&curescan.Template{}).Omit("template_content")
+	var db *gorm.DB
+	if searchTemplate.IsAll {
+		db = global.GVA_DB.Model(&curescan.Template{})
+	} else {
+		db = global.GVA_DB.Model(&curescan.Template{}).Omit("template_content")
+	}
 	var templates []curescan.Template
 	if template.TemplateType != 0 {
 		db = db.Where("template_type = ?", template.TemplateType)

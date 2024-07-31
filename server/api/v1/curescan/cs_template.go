@@ -127,7 +127,7 @@ func (t *TemplateApi) GetTemplateList(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	list, total, err := templateService.GetTemplateList(searchTemplate.Template, searchTemplate.PageInfo, searchTemplate.OrderKey, searchTemplate.Desc)
+	list, total, err := templateService.GetTemplateList(searchTemplate)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
