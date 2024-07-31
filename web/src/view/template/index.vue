@@ -1,6 +1,5 @@
 <template>
   <div>
-    <warning-bar title="注：右上角头像下拉可切换角色" />
     <div class="gva-table-box">
       <div class="gva-btn-list">
         <el-button
@@ -17,6 +16,17 @@
         :pagination="handleCurrentChange"
         :index="true"
       >
+      <template v-slot:custType="slotProps">
+        <!-- 自定义的字段 -->
+        <span v-for="(item, key) in templateOptions" :key="key" style="margin-left: 5px;"> 
+          <el-tag
+            type="primary"
+            effect="dark"
+            v-if="slotProps.row.templateType == item.value"
+          >
+          {{  item.label }}</el-tag>
+        </span>
+      </template>
       </advance-table>
 
     </div>
@@ -29,7 +39,7 @@
     >
       <template #header>
         <div class="flex justify-between items-center">
-          <span class="text-lg">区域</span>
+          <span class="text-lg">模板</span>
           <div>
             <el-button @click="closeAddDialog">取 消</el-button>
             <el-button
@@ -43,22 +53,22 @@
       <el-form
         ref="form"
         :rules="rules"
-        :model="template"
+        :model="tempFormData"
         label-width="80px"
       >
         <el-form-item
-          label="模板名称"
-          prop="areaName"
+          label="名称"
+          prop="templateName"
         >
-          <el-input v-model="template.templateName" />
+          <el-input v-model="tempFormData.templateName" placeholder="模板名称" />
         </el-form-item>
         <el-form-item
           label="类型"
           prop="templateType"
         >
         <el-select
-          v-model="template.templateType"
-          placeholder="选择模板类型"
+          v-model="tempFormData.templateType"
+          placeholder="类型"
           size="large"
           >
           <el-option
@@ -70,9 +80,10 @@
           </el-select>
         </el-form-item>
         <el-form-item
-          label="模板内容"
+          label="内容"
+          prop="templateContent"
         >
-        <el-input type="textarea" :rows="18" v-model="template.templateContent" />
+        <el-input type="textarea" :rows="18" v-model="tempFormData.templateContent" placeholder="模板内容" />
         </el-form-item>
       </el-form>
     </el-drawer>
@@ -127,7 +138,7 @@ const statusData = reactive([
 ])
 
 const searchInfo = reactive({
-    areaName:''
+  templateName:''
 })
 
 // 查询
@@ -135,6 +146,7 @@ const getTableData = async() => {
   const table = await getTemplateList({
       page: listQuery.page,
       pageSize: listQuery.pageSize,
+      isAll:true,
       ...searchInfo,
     });
     if (table.code === 0) {
@@ -166,19 +178,20 @@ const handleClickDelete = async(row) => {
 }
 
 // 弹窗相关
-const template = ref({
+const tempFormData = ref({
   templateName:"",
   templateType:"",
   templateContent:"",
 })
 
 const tableColumns = reactive([
+    { label:'I D', prop:'templateId'},
     { label:'名称', prop:'templateName'},
-    { label:'类型', prop:'templateType'},
+    { label:'类型', prop:'templateType',  slot: 'custType'},
 ])
 
-const rules = ref({
-  templateNameme: [
+const rules = reactive({
+  templateName: [
     { required: true, message: '请输入模板名称', trigger: 'blur' },
   ],
   templateType: [
@@ -186,8 +199,7 @@ const rules = ref({
   ],
   templateContent: [
     { required: true, message: '请输入模板内容', trigger: 'blur' },
-  ],
-  
+  ]
 })
 const form = ref(null)
 const enterAddDialog = async() => {
@@ -195,7 +207,7 @@ const enterAddDialog = async() => {
   form.value.validate(async valid => {
     if (valid) {
       const req = {
-        ...template.value
+        ...tempFormData.value
       }
       // req.areaIp = getIpArr(req.areaIpStr)
       if (dialogFlag.value === 'add') {
@@ -218,19 +230,15 @@ const enterAddDialog = async() => {
   })
 }
 
-function getIpArr(e) {
-    if(e.includes(',')) {
-        return e.split(',')
-    }else {
-      return [e]
-    }
-}
-
 const templateDialog = ref(false)
 const closeAddDialog = () => {
+  console.log(
+  '%c 🍱 CONSOLE_INFO: ',
+  'font-size:20px;background-color: #ED9EC7;color:#fff;',
+  form.value
+  );
+  
   form.value.resetFields()
-  template.value.headerImg = ''
-  template.value.authorityIds = []
   templateDialog.value = false
 }
 
@@ -245,7 +253,7 @@ const handleClickUpdate = (row) => {
   console.log(row)
   dialogFlag.value = 'edit'
   row.templateType = row.templateType + ''
-  template.value = JSON.parse(JSON.stringify(row))
+  tempFormData.value = JSON.parse(JSON.stringify(row))
   templateDialog.value = true
 }
 
