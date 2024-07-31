@@ -30,7 +30,7 @@ func (t *TemplateService) DeleteTemplate(id int) error {
 // GetTemplateById 根据模板ID获取模板详情信息，包括模板内容
 func (t *TemplateService) GetTemplateById(id int) (*curescan.Template, error) {
 	var template curescan.Template
-	err := global.GVA_DB.Select("id", "template_name", "template_type", "template_desc", "template_content",
+	err := global.GVA_DB.Select("id", "template_name", "template_type", "template_id", "template_desc", "template_content",
 		"created_at", "updated_at", "deleted_at").Where("id = ?", id).First(&template).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -41,9 +41,9 @@ func (t *TemplateService) GetTemplateById(id int) (*curescan.Template, error) {
 	return &template, nil
 }
 
-func (t *TemplateService) GetTemplatesByIds(ids []int64) ([]*curescan.Template, error) {
+func (t *TemplateService) GetTemplatesByIds(ids []string) ([]*curescan.Template, error) {
 	var templates []*curescan.Template
-	err := global.GVA_DB.Select("id", "template_name", "template_type", "template_desc", "template_content",
+	err := global.GVA_DB.Select("id", "template_name", "template_type", "template_id", "template_desc", "template_content",
 		"created_at", "updated_at", "deleted_at").Where("id in (?)", ids).Find(&templates).Error
 	if err != nil {
 		return nil, err

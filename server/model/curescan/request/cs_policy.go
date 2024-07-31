@@ -34,14 +34,14 @@ type PortScanConfig struct {
 }
 
 type JobConfig struct {
-	Name        string  `json:"name"`
-	Kind        string  `json:"kind"`
-	Timeout     string  `json:"timeout"`
-	Count       int     `json:"count"`
-	Format      string  `json:"format"`
-	RateLimit   int     `json:"rateLimit"`
-	Concurrency int     `json:"concurrency"`
-	Templates   []int64 `json:"templates"`
+	Name        string   `json:"name"`
+	Kind        string   `json:"kind"`
+	Timeout     string   `json:"timeout"`
+	Count       int      `json:"count"`
+	Format      string   `json:"format"`
+	RateLimit   int      `json:"rateLimit"`
+	Concurrency int      `json:"concurrency"`
+	Templates   []string `json:"templates"`
 }
 
 type UpdatePolicy struct {

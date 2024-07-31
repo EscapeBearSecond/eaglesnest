@@ -231,3 +231,12 @@ func (t *TemplateApi) ImportTemplates(c *gin.Context) {
 	response.Ok(c)
 
 }
+
+func (t *TemplateApi) LLL(c *gin.Context) {
+	templates, err := templateService.GetTemplatesByIds([]string{"130"})
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	response.OkWithData(templates, c)
+}
