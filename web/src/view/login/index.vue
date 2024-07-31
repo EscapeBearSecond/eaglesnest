@@ -21,7 +21,8 @@
             </div>
             <div class="mb-9">
               <p class="text-center text-4xl font-bold">{{ $GIN_VUE_ADMIN.appName }}</p>
-             
+              <p class="text-center text-sm font-normal text-gray-500 mt-2.5">A management platform using Golang and Vue
+              </p>
             </div>
             <el-form
               ref="loginForm"
@@ -84,6 +85,15 @@
                   @click="submitForm"
                 >登 录</el-button>
               </el-form-item>
+              <el-form-item class="mb-6">
+                <el-button
+                  class="shadow shadow-active h-11 w-full"
+                  type="primary"
+                  size="large"
+                  @click="checkInit"
+                >前往初始化</el-button>
+
+              </el-form-item>
             </el-form>
           </div>
         </div>
@@ -101,6 +111,7 @@
 
 <script setup>
 import { captcha } from '@/api/user'
+import { checkDB } from '@/api/initdb'
 
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
@@ -147,8 +158,8 @@ loginVerify()
 const loginForm = ref(null)
 const picPath = ref('')
 const loginFormData = reactive({
-  username: 'ruiven',
-  password: 'chenrui',
+  username: 'chenrui',
+  password: 'chenrui1989',
   captcha: '',
   captchaId: '',
   openCaptcha: false,
@@ -194,4 +205,21 @@ const submitForm = () => {
     return true
   })
 }
+
+// 跳转初始化
+const checkInit = async() => {
+  const res = await checkDB()
+  if (res.code === 0) {
+    if (res.data?.needInit) {
+      userStore.NeedInit()
+      router.push({ name: 'Init' })
+    } else {
+      ElMessage({
+        type: 'info',
+        message: '已配置数据库信息，无法初始化',
+      })
+    }
+  }
+}
+
 </script>

@@ -30,7 +30,7 @@
          <el-button
            type="primary"
            icon="plus"
-           @click="addPolicy()"
+           @click="handleAdd()"
          >新增策略</el-button>
        </div>
        <advance-table
@@ -87,19 +87,34 @@
        :before-close="handleClose"
        size="45%"
      >
+     <template #header>
+        <div class="flex justify-between items-center">
+          <span class="text-lg">策略</span>
+          <div>
+            <el-button @click="closeDialog">取 消</el-button>
+            <el-button
+              type="primary"
+              @click="enterDialog"
+            >确 定</el-button>
+          </div>
+        </div>
+      </template>
        <el-form
-         ref="authorityForm"
+         ref="formRef"
          :model="form"
          :rules="rules"
          style="padding:10px 20px;"
          label-width="100px"
        >
-         <el-form-item label="策略名称" :label-position="itemLabelPosition" prop="taskName">
-            <el-input v-model="form.policyName" placeholder="请输入扫描名称" />
+         <el-form-item label="策略名称" :label-position="itemLabelPosition" prop="policyName">
+            <el-input v-model="form.policyName" placeholder="请输入策略名称" />
          </el-form-item>
+         <el-form-item label=" 其他描述：" :label-position="itemLabelPosition">
+            <el-input type="textarea" :rows="3" v-model="form.policyDesc" />
+        </el-form-item>
          <div style="margin-left: 8px;">
-            <label  class="el-form-item__label">策略选项</label>
-            <el-collapse v-model="activeNames" style="padding-left: 20px;" accordion>
+            <label  class="el-form-item__label">策略配置</label>
+            <el-collapse v-model="activeNames" style="padding-left: 40px;" accordion>
                <el-collapse-item title="在线检测" name="1">
                   <el-form-item label="策略状态" :label-position="itemLabelPosition" class="one-lab">
                         <el-checkbox v-model="form.onlineConfig.use" label="开启"  size="large" />
@@ -146,15 +161,35 @@
                </el-collapse-item>
             </el-collapse>
          </div>
-         <div style="margin-left: 8px;padding-top: 5px;">
-            <label  class="el-form-item__label">其他选项：</label>
-             <template v-for="(item, index) in form.policyConfig" :key="index" >
-                <label style="display: block;margin-left: 20px;">配置{{ index+1 }}</label>
+         <div style="margin: 10px 0 10px 10px;padding-top: 5px;">
+            <label  class="el-form-item__label">模板配置：</label>
+            <el-button type="primary" icon="Plus" @click="addTmpData" v-if="form.policyConfig.length < 3">新增</el-button>
+            <el-button type="primary" icon="Delete" @click="delTmpData" v-if="form.policyConfig.length >= 2">删除</el-button>
+
+             <template v-for="(policyItem, index) in form.policyConfig" :key="index" >
+                <label style="display: block;margin: 10px 0 10px 20px;">配置{{ index+1 }}</label>
                 <div style="margin-left: 40px;">
                   <el-form-item label="类型" :label-position="itemLabelPosition" class="sec-lab">
-                    <el-select v-model="item.kind" placeholder="请选择扫描类型">
+                    <el-select v-model="policyItem.kind" placeholder="请选择扫描类型" @change="getTemplateData(policyItem.kind)">
                         <el-option
-                          v-for="item in typeNameList"
+                          v-for="type in typeNameList"
+                          :key="type.value"
+                          :label="type.label"
+                          :value="type.value"
+                          :disabled="type.disabled"
+                        />
+                      </el-select>
+                  </el-form-item>
+                  <el-form-item label="模板" :label-position="itemLabelPosition" class="sec-lab">
+                     <el-select 
+                      v-model="policyItem.templates" 
+                      placeholder="请选择模板，可多选"   
+                      multiple
+                      collapse-tags
+                      collapse-tags-tooltip
+                      >
+                        <el-option
+                          v-for="item in tmpOption[policyItem.kind]"
                           :key="item.value"
                           :label="item.label"
                           :value="item.value"
@@ -162,52 +197,29 @@
                         />
                       </el-select>
                   </el-form-item>
-                  <el-form-item label="模板" :label-position="itemLabelPosition" class="sec-lab">
-                     <el-input v-model="item.ports" />
-                  </el-form-item>
                   <el-form-item label="并发数" :label-position="itemLabelPosition" class="sec-lab">
-                     <el-input v-model="item.concurrency" />
+                     <el-input v-model="policyItem.concurrency" />
                   </el-form-item>
                   <el-form-item label="超时" :label-position="itemLabelPosition" class="sec-lab">
-                     <el-input v-model="item.timeout" />
+                     <el-input v-model="policyItem.timeout" />
                   </el-form-item>
                   <el-form-item label="限流速度" :label-position="itemLabelPosition" class="sec-lab">
-                     <el-input v-model="item.rateLimit" />
+                     <el-input v-model="policyItem.rateLimit" />
                   </el-form-item>
                   <el-form-item label="探活轮次" :label-position="itemLabelPosition" class="sec-lab">
-                     <el-input v-model="item.count" />
+                     <el-input v-model="policyItem.count" />
                   </el-form-item>
                 </div>
-             </template>
-            <el-button type="primary" icon="el-icon-plus" @click="addTmpData">新增模板</el-button>
-         </div>
-         <div style="margin-left: 15px;margin-top: 10px;">
-            <el-form-item label=" 其他描述：" :label-position="itemLabelPosition">
-               <el-input type="textarea" :rows="3" v-model="form.policyDesc" />
-            </el-form-item>
+             </template>            
          </div>
          </el-form>
-       <template #footer>
-         <div class="dialog-footer">
-           <el-button @click="closeDialog">取 消</el-button>
-           <el-button
-             type="primary"
-             @click="enterDialog"
-           >确 定</el-button>
-         </div>
-       </template>
      </el-drawer>
    </div>
  </template>
  
  <script setup>
- import {
-   getTaskList,
-   createTask,
-   stopTask,
-   delTask,
- } from '@/api/task.js'
-import { getPolicyList, createPolicy } from '@/api/policy.js';
+ import { getPolicyList, createPolicy, deletePolicy, updatePolicy } from '@/api/policy.js';
+ import { getTemplateList } from '@/api/template.js';
 
  import { ref,reactive } from 'vue'
  import { ElMessage, ElMessageBox } from 'element-plus'
@@ -222,7 +234,7 @@ import { getPolicyList, createPolicy } from '@/api/policy.js';
  const dialogFormVisible = ref(false)
  const apiDialogFlag = ref(false)
  const labelPosition = ref('right')
-const itemLabelPosition = ref('top')
+ const itemLabelPosition = ref('top')
  const form = ref({
          policyName: '',
          policyDesc: '',
@@ -232,28 +244,28 @@ const itemLabelPosition = ref('top')
          policyConfig: [{
           "name": "",
           "kind": "",
-          "timeout": "",
+          "timeout": "5s",
           "count": 0,
           "format": "",
-          "rateLimit": 0,
-          "concurrency": 0
+          "rateLimit": 150,
+          "concurrency": 150
          }],
          "onlineConfig": {
-         "use": true,
-         "timeout": "5s",
-         "count": 1,
-         "format": "csv",
-         "rateLimit": 1000,
-         "concurrency": 1000
+          "use": true,
+          "timeout": "5s",
+          "count": 1,
+          "format": "csv",
+          "rateLimit": 150,
+          "concurrency": 150
          },
          "portScanConfig": {
-         "use": true,
-         "timeout": "5s",
-         "count": 1,
-         "format": "csv",
-         "ports": "http",
-         "rateLimit": 1000,
-         "concurrency": 1000
+          "use": true,
+          "timeout": "5s",
+          "count": 1,
+          "format": "csv",
+          "ports": "http",
+          "rateLimit": 150,
+          "concurrency": 150
          }
 });
 
@@ -272,11 +284,11 @@ const typeNameList = reactive([
 ])
 
  const tableColumns = ref([
-       { label:'名称', prop:'policyName'},
-        { label:'描述', prop:'policyDesc'},
-        { label:'在线检测', prop:'onlineCheck', slot: 'custOnline'},
-        { label:'端口检测', prop:'portScan' , slot: 'custPortScan'},
-        { label:'扫描类型', prop:'scanType' , slot: 'custScanType'},
+      { label:'名称', prop:'policyName'},
+      { label:'描述', prop:'policyDesc'},
+      { label:'在线检测', prop:'onlineCheck', slot: 'custOnline'},
+      { label:'端口检测', prop:'portScan' , slot: 'custPortScan'},
+      { label:'扫描类型', prop:'scanType' , slot: 'custScanType'},
    ])
  const rules = ref({
    taskName: [
@@ -291,9 +303,6 @@ const typeNameList = reactive([
    policyId: [
      { required: true, message: '请选择策略模板', trigger: 'blur' }
    ],
-   // date: [
-   //   { required: true, message: '请选择定时执行时间', trigger: 'blur' }
-   // ],
    taskPlan: [
      { required: true, message: '请选择执行方式', trigger: 'blur' }
    ]
@@ -310,7 +319,13 @@ const typeNameList = reactive([
       type: "primary",
       icon: "edit",
       handleClick: (scope) => handleEdit(scope.row),
-   }
+   },
+   {
+      name: "删除",
+      type: "primary",
+      icon: "delete",
+      handleClick: (scope) => handleDelete(scope.row),
+   },
  ])
  
  const tableData = ref([])
@@ -332,23 +347,22 @@ const typeNameList = reactive([
  getTableData()
 
  // 初始化表单
- const authorityForm = ref(null)
- const tmpForm = ref(null)
+ const formRef = ref(null)
  const initForm = () => {
-   if (authorityForm.value) {
-     authorityForm.value.resetFields()
+   if (formRef.value) {
+    formRef.value.resetFields()
    }
    form.value = {
     policyName: '',
     policyDesc: '',
     policyConfig: [{
-        "name": "",
-        "kind": "",
-        "timeout": "",
-        "count": 0,
-        "format": "",
-        "rateLimit": 0,
-        "concurrency": 0
+      "name": "",
+      "kind": "",
+      "timeout": "5s",
+      "count": 1,
+      "format": "",
+      "rateLimit": 150,
+      "concurrency": 150
     }],
     "onlineConfig": {
         "use": true,
@@ -364,8 +378,8 @@ const typeNameList = reactive([
         "count": 1,
         "format": "csv",
         "ports": "http",
-        "rateLimit": 1000,
-        "concurrency": 1000
+        "rateLimit": 150,
+        "concurrency": 150
     }
    }
  }
@@ -378,7 +392,7 @@ const typeNameList = reactive([
  // 确定弹窗
  
  const enterDialog = () => {
-   authorityForm.value.validate(async valid => {
+  formRef.value.validate(async valid => {
      if (valid) {
        switch (dialogType.value) {
          case 'add':
@@ -402,32 +416,39 @@ const typeNameList = reactive([
    })
  }
  const setOptions = () => {
-   
  }
  
- // 增加角色
- const addPolicy = (parentId) => {
+ // 新增策略
+ const handleAdd = () => {
    initForm()
    dialogTitle.value = '新增策略'
    dialogType.value = 'add'
-   form.value.parentId = parentId
    setOptions()
+   dialogFormVisible.value = true
+ }
+
+ const handleEdit = (row) => {
+   dialogTitle.value = '修改策略'
+   dialogType.value = 'edit'
+   setOptions()
+   form.value = JSON.parse(JSON.stringify(row))
    dialogFormVisible.value = true
  }
  
  
- const pagination = () => {
-   getTableData()
+ const pagination = (val) => {
+  page.value = val
+  getTableData()
  }
  
- const handleEdit = (row) => {
-   ElMessageBox.confirm('此操作将停止该任务, 是否继续?', '提示', {
+ const handleDelete = (row) => {
+   ElMessageBox.confirm('此操作将删除策略, 是否继续?', '提示', {
      confirmButtonText: '确定',
      cancelButtonText: '取消',
      type: 'warning'
    })
      .then(async() => {
-       const res = await stopTask({ id: row.id })
+       const res = await deletePolicy({ id: row.ID })
        if (res.code === 0) {
          ElMessage({
            type: 'success',
@@ -462,20 +483,38 @@ const typeNameList = reactive([
     form.value.policyConfig.push({
       "name": "",
       "kind": "",
-      "timeout": "",
+      "timeout": "5s",
       "count": 0,
       "format": "",
-      "rateLimit": 0,
-      "concurrency": 0
+      "rateLimit": 150,
+      "concurrency": 150
     })
   }
  }
 
+ const delTmpData = () => {
+    form.value.policyConfig.pop()
+ }
+
  const getTypeName = (type) => {
-      if(type) {
-        const typeNameList = ['未知', '资产发现', '漏洞扫描', '弱口令']
-        return typeNameList[type]
-      }
+    if(type) {
+      const typeNameList = ['未知', '资产发现', '漏洞扫描', '弱口令']
+      return typeNameList[type]
+    }
+ }
+
+ // 配置选中扫描类型时返回模板
+ const tmpOption = []
+ const getTemplateData = async (type) => {
+      const table = await getTemplateList({
+        page: 1,
+        pageSize: 99999,
+        isAll: false,
+        templateType: type
+      });
+      tmpOption[type] = table.data.list.map((item)=>{
+          return {label: item.templateName, value: item.ID, disabled: false}
+      })      
  }
  
  </script>

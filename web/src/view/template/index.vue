@@ -16,6 +16,17 @@
         :pagination="handleCurrentChange"
         :index="true"
       >
+      <template v-slot:custType="slotProps">
+        <!-- 自定义的字段 -->
+        <span v-for="(item, key) in templateOptions" :key="key" style="margin-left: 5px;"> 
+          <el-tag
+            type="primary"
+            effect="dark"
+            v-if="slotProps.row.templateType == item.value"
+          >
+          {{  item.label }}</el-tag>
+        </span>
+      </template>
       </advance-table>
 
     </div>
@@ -135,6 +146,7 @@ const getTableData = async() => {
   const table = await getTemplateList({
       page: listQuery.page,
       pageSize: listQuery.pageSize,
+      isAll:true,
       ...searchInfo,
     });
     if (table.code === 0) {
@@ -173,8 +185,9 @@ const tempFormData = ref({
 })
 
 const tableColumns = reactive([
+    { label:'I D', prop:'templateId'},
     { label:'名称', prop:'templateName'},
-    { label:'类型', prop:'templateType'},
+    { label:'类型', prop:'templateType',  slot: 'custType'},
 ])
 
 const rules = reactive({
@@ -186,8 +199,7 @@ const rules = reactive({
   ],
   templateContent: [
     { required: true, message: '请输入模板内容', trigger: 'blur' },
-  ],
-  
+  ]
 })
 const form = ref(null)
 const enterAddDialog = async() => {
@@ -220,6 +232,12 @@ const enterAddDialog = async() => {
 
 const templateDialog = ref(false)
 const closeAddDialog = () => {
+  console.log(
+  '%c 🍱 CONSOLE_INFO: ',
+  'font-size:20px;background-color: #ED9EC7;color:#fff;',
+  form.value
+  );
+  
   form.value.resetFields()
   templateDialog.value = false
 }
@@ -234,7 +252,7 @@ const addTemplate = () => {
 const handleClickUpdate = (row) => {
   console.log(row)
   dialogFlag.value = 'edit'
-  row.templateType = row.templateType
+  row.templateType = row.templateType + ''
   tempFormData.value = JSON.parse(JSON.stringify(row))
   templateDialog.value = true
 }
