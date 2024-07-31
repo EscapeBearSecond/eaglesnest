@@ -40,7 +40,44 @@
          :statusData="statusData"
          :pagination="pagination"
          :index="true"
-       ></advance-table>
+       >
+       <template v-slot:custOnline="slotProps">
+        <!-- 自定义的字段 -->
+        <span v-if="slotProps.row.onlineCheck"> 
+          <el-icon :size="20" color="#67C23A" >
+            <CircleCheck />
+          </el-icon>
+        </span>
+        <span v-else>
+          <el-icon :size="20" color="#F56C6C" >
+            <CircleClose />
+          </el-icon>
+        </span>
+      </template>
+      <template v-slot:custPortScan="slotProps">
+        <!-- 自定义的字段 -->
+        <span v-if="slotProps.row.portScan"> 
+          <el-icon :size="20" color="#67C23A" >
+            <CircleCheck />
+          </el-icon>
+        </span>
+        <span v-else>
+          <el-icon :size="20" color="#F56C6C" >
+            <CircleClose />
+          </el-icon>
+        </span>
+      </template>
+      <template v-slot:custScanType="slotProps">
+        <!-- 自定义的字段 -->
+        <span v-for="(item, key) in slotProps.row.scanType" :key="key" style="margin-left: 5px;"> 
+          <el-tag
+            type="primary"
+            effect="dark"
+          >
+          {{ getTypeName(item) }}</el-tag>
+        </span>
+      </template>
+      </advance-table>
       
      </div>
      <!-- 新增角色弹窗 -->
@@ -114,19 +151,27 @@
              <template v-for="(item, index) in form.policyConfig" :key="index" >
                 <label style="display: block;margin-left: 20px;">配置{{ index+1 }}</label>
                 <div style="margin-left: 40px;">
-                  <el-form-item label="扫描类型" :label-position="itemLabelPosition" class="sec-lab">
-                     <el-input v-model="item.type" />
+                  <el-form-item label="类型" :label-position="itemLabelPosition" class="sec-lab">
+                    <el-select v-model="item.kind" placeholder="请选择扫描类型">
+                        <el-option
+                          v-for="item in typeNameList"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"
+                          :disabled="item.disabled"
+                        />
+                      </el-select>
                   </el-form-item>
-                  <el-form-item label="扫描模板" :label-position="itemLabelPosition" class="sec-lab">
+                  <el-form-item label="模板" :label-position="itemLabelPosition" class="sec-lab">
                      <el-input v-model="item.ports" />
                   </el-form-item>
-                  <el-form-item label="扫描速度" :label-position="itemLabelPosition" class="sec-lab">
+                  <el-form-item label="并发数" :label-position="itemLabelPosition" class="sec-lab">
                      <el-input v-model="item.concurrency" />
                   </el-form-item>
-                  <el-form-item label="超时时间" :label-position="itemLabelPosition" class="sec-lab">
+                  <el-form-item label="超时" :label-position="itemLabelPosition" class="sec-lab">
                      <el-input v-model="item.timeout" />
                   </el-form-item>
-                  <el-form-item label="探活频率" :label-position="itemLabelPosition" class="sec-lab">
+                  <el-form-item label="限流速度" :label-position="itemLabelPosition" class="sec-lab">
                      <el-input v-model="item.rateLimit" />
                   </el-form-item>
                   <el-form-item label="探活轮次" :label-position="itemLabelPosition" class="sec-lab">
@@ -162,11 +207,13 @@
    stopTask,
    delTask,
  } from '@/api/task.js'
- import { ref } from 'vue'
+import { getPolicyList, createPolicy } from '@/api/policy.js';
+
+ import { ref,reactive } from 'vue'
  import { ElMessage, ElMessageBox } from 'element-plus'
  
  defineOptions({
-   name: 'Authority'
+   name: 'Policy'
  })
  const activeNames = ref([1])
  const dialogType = ref('add')
@@ -183,13 +230,13 @@ const itemLabelPosition = ref('top')
          scanType: '',
          scanRate: '',
          policyConfig: [{
-         "name": "",
-         "kind": "",
-         "timeout": "",
-         "count": 0,
-         "format": "",
-         "rateLimit": 0,
-         "concurrency": 0
+          "name": "",
+          "kind": "",
+          "timeout": "",
+          "count": 0,
+          "format": "",
+          "rateLimit": 0,
+          "concurrency": 0
          }],
          "onlineConfig": {
          "use": true,
@@ -216,14 +263,20 @@ const marks = ref({
   66: '适中',
   100: '快速'
 })
+
+//'资产发现', '漏洞扫描', '弱口令'
+const typeNameList = reactive([
+  {id: '1', label: '资产发现', value:'1', disabled: false},
+  {id: '2', label: '漏洞扫描', value:'2', disabled: false},
+  {id: '3', label: '弱口令', value:'3', disabled: false}
+])
+
  const tableColumns = ref([
        { label:'名称', prop:'policyName'},
         { label:'描述', prop:'policyDesc'},
-        { label:'在线检测', prop:'onlineCheck'},
-        { label:'端口检测', prop:'portScan' },
-        { label:'扫描类型', prop:'scanType' , formatter: (row, col, cellValue) => {
-         let data = cellValue
-        }},
+        { label:'在线检测', prop:'onlineCheck', slot: 'custOnline'},
+        { label:'端口检测', prop:'portScan' , slot: 'custPortScan'},
+        { label:'扫描类型', prop:'scanType' , slot: 'custScanType'},
    ])
  const rules = ref({
    taskName: [
@@ -245,10 +298,7 @@ const marks = ref({
      { required: true, message: '请选择执行方式', trigger: 'blur' }
    ]
  })
- 
- const page = ref(1)
- const total = ref(0)
- const pageSize = ref(999)
+
  const listQuery = ref({
      page: 1,
      total: 0,
@@ -268,13 +318,15 @@ const marks = ref({
  
  // 查询
  const getTableData = async() => {
-   const table = await getTaskList({ page: page.value, pageSize: pageSize.value, ...searchInfo.value })
+   const table = await getPolicyList({ page: listQuery.value.page, pageSize: listQuery.value.pageSize, ...searchInfo.value })
    if (table.code === 0) {
      tableData.value = table.data.list
-     total.value = table.data.total
-     page.value = table.data.page
-     pageSize.value = table.data.pageSize
+     listQuery.value.total = table.data.total
+     listQuery.value.page = table.data.page
+     listQuery.value.pageSize = table.data.pageSize
    }
+
+   console.log(table.data.list);
  }
  
  getTableData()
@@ -328,11 +380,10 @@ const marks = ref({
  const enterDialog = () => {
    authorityForm.value.validate(async valid => {
      if (valid) {
-       form.value.authorityId = Number(form.value.authorityId)
        switch (dialogType.value) {
          case 'add':
            {
-             const res = await createTask(form.value)
+             const res = await createPolicy(form.value)
              if (res.code === 0) {
                ElMessage({
                  type: 'success',
@@ -357,7 +408,7 @@ const marks = ref({
  // 增加角色
  const addPolicy = (parentId) => {
    initForm()
-   dialogTitle.value = '新增角色'
+   dialogTitle.value = '新增策略'
    dialogType.value = 'add'
    form.value.parentId = parentId
    setOptions()
@@ -418,6 +469,13 @@ const marks = ref({
       "concurrency": 0
     })
   }
+ }
+
+ const getTypeName = (type) => {
+      if(type) {
+        const typeNameList = ['未知', '资产发现', '漏洞扫描', '弱口令']
+        return typeNameList[type]
+      }
  }
  
  </script>
