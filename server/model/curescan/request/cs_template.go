@@ -10,6 +10,7 @@ type CreateTemplate struct {
 	TemplateType    uint   `json:"templateType,string"`
 	TemplateDesc    string `json:"templateDesc"`
 	TemplateContent string `json:"templateContent"`
+	TemplateId      string `json:"templateId""`
 }
 
 type SearchTemplate struct {

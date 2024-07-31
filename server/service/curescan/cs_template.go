@@ -72,6 +72,9 @@ func (t *TemplateService) GetTemplateList(searchTemplate request2.SearchTemplate
 	if template.TemplateName != "" {
 		db = db.Where("template_name LIKE ?", "%"+template.TemplateName+"%")
 	}
+	if template.TemplateId != "" {
+		db = db.Where("template_id = ?", template.TemplateId)
+	}
 	err = db.Count(&total).Error
 	if err != nil {
 		return templates, total, err

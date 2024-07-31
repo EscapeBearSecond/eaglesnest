@@ -1,6 +1,7 @@
 package curescan
 
 import (
+	"bytes"
 	"fmt"
 	"strconv"
 
@@ -10,6 +11,7 @@ import (
 	"47.103.136.241/goprojects/curesan/server/model/curescan/request"
 	"47.103.136.241/goprojects/curesan/server/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 )
 
 type TemplateApi struct {
@@ -181,13 +183,14 @@ func (t *TemplateApi) ImportTemplates(c *gin.Context) {
 	templateType := strings[0]
 	templates := make([]*curescan.Template, 0)
 	for _, fh := range files {
-		var buffer = make([]byte, fh.Size)
+
 		file, err := fh.Open()
 		if err != nil {
 			errorStrings = append(errorStrings, fmt.Sprintf("open file [%s] error, err: [%s]", fh.Filename, err.Error()))
 			file.Close()
 			continue
 		}
+		var buffer = make([]byte, fh.Size)
 		n, err := file.Read(buffer)
 		if err != nil {
 			errorStrings = append(errorStrings, fmt.Sprintf("read file [%s] error, err: [%s]", fh.Filename, err.Error()))
@@ -199,17 +202,30 @@ func (t *TemplateApi) ImportTemplates(c *gin.Context) {
 			file.Close()
 			continue
 		}
+		file.Close()
+
+		viper.SetConfigType("yaml")
+		err = viper.ReadConfig(bytes.NewBuffer(buffer))
+		if err != nil {
+			errorStrings = append(errorStrings, fmt.Sprintf("viper read file [%s] error, err: [%s]", fh.Filename, err.Error()))
+			continue
+		}
 		template := &curescan.Template{}
 		tmp, _ := strconv.ParseUint(templateType, 10, 64)
 		template.TemplateType = uint(tmp)
-		template.TemplateName = fh.Filename
+		template.TemplateId = viper.GetString("id")
 		template.TemplateContent = string(buffer)
+		template.TemplateDesc = viper.GetString("info.description")
+		template.TemplateName = viper.GetString("info.name")
 		templates = append(templates, template)
-		file.Close()
 	}
 	err = templateService.BatchAdd(templates)
 	if err != nil {
 		response.FailWithDetailed(errorStrings, err.Error(), c)
+		return
+	}
+	if len(errorStrings) > 0 {
+		response.OkWithDetailed(errorStrings, "部分模板上传失败", c)
 		return
 	}
 	response.Ok(c)
