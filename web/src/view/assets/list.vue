@@ -1,6 +1,5 @@
 <template>
   <div>
-    <warning-bar title="注：右上角头像下拉可切换角色" />
     <div class="gva-table-box">
       <div class="gva-btn-list">
         <!-- <el-button

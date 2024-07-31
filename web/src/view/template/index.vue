@@ -1,6 +1,5 @@
 <template>
   <div>
-    <warning-bar title="注：右上角头像下拉可切换角色" />
     <div class="gva-table-box">
       <div class="gva-btn-list">
         <el-button
@@ -128,7 +127,7 @@ const statusData = reactive([
 ])
 
 const searchInfo = reactive({
-    areaName:''
+  templateName:''
 })
 
 // 查询
@@ -196,7 +195,7 @@ const enterAddDialog = async() => {
   form.value.validate(async valid => {
     if (valid) {
       const req = {
-        ...template.value
+        ...tempFormData.value
       }
       // req.areaIp = getIpArr(req.areaIpStr)
       if (dialogFlag.value === 'add') {
@@ -235,8 +234,8 @@ const addTemplate = () => {
 const handleClickUpdate = (row) => {
   console.log(row)
   dialogFlag.value = 'edit'
-  row.templateType = row.templateType + ''
-  template.value = JSON.parse(JSON.stringify(row))
+  row.templateType = row.templateType
+  tempFormData.value = JSON.parse(JSON.stringify(row))
   templateDialog.value = true
 }
 
