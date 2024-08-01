@@ -4,7 +4,7 @@ import (
 	"go/token"
 	"strings"
 
-	"47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curescan/server/global"
 )
 
 // AutoCodeStruct 初始版本自动化代码工具

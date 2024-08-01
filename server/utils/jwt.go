@@ -6,8 +6,8 @@ import (
 
 	jwt "github.com/golang-jwt/jwt/v4"
 
-	"47.103.136.241/goprojects/curesan/server/global"
-	"47.103.136.241/goprojects/curesan/server/model/system/request"
+	"47.103.136.241/goprojects/curescan/server/global"
+	"47.103.136.241/goprojects/curescan/server/model/system/request"
 )
 
 type JWT struct {

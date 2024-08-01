@@ -1,6 +1,6 @@
 package system
 
-import "47.103.136.241/goprojects/curesan/server/service"
+import "47.103.136.241/goprojects/curescan/server/service"
 
 type ApiGroup struct {
 	DBApi

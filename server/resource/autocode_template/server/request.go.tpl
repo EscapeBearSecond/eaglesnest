@@ -1,7 +1,7 @@
 package request
 
 import (
-	"47.103.136.241/goprojects/curesan/server/model/common/request"
+	"47.103.136.241/goprojects/curescan/server/model/common/request"
 	{{ if or .HasSearchTimer .GvaModel}}"time"{{ end }}
 )
 

@@ -1,7 +1,7 @@
 package request
 
 import (
-	"47.103.136.241/goprojects/curesan/server/config"
+	"47.103.136.241/goprojects/curescan/server/config"
 	"fmt"
 	"os"
 )

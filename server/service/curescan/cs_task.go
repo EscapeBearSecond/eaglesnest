@@ -9,10 +9,10 @@ import (
 
 	"go.uber.org/zap"
 
-	"47.103.136.241/goprojects/curesan/server/global"
-	"47.103.136.241/goprojects/curesan/server/model/curescan"
-	"47.103.136.241/goprojects/curesan/server/model/curescan/request"
-	"47.103.136.241/goprojects/curesan/server/model/curescan/response"
+	"47.103.136.241/goprojects/curescan/server/global"
+	"47.103.136.241/goprojects/curescan/server/model/curescan"
+	"47.103.136.241/goprojects/curescan/server/model/curescan/request"
+	"47.103.136.241/goprojects/curescan/server/model/curescan/response"
 	eagleeye "47.103.136.241/goprojects/eagleeye/pkg/sdk"
 	"47.103.136.241/goprojects/eagleeye/pkg/types"
 	"github.com/robfig/cron/v3"
@@ -252,7 +252,6 @@ func (s *TaskService) ExecuteTask(id int) error {
 	// 获取任务
 	task, err := s.GetTaskById(id)
 	if err != nil {
-		fmt.Println("1")
 		return err
 	}
 
@@ -263,7 +262,6 @@ func (s *TaskService) ExecuteTask(id int) error {
 	// 得到任务关联的策略
 	policy, err := policyService.GetPolicyById(int(task.PolicyID))
 	if err != nil {
-		fmt.Println("2")
 		return err
 	}
 
@@ -274,21 +272,18 @@ func (s *TaskService) ExecuteTask(id int) error {
 	if policy.OnlineCheck {
 		err = json.Unmarshal([]byte(policy.OnlineConfig), &onlineConfig)
 		if err != nil {
-			fmt.Println("3")
 			return err
 		}
 	}
 	if policy.PortScan {
 		err = json.Unmarshal([]byte(policy.PortScanConfig), &portScanConfig)
 		if err != nil {
-			fmt.Println("4")
 			return err
 		}
 	}
 	if policy.PolicyConfig != "" {
 		err = json.Unmarshal([]byte(policy.PolicyConfig), &jobConfig)
 		if err != nil {
-			fmt.Println("5")
 			return err
 		}
 	}
@@ -374,7 +369,6 @@ func (s *TaskService) ExecuteTask(id int) error {
 // 对于普通任务来说, 不需要复制任务, 但是对于定时任务每次执行需要复制一次任务
 // 对于普通任务如果需要复用, 需要重新创建一条任务
 func (s *TaskService) processTask(task *curescan.Task, options *types.Options, taskResult *response.TaskResult) {
-	fmt.Println(4)
 	entry, err := global.EagleeyeEngine.NewEntry(options)
 	if err != nil {
 		global.GVA_LOG.Error("创建任务entry失败", zap.String("taskName", task.TaskName), zap.Error(err))

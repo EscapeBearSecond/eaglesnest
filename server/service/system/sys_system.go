@@ -1,10 +1,10 @@
 package system
 
 import (
-	"47.103.136.241/goprojects/curesan/server/config"
-	"47.103.136.241/goprojects/curesan/server/global"
-	"47.103.136.241/goprojects/curesan/server/model/system"
-	"47.103.136.241/goprojects/curesan/server/utils"
+	"47.103.136.241/goprojects/curescan/server/config"
+	"47.103.136.241/goprojects/curescan/server/global"
+	"47.103.136.241/goprojects/curescan/server/model/system"
+	"47.103.136.241/goprojects/curescan/server/utils"
 	"go.uber.org/zap"
 )
 

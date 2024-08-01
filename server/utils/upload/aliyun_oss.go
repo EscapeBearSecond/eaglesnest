@@ -5,7 +5,7 @@ import (
 	"mime/multipart"
 	"time"
 
-	"47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curescan/server/global"
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"go.uber.org/zap"
 )

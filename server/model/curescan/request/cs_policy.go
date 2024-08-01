@@ -1,8 +1,8 @@
 package request
 
 import (
-	"47.103.136.241/goprojects/curesan/server/model/common/request"
-	"47.103.136.241/goprojects/curesan/server/model/curescan"
+	"47.103.136.241/goprojects/curescan/server/model/common/request"
+	"47.103.136.241/goprojects/curescan/server/model/curescan"
 )
 
 type CreatePolicy struct {
@@ -34,13 +34,13 @@ type PortScanConfig struct {
 }
 
 type JobConfig struct {
-	Name        string   `json:"name"`
-	Kind        string   `json:"kind"`
-	Timeout     string   `json:"timeout"`
-	Count       int      `json:"count"`
-	Format      string   `json:"format"`
-	RateLimit   int      `json:"rateLimit"`
-	Concurrency int      `json:"concurrency"`
+	Name        string  `json:"name"`
+	Kind        string  `json:"kind"`
+	Timeout     string  `json:"timeout"`
+	Count       int     `json:"count"`
+	Format      string  `json:"format"`
+	RateLimit   int     `json:"rateLimit"`
+	Concurrency int     `json:"concurrency"`
 	Templates   []int64 `json:"templates"`
 }
 

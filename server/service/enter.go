@@ -1,9 +1,9 @@
 package service
 
 import (
-	"47.103.136.241/goprojects/curesan/server/service/curescan"
-	"47.103.136.241/goprojects/curesan/server/service/example"
-	"47.103.136.241/goprojects/curesan/server/service/system"
+	"47.103.136.241/goprojects/curescan/server/service/curescan"
+	"47.103.136.241/goprojects/curescan/server/service/example"
+	"47.103.136.241/goprojects/curescan/server/service/system"
 )
 
 type ServiceGroup struct {

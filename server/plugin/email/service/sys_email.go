@@ -1,7 +1,7 @@
 package service
 
 import (
-	"47.103.136.241/goprojects/curesan/server/plugin/email/utils"
+	"47.103.136.241/goprojects/curescan/server/plugin/email/utils"
 )
 
 type EmailService struct{}

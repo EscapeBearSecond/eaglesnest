@@ -7,8 +7,8 @@ import (
 
 	"gorm.io/gorm"
 
-	"47.103.136.241/goprojects/curesan/server/global"
-	"47.103.136.241/goprojects/curesan/server/model/system/request"
+	"47.103.136.241/goprojects/curescan/server/global"
+	"47.103.136.241/goprojects/curescan/server/model/system/request"
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
 	gormadapter "github.com/casbin/gorm-adapter/v3"

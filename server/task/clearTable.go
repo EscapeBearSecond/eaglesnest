@@ -1,7 +1,7 @@
 package task
 
 import (
-	"47.103.136.241/goprojects/curesan/server/model/common"
+	"47.103.136.241/goprojects/curescan/server/model/common"
 	"errors"
 	"fmt"
 	"time"

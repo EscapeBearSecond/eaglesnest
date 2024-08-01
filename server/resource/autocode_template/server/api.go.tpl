@@ -1,15 +1,15 @@
 package {{.Package}}
 
 import (
-	"47.103.136.241/goprojects/curesan/server/global"
-    "47.103.136.241/goprojects/curesan/server/model/{{.Package}}"
-    {{.Package}}Req "47.103.136.241/goprojects/curesan/server/model/{{.Package}}/request"
-    "47.103.136.241/goprojects/curesan/server/model/common/response"
-    "47.103.136.241/goprojects/curesan/server/service"
+	"47.103.136.241/goprojects/curescan/server/global"
+    "47.103.136.241/goprojects/curescan/server/model/{{.Package}}"
+    {{.Package}}Req "47.103.136.241/goprojects/curescan/server/model/{{.Package}}/request"
+    "47.103.136.241/goprojects/curescan/server/model/common/response"
+    "47.103.136.241/goprojects/curescan/server/service"
     "github.com/gin-gonic/gin"
     "go.uber.org/zap"
     {{- if .AutoCreateResource}}
-    "47.103.136.241/goprojects/curesan/server/utils"
+    "47.103.136.241/goprojects/curescan/server/utils"
     {{- end }}
 )
 

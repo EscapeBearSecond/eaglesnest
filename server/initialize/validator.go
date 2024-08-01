@@ -1,7 +1,7 @@
 package initialize
 
 import (
-	"47.103.136.241/goprojects/curesan/server/utils"
+	"47.103.136.241/goprojects/curescan/server/utils"
 )
 
 func init() {

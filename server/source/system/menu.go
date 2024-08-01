@@ -3,8 +3,8 @@ package system
 import (
 	"context"
 
-	. "47.103.136.241/goprojects/curesan/server/model/system"
-	"47.103.136.241/goprojects/curesan/server/service/system"
+	. "47.103.136.241/goprojects/curescan/server/model/system"
+	"47.103.136.241/goprojects/curescan/server/service/system"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 )
@@ -72,10 +72,10 @@ func (i *initMenu) InitializeData(ctx context.Context) (next context.Context, er
 		{MenuLevel: 0, Hidden: false, ParentId: 15, Path: "autoCodeAdmin", Name: "autoCodeAdmin", Component: "view/systemTools/autoCodeAdmin/index.vue", Sort: 1, Meta: Meta{Title: "自动化代码管理", Icon: "magic-stick"}},
 		{MenuLevel: 0, Hidden: true, ParentId: 15, Path: "autoCodeEdit/:id", Name: "autoCodeEdit", Component: "view/systemTools/autoCode/index.vue", Sort: 0, Meta: Meta{Title: "自动化代码-${id}", Icon: "magic-stick"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 15, Path: "autoPkg", Name: "autoPkg", Component: "view/systemTools/autoPkg/autoPkg.vue", Sort: 0, Meta: Meta{Title: "自动化package", Icon: "folder"}},
-		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "https://www.curesan.com", Name: "https://www.curesan.com", Component: "/", Sort: 0, Meta: Meta{Title: "官方网站", Icon: "customer-gva"}},
+		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "https://www.curescan.com", Name: "https://www.curescan.com", Component: "/", Sort: 0, Meta: Meta{Title: "官方网站", Icon: "customer-gva"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "state", Name: "state", Component: "view/system/state.vue", Sort: 8, Meta: Meta{Title: "服务器状态", Icon: "cloudy"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "plugin", Name: "plugin", Component: "view/routerHolder.vue", Sort: 6, Meta: Meta{Title: "插件系统", Icon: "cherry"}},
-		{MenuLevel: 0, Hidden: false, ParentId: 24, Path: "https://plugin.curesan.com/", Name: "https://plugin.curesan.com/", Component: "https://plugin.curesan.com/", Sort: 0, Meta: Meta{Title: "插件市场", Icon: "shop"}},
+		{MenuLevel: 0, Hidden: false, ParentId: 24, Path: "https://plugin.curescan.com/", Name: "https://plugin.curescan.com/", Component: "https://plugin.curescan.com/", Sort: 0, Meta: Meta{Title: "插件市场", Icon: "shop"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 24, Path: "installPlugin", Name: "installPlugin", Component: "view/systemTools/installPlugin/index.vue", Sort: 1, Meta: Meta{Title: "插件安装", Icon: "box"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 24, Path: "autoPlug", Name: "autoPlug", Component: "view/systemTools/autoPlug/autoPlug.vue", Sort: 2, Meta: Meta{Title: "插件模板", Icon: "folder"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 24, Path: "pubPlug", Name: "pubPlug", Component: "view/systemTools/pubPlug/pubPlug.vue", Sort: 3, Meta: Meta{Title: "打包插件", Icon: "files"}},

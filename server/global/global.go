@@ -6,7 +6,7 @@ import (
 	"github.com/qiniu/qmgo"
 	"github.com/redis/go-redis/v9"
 
-	"47.103.136.241/goprojects/curesan/server/utils/timer"
+	"47.103.136.241/goprojects/curescan/server/utils/timer"
 	eagleeye "47.103.136.241/goprojects/eagleeye/pkg/sdk"
 	"github.com/songzhibin97/gkit/cache/local_cache"
 
@@ -14,7 +14,7 @@ import (
 
 	"go.uber.org/zap"
 
-	"47.103.136.241/goprojects/curesan/server/config"
+	"47.103.136.241/goprojects/curescan/server/config"
 
 	"github.com/spf13/viper"
 	"gorm.io/gorm"

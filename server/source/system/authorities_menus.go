@@ -3,8 +3,8 @@ package system
 import (
 	"context"
 
-	sysModel "47.103.136.241/goprojects/curesan/server/model/system"
-	"47.103.136.241/goprojects/curesan/server/service/system"
+	sysModel "47.103.136.241/goprojects/curescan/server/model/system"
+	"47.103.136.241/goprojects/curescan/server/service/system"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 )

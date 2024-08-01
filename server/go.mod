@@ -1,4 +1,4 @@
-module 47.103.136.241/goprojects/curesan/server
+module 47.103.136.241/goprojects/curescan/server
 
 go 1.22
 

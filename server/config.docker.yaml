@@ -1,4 +1,4 @@
-# 47.103.136.241/goprojects/curesan/server Global Configuration
+# 47.103.136.241/goprojects/curescan/server Global Configuration
 
 # jwt configuration
 jwt:
@@ -10,7 +10,7 @@ jwt:
 zap:
   level: info
   format: console
-  prefix: "[47.103.136.241/goprojects/curesan/server]"
+  prefix: "[47.103.136.241/goprojects/curescan/server]"
   director: log
   show-line: true
   encode-level: LowercaseColorLevelEncoder
@@ -25,19 +25,19 @@ redis:
 
 # mongo configuration
 mongo:
-  coll: ''
-  options: ''
-  database: ''
-  username: ''
-  password: ''
+  coll: ""
+  options: ""
+  database: ""
+  username: ""
+  password: ""
   min-pool-size: 0
   max-pool-size: 100
   socket-timeout-ms: 0
   connect-timeout-ms: 0
   is-zap: false
   hosts:
-    - host: ''
-      port: ''
+    - host: ""
+      port: ""
 
 # email configuration
 email:
@@ -51,12 +51,12 @@ email:
 
 # system configuration
 system:
-  env: public  # Change to "develop" to skip authentication for development mode
+  env: public # Change to "develop" to skip authentication for development mode
   addr: 8888
   db-type: mysql
-  oss-type: local    # 控制oss选择走本地还是 七牛等其他仓 自行增加其他oss仓可以在 server/utils/upload/upload.go 中 NewOss函数配置
-  use-redis: false     # 使用redis
-  use-mongo: false     # 使用mongo
+  oss-type: local # 控制oss选择走本地还是 七牛等其他仓 自行增加其他oss仓可以在 server/utils/upload/upload.go 中 NewOss函数配置
+  use-redis: false # 使用redis
+  use-mongo: false # 使用mongo
   use-multipoint: false
   # IP限制次数 一个小时15000次
   iplimit-count: 15000
@@ -72,7 +72,7 @@ captcha:
   open-captcha-timeout: 3600 # open-captcha大于0时才生效
 
 # mysql connect configuration
-# 未初始化之前请勿手动修改数据库信息！！！如果一定要手动初始化请看（https://curesan.com/docs/first_master）
+# 未初始化之前请勿手动修改数据库信息！！！如果一定要手动初始化请看（https://curescan.com/docs/first_master）
 mysql:
   path: ""
   port: ""
@@ -86,7 +86,7 @@ mysql:
   log-zap: false
 
 # pgsql connect configuration
-# 未初始化之前请勿手动修改数据库信息！！！如果一定要手动初始化请看（https://curesan.com/docs/first_master）
+# 未初始化之前请勿手动修改数据库信息！！！如果一定要手动初始化请看（https://curescan.com/docs/first_master）
 pgsql:
   path: ""
   port: ""
@@ -113,7 +113,6 @@ db-list:
     max-open-conns: 100
     log-mode: ""
     log-zap: false
-
 
 # local configuration
 local:
@@ -165,7 +164,7 @@ tencent-cos:
   secret-id: your-secret-id
   secret-key: your-secret-key
   base-url: https://gin.vue.admin
-  path-prefix: 47.103.136.241/goprojects/curesan/server
+  path-prefix: 47.103.136.241/goprojects/curescan/server
 
 # aws s3 configuration (minio compatible)
 aws-s3:
@@ -177,7 +176,7 @@ aws-s3:
   secret-id: your-secret-id
   secret-key: your-secret-key
   base-url: https://gin.vue.admin
-  path-prefix: 47.103.136.241/goprojects/curesan/server
+  path-prefix: 47.103.136.241/goprojects/curescan/server
 
 # huawei obs configuration
 hua-wei-obs:
@@ -194,7 +193,7 @@ excel:
 # timer task db clear table
 Timer:
   start: true
-  spec: "@daily"  # 定时任务详细配置参考 https://pkg.go.dev/github.com/robfig/cron/v3
+  spec: "@daily" # 定时任务详细配置参考 https://pkg.go.dev/github.com/robfig/cron/v3
   detail:
     - tableName: sys_operation_records
       compareField: created_at

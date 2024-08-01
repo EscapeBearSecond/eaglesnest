@@ -3,7 +3,7 @@ package upload
 import (
 	"mime/multipart"
 
-	"47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curescan/server/global"
 	"github.com/huaweicloud/huaweicloud-sdk-go-obs/obs"
 	"github.com/pkg/errors"
 )

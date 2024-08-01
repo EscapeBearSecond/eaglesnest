@@ -1,7 +1,7 @@
 package curescan
 
 import (
-	"47.103.136.241/goprojects/curesan/server/service"
+	"47.103.136.241/goprojects/curescan/server/service"
 )
 
 type ApiGroup struct {

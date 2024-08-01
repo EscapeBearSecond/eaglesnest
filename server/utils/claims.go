@@ -1,8 +1,8 @@
 package utils
 
 import (
-	"47.103.136.241/goprojects/curesan/server/global"
-	systemReq "47.103.136.241/goprojects/curesan/server/model/system/request"
+	"47.103.136.241/goprojects/curescan/server/global"
+	systemReq "47.103.136.241/goprojects/curescan/server/model/system/request"
 	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid/v5"
 	"net"

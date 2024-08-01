@@ -1,7 +1,7 @@
 package initialize
 
 import (
-	"47.103.136.241/goprojects/curesan/server/router"
+	"47.103.136.241/goprojects/curescan/server/router"
 	"github.com/gin-gonic/gin"
 )
 

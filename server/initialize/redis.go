@@ -3,7 +3,7 @@ package initialize
 import (
 	"context"
 
-	"47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curescan/server/global"
 
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"

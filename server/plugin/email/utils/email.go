@@ -6,7 +6,7 @@ import (
 	"net/smtp"
 	"strings"
 
-	"47.103.136.241/goprojects/curesan/server/plugin/email/global"
+	"47.103.136.241/goprojects/curescan/server/plugin/email/global"
 
 	"github.com/jordan-wright/email"
 )

@@ -1,8 +1,8 @@
 package email
 
 import (
-	"47.103.136.241/goprojects/curesan/server/plugin/email/global"
-	"47.103.136.241/goprojects/curesan/server/plugin/email/router"
+	"47.103.136.241/goprojects/curescan/server/plugin/email/global"
+	"47.103.136.241/goprojects/curescan/server/plugin/email/router"
 	"github.com/gin-gonic/gin"
 )
 

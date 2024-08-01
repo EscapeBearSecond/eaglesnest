@@ -1,7 +1,7 @@
 package response
 
 import (
-	"47.103.136.241/goprojects/curesan/server/model/system"
+	"47.103.136.241/goprojects/curescan/server/model/system"
 )
 
 type SysUserResponse struct {

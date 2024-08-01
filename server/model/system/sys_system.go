@@ -1,7 +1,7 @@
 package system
 
 import (
-	"47.103.136.241/goprojects/curesan/server/config"
+	"47.103.136.241/goprojects/curescan/server/config"
 )
 
 // 配置文件结构体

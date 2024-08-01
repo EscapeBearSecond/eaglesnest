@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 
-	"47.103.136.241/goprojects/curesan/server/global"
-	"47.103.136.241/goprojects/curesan/server/model/common/request"
-	"47.103.136.241/goprojects/curesan/server/model/system"
+	"47.103.136.241/goprojects/curescan/server/global"
+	"47.103.136.241/goprojects/curescan/server/model/common/request"
+	"47.103.136.241/goprojects/curescan/server/model/system"
 
 	"gorm.io/gorm"
 )

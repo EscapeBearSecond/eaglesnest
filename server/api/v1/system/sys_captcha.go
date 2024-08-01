@@ -3,9 +3,9 @@ package system
 import (
 	"time"
 
-	"47.103.136.241/goprojects/curesan/server/global"
-	"47.103.136.241/goprojects/curesan/server/model/common/response"
-	systemRes "47.103.136.241/goprojects/curesan/server/model/system/response"
+	"47.103.136.241/goprojects/curescan/server/global"
+	"47.103.136.241/goprojects/curescan/server/model/common/response"
+	systemRes "47.103.136.241/goprojects/curescan/server/model/system/response"
 	"github.com/gin-gonic/gin"
 	"github.com/mojocn/base64Captcha"
 	"go.uber.org/zap"

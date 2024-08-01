@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"strconv"
 
-	"47.103.136.241/goprojects/curesan/server/global"
-	"47.103.136.241/goprojects/curesan/server/model/common/response"
-	"47.103.136.241/goprojects/curesan/server/model/curescan"
-	"47.103.136.241/goprojects/curesan/server/model/curescan/request"
-	"47.103.136.241/goprojects/curesan/server/utils"
+	"47.103.136.241/goprojects/curescan/server/global"
+	"47.103.136.241/goprojects/curescan/server/model/common/response"
+	"47.103.136.241/goprojects/curescan/server/model/curescan"
+	"47.103.136.241/goprojects/curescan/server/model/curescan/request"
+	"47.103.136.241/goprojects/curescan/server/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 )

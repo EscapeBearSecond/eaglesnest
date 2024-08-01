@@ -2,7 +2,7 @@
 package system
 
 import (
-	"47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curescan/server/global"
 )
 
 // 导出模板 结构体  SysExportTemplate

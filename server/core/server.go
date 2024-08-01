@@ -1,9 +1,9 @@
 package core
 
 import (
-	"47.103.136.241/goprojects/curesan/server/global"
-	"47.103.136.241/goprojects/curesan/server/initialize"
-	"47.103.136.241/goprojects/curesan/server/service/system"
+	"47.103.136.241/goprojects/curescan/server/global"
+	"47.103.136.241/goprojects/curescan/server/initialize"
+	"47.103.136.241/goprojects/curescan/server/service/system"
 	"fmt"
 	"go.uber.org/zap"
 )

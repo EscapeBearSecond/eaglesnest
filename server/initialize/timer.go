@@ -1,12 +1,12 @@
 package initialize
 
 import (
-	"47.103.136.241/goprojects/curesan/server/task"
+	"47.103.136.241/goprojects/curescan/server/task"
 	"fmt"
 
 	"github.com/robfig/cron/v3"
 
-	"47.103.136.241/goprojects/curesan/server/global"
+	"47.103.136.241/goprojects/curescan/server/global"
 )
 
 func Timer() {

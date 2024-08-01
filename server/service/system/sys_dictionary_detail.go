@@ -1,9 +1,9 @@
 package system
 
 import (
-	"47.103.136.241/goprojects/curesan/server/global"
-	"47.103.136.241/goprojects/curesan/server/model/system"
-	"47.103.136.241/goprojects/curesan/server/model/system/request"
+	"47.103.136.241/goprojects/curescan/server/global"
+	"47.103.136.241/goprojects/curescan/server/model/system"
+	"47.103.136.241/goprojects/curescan/server/model/system/request"
 )
 
 // @author: DingYG

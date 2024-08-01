@@ -6,12 +6,12 @@ import (
 	"strconv"
 	"time"
 
-	"47.103.136.241/goprojects/curesan/server/plugin/email/utils"
-	utils2 "47.103.136.241/goprojects/curesan/server/utils"
+	"47.103.136.241/goprojects/curescan/server/plugin/email/utils"
+	utils2 "47.103.136.241/goprojects/curescan/server/utils"
 
-	"47.103.136.241/goprojects/curesan/server/global"
-	"47.103.136.241/goprojects/curesan/server/model/system"
-	"47.103.136.241/goprojects/curesan/server/service"
+	"47.103.136.241/goprojects/curescan/server/global"
+	"47.103.136.241/goprojects/curescan/server/model/system"
+	"47.103.136.241/goprojects/curescan/server/service"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )

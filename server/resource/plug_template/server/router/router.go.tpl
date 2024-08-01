@@ -1,7 +1,7 @@
 package router
 
 import (
-	"47.103.136.241/goprojects/curesan/server/plugin/{{ .Snake}}/api"
+	"47.103.136.241/goprojects/curescan/server/plugin/{{ .Snake}}/api"
 	"github.com/gin-gonic/gin"
 )
 

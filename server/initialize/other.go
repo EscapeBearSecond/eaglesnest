@@ -3,8 +3,8 @@ package initialize
 import (
 	"github.com/songzhibin97/gkit/cache/local_cache"
 
-	"47.103.136.241/goprojects/curesan/server/global"
-	"47.103.136.241/goprojects/curesan/server/utils"
+	"47.103.136.241/goprojects/curescan/server/global"
+	"47.103.136.241/goprojects/curescan/server/utils"
 )
 
 func OtherInit() {

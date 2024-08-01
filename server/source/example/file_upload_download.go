@@ -1,8 +1,8 @@
 package example
 
 import (
-	"47.103.136.241/goprojects/curesan/server/model/example"
-	"47.103.136.241/goprojects/curesan/server/service/system"
+	"47.103.136.241/goprojects/curescan/server/model/example"
+	"47.103.136.241/goprojects/curescan/server/service/system"
 	"context"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"

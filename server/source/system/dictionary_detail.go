@@ -1,8 +1,8 @@
 package system
 
 import (
-	sysModel "47.103.136.241/goprojects/curesan/server/model/system"
-	"47.103.136.241/goprojects/curesan/server/service/system"
+	sysModel "47.103.136.241/goprojects/curescan/server/model/system"
+	"47.103.136.241/goprojects/curescan/server/service/system"
 	"context"
 	"fmt"
 	"github.com/pkg/errors"

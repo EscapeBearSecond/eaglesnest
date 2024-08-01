@@ -2,7 +2,7 @@ package service
 
  {{- if .NeedModel }}
 import (
-   "47.103.136.241/goprojects/curesan/server/plugin/{{ .Snake}}/model"
+   "47.103.136.241/goprojects/curescan/server/plugin/{{ .Snake}}/model"
 )
 {{ end }}
 

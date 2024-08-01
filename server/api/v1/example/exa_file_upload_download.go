@@ -1,11 +1,11 @@
 package example
 
 import (
-	"47.103.136.241/goprojects/curesan/server/global"
-	"47.103.136.241/goprojects/curesan/server/model/common/request"
-	"47.103.136.241/goprojects/curesan/server/model/common/response"
-	"47.103.136.241/goprojects/curesan/server/model/example"
-	exampleRes "47.103.136.241/goprojects/curesan/server/model/example/response"
+	"47.103.136.241/goprojects/curescan/server/global"
+	"47.103.136.241/goprojects/curescan/server/model/common/request"
+	"47.103.136.241/goprojects/curescan/server/model/common/response"
+	"47.103.136.241/goprojects/curescan/server/model/example"
+	exampleRes "47.103.136.241/goprojects/curescan/server/model/example/response"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
