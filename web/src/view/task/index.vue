@@ -135,13 +135,13 @@ const statusData = reactive([
   {
       name: "删除",
       type: "primary",
-      icon: "edit",
+      icon: "Delete",
       handleClick: (scope) => handleDel(scope.row),
   },
   {
       name: "生成报告",
       type: "primary",
-      icon: "edit",
+      icon: "Position",
       handleClick: (scope) => handleReport(scope.row),
       visible : (scope) => visibleReport(scope.row)
   }
