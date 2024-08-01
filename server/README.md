@@ -52,3 +52,20 @@
 | `--timer` | timer | 定时器接口封装 |
 | `--upload`      | oss                  | oss接口封装        |
 
+## 使用
+
+> Windows
+
+```bash
+set GODEBUG=tlsrsakex=1
+go build -o curescan.exe .\main.go
+./curescan.exe
+```
+
+> Linux Or MasOS
+
+```bash
+GODEBUG=tlsrsakex=1 go build -o curescan ./main.go
+./curescan
+```
+
