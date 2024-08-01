@@ -127,6 +127,7 @@ const statusData = reactive([
       type: "primary",
       icon: "edit",
       handleClick: (scope) => handleStop(scope.row),
+      visible : (scope) => visibleStop(scope.row)
   },
   {
       name: "删除",
@@ -139,6 +140,7 @@ const statusData = reactive([
       type: "primary",
       icon: "edit",
       handleClick: (scope) => handleReport(scope.row),
+      visible : (scope) => visibleReport(scope.row)
   }
 ])
 
@@ -171,7 +173,6 @@ const setPolicyOption = async() => {
     policyOption.value = data.data.list.map((item)=> {
       return {label: item.policyName, value: item.ID}
     })
-    console.log(data.data.list, policyOption.value)
 }
 
 const getPolicyName = (id) => {
@@ -350,6 +351,17 @@ function getIpArr(e) {
     }else {
       return [e]
     }
+}
+
+
+// 根据状态来判断是否显示停止按钮
+const visibleStop = (e) => {
+    return e.status == 1
+}
+
+// 根据状态来判断是否显示报告按钮
+const visibleReport = (e) => {
+    return e.status == 2
 }
 
 </script>

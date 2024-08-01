@@ -50,7 +50,7 @@
     >
       <template #default="scope">
           <template v-for="(btn, index) in statusData">
-              <template v-if="btn.visible ? btn.visible(scope, btn) : true">
+              <template v-if="btn.visible !== false && (typeof btn.visible !== 'function' || btn.visible(scope, btn))">
                   <el-button link :icon="btn.icon ? btn.icon : ''" :type="btn.type" @click="btn.handleClick && btn.handleClick(scope)" :key="index">{{  btn.name }}</el-button>
               </template>
           </template>

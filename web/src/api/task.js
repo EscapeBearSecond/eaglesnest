@@ -10,8 +10,8 @@ export const createTask = (data) => {
 
 export const stopTask = (data) => {
     return service({
-      url: `/task/${data.id}`,
-      method: 'put',
+      url: `/task/stop/${data.id}`,
+      method: 'post',
       data
     })
 }
