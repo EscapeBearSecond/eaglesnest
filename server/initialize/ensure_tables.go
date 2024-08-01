@@ -105,6 +105,15 @@ func (e *ensureTables) TableCreated(ctx context.Context) bool {
 		example.ExaCustomer{},
 		example.ExaFileChunk{},
 		example.ExaFileUploadAndDownload{},
+
+		curescan.Area{},
+		curescan.Asset{},
+		curescan.Task{},
+		curescan.Policy{},
+		curescan.Template{},
+		curescan.PortScan{}, 
+		curescan.OnlineCheck{},
+		curescan.JobResultItem{},
 	}
 	yes := true
 	for _, t := range tables {

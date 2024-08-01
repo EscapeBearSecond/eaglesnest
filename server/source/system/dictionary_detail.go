@@ -1,10 +1,11 @@
 package system
 
 import (
-	sysModel "47.103.136.241/goprojects/curescan/server/model/system"
-	"47.103.136.241/goprojects/curescan/server/service/system"
 	"context"
 	"fmt"
+
+	sysModel "47.103.136.241/goprojects/curescan/server/model/system"
+	"47.103.136.241/goprojects/curescan/server/service/system"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 )
@@ -98,6 +99,26 @@ func (i *initDictDetail) InitializeData(ctx context.Context) (context.Context, e
 		{Label: "tinyint", Value: "1", Extend: "mysql", Status: &True},
 		{Label: "bool", Value: "2", Extend: "pgsql", Status: &True},
 	}
+	dicts[6].SysDictionaryDetails = []sysModel.SysDictionaryDetail{
+		{Label: "立即执行", Value: "1", Status: &True, Sort: 1},
+		{Label: "稍后执行", Value: "2", Status: &True, Sort: 2},
+		{Label: "定时执行", Value: "3", Status: &True, Sort: 3},
+	}
+	dicts[7].SysDictionaryDetails = []sysModel.SysDictionaryDetail{
+		{Label: "资产发现", Value: "1", Status: &True, Sort: 1},
+		{Label: "漏洞扫描", Value: "2", Status: &True, Sort: 2},
+		{Label: "弱口令", Value: "2", Status: &True, Sort: 3},
+	}
+	dicts[8].SysDictionaryDetails = []sysModel.SysDictionaryDetail{
+		{Label: "创建", Value: "0", Status: &True, Extend: "普通任务", Sort: 1},
+		{Label: "执行中", Value: "1", Status: &True, Extend: "普通任务", Sort: 2},
+		{Label: "成功", Value: "2", Status: &True, Extend: "普通任务", Sort: 3},
+		{Label: "失败", Value: "3", Status: &True, Extend: "普通任务", Sort: 4},
+		{Label: "中止", Value: "4", Status: &True, Extend: "普通任务", Sort: 5},
+		{Label: "运行", Value: "5", Status: &True, Extend: "普通任务", Sort: 6},
+		{Label: "停止", Value: "6", Status: &True, Extend: "普通任务", Sort: 7},
+	}
+
 	for _, dict := range dicts {
 		if err := db.Model(&dict).Association("SysDictionaryDetails").
 			Replace(dict.SysDictionaryDetails); err != nil {

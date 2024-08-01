@@ -58,8 +58,8 @@ type orderedInitializer struct {
 }
 
 // initSlice 供 initializer 排序依赖时使用
-type initSlice []*orderedInitializer
 
+type initSlice []*orderedInitializer
 var (
 	initializers initSlice
 	cache        map[string]*orderedInitializer

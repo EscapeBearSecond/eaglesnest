@@ -1,9 +1,10 @@
 package system
 
 import (
+	"context"
+
 	sysModel "47.103.136.241/goprojects/curescan/server/model/system"
 	"47.103.136.241/goprojects/curescan/server/service/system"
-	"context"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 )
@@ -50,6 +51,9 @@ func (i *initDict) InitializeData(ctx context.Context) (next context.Context, er
 		{Name: "数据库浮点型", Type: "float64", Status: &True, Desc: "数据库浮点型"},
 		{Name: "数据库字符串", Type: "string", Status: &True, Desc: "数据库字符串"},
 		{Name: "数据库bool类型", Type: "bool", Status: &True, Desc: "数据库bool类型"},
+		{Name: "执行方式", Type: "executeType", Status: &True, Desc: "执行方式"},
+		{Name: "模板类型", Type: "templateType", Status: &True, Desc: "模板类型"},
+		{Name: "任务状态", Type: "taskStatus", Status: &True, Desc: "任务状态"},
 	}
 
 	if err = db.Create(&entities).Error; err != nil {
