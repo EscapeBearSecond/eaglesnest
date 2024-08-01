@@ -130,6 +130,7 @@ const statusData = reactive([
       type: "primary",
       icon: "edit",
       handleClick: (scope) => handleStop(scope.row),
+      visible : (scope) => visibleStop(scope.row)
   },
   {
       name: "删除",
@@ -142,6 +143,7 @@ const statusData = reactive([
       type: "primary",
       icon: "edit",
       handleClick: (scope) => handleReport(scope.row),
+      visible : (scope) => visibleReport(scope.row)
   }
 ])
 
@@ -173,15 +175,15 @@ const setPolicyOption = async() => {
     policyOption.value = data.data.list.map((item)=> {
       return {label: item.policyName, value: item.ID}
     })
-    console.log(data.data.list, policyOption.value)
 }
 
+// 获取策略名称
 const getPolicyName = (id) => {
    let item = policyOption.value.find((item) => item.value == id);   
    return item.label
 }
 
-
+// 初始化
 const initPage = async() => {
   setPolicyOption()
   getTableData()
@@ -189,6 +191,7 @@ const initPage = async() => {
 
 initPage()
 
+// 停止
 const handleStop = (row) => {
   ElMessageBox.confirm('此操作将停止该任务, 是否继续?', '提示', {
     confirmButtonText: '确定',
@@ -196,7 +199,7 @@ const handleStop = (row) => {
     type: 'warning'
   })
     .then(async() => {
-      const res = await stopTask({ id: row.id })
+      const res = await stopTask({ id: row.ID })
       if (res.code === 0) {
         ElMessage({
           type: 'success',
@@ -213,6 +216,7 @@ const handleStop = (row) => {
     })
 }
 
+// 删除
 const handleDel = (row) => {
   ElMessageBox.confirm('此操作将永久删除该任务, 是否继续?', '提示', {
     confirmButtonText: '确定',
@@ -240,16 +244,18 @@ const handleDel = (row) => {
     })
 }
 
+// 下载报告
 const handleReport =  async(row) =>{
-    await reportTask({ id: row.id })
+    await reportTask({ id: row.ID })
 }
 
+// 获取执行方式
 const getTypeTagName = (e) => {
     let status = ['其他', '立即执行', '稍后执行','定时执行']
     return status[e]
 }
 
-// 弹窗相关
+// 表单
 const taskForm = ref({
   taskName:"",
   taskDesc:"",
@@ -261,18 +267,20 @@ const taskForm = ref({
   frequency:"",
 })
 
+// 表头
 const tableColumns = reactive([
   { label:'名称', prop:'taskName'},
-  { label:'描述', prop:'taskDesc'},
   { label:'目标', prop:'targetIp'},
   { label:'执行方式', prop:'taskPlan', slot: 'customTaskPlan'},
+  { label:'策略', prop:'policyName'},
   { label:'状态', prop:'status', formatter(row, column) {
       let res = ['创建中','执行中','已完成', '执行失败']
       return res[row.status]
   }},
-  { label:'策略', prop:'planConfig'},
+  { label:'描述', prop:'taskDesc'},
 ])
 
+//验证输入
 const rules = reactive({
   taskName: [
     { required: true, message: '请输入扫描名称', trigger: 'blur' }
@@ -290,9 +298,9 @@ const rules = reactive({
     { required: true, message: '请选择策略模板', trigger: 'blur' }
   ]
 })
+// 提交表单
 const form = ref(null)
 const enterAddDialog = async() => {
-  
   form.value.validate(async valid => {
     if (valid) {
       const req = {
@@ -352,6 +360,17 @@ function getIpArr(e) {
       return [e]
     }
 }
+
+// 根据状态来判断是否显示停止按钮
+const visibleStop = (e) => {
+    return e.status == 1
+}
+
+// 根据状态来判断是否显示报告按钮
+const visibleReport = (e) => {
+    return e.status == 2
+}
+
 
 </script>
 

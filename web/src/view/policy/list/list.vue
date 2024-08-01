@@ -535,8 +535,6 @@ const typeNameList = reactive([
       console.log(e)
       e.templates = []
  }
-
- 
  </script>
  
  <style lang="scss">
