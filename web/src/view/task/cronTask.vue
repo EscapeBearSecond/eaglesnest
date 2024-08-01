@@ -6,7 +6,7 @@
           type="primary"
           icon="plus"
           @click="handleClickAdd"
-        >新增任务</el-button>
+        >定时任务</el-button>
       </div>
       <advance-table
         :columns="tableColumns"
@@ -34,7 +34,7 @@
     >
       <template #header>
         <div class="flex justify-between items-center">
-          <span class="text-lg">普通任务</span>
+          <span class="text-lg">计划任务</span>
           <div>
             <el-button @click="closeAddDialog">取 消</el-button>
             <el-button
@@ -51,19 +51,13 @@
         :model="taskForm"
         label-width="100px"
       >
-      <el-form-item label="扫描名称：" :label-position="itemLabelPosition" prop="taskName">
+        <el-form-item label="扫描名称：" :label-position="itemLabelPosition" prop="taskName">
           <el-input v-model="taskForm.taskName" placeholder="请输入扫描名称" />
         </el-form-item>
         <el-form-item label="扫描状态：" :label-position="itemLabelPosition" prop="status">
           <el-select v-model="taskForm.status" placeholder="请选择扫描状态">
             <el-option label="开启" value="1" />
             <el-option label="关闭" value="0" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="执行方式：" :label-position="itemLabelPosition" prop="taskPlan">
-          <el-select v-model="taskForm.taskPlan" placeholder="请选择执行方式">
-            <el-option label="立即执行" value="1" />
-            <el-option label="稍后执行" value="2" />
           </el-select>
         </el-form-item>
         <p style="margin-left:100px"><warning-bar title="注：多个地址段请用逗号分隔" /></p>
@@ -79,6 +73,9 @@
               :value="item.value">
             </el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="计划配置：" :label-position="itemLabelPosition" prop="planConfig">
+          <el-input v-model="taskForm.planConfig" placeholder="请输入Cron表达式，例每天中午12点执行：0 0 12 * * ? " />
         </el-form-item>
         <el-form-item label=" 其他描述：" :label-position="itemLabelPosition">
           <el-input type="textarea" :rows="3" v-model="taskForm.taskDesc" />
@@ -155,6 +152,7 @@ const getTableData = async() => {
       page: listQuery.page,
       pageSize: listQuery.pageSize,
       isAll:true,
+      taskPlan: [3],
       ...searchInfo,
     });
     if (table.code === 0) {
@@ -196,7 +194,7 @@ const handleStop = (row) => {
     type: 'warning'
   })
     .then(async() => {
-      const res = await stopTask({ id: row.id })
+      const res = await stopTask({ id: row.ID })
       if (res.code === 0) {
         ElMessage({
           type: 'success',
@@ -220,7 +218,7 @@ const handleDel = (row) => {
     type: 'warning'
   })
     .then(async() => {
-      const res = await delTask({ id: row.id })
+      const res = await delTask({ id: row.ID })
       if (res.code === 0) {
         ElMessage({
           type: 'success',
@@ -241,7 +239,7 @@ const handleDel = (row) => {
 }
 
 const handleReport =  async(row) =>{
-    await reportTask({ id: row.id })
+    await reportTask({ id: row.ID })
 }
 
 const getTypeTagName = (e) => {
@@ -257,6 +255,7 @@ const taskForm = ref({
   targetIp:"",
   targetIpStr:"",
   policyId:"",
+  taskPlan:[3],
   date:"",
   frequency:"",
 })

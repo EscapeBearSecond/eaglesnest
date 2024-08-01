@@ -218,7 +218,7 @@
  </template>
  
  <script setup>
- import { getPolicyList, createPolicy, deletePolicy, updatePolicy } from '@/api/policy.js';
+ import { getPolicyList, createPolicy, deletePolicy, updatePolicy, getPolicyId } from '@/api/policy.js';
  import { getTemplateList } from '@/api/template.js';
 
  import { ref,reactive } from 'vue'
@@ -285,27 +285,15 @@ const typeNameList = reactive([
 
  const tableColumns = ref([
       { label:'名称', prop:'policyName'},
-      { label:'描述', prop:'policyDesc'},
       { label:'在线检测', prop:'onlineCheck', slot: 'custOnline'},
       { label:'端口检测', prop:'portScan' , slot: 'custPortScan'},
       { label:'扫描类型', prop:'scanType' , slot: 'custScanType'},
-   ])
+      { label:'描述', prop:'policyDesc'},
+    ])
  const rules = ref({
-   taskName: [
-     { required: true, message: '请输入扫描名称', trigger: 'blur' }
-   ],
-   targetIp: [
-     { required: true, message: '请输入扫描IP', trigger: 'blur' }
-   ],
-   status: [
-     { required: true, message: '请选择扫描状态', trigger: 'blur' }
-   ],
-   policyId: [
-     { required: true, message: '请选择策略模板', trigger: 'blur' }
-   ],
-   taskPlan: [
-     { required: true, message: '请选择执行方式', trigger: 'blur' }
-   ]
+  policyName: [
+     { required: true, message: '请输入策略名称', trigger: 'blur' }
+  ],
  })
 
  const listQuery = ref({
@@ -407,7 +395,19 @@ const typeNameList = reactive([
                closeDialog()
              }
            }
-           break
+           break;
+          case 'edit':
+            {
+              const res = await updatePolicy(form.value)
+              if (res.code === 0) {
+                ElMessage({
+                  type: 'success',
+                  message: '修改成功!'
+                })
+                getTableData()
+                closeDialog()
+              }
+            }
        }
  
        initForm()
@@ -428,11 +428,25 @@ const typeNameList = reactive([
  }
 
  const handleEdit = (row) => {
+  //  initForm()
    dialogTitle.value = '修改策略'
    dialogType.value = 'edit'
    setOptions()
-   form.value = JSON.parse(JSON.stringify(row))
+   getPolicyById(row.ID)
+   
    dialogFormVisible.value = true
+ }
+
+ //获取单个策略修改内容
+ const getPolicyById = async (id) => {
+     const data = await getPolicyId({id: id})     
+     
+     const policyConfig = data.data.policyConfig
+     for(let item in policyConfig) {
+       getTemplateData(item.kind)
+     }
+
+     form.value = data.data
  }
  
  
@@ -506,15 +520,15 @@ const typeNameList = reactive([
  // 配置选中扫描类型时返回模板
  const tmpOption = []
  const getTemplateData = async (type) => {
-      const table = await getTemplateList({
-        page: 1,
-        pageSize: 99999,
-        isAll: false,
-        templateType: type
-      });
-      tmpOption[type] = table.data.list.map((item)=>{
-          return {label: item.templateName, value: item.ID, disabled: false}
-      })      
+    const table = await getTemplateList({
+       page: 1,
+       pageSize: 99999,
+       isAll: false,
+       templateType: type
+    });
+    tmpOption[type] = table.data.list.map((item)=>{
+        return {label: item.templateName, value: item.ID, disabled: false}
+    })
  }
  
  </script>
