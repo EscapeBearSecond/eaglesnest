@@ -132,13 +132,13 @@ const statusData = reactive([
   {
       name: "删除",
       type: "primary",
-      icon: "edit",
+      icon: "Delete",
       handleClick: (scope) => handleDel(scope.row),
   },
   {
       name: "生成报告",
       type: "primary",
-      icon: "edit",
+      icon: "Position",
       handleClick: (scope) => handleReport(scope.row),
       visible : (scope) => visibleReport(scope.row)
   }
@@ -266,7 +266,7 @@ const tableColumns = reactive([
   { label:'目标', prop:'targetIp'},
   { label:'执行方式', prop:'taskPlan', slot: 'customTaskPlan'},
   { label:'状态', prop:'status', formatter(row, column) {
-      let res = ['创建中','执行中','已完成', '执行失败']
+      let res = ['创建中','执行中','已完成', '执行失败', '已终止', '运行中', '已停止']
       return res[row.status]
   }},
   { label:'计划配置', prop:'planConfig'},
