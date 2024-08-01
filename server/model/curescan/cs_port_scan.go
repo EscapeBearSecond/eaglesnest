@@ -7,6 +7,7 @@ import (
 
 type PortScan struct {
 	global.GvaModel
+	global.CsModel
 	TaskID  uint          `gorm:"column:task_id;type:int8;comment:任务ID" json:"taskId"`
 	IP      string        `gorm:"column:ip;type:varchar(20);comment:主机" json:"ip"`
 	Ports   pq.Int64Array `gorm:"column:port;type:int8[];comment:端口" json:"ports"`

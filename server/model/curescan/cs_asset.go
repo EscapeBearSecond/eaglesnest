@@ -7,6 +7,7 @@ import (
 
 type Asset struct {
 	global.GvaModel
+	global.CsModel
 	AssetName    string        `json:"assetName" gorm:"type:varchar(255);column:asset_name;comment:资产名称"`
 	AssetIP      string        `json:"assetIp" gorm:"type:varchar(255);column:asset_ip;comment:资产IP"`
 	AreaName     string        `json:"areaName" gorm:"type:varchar(255);column:area_name;comment:资产所属区域名称"`

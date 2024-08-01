@@ -1,14 +1,15 @@
 package middleware
 
 import (
+	"errors"
+	"strconv"
+	"time"
+
 	"47.103.136.241/goprojects/curescan/server/global"
 	"47.103.136.241/goprojects/curescan/server/model/system"
 	"47.103.136.241/goprojects/curescan/server/utils"
-	"errors"
 	"github.com/golang-jwt/jwt/v4"
 	"go.uber.org/zap"
-	"strconv"
-	"time"
 
 	"47.103.136.241/goprojects/curescan/server/model/common/response"
 	"47.103.136.241/goprojects/curescan/server/service"

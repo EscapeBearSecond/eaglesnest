@@ -48,7 +48,8 @@ func (t *TemplateApi) CreateTemplate(c *gin.Context) {
 		TemplateDesc:    createTemplate.TemplateDesc,
 		TemplateContent: createTemplate.TemplateContent,
 	}
-
+	modelTemplate.CreatedBy = utils.GetUserID(c)
+	modelTemplate.UpdatedBy = utils.GetUserID(c)
 	err = templateService.CreateTemplate(&modelTemplate)
 	if err != nil {
 		global.GVA_LOG.Error(err.Error())

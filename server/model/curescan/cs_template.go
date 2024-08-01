@@ -6,6 +6,7 @@ import (
 
 type Template struct {
 	global.GvaModel
+	global.CsModel
 	TemplateName    string `gorm:"column:template_name;type:varchar(20);uniqueIndex;not null;comment:模板名称" json:"templateName"`
 	TemplateType    uint   `gorm:"column:template_type;type:int8;not null;comment:模板类型" json:"templateType,string"`
 	TemplateDesc    string `gorm:"column:template_desc;type:text;comment:模板描述" json:"templateDesc"`

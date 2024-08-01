@@ -190,7 +190,7 @@ func (s *TaskService) DeleteTask(id int) error {
 }
 
 func (s *TaskService) GetTaskById(id int) (*curescan.Task, error) {
-	var task curescan.Task
+	var task *curescan.Task
 	err := global.GVA_DB.Select("id", "task_name", "task_desc", "status", "target_ip", "policy_id", "task_plan",
 		"plan_config", "created_at", "updated_at", "deleted_at").Where("id=?", id).First(&task).Error
 	if err != nil {
@@ -199,7 +199,12 @@ func (s *TaskService) GetTaskById(id int) (*curescan.Task, error) {
 		}
 		return nil, err
 	}
-	return &task, nil
+	policy, err := policyService.GetPolicyById(int(task.PolicyID))
+	if err != nil {
+		return nil, err
+	}
+	task.PolicyName = policy.PolicyName
+	return task, nil
 }
 
 func (s *TaskService) GetTaskList(st request.SearchTask) (list interface{}, total int64, err error) {
@@ -210,7 +215,7 @@ func (s *TaskService) GetTaskList(st request.SearchTask) (list interface{}, tota
 	offset := page.PageSize * (page.Page - 1)
 	db := global.GVA_DB.Model(&curescan.Task{}).Select("id", "task_name", "task_desc", "status", "target_ip", "policy_id", "task_plan",
 		"plan_config", "created_at", "updated_at", "deleted_at")
-	var tasks []curescan.Task
+	var tasks []*curescan.Task
 	if st.TaskName != "" {
 		db = db.Where("task_name LIKE ?", "%"+st.TaskName+"%")
 	}
@@ -241,6 +246,17 @@ func (s *TaskService) GetTaskList(st request.SearchTask) (list interface{}, tota
 		}
 	}
 	err = db.Order(OrderStr).Find(&tasks).Error
+	if err != nil {
+		return tasks, total, err
+	}
+	for _, task := range tasks {
+		policy, err := policyService.GetPolicyById(int(task.PolicyID))
+		if err != nil {
+			// todo 记录错误日志
+			return tasks, total, err
+		}
+		task.PolicyName = policy.PolicyName
+	}
 	return tasks, total, err
 }
 

@@ -43,6 +43,8 @@ func (csa *AreaApi) CreateArea(c *gin.Context) {
 		AreaIP:   createArea.AreaIP,
 		AreaDesc: createArea.AreaDesc,
 	}
+	modelArea.CreatedBy = utils.GetUserID(c)
+	modelArea.UpdatedBy = utils.GetUserID(c)
 	err = areaService.CreateArea(&modelArea)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
@@ -91,6 +93,7 @@ func (csa *AreaApi) UpdateArea(c *gin.Context) {
 		AreaIP:   updateArea.AreaIP,
 		AreaDesc: updateArea.AreaDesc,
 	}
+	modelArea.UpdatedBy = utils.GetUserID(c)
 	err = areaService.UpdateArea(&modelArea)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)

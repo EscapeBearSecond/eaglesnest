@@ -12,3 +12,8 @@ type GvaModel struct {
 	UpdatedAt time.Time      // 更新时间
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"` // 删除时间
 }
+
+type CsModel struct {
+	CreatedBy uint `gorm:"column:created_by;type:int8;comment:创建者" json:"CreatedBy"`
+	UpdatedBy uint `gorm:"column:updated_by;type:int8;comment:更新者" json:"UpdatedBy"`
+}

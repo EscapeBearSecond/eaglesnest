@@ -4,6 +4,7 @@ import "47.103.136.241/goprojects/curescan/server/global"
 
 type OnlineCheck struct {
 	global.GvaModel
+	global.CsModel
 	IP      string `gorm:"column:ip;type:varchar(20);comment:主机" json:"ip"`
 	System  string `gorm:"column:system;type:varchar(20);comment:系统" json:"system"`
 	TTL     int    `gorm:"column:ttl;type:int8;comment:TTL" json:"ttl"`

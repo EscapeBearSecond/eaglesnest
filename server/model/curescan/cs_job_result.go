@@ -4,6 +4,7 @@ import "47.103.136.241/goprojects/curescan/server/global"
 
 type JobResultItem struct {
 	global.GvaModel
+	global.CsModel
 	Name             string   `json:"name" gorm:"type:text;column:name;comment:任务名称"`
 	Kind             string   `json:"kind" gorm:"type:text;column:kind;comment:任务类型"`
 	TemplateID       string   `json:"templateId" gorm:"type:text;column:template_id;comment:模板ID"`
