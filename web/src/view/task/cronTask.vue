@@ -262,14 +262,14 @@ const taskForm = ref({
 
 const tableColumns = reactive([
   { label:'名称', prop:'taskName'},
-  { label:'描述', prop:'taskDesc'},
   { label:'目标', prop:'targetIp'},
   { label:'执行方式', prop:'taskPlan', slot: 'customTaskPlan'},
   { label:'状态', prop:'status', formatter(row, column) {
       let res = ['创建中','执行中','已完成', '执行失败']
       return res[row.status]
   }},
-  { label:'策略', prop:'planConfig'},
+  { label:'计划配置', prop:'planConfig'},
+  { label:'描述', prop:'taskDesc'},
 ])
 
 const rules = reactive({
