@@ -170,7 +170,7 @@
                 <label style="display: block;margin: 10px 0 10px 20px;">配置{{ index+1 }}</label>
                 <div style="margin-left: 40px;">
                   <el-form-item label="类型" :label-position="itemLabelPosition" class="sec-lab">
-                    <el-select v-model="policyItem.kind" placeholder="请选择扫描类型" @change="getTemplateData(policyItem.kind)">
+                    <el-select v-model="policyItem.kind" placeholder="请选择扫描类型" @change="changeScanType(policyItem)">
                         <el-option
                           v-for="type in typeNameList"
                           :key="type.value"
@@ -180,7 +180,7 @@
                         />
                       </el-select>
                   </el-form-item>
-                  <el-form-item label="模板" :label-position="itemLabelPosition" class="sec-lab">
+                  <el-form-item label="模板" :label-position="itemLabelPosition" class="sec-lab" v-if="policyItem.kind != ''">
                      <el-select 
                       v-model="policyItem.templates" 
                       placeholder="请选择模板，可多选"   
@@ -189,7 +189,7 @@
                       collapse-tags-tooltip
                       >
                         <el-option
-                          v-for="item in tmpOption[policyItem.kind]"
+                          v-for="item in tmpOption[policyItem.kind - 1]"
                           :key="item.value"
                           :label="item.label"
                           :value="item.value"
@@ -218,7 +218,7 @@
  </template>
  
  <script setup>
- import { getPolicyList, createPolicy, deletePolicy, updatePolicy } from '@/api/policy.js';
+ import { getPolicyList, createPolicy, deletePolicy, updatePolicy, getPolicyId } from '@/api/policy.js';
  import { getTemplateList } from '@/api/template.js';
 
  import { ref,reactive } from 'vue'
@@ -245,7 +245,7 @@
           "name": "",
           "kind": "",
           "timeout": "5s",
-          "count": 0,
+          "count": 1,
           "format": "",
           "rateLimit": 150,
           "concurrency": 150
@@ -285,27 +285,15 @@ const typeNameList = reactive([
 
  const tableColumns = ref([
       { label:'名称', prop:'policyName'},
-      { label:'描述', prop:'policyDesc'},
       { label:'在线检测', prop:'onlineCheck', slot: 'custOnline'},
       { label:'端口检测', prop:'portScan' , slot: 'custPortScan'},
       { label:'扫描类型', prop:'scanType' , slot: 'custScanType'},
-   ])
+      { label:'描述', prop:'policyDesc'},
+    ])
  const rules = ref({
-   taskName: [
-     { required: true, message: '请输入扫描名称', trigger: 'blur' }
-   ],
-   targetIp: [
-     { required: true, message: '请输入扫描IP', trigger: 'blur' }
-   ],
-   status: [
-     { required: true, message: '请选择扫描状态', trigger: 'blur' }
-   ],
-   policyId: [
-     { required: true, message: '请选择策略模板', trigger: 'blur' }
-   ],
-   taskPlan: [
-     { required: true, message: '请选择执行方式', trigger: 'blur' }
-   ]
+  policyName: [
+     { required: true, message: '请输入策略名称', trigger: 'blur' }
+  ],
  })
 
  const listQuery = ref({
@@ -340,8 +328,7 @@ const typeNameList = reactive([
      listQuery.value.page = table.data.page
      listQuery.value.pageSize = table.data.pageSize
    }
-
-   console.log(table.data.list);
+   setOptions()
  }
  
  getTableData()
@@ -407,7 +394,19 @@ const typeNameList = reactive([
                closeDialog()
              }
            }
-           break
+           break;
+          case 'edit':
+            {
+              const res = await updatePolicy(form.value)
+              if (res.code === 0) {
+                ElMessage({
+                  type: 'success',
+                  message: '修改成功!'
+                })
+                getTableData()
+                closeDialog()
+              }
+            }
        }
  
        initForm()
@@ -416,6 +415,7 @@ const typeNameList = reactive([
    })
  }
  const setOptions = () => {
+  getTemplateData()
  }
  
  // 新增策略
@@ -423,16 +423,22 @@ const typeNameList = reactive([
    initForm()
    dialogTitle.value = '新增策略'
    dialogType.value = 'add'
-   setOptions()
    dialogFormVisible.value = true
  }
 
  const handleEdit = (row) => {
+  //  initForm()
    dialogTitle.value = '修改策略'
    dialogType.value = 'edit'
-   setOptions()
-   form.value = JSON.parse(JSON.stringify(row))
+   getPolicyById(row.ID)
+   
    dialogFormVisible.value = true
+ }
+
+ //获取单个策略修改内容
+ const getPolicyById = async (id) => {
+     const data = await getPolicyId({id: id})     
+     form.value = data.data
  }
  
  
@@ -484,7 +490,7 @@ const typeNameList = reactive([
       "name": "",
       "kind": "",
       "timeout": "5s",
-      "count": 0,
+      "count": 1,
       "format": "",
       "rateLimit": 150,
       "concurrency": 150
@@ -504,18 +510,32 @@ const typeNameList = reactive([
  }
 
  // 配置选中扫描类型时返回模板
- const tmpOption = []
- const getTemplateData = async (type) => {
-      const table = await getTemplateList({
+ const tmpOption = [[],[],[]]
+ const getTemplateData = async () => {
+    const table = await getTemplateList({
         page: 1,
         pageSize: 99999,
         isAll: false,
-        templateType: type
-      });
-      tmpOption[type] = table.data.list.map((item)=>{
-          return {label: item.templateName, value: item.ID, disabled: false}
-      })      
+    });
+    table.data.list.forEach(e => {
+        console.log(e)
+        if(e.templateType == 1 && tmpOption[0].length == 0) {
+          tmpOption[0].push({label:e.templateName, value: e.ID})
+        }
+        if(e.templateType == 2 && tmpOption[1].length == 0) {
+          tmpOption[1].push({label:e.templateName, value: e.ID})
+        }
+        if(e.templateType == 3 && tmpOption[2].length == 0) {
+          tmpOption[2].push({label:e.templateName, value: e.ID})
+        }
+    });    
  }
+
+ const changeScanType = (e)=> {
+      console.log(e)
+      e.templates = []
+ }
+
  
  </script>
  
