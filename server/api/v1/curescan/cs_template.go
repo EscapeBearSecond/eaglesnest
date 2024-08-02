@@ -248,22 +248,22 @@ func (t *TemplateApi) TemplateTags(c *gin.Context) {
 	var tag4s []string
 	err := global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 		template := curescan.Template{}
-		err := tx.Model(template).Select("tag1").Distinct("tag1").Find(&tag1s).Error
+		err := tx.Model(template).Select("tag1").Where("tag1 IS NOT NULL AND tag1 != ''").Distinct("tag1").Find(&tag1s).Error
 		if err != nil {
 			fmt.Println(1)
 			return err
 		}
-		err = tx.Model(template).Select("tag2").Distinct("tag2").Find(&tag2s).Error
+		err = tx.Model(template).Select("tag2").Where("tag2 IS NOT NULL AND tag2 != ''").Distinct("tag2").Find(&tag2s).Error
 		if err != nil {
 			fmt.Println(2)
 			return err
 		}
-		err = tx.Model(template).Select("tag3").Distinct("tag3").Find(&tag3s).Error
+		err = tx.Model(template).Select("tag3").Where("tag2 IS NOT NULL AND tag3 != ''").Distinct("tag3").Find(&tag3s).Error
 		if err != nil {
 			fmt.Println(3)
 			return err
 		}
-		err = tx.Model(template).Select("tag4").Distinct("tag4").Find(&tag4s).Error
+		err = tx.Model(template).Select("tag4").Where("tag3 IS NOT NULL AND tag4 != ''").Distinct("tag4").Find(&tag4s).Error
 		if err != nil {
 			fmt.Println(4)
 			return err
