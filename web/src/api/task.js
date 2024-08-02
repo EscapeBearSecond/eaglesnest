@@ -32,6 +32,14 @@ export const reportTask = (data) => {
     })
 }
 
+export const startTask = (data) => {
+    return service({
+      url: `/task/execute/${data.id}`,
+      method: 'post',
+      data
+    })
+}
+
 export const delTask = (data) => {
   return service({
     url: `/task/${data.id}`,
