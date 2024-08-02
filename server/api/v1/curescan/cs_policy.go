@@ -55,9 +55,32 @@ func (p *PolicyApi) CreatePolicy(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	policyConfig, _ := json.Marshal(createPolicy.PolicyConfig)
-	onlineConfg, _ := json.Marshal(createPolicy.OnlineConfig)
-	portScanConfg, _ := json.Marshal(createPolicy.PortScanConfig)
+	for _, policyConfig := range createPolicy.PolicyConfig {
+		if policyConfig.Kind == "1" {
+			policyConfig.Name = "资产发现"
+		}
+		if policyConfig.Kind == "2" {
+			policyConfig.Name = "漏洞扫描"
+		}
+		if policyConfig.Kind == "3" {
+			policyConfig.Name = "弱口令"
+		}
+	}
+	policyConfig, err := json.Marshal(createPolicy.PolicyConfig)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	onlineConfg, err := json.Marshal(createPolicy.OnlineConfig)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	portScanConfg, err := json.Marshal(createPolicy.PortScanConfig)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	scanType := make([]string, len(createPolicy.PolicyConfig))
 	templates := make([]int64, 0)
 	for i := 0; i < len(createPolicy.PolicyConfig); i++ {

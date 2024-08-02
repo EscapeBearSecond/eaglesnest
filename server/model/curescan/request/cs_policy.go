@@ -6,12 +6,12 @@ import (
 )
 
 type CreatePolicy struct {
-	PolicyName     string         `json:"policyName"`
-	PolicyDesc     string         `json:"policyDesc"`
-	PolicyConfig   []JobConfig    `json:"policyConfig"`
-	OnlineConfig   OnlineConfig   `json:"onlineConfig"`
-	PortScanConfig PortScanConfig `json:"portScanConfig"`
-	IgnoredIP      []string       `json:"ignoredIp"`
+	PolicyName     string          `json:"policyName"`
+	PolicyDesc     string          `json:"policyDesc"`
+	PolicyConfig   []*JobConfig    `json:"policyConfig"`
+	OnlineConfig   *OnlineConfig   `json:"onlineConfig"`
+	PortScanConfig *PortScanConfig `json:"portScanConfig"`
+	IgnoredIP      []string        `json:"ignoredIp"`
 }
 
 type OnlineConfig struct {

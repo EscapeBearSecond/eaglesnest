@@ -7,11 +7,11 @@ import (
 type Template struct {
 	global.GvaModel
 	global.CsModel
-	TemplateName    string `gorm:"column:template_name;type:varchar(20);uniqueIndex;not null;comment:模板名称" json:"templateName"`
+	TemplateName    string `gorm:"column:template_name;type:text;uniqueIndex;not null;comment:模板名称" json:"templateName"`
 	TemplateType    uint   `gorm:"column:template_type;type:int8;not null;comment:模板类型" json:"templateType,string"`
 	TemplateDesc    string `gorm:"column:template_desc;type:text;comment:模板描述" json:"templateDesc"`
 	TemplateContent string `gorm:"column:template_content;type:text;not null;comment:模板内容" json:"templateContent"`
-	TemplateId      string `gorm:"column:template_id;type:varchar(20);uniqueIndex;not null;comment:模板id" json:"templateId"`
+	TemplateId      string `gorm:"column:template_id;type:text;uniqueIndex;not null;comment:模板id" json:"templateId"`
 }
 
 func (Template) TableName() string {

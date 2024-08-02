@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 
 	"go.uber.org/zap"
 
@@ -28,6 +29,7 @@ var (
 	portScanService    = &PortScanService{}
 	onlineCheckService = &OnlineCheckService{}
 	jobResultService   = &JobResultService{}
+	assetService       = &AssetService{}
 )
 
 // 执行方式
@@ -484,6 +486,46 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 				return err
 			}
 			err = jobResultService.BatchAddWithTransaction(tx, taskResult.JobResultList)
+			if err != nil {
+				return err
+			}
+			var assets = make([]*curescan.Asset, 0)
+			// 资产添加
+			for _, item := range taskResult.JobResultList {
+				nameSplit := strings.Split(item.Name, "_")
+				if item.Kind == "1" {
+					asset := &curescan.Asset{}
+					asset.AreaName = "未知"
+					asset.AssetArea = 0
+					asset.AssetName = item.Name
+					asset.AssetType = nameSplit[0]
+					if len(nameSplit) == 1 {
+						asset.SystemType = "未知"
+						asset.Manufacturer = "未知"
+						asset.AssetModel = "未知"
+					}
+					if len(nameSplit) == 2 {
+						asset.SystemType = nameSplit[1]
+						asset.Manufacturer = "未知"
+						asset.AssetModel = "未知"
+					}
+					if len(nameSplit) == 3 {
+						asset.SystemType = nameSplit[1]
+						asset.Manufacturer = nameSplit[2]
+						asset.AssetModel = "未知"
+					}
+					if len(nameSplit) == 4 {
+						asset.SystemType = nameSplit[1]
+						asset.Manufacturer = nameSplit[2]
+						asset.AssetModel = nameSplit[3]
+					}
+					asset.AssetIP = item.Host
+					port, _ := strconv.Atoi(item.Port)
+					asset.OpenPorts = []int64{int64(port)}
+					assets = append(assets, asset)
+				}
+			}
+			err = tx.Model(&curescan.Asset{}).CreateInBatches(assets, 100).Error
 			if err != nil {
 				return err
 			}
