@@ -6,7 +6,7 @@ import (
 )
 
 type CreateTemplate struct {
-	TemplateType    uint   `json:"templateType,string"`
+	TemplateType    string `json:"templateType"`
 	TemplateContent string `json:"templateContent"`
 }
 

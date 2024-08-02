@@ -24,6 +24,7 @@ func (t *TemplateRouter) InitTemplateRouter(Router *gin.RouterGroup) {
 		// apiRouterWithoutRecord.POST("getAllTemplates", TemplateRouterApi.GetAllApis) // 获取所有Template
 		templateRouter.POST("list", templateRouterApi.GetTemplateList) // 获取Template列表
 		templateRouter.POST("imports", templateRouterApi.ImportTemplates)
+		templateRouter.GET("tags", templateRouterApi.TemplateTags)
 		templateRouter.GET("lll", templateRouterApi.LLL)
 
 	}

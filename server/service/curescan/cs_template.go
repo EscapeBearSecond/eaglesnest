@@ -69,7 +69,7 @@ func (t *TemplateService) GetTemplateList(searchTemplate request2.SearchTemplate
 		db = global.GVA_DB.Model(&curescan.Template{}).Omit("template_content")
 	}
 	var templates []curescan.Template
-	if template.TemplateType != 0 {
+	if template.TemplateType != "" {
 		db = db.Where("template_type = ?", template.TemplateType)
 	}
 	if template.TemplateName != "" {

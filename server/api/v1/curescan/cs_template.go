@@ -11,6 +11,7 @@ import (
 	"47.103.136.241/goprojects/curescan/server/utils"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
 
 type TemplateApi struct {
@@ -187,7 +188,7 @@ func (t *TemplateApi) ImportTemplates(c *gin.Context) {
 	files := form.File["file"]
 	errorStrings := make([]string, 0)
 	types := form.Value["templateType"]
-	templateTypeStr := types[0]
+	templateType := types[0]
 	templates := make([]*curescan.Template, 0)
 	for _, fh := range files {
 
@@ -210,7 +211,7 @@ func (t *TemplateApi) ImportTemplates(c *gin.Context) {
 			continue
 		}
 		file.Close()
-		templateType, err := strconv.ParseUint(templateTypeStr, 10, 64)
+
 		if err != nil {
 			errorStrings = append(errorStrings, fmt.Sprintf("parse template type [%s] error, err: [%s]", templateType, err.Error()))
 			continue
@@ -218,7 +219,7 @@ func (t *TemplateApi) ImportTemplates(c *gin.Context) {
 
 		template := &curescan.Template{}
 		template.TemplateContent = string(buffer)
-		template.TemplateType = uint(templateType)
+		template.TemplateType = templateType
 		err = templateService.ParseTemplateContent(template)
 		if err != nil {
 			errorStrings = append(errorStrings, fmt.Sprintf("parse template [%s] error, err: [%s]", fh.Filename, err.Error()))
@@ -237,6 +238,49 @@ func (t *TemplateApi) ImportTemplates(c *gin.Context) {
 	}
 	response.Ok(c)
 
+}
+
+func (t *TemplateApi) TemplateTags(c *gin.Context) {
+	fmt.Println("111111111111")
+	var tag1s []string
+	var tag2s []string
+	var tag3s []string
+	var tag4s []string
+	err := global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+		template := curescan.Template{}
+		err := tx.Model(template).Select("tag1").Distinct("tag1").Find(&tag1s).Error
+		if err != nil {
+			fmt.Println(1)
+			return err
+		}
+		err = tx.Model(template).Select("tag2").Distinct("tag2").Find(&tag2s).Error
+		if err != nil {
+			fmt.Println(2)
+			return err
+		}
+		err = tx.Model(template).Select("tag3").Distinct("tag3").Find(&tag3s).Error
+		if err != nil {
+			fmt.Println(3)
+			return err
+		}
+		err = tx.Model(template).Select("tag4").Distinct("tag4").Find(&tag4s).Error
+		if err != nil {
+			fmt.Println(4)
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		global.GVA_LOG.Error("查询数据库出现异常", zap.String("uri", c.Request.RequestURI), zap.String("error", err.Error()))
+		response.FailWithMessage("查询数据库出现异常", c)
+		return
+	}
+	response.OkWithData(map[string]interface{}{
+		"tag1": tag1s,
+		"tag2": tag2s,
+		"tag3": tag3s,
+		"tag4": tag4s,
+	}, c)
 }
 
 func (t *TemplateApi) LLL(c *gin.Context) {
