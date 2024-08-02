@@ -9,6 +9,7 @@ type CreateTask struct {
 	TaskDesc   string   `json:"taskDesc"`
 	Status     int      `json:"status"`
 	TargetIP   []string `json:"targetIp"`
+	Flag       string   `json:"flag"`
 	PolicyID   uint     `json:"policyId"`
 	TaskPlan   int      `json:"taskPlan"`
 	PlanConfig string   `json:"planConfig"`

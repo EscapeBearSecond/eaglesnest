@@ -29,7 +29,7 @@ var (
 	portScanService    = &PortScanService{}
 	onlineCheckService = &OnlineCheckService{}
 	jobResultService   = &JobResultService{}
-	assetService       = &AssetService{}
+	// assetService       = &AssetService{}
 )
 
 // 执行方式
@@ -75,6 +75,11 @@ var (
 )
 
 func (s *TaskService) CreateTask(createTask *request.CreateTask) error {
+	if createTask.TaskPlan == ExecuteTiming {
+		if !errors.Is(global.GVA_DB.Select("task_name").First(&curescan.Task{}, "area_name=? AND task_plan = ?", createTask.TaskName, ExecuteTiming).Error, gorm.ErrRecordNotFound) {
+			return fmt.Errorf("定时任务'%s'已存在, 请勿重复创建", createTask.TaskName)
+		}
+	}
 	var task = curescan.Task{
 		TaskName:   createTask.TaskName,
 		TaskDesc:   createTask.TaskDesc,
@@ -82,6 +87,7 @@ func (s *TaskService) CreateTask(createTask *request.CreateTask) error {
 		PlanConfig: createTask.PlanConfig,
 		PolicyID:   createTask.PolicyID,
 		TargetIP:   createTask.TargetIP,
+		Flag:       createTask.Flag,
 	}
 	if createTask.TaskPlan == ExecuteImmediately || createTask.TaskPlan == ExecuteLater {
 		// 普通任务创建后的状态为"创建"
@@ -194,7 +200,7 @@ func (s *TaskService) DeleteTask(id int) error {
 func (s *TaskService) GetTaskById(id int) (*curescan.Task, error) {
 	var task *curescan.Task
 	err := global.GVA_DB.Select("id", "task_name", "task_desc", "status", "target_ip", "policy_id", "task_plan",
-		"plan_config", "created_at", "updated_at", "deleted_at").Where("id=?", id).First(&task).Error
+		"plan_config", "created_at", "updated_at", "deleted_at", "flag").Where("id=?", id).First(&task).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("目标数据不存在")
@@ -216,7 +222,7 @@ func (s *TaskService) GetTaskList(st request.SearchTask) (list interface{}, tota
 	limit := page.PageSize
 	offset := page.PageSize * (page.Page - 1)
 	db := global.GVA_DB.Model(&curescan.Task{}).Select("id", "task_name", "task_desc", "status", "target_ip", "policy_id", "task_plan",
-		"plan_config", "created_at", "updated_at", "deleted_at")
+		"plan_config", "created_at", "updated_at", "deleted_at", "flag")
 	var tasks []*curescan.Task
 	if st.TaskName != "" {
 		db = db.Where("task_name LIKE ?", "%"+st.TaskName+"%")
@@ -454,6 +460,7 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 			TaskPlan:   ExecuteImmediately,
 			PlanConfig: "",
 			EntryID:    entry.EntryID,
+			Flag:       task.Flag,
 		}
 		err = global.GVA_DB.Create(newTask).Error
 		if err != nil {

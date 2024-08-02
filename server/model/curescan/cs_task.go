@@ -18,6 +18,7 @@ type Task struct {
 	PlanConfig string         `json:"planConfig" gorm:"column:plan_config;type:text;comment:计划配置"`
 	Executions uint           `json:"executions" gorm:"column:executions;type:int8;comment:执行次数"`
 	EntryID    string         `json:"entryId" gorm:"column:entry_id;type:varchar(255);comment:entry ID"`
+	Flag       string         `json:"flag" gorm:"column:flag;type:text;comment:flag"`
 }
 
 func (Task) TableName() string {
