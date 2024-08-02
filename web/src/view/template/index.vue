@@ -6,11 +6,22 @@
         :inline="true"
         :model="searchInfo"
       >
-        <el-form-item label="路径">
+        <el-form-item label="模板名称">
           <el-input
             v-model="searchInfo.templateName"
             placeholder="模板名称"
           />
+        </el-form-item>
+        <el-form-item label="模板类型">
+          <el-select v-model="searchInfo.templateType" placeholder="请选择执行方式">
+            <el-option label="全部" value=""></el-option>
+            <el-option
+              v-for="item in templateOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+          />
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button
@@ -82,12 +93,6 @@
         label-width="80px"
       >
         <el-form-item
-          label="名称"
-          prop="templateName"
-        >
-          <el-input v-model="tempFormData.templateName" placeholder="模板名称" />
-        </el-form-item>
-        <el-form-item
           label="类型"
           prop="templateType"
         >
@@ -117,9 +122,6 @@
 
 <script setup>
 import { getTemplateList,  createTemplate, updateTemplate, delTemplate } from "@/api/template.js"
-
-
-
 import { ref, reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
@@ -162,10 +164,7 @@ const statusData = reactive([
   }
 ])
 
-const searchInfo = reactive({
-  templateName: ''
-})
-
+const searchInfo = ref({})
 const onReset = () => {
   searchInfo.value = {}
 }
@@ -214,14 +213,13 @@ const handleClickDelete = async(row) => {
 
 // 弹窗相关
 const tempFormData = ref({
-  templateName:"",
   templateType:"",
   templateContent:"",
 })
 
 const tableColumns = reactive([
-    { label:'I D', prop:'templateId'},
     { label:'名称', prop:'templateName'},
+    { label:'I D', prop:'templateId'},
     { label:'类型', prop:'templateType',  slot: 'custType'},
 ])
 
@@ -248,9 +246,9 @@ const enterAddDialog = async() => {
       if (dialogFlag.value === 'add') {
         const res = await createTemplate(req)
         if (res.code === 0) {
-          ElMessage({ type: 'success', message: '创建成功' })
-          await getTableData()
-          closeAddDialog()
+            ElMessage({ type: 'success', message: '创建成功' })
+            getTableData()
+            closeAddDialog()
         }
       }
       if (dialogFlag.value === 'edit') {
@@ -267,12 +265,6 @@ const enterAddDialog = async() => {
 
 const templateDialog = ref(false)
 const closeAddDialog = () => {
-  console.log(
-  '%c 🍱 CONSOLE_INFO: ',
-  'font-size:20px;background-color: #ED9EC7;color:#fff;',
-  form.value
-  );
-  
   form.value.resetFields()
   templateDialog.value = false
 }
@@ -285,11 +277,10 @@ const addTemplate = () => {
 }
 
 const handleClickUpdate = (row) => {
-  console.log(row)
-  dialogFlag.value = 'edit'
-  row.templateType = row.templateType + ''
-  tempFormData.value = JSON.parse(JSON.stringify(row))
-  templateDialog.value = true
+    dialogFlag.value = 'edit'
+    row.templateType = row.templateType + ''
+    tempFormData.value = JSON.parse(JSON.stringify(row))
+    templateDialog.value = true
 }
 
 </script>
