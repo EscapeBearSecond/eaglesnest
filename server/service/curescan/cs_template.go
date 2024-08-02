@@ -1,12 +1,15 @@
 package curescan
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
+	"strings"
 
 	"47.103.136.241/goprojects/curescan/server/global"
 	"47.103.136.241/goprojects/curescan/server/model/curescan"
 	request2 "47.103.136.241/goprojects/curescan/server/model/curescan/request"
+	"github.com/spf13/viper"
 	"gorm.io/gorm"
 )
 
@@ -31,7 +34,7 @@ func (t *TemplateService) DeleteTemplate(id int) error {
 func (t *TemplateService) GetTemplateById(id int) (*curescan.Template, error) {
 	var template curescan.Template
 	err := global.GVA_DB.Select("id", "template_name", "template_type", "template_id", "template_desc", "template_content",
-		"created_at", "updated_at", "deleted_at").Where("id = ?", id).First(&template).Error
+		"created_at", "updated_at", "deleted_at", "tag1", "tag2", "tag3", "tag4").Where("id = ?", id).First(&template).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("目标数据不存在")
@@ -75,6 +78,18 @@ func (t *TemplateService) GetTemplateList(searchTemplate request2.SearchTemplate
 	if template.TemplateId != "" {
 		db = db.Where("template_id = ?", template.TemplateId)
 	}
+	if template.Tag1 != "" {
+		db = db.Where("tag1 = ?", template.Tag1)
+	}
+	if template.Tag2 != "" {
+		db = db.Where("tag2 = ?", template.Tag2)
+	}
+	if template.Tag3 != "" {
+		db = db.Where("tag3 = ?", template.Tag3)
+	}
+	if template.Tag4 != "" {
+		db = db.Where("tag4 = ?", template.Tag4)
+	}
 	err = db.Count(&total).Error
 	if err != nil {
 		return templates, total, err
@@ -86,6 +101,11 @@ func (t *TemplateService) GetTemplateList(searchTemplate request2.SearchTemplate
 		orderMap["id"] = true
 		orderMap["template_name"] = true
 		orderMap["template_type"] = true
+		orderMap["template_id"] = true
+		orderMap["tag1"] = true
+		orderMap["tag2"] = true
+		orderMap["tag3"] = true
+		orderMap["tag4"] = true
 		if !orderMap[order] {
 			err = fmt.Errorf("非法的排序字段: %s", order)
 			return templates, total, err
@@ -117,4 +137,51 @@ func (t *TemplateService) UpdateTemplate(template *curescan.Template) error {
 
 func (t *TemplateService) BatchAdd(templates []*curescan.Template) error {
 	return global.GVA_DB.Model(&curescan.Template{}).CreateInBatches(templates, 100).Error
+}
+
+func (t *TemplateService) ParseTemplateContent(template *curescan.Template) (err error) {
+	viper.SetConfigType("yaml")
+	err = viper.ReadConfig(bytes.NewBuffer([]byte(template.TemplateContent)))
+	if err != nil {
+		err = errors.New("模板内容有误, 请检查模板内容是否是yaml格式")
+		return
+	}
+	tagsStr := viper.GetString("info.tags")
+	templateName := viper.GetString("info.name")
+
+	templateId := viper.GetString("id")
+	if tagsStr == "" || templateName == "" || templateId == "" {
+		err = errors.New("模板内容有误, 请检查模板名称, 模板id, 模板标签是否填写完整")
+		return
+	}
+	template.TemplateName = templateName
+	template.TemplateDesc = viper.GetString("info.description")
+	template.TemplateId = templateId
+	tags := strings.Split(tagsStr, ",")
+
+	if len(tags) == 1 {
+		template.Tag1 = tags[0]
+		template.Tag2 = "未知"
+		template.Tag3 = "未知"
+		template.Tag4 = "未知"
+	}
+	if len(tags) == 2 {
+		template.Tag1 = tags[0]
+		template.Tag2 = tags[1]
+		template.Tag3 = "未知"
+		template.Tag4 = "未知"
+	}
+	if len(tags) == 3 {
+		template.Tag2 = tags[1]
+		template.Tag3 = tags[2]
+		template.Tag1 = tags[0]
+		template.Tag4 = "未知"
+	}
+	if len(tags) == 4 {
+		template.Tag1 = tags[0]
+		template.Tag2 = tags[1]
+		template.Tag3 = tags[2]
+		template.Tag4 = tags[3]
+	}
+	return
 }

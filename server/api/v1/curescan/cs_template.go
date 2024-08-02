@@ -1,7 +1,6 @@
 package curescan
 
 import (
-	"bytes"
 	"fmt"
 	"strconv"
 
@@ -11,7 +10,7 @@ import (
 	"47.103.136.241/goprojects/curescan/server/model/curescan/request"
 	"47.103.136.241/goprojects/curescan/server/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
+	"go.uber.org/zap"
 )
 
 type TemplateApi struct {
@@ -32,27 +31,30 @@ func (t *TemplateApi) CreateTemplate(c *gin.Context) {
 	var createTemplate request.CreateTemplate
 	err := c.ShouldBindJSON(&createTemplate)
 	if err != nil {
-		global.GVA_LOG.Error(err.Error())
-		response.FailWithMessage(err.Error(), c)
+		global.GVA_LOG.Error("参数错误", zap.String("url", c.Request.URL.Path), zap.String("error", err.Error()))
+		response.FailWithMessage("参数错误", c)
 		return
 	}
 	err = utils.Verify(createTemplate, utils.CreateTemplateVerify)
 	if err != nil {
-		global.GVA_LOG.Error(err.Error())
+		global.GVA_LOG.Error("参数错误", zap.String("url", c.Request.URL.Path), zap.String("error", err.Error()))
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
 	var modelTemplate = curescan.Template{
-		TemplateName:    createTemplate.TemplateName,
 		TemplateType:    createTemplate.TemplateType,
-		TemplateDesc:    createTemplate.TemplateDesc,
 		TemplateContent: createTemplate.TemplateContent,
+	}
+	err = templateService.ParseTemplateContent(&modelTemplate)
+	if err != nil {
+		global.GVA_LOG.Error("模板内容解析失败", zap.String("uri", c.Request.RequestURI), zap.String("error", err.Error()))
+		response.FailWithMessage(err.Error(), c)
+		return
 	}
 	modelTemplate.CreatedBy = utils.GetUserID(c)
 	modelTemplate.UpdatedBy = utils.GetUserID(c)
 	err = templateService.CreateTemplate(&modelTemplate)
 	if err != nil {
-		global.GVA_LOG.Error(err.Error())
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
@@ -159,10 +161,14 @@ func (t *TemplateApi) UpdateTemplate(c *gin.Context) {
 		GvaModel: global.GvaModel{
 			ID: updateTemplate.ID,
 		},
-		TemplateName:    updateTemplate.TemplateName,
 		TemplateType:    updateTemplate.TemplateType,
-		TemplateDesc:    updateTemplate.TemplateDesc,
 		TemplateContent: updateTemplate.TemplateContent,
+	}
+	err = templateService.ParseTemplateContent(&modelTemplate)
+	if err != nil {
+		global.GVA_LOG.Error("模板内容解析失败", zap.String("uri", c.Request.RequestURI), zap.String("error", err.Error()))
+		response.FailWithMessage(err.Error(), c)
+		return
 	}
 	err = templateService.UpdateTemplate(&modelTemplate)
 	if err != nil {
@@ -180,8 +186,8 @@ func (t *TemplateApi) ImportTemplates(c *gin.Context) {
 	}
 	files := form.File["file"]
 	errorStrings := make([]string, 0)
-	strings := form.Value["templateType"]
-	templateType := strings[0]
+	types := form.Value["templateType"]
+	templateTypeStr := types[0]
 	templates := make([]*curescan.Template, 0)
 	for _, fh := range files {
 
@@ -204,20 +210,20 @@ func (t *TemplateApi) ImportTemplates(c *gin.Context) {
 			continue
 		}
 		file.Close()
-
-		viper.SetConfigType("yaml")
-		err = viper.ReadConfig(bytes.NewBuffer(buffer))
+		templateType, err := strconv.ParseUint(templateTypeStr, 10, 64)
 		if err != nil {
-			errorStrings = append(errorStrings, fmt.Sprintf("viper read file [%s] error, err: [%s]", fh.Filename, err.Error()))
+			errorStrings = append(errorStrings, fmt.Sprintf("parse template type [%s] error, err: [%s]", templateType, err.Error()))
 			continue
 		}
+
 		template := &curescan.Template{}
-		tmp, _ := strconv.ParseUint(templateType, 10, 64)
-		template.TemplateType = uint(tmp)
-		template.TemplateId = viper.GetString("id")
 		template.TemplateContent = string(buffer)
-		template.TemplateDesc = viper.GetString("info.description")
-		template.TemplateName = viper.GetString("info.name")
+		template.TemplateType = uint(templateType)
+		err = templateService.ParseTemplateContent(template)
+		if err != nil {
+			errorStrings = append(errorStrings, fmt.Sprintf("parse template [%s] error, err: [%s]", fh.Filename, err.Error()))
+			continue
+		}
 		templates = append(templates, template)
 	}
 	err = templateService.BatchAdd(templates)

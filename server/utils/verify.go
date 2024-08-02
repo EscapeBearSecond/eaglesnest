@@ -17,7 +17,7 @@ var (
 	ChangePasswordVerify   = Rules{"Password": {NotEmpty()}, "NewPassword": {NotEmpty()}}
 	SetUserAuthorityVerify = Rules{"AuthorityId": {NotEmpty()}}
 	CreateAreaVerify       = Rules{"AreaName": {NotEmpty(), Ge("2"), Le("20")}, "AreaIP": {Gt("0")}}
-	CreateTemplateVerify   = Rules{"TemplateName": {NotEmpty()}, "TemplateType": {NotEmpty()}, "TemplateContent": {NotEmpty()}, "templdateId": {NotEmpty()}}
+	CreateTemplateVerify   = Rules{"TemplateType": {NotEmpty()}, "TemplateContent": {NotEmpty()}}
 	CreatePolicyVerify     = Rules{"PolicyName": {NotEmpty(), Le("50")}, "PolicyDesc": {Le("100")}, "ScanType": {Gt("0")}, "Templates": {Gt("0")}}
 	CreateTaskVerify       = Rules{"TaskName": {NotEmpty(), Le("50")}, "TaskDesc": {Le("100")}, "TaskPlan": {NotEmpty()}, "PolicyID": {NotEmpty()}, "TargetIP": {Gt("0")}}
 )
