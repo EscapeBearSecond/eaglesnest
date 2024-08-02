@@ -6,7 +6,7 @@
           type="primary"
           icon="plus"
           @click="handleClickAdd"
-        >新增任务</el-button>
+        >定时任务</el-button>
       </div>
       <advance-table
         :columns="tableColumns"
@@ -34,7 +34,7 @@
     >
       <template #header>
         <div class="flex justify-between items-center">
-          <span class="text-lg">普通任务</span>
+          <span class="text-lg">计划任务</span>
           <div>
             <el-button @click="closeAddDialog">取 消</el-button>
             <el-button
@@ -51,19 +51,13 @@
         :model="taskForm"
         label-width="100px"
       >
-      <el-form-item label="扫描名称：" :label-position="itemLabelPosition" prop="taskName">
+        <el-form-item label="扫描名称：" :label-position="itemLabelPosition" prop="taskName">
           <el-input v-model="taskForm.taskName" placeholder="请输入扫描名称" />
         </el-form-item>
         <el-form-item label="扫描状态：" :label-position="itemLabelPosition" prop="status">
           <el-select v-model="taskForm.status" placeholder="请选择扫描状态">
             <el-option label="开启" value="1" />
             <el-option label="关闭" value="0" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="执行方式：" :label-position="itemLabelPosition" prop="taskPlan">
-          <el-select v-model="taskForm.taskPlan" placeholder="请选择执行方式">
-            <el-option label="立即执行" value="1" />
-            <el-option label="稍后执行" value="2" />
           </el-select>
         </el-form-item>
         <p style="margin-left:100px"><warning-bar title="注：多个地址段请用逗号分隔" /></p>
@@ -79,6 +73,9 @@
               :value="item.value">
             </el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="计划配置：" :label-position="itemLabelPosition" prop="planConfig">
+          <el-input v-model="taskForm.planConfig" placeholder="请输入Cron表达式，例每天中午12点执行：0 0 12 * * ? " />
         </el-form-item>
         <el-form-item label=" 其他描述：" :label-position="itemLabelPosition">
           <el-input type="textarea" :rows="3" v-model="taskForm.taskDesc" />
@@ -157,6 +154,7 @@ const getTableData = async() => {
       page: listQuery.page,
       pageSize: listQuery.pageSize,
       isAll:true,
+      taskPlan: [3],
       ...searchInfo,
     });
     if (table.code === 0) {
@@ -177,13 +175,12 @@ const setPolicyOption = async() => {
     })
 }
 
-// 获取策略名称
 const getPolicyName = (id) => {
    let item = policyOption.value.find((item) => item.value == id);   
    return item.label
 }
 
-// 初始化
+
 const initPage = async() => {
   setPolicyOption()
   getTableData()
@@ -191,7 +188,6 @@ const initPage = async() => {
 
 initPage()
 
-// 停止
 const handleStop = (row) => {
   ElMessageBox.confirm('此操作将停止该任务, 是否继续?', '提示', {
     confirmButtonText: '确定',
@@ -216,7 +212,6 @@ const handleStop = (row) => {
     })
 }
 
-// 删除
 const handleDel = (row) => {
   ElMessageBox.confirm('此操作将永久删除该任务, 是否继续?', '提示', {
     confirmButtonText: '确定',
@@ -224,7 +219,7 @@ const handleDel = (row) => {
     type: 'warning'
   })
     .then(async() => {
-      const res = await delTask({ id: row.id })
+      const res = await delTask({ id: row.ID })
       if (res.code === 0) {
         ElMessage({
           type: 'success',
@@ -244,18 +239,16 @@ const handleDel = (row) => {
     })
 }
 
-// 下载报告
 const handleReport =  async(row) =>{
     await reportTask({ id: row.ID })
 }
 
-// 获取执行方式
 const getTypeTagName = (e) => {
     let status = ['其他', '立即执行', '稍后执行','定时执行']
     return status[e]
 }
 
-// 表单
+// 弹窗相关
 const taskForm = ref({
   taskName:"",
   taskDesc:"",
@@ -263,24 +256,23 @@ const taskForm = ref({
   targetIp:"",
   targetIpStr:"",
   policyId:"",
+  taskPlan:[3],
   date:"",
   frequency:"",
 })
 
-// 表头
 const tableColumns = reactive([
   { label:'名称', prop:'taskName'},
   { label:'目标', prop:'targetIp'},
   { label:'执行方式', prop:'taskPlan', slot: 'customTaskPlan'},
-  { label:'策略', prop:'policyName'},
   { label:'状态', prop:'status', formatter(row, column) {
-      let res = ['创建中','执行中','已完成', '执行失败']
+      let res = ['创建中','执行中','已完成', '执行失败', '已终止', '运行中', '已停止']
       return res[row.status]
   }},
+  { label:'计划配置', prop:'planConfig'},
   { label:'描述', prop:'taskDesc'},
 ])
 
-//验证输入
 const rules = reactive({
   taskName: [
     { required: true, message: '请输入扫描名称', trigger: 'blur' }
@@ -298,9 +290,9 @@ const rules = reactive({
     { required: true, message: '请选择策略模板', trigger: 'blur' }
   ]
 })
-// 提交表单
 const form = ref(null)
 const enterAddDialog = async() => {
+  
   form.value.validate(async valid => {
     if (valid) {
       const req = {
@@ -361,6 +353,7 @@ function getIpArr(e) {
     }
 }
 
+
 // 根据状态来判断是否显示停止按钮
 const visibleStop = (e) => {
     return e.status == 1
@@ -370,7 +363,6 @@ const visibleStop = (e) => {
 const visibleReport = (e) => {
     return e.status == 2
 }
-
 
 </script>
 
