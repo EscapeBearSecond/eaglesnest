@@ -20,6 +20,6 @@ var (
 	assetService       = service.ServiceGroupApp.CurescanServiceGroup.AssetService
 	policyService      = service.ServiceGroupApp.CurescanServiceGroup.PolicyService
 	onlineCheckService = service.ServiceGroupApp.CurescanServiceGroup.OnlineCheckService
-	portScanService    = service.ServiceGroupApp.CurescanServiceGroup.PortScanService
-	taskService        = service.ServiceGroupApp.CurescanServiceGroup.TaskService
+	// portScanService    = service.ServiceGroupApp.CurescanServiceGroup.PortScanService
+	taskService = service.ServiceGroupApp.CurescanServiceGroup.TaskService
 )

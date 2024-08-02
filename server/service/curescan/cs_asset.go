@@ -20,7 +20,7 @@ func (a *AssetService) BatchAdd(assets []*curescan.Asset) error {
 // GetAssetList 获取资产列表, 该方法会根据页码信息和排序信息返回分页后的资产信息. 调用该方法需要传递的参数有4个, 第一个为过滤信息, 也就是要查询的资产信息或关键字;
 // 第二个参数是分页信息; 第三个参数是排序字段; 第四个参数是是否倒序. 如查询资产类型为"监控", 且要按照资产厂商字段倒序排序, 则参数 asset.AssetType="监控", page.Page=1,
 // page.PageInfo=10, order="manufacturer", desc=true
-func (a *AssetService) GetAssetList(asset curescan.Asset, page request.PageInfo, order string, desc bool) (list interface{}, total int64, err error) {
+func (a *AssetService) GetAssetList(asset *curescan.Asset, page request.PageInfo, order string, desc bool) (list interface{}, total int64, err error) {
 	limit := page.PageSize
 	offset := page.PageSize * (page.Page - 1)
 	db := global.GVA_DB.Select("id", "asset_name", "asset_ip", "asset_area", "area_name", "asset_type", "open_ports", "system_type",
@@ -35,8 +35,17 @@ func (a *AssetService) GetAssetList(asset curescan.Asset, page request.PageInfo,
 	if asset.AssetArea != 0 {
 		db = db.Where("asset_area = ?", asset.AssetArea)
 	}
+	if asset.AssetIP != "" {
+		db = db.Where("asset_ip LIKE ?", "%"+asset.AssetIP+"%")
+	}
 	if asset.Manufacturer != "" {
 		db = db.Where("manufacturer LIKE ?", "%"+asset.Manufacturer+"%")
+	}
+	if asset.AssetModel != "" {
+		db = db.Where("asset_model LIKE ?", "%"+asset.AssetModel+"%")
+	}
+	if asset.SystemType != "" {
+		db = db.Where("system_type LIKE ?", "%"+asset.SystemType+"%")
 	}
 	err = db.Count(&total).Error
 	if err != nil {
@@ -51,6 +60,9 @@ func (a *AssetService) GetAssetList(asset curescan.Asset, page request.PageInfo,
 		orderMap["area_name"] = true
 		orderMap["asset_area"] = true
 		orderMap["manufacturer"] = true
+		orderMap["system_type"] = true
+		orderMap["asset_model"] = true
+		orderMap["asset_ip"] = true
 		if !orderMap[order] {
 			err = fmt.Errorf("非法的排序字段: %s", order)
 			return assets, total, err

@@ -53,8 +53,8 @@ func (a *AssetApi) GetAssetList(c *gin.Context) {
 	}
 	list, total, err := assetService.GetAssetList(searchAsset.Asset, searchAsset.PageInfo, searchAsset.OrderKey, searchAsset.Desc)
 	if err != nil {
-		global.GVA_LOG.Error("获取失败!", zap.Error(err))
-		response.FailWithMessage("获取失败", c)
+		global.GVA_LOG.Error("数据库查询异常!", zap.String("URI", c.Request.RequestURI), zap.Error(err))
+		response.FailWithMessage("数据库查询异常", c)
 		return
 	}
 	response.OkWithDetailed(response.PageResult{
