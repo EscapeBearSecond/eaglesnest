@@ -163,29 +163,63 @@
          </div>
          <div style="margin: 10px 0 10px 10px;padding-top: 5px;">
             <label  class="el-form-item__label">模板配置：</label>
-            <!-- <el-button type="primary" icon="Plus" @click="addTmpData" v-if="form.policyConfig.length < 3">新增</el-button>
-            <el-button type="primary" icon="Delete" @click="delTmpData" v-if="form.policyConfig.length >= 2">删除</el-button> -->
-            <el-button size="small" @click="addTab(editableTabsValue)">
-              add tab
-            </el-button>
-            <el-button size="small" @click="removeTab(editableTabsValue)">
-              del tab
-            </el-button>
-            <el-tabs
-              v-model="editableTabsValue"
-              type="card"
-              class="demo-tabs"
-              @tab-remove="removeTab"
-            >
-              <el-tab-pane
-                v-for="item in editableTabs"
-                :key="item.name"
-                :label="item.title"
-                :name="item.name"
-              >
-                {{ item.content }}
-              </el-tab-pane>
-            </el-tabs>
+            <el-button type="primary" icon="Plus" @click="addTmpData" v-if="form.policyConfig.length < 3">新增</el-button>
+            <el-button type="primary" icon="Delete" @click="delTmpData" v-if="form.policyConfig.length >= 2">删除</el-button>
+
+             <template v-for="(policyItem, index) in form.policyConfig" :key="index" >
+                <label style="display: block;margin: 10px 0 10px 20px;">配置{{ index+1 }}</label>
+                <div style="margin-left: 40px;">
+                  <el-form-item label="类型" :label-position="itemLabelPosition" class="sec-lab">
+                    <el-select v-model="policyItem.kind" placeholder="请选择扫描类型" @change="changeScanType(policyItem)">
+                        <el-option
+                          v-for="type in typeNameList"
+                          :key="type.value"
+                          :label="type.label"
+                          :value="type.value"
+                          :disabled="type.disabled"
+                        />
+                      </el-select>
+                  </el-form-item>
+                  <el-form-item label="模板" :label-position="itemLabelPosition" class="sec-lab" v-if="policyItem.kind != ''">
+                     <el-select 
+                        v-model="policyItem.templates" 
+                        placeholder="请选择模板，可多选"   
+                        multiple
+                        collapse-tags
+                        collapse-tags-tooltip
+                      >
+                      <template #header>
+                        <el-checkbox
+                          v-model="checkAll"
+                          :indeterminate="indeterminate"
+                          @change="handleCheckAll(e, taskForm)"
+                        >
+                          全选
+                        </el-checkbox>
+                      </template>
+                        <el-option
+                          v-for="item in tmpOption[policyItem.kind - 1]"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"
+                          :disabled="item.disabled"
+                        />
+                      </el-select>
+                  </el-form-item>
+                  <el-form-item label="并发数" :label-position="itemLabelPosition" class="sec-lab">
+                     <el-input v-model="policyItem.concurrency" />
+                  </el-form-item>
+                  <el-form-item label="超时" :label-position="itemLabelPosition" class="sec-lab">
+                     <el-input v-model="policyItem.timeout" />
+                  </el-form-item>
+                  <el-form-item label="限流速度" :label-position="itemLabelPosition" class="sec-lab">
+                     <el-input v-model="policyItem.rateLimit" />
+                  </el-form-item>
+                  <el-form-item label="探活轮次" :label-position="itemLabelPosition" class="sec-lab">
+                     <el-input v-model="policyItem.count" />
+                  </el-form-item>
+                </div>
+             </template>            
          </div>
          </el-form>
      </el-drawer>
@@ -202,45 +236,6 @@
  defineOptions({
    name: 'Policy'
  })
-
- /* test */
- let tabIndex = 1
- const editableTabsValue = ref('1')
- const removeTab = (targetName) => {
-    const tabs = editableTabs.value
-    let activeName = editableTabsValue.value
-    if (activeName === targetName) {
-      tabs.forEach((tab, index) => {
-        if (tab.name === targetName) {
-          const nextTab = tabs[index + 1] || tabs[index - 1]
-          if (nextTab) {
-            activeName = nextTab.name
-          }
-        }
-      })
-    }
-
-    editableTabsValue.value = activeName
-    editableTabs.value = tabs.filter((tab) => tab.name !== targetName)
- }
- const addTab  = (targetName) => {
-  const newTabName = `${++tabIndex}`
-  editableTabs.value.push({
-    title: '配置' + tabIndex,
-    name: newTabName,
-    content: 'New Tab content',
-  })
-  editableTabsValue.value = newTabName
- }
- const editableTabs = ref([
-  {
-    title: '配置',
-    name: 'setting',
-    content: 'Tab 1 content',
-  }
-])
-
-
  const activeNames = ref([1])
  const dialogType = ref('add')
  

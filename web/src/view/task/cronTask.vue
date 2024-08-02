@@ -123,6 +123,13 @@ const handleCurrentChange = (val) => {
 // 操作
 const statusData = reactive([
   {
+      name: "启动",
+      type: "primary",
+      icon: "start",
+      handleClick: (scope) => handleStart(scope.row),
+      visible : (scope) => visibleStart(scope.row)
+  },
+  {
       name: "停止",
       type: "primary",
       icon: "edit",
@@ -362,6 +369,35 @@ const visibleStop = (e) => {
 // 根据状态来判断是否显示报告按钮
 const visibleReport = (e) => {
     return e.status == 2
+}
+
+// 是否显示启动按钮
+const visibleStart = (e) => {
+    return e.status == 6
+}
+
+const handleStart = (e) => {
+  ElMessageBox.confirm('此操作将启动该任务, 是否继续?', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+    .then(async() => {
+      const res = await startTask({ id: row.ID })
+      if (res.code === 0) {
+        ElMessage({
+          type: 'success',
+          message: '任务启动成功!'
+        })
+        getTableData()
+      }
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '已取消启动任务'
+      })
+    })
 }
 
 </script>

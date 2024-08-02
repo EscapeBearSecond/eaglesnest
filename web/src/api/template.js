@@ -15,6 +15,13 @@ export const getTemplateList = (data) => {
       data
     })
 }
+export const getTemplateTagList = (data) => {
+    return service({
+      url: '/template/tags',
+      method: 'post',
+      data
+    })
+}
 
 export const getTemplate = (param) => {
     return service({
@@ -39,3 +46,4 @@ export const delTemplate = (data) => {
     data
   })
 }
+
