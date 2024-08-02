@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"go.uber.org/zap"
 
@@ -75,11 +76,10 @@ var (
 )
 
 func (s *TaskService) CreateTask(createTask *request.CreateTask) error {
-	if createTask.TaskPlan == ExecuteTiming {
-		if !errors.Is(global.GVA_DB.Select("task_name").First(&curescan.Task{}, "area_name=? AND task_plan = ?", createTask.TaskName, ExecuteTiming).Error, gorm.ErrRecordNotFound) {
-			return fmt.Errorf("定时任务'%s'已存在, 请勿重复创建", createTask.TaskName)
-		}
+	if !errors.Is(global.GVA_DB.Select("task_name").First(&curescan.Task{}, "area_name=?", createTask.TaskName).Error, gorm.ErrRecordNotFound) {
+		return fmt.Errorf("任务'%s'已存在, 请勿重复创建", createTask.TaskName)
 	}
+
 	var task = curescan.Task{
 		TaskName:   createTask.TaskName,
 		TaskDesc:   createTask.TaskDesc,
@@ -453,7 +453,7 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 	if task.TaskPlan == ExecuteTiming {
 		newTask := &curescan.Task{
 			Status:     Running,
-			TaskName:   task.TaskName,
+			TaskName:   task.TaskName + "_" + time.Now().Format("2006-01-02 15:04:05"),
 			TaskDesc:   fmt.Sprintf("%s (该任务由定时任务【%s】生成)", task.TaskDesc, task.TaskName),
 			TargetIP:   task.TargetIP,
 			PolicyID:   task.PolicyID,

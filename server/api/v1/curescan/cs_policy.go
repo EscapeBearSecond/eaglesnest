@@ -55,6 +55,11 @@ func (p *PolicyApi) CreatePolicy(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+	if len(createPolicy.PolicyConfig) == 0 && !createPolicy.OnlineConfig.Use && !createPolicy.PortScanConfig.Use{
+		err = fmt.Errorf("至少选择一种扫描类型")
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	for _, policyConfig := range createPolicy.PolicyConfig {
 		if policyConfig.Kind == "1" {
 			policyConfig.Name = "资产发现"
