@@ -20,7 +20,7 @@
           </div>
           <p class="text-gray-600 dark:text-gray-300 mb-2">初始化须知</p>
           <p class="text-gray-600 dark:text-gray-300 mb-2">
-            1.您需有用一定的项目实施经验
+            1.您需有一定的项目实施经验
           </p>
           <p class="text-gray-600 dark:text-gray-300 mb-2">
             2.请您确认是否已经阅读过<a class="text-blue-600 font-bold"
