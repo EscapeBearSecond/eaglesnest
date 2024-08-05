@@ -536,7 +536,6 @@ const typeNameList = reactive([
         isAll: false,
     });
     table.data.list.forEach(e => {
-        console.log(e)
         if(e.templateType == 1) {
           tmpOption[0].push({label:e.templateName, value: e.ID})
         }

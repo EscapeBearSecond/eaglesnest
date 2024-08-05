@@ -115,14 +115,14 @@
         </template>
         <el-form ref="searchRef" :rules="searchRules" :model="searchInfo" label-width="80px">
                 <el-form-item label="模板类型"  class="sec-lab" prop="kind">
-                    <el-select v-model="searchInfo.kind" placeholder="请选择模板类型" @change="changeScanType(searchInfo)">
-                            <el-option
+                    <el-select v-model="searchInfo.kind" placeholder="请选择模板类型" @change="changeScanType(searchInfo, 'kind')">
+                        <el-option
                             v-for="type in typeNameList"
                             :key="type.value"
                             :label="type.label"
                             :value="type.value"
                             :disabled="type.disabled"
-                            />
+                        />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="设备类型"  class="sec-lab"> 
@@ -258,7 +258,31 @@ const indeterminate = ref(false)
 
 // 筛选模板联动
 const changeScanType = (e, f) => {
-    getTemplateData()
+    console.log(
+    '%c 🍱 CONSOLE_INFO: ',
+    'font-size:20px;background-color: #ED9EC7;color:#fff;',
+    e, f
+    );
+    if(f == 'kind') {
+        searchInfo.value.templates = []
+    }
+    updatetmpOption(e.kind)
+}
+
+const updatetmpOption = async (kind) => {
+    const table = await getTemplateList({
+        page: 1,
+        pageSize: 99999,
+        isAll: false,
+        tag1: searchInfo.value.tagOne,
+        tag2: searchInfo.value.tagTwo,
+        tag3: searchInfo.value.tagThree,
+        tag4: searchInfo.value.tagFour,
+    });
+    tmpOption[kind - 1] = []
+    table.data.list.forEach(e => {
+        tmpOption[kind - 1].push({label:e.templateName, value: e.ID})
+    })
 }
 
 const route = useRoute();
@@ -305,7 +329,7 @@ const handleCheckAll = (e, f) => {
  const tmpOption = [[],[],[]]
  const searchRef = ref(null)
  const searchInfo = ref({
-    "tagOne":"",
+    "tag1":"",
     "tagTwo":"",
     "tagThree":"",
     "tagFour":"",
@@ -322,8 +346,7 @@ const handleCheckAll = (e, f) => {
     const table = await getTemplateList({
         page: 1,
         pageSize: 99999,
-        isAll: false,
-        ...searchInfo,
+        isAll: false
     });
     table.data.list.forEach(e => {
         if(e.templateType == 1) {
@@ -350,14 +373,29 @@ const closeDialog = ()=> {
 }
 
 const onReset = () => {
-    searchRef.value = {}
+    searchInfo.value = {}
+    searchInfo.value.templates = []
 }
 
 // 保存模板选择
 const enterDialog = () => {
     let pushData = JSON.parse(JSON.stringify(searchInfo.value))
-    form.value.policyConfig.push(pushData)
-    closeDialog()
+    // 如果已经添加同一类型就提醒不能添加
+    let flag = false
+    form.value.policyConfig.forEach(item => {
+        if(item.kind === pushData.kind) {
+            flag =  true
+        }
+    });
+    if(!flag) {
+        form.value.policyConfig.push(pushData)
+        closeDialog()
+    }else {
+        ElMessage({
+            type: 'warning',
+            message: '策略已经存在相同类型模板!'
+        })
+    }
 }
 
 // 删除模板配置
