@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"47.103.136.241/goprojects/curescan/server/global"
+	"47.103.136.241/goprojects/curescan/server/model/curescan"
 	"47.103.136.241/goprojects/curescan/server/model/example"
 	"47.103.136.241/goprojects/curescan/server/model/system"
 
@@ -45,6 +46,15 @@ func RegisterTables() {
 		example.ExaCustomer{},
 		example.ExaFileChunk{},
 		example.ExaFileUploadAndDownload{},
+
+		curescan.Area{},
+		curescan.Asset{},
+		curescan.JobResultItem{},
+		curescan.OnlineCheck{},
+		curescan.Policy{},
+		curescan.PortScan{},
+		curescan.Task{},
+		curescan.Template{},
 	)
 	if err != nil {
 		global.GVA_LOG.Error("register table failed", zap.Error(err))

@@ -30,7 +30,6 @@ func main() {
 	initialize.Timer()
 	initialize.DBList()
 	initialize.EagleeyeEngine()
-	initialize.MigrateTables()
 	if global.GVA_DB != nil {
 		initialize.RegisterTables() // 初始化表
 		// 程序结束前关闭数据库链接
