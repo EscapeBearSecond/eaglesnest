@@ -294,7 +294,6 @@ const initForm = async () => {
 }
 initForm();
 
->>>>>>> dev-feat-rui.chen
 // 全选模板
 const handleCheckAll = (e, f) => {
     if(e) {
@@ -372,21 +371,13 @@ const closeDialog = ()=> {
 }
 
 const onReset = () => {
-<<<<<<< HEAD
-    searchRef.value = {}
-=======
     searchInfo.value = {}
     searchInfo.value.templates = []
->>>>>>> dev-feat-rui.chen
 }
 
 // 保存模板选择
 const enterDialog = () => {
     let pushData = JSON.parse(JSON.stringify(searchInfo.value))
-<<<<<<< HEAD
-    form.value.policyConfig.push(pushData)
-    closeDialog()
-=======
     // 如果已经添加同一类型就提醒不能添加
     let flag = false
     form.value.policyConfig.forEach(item => {
@@ -403,7 +394,6 @@ const enterDialog = () => {
             message: '策略已经存在相同类型模板!'
         })
     }
->>>>>>> dev-feat-rui.chen
 }
 
 // 删除模板配置
@@ -414,11 +404,6 @@ const deleteTemplateConfig = () => {
 // 获取模板类型 
 const getKind = (e)=> {
     const item = typeNameList.find(item => item.id === e);
-<<<<<<< HEAD
-    console.log(e, item)
-    return item ? item.label : null;
-}
-=======
     return item ? item.label : null;
 }
 
@@ -450,16 +435,11 @@ const savePolicy = async () => {
         }
     })  
 }
->>>>>>> dev-feat-rui.chen
 </script>
 <style lang='scss' scoped>
 .btn-save {
     display: flex;
-<<<<<<< HEAD
-    justify-content:flex-end;
-=======
     justify-content:center;
->>>>>>> dev-feat-rui.chen
     margin: 10px;
 }
 </style>

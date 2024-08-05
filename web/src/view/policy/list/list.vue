@@ -434,11 +434,7 @@ const typeNameList = reactive([
  
  // 新增策略
  const handleAdd = () => {
-<<<<<<< HEAD
-   router.push({ path: 'create', replace: true })
-=======
    router.push({ name: 'create'})
->>>>>>> dev-feat-rui.chen
   //  initForm()
   //  dialogTitle.value = '新增策略'
   //  dialogType.value = 'add'
@@ -447,12 +443,8 @@ const typeNameList = reactive([
 
  const handleEdit = (row) => {
   let id = row.ID
-
-<<<<<<< HEAD
-  router.push({ path: 'create', query: { id:id } })
-=======
   router.push({ name: 'create', query: { id:id } })
->>>>>>> dev-feat-rui.chen
+
   //  initForm()
   //  dialogTitle.value = '修改策略'
   //  dialogType.value = 'edit'
