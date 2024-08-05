@@ -1,92 +1,79 @@
 version: "3"
 
-# 声明一个名为network的networks,subnet为network的子网地址,默认网关是177.7.0.1
-networks:
-  network:
-    ipam:
-      driver: default
-      config:
-        - subnet: '177.7.0.0/16'
-        
 # 设置mysql，redis持久化保存
 volumes:
-  mysql:
+  postgres:
   redis:
 
 services:
   web:
     image: node:16
-    container_name: gva-web
-    hostname: gva-web           #可以通过容器名访问
+    container_name: cs-web
+    hostname: cs-web #可以通过容器名访问
     restart: always
     ports:
-      - '8080:8080'
+      - "8080:8080"
     depends_on:
       - server
-    working_dir: /web       # 如果docker 设置了workdir 则此处不需要设置
+    working_dir: /web # 如果docker 设置了workdir 则此处不需要设置
     #若网络不太好，请自行换源，如下
-    #command: bash -c "yarn config set registry https://registry.npm.taobao.org --global && yarn install && yarn serve"
-    command: bash -c "yarn install && yarn serve"
+    command: >
+      bash -c "yarn install && yarn serve"
     volumes:
       - ../../web:/web
-    networks:
-      network:
-        ipv4_address: 177.7.0.11
 
   server:
-    image: golang:1.18
-    container_name: gva-server
-    hostname: gva-server
+    image: golang:1.22.2
+    container_name: cs-server
+    hostname: cs-server
     restart: always
-    ports:
-      - '8888:8888'
     depends_on:
-      mysql:
+      postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
     volumes:
       - ../../server:/server
-    working_dir: /server    # 如果docker 设置了workdir 则此处不需要设置 
-    command: bash -c "go env -w GOPROXY=https://goproxy.cn,direct && go mod tidy && go run main.go"
-    links:
-      - mysql
-      - redis
-    networks:
-      network:
-        ipv4_address: 177.7.0.12
+    working_dir: /server # 如果docker 设置了workdir 则此处不需要设置
+    command: >
+      bash -c "apt-get update
+      && apt-get install -y libpcap-dev
+      && git config --global credential.helper 'store --file=/root/.git-credentials'
+      && echo 'http://zy:%23XWUT%2AKjkM6tqP@47.103.136.241' > /root/.git-credentials
+      && go env -w GOPROXY=https://goproxy.cn,direct
+      && go env -w GOPRIVATE=47.103.136.241/goprojects
+      && go env -w GOINSECURE=47.103.136.241/goprojects
+      && go mod tidy
+      && GODEBUG=tlsrsakex=1 go run main.go"
+    network_mode: host
 
-  mysql:
-    image: mysql:8.0.21    # 如果您是 arm64 架构：如 MacOS 的 M1，请修改镜像为 image: mysql/mysql-server:8.0.21
-    container_name: gva-mysql
-    hostname: gva-mysql
-    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci #设置utf8字符集
+  postgres:
+    image: postgres:13.3 # 使用PostgreSQL 13.3镜像
+    container_name: cs-postgres
+    hostname: cs-postgres
     restart: always
     ports:
-      - "13306:3306"  # host物理直接映射端口为13306
+      - "5432:5432" # host物理直接映射端口为15432
     environment:
-      #MYSQL_ROOT_PASSWORD: 'Aa@6447985' # root管理员用户密码
-      MYSQL_DATABASE: 'qmPlus' # 初始化启动时要创建的数据库的名称
-      MYSQL_USER: 'gva'
-      MYSQL_PASSWORD: 'Aa@6447985'
+      POSTGRES_DB: "postgres" # 初始化启动时要创建的数据库的名称，不设置空是为了避免新建一个和用户名同名的数据库，数据库初始化放到页面上
+      POSTGRES_USER: "curescan" # 初始化启动时要创建的数据库的超级用户的用户名
+      POSTGRES_PASSWORD: "H9nWDpM86K"
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "gva", "-pAa@6447985"]
+      test: ["CMD-SHELL", "pg_isready -U curescan -d curescan"]
       interval: 10s
       timeout: 5s
       retries: 3
     volumes:
-      - mysql:/var/lib/mysql
-    networks:
-      network:
-        ipv4_address: 177.7.0.13
-
+      - postgres:/var/lib/postgresql/data
   redis:
     image: redis:6.0.6
-    container_name: gva-redis # 容器名
-    hostname: gva-redis
+    container_name: cs-redis # 容器名
+    hostname: cs-redis
     restart: always
     ports:
-      - '16379:6379'
+      - "6379:6379"
+    environment:
+      REDIS_PASSWORD: "ZtGf2B2T5b" # 设置Redis密码
     healthcheck:
       test: ["CMD-SHELL", "redis-cli ping | grep PONG || exit 1"]
       interval: 10s
@@ -94,6 +81,3 @@ services:
       retries: 3
     volumes:
       - redis:/data
-    networks:
-      network:
-        ipv4_address: 177.7.0.14
