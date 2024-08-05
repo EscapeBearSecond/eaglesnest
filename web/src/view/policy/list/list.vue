@@ -195,7 +195,7 @@
  <script setup>
  import { getPolicyList, createPolicy, deletePolicy, updatePolicy, getPolicyId } from '@/api/policy.js';
  import { getTemplateList } from '@/api/template.js';
-
+ import router from '@/router/index'
  import { ref,reactive } from 'vue'
  import { ElMessage, ElMessageBox } from 'element-plus'
  
@@ -434,19 +434,23 @@ const typeNameList = reactive([
  
  // 新增策略
  const handleAdd = () => {
-   initForm()
-   dialogTitle.value = '新增策略'
-   dialogType.value = 'add'
-   dialogFormVisible.value = true
+   router.push({ name: 'create'})
+  //  initForm()
+  //  dialogTitle.value = '新增策略'
+  //  dialogType.value = 'add'
+  //  dialogFormVisible.value = true
  }
 
  const handleEdit = (row) => {
+  let id = row.ID
+  router.push({ name: 'create', query: { id:id } })
+
   //  initForm()
-   dialogTitle.value = '修改策略'
-   dialogType.value = 'edit'
-   getPolicyById(row.ID)
+  //  dialogTitle.value = '修改策略'
+  //  dialogType.value = 'edit'
+  //  getPolicyById(row.ID)
    
-   dialogFormVisible.value = true
+  //  dialogFormVisible.value = true
  }
 
  //获取单个策略修改内容
@@ -532,7 +536,6 @@ const typeNameList = reactive([
         isAll: false,
     });
     table.data.list.forEach(e => {
-        console.log(e)
         if(e.templateType == 1) {
           tmpOption[0].push({label:e.templateName, value: e.ID})
         }

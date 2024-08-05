@@ -250,15 +250,7 @@
          headlessFlg: '',
          scanType: '',
          scanRate: '',
-         policyConfig: [{
-          "name": "",
-          "kind": "",
-          "timeout": "5s",
-          "count": 1,
-          "format": "",
-          "rateLimit": 150,
-          "concurrency": 150
-         }],
+         policyConfig: [],
          "onlineConfig": {
           "use": true,
           "timeout": "5s",
