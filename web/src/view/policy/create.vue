@@ -2,11 +2,7 @@
 <template>
 <div>
     <el-row :gutter="10" style="margin-bottom:18px">
-        <el-col :span="18">
-            <div class="btn-save">
-                <el-button type="primary">返回</el-button>
-                <el-button type="primary">确定</el-button>
-            </div>
+        <el-col :span="18" :offset="2">
             <el-form
                 ref="formRef"
                 :model="form"
@@ -90,6 +86,10 @@
                     </el-table-column>
                 </el-table>
             </div>
+            <div class="btn-save">
+                <el-button type="info" @click="goStep">返回</el-button>
+                <el-button type="primary" @click="savePolicy">确定</el-button>
+            </div>
             </el-form>
         </el-col>
     </el-row>
@@ -114,36 +114,40 @@
         </template>
         <el-form ref="searchRef" :rules="searchRules" :model="searchInfo" label-width="80px">
                 <el-form-item label="模板类型"  class="sec-lab" prop="kind">
-                    <el-select v-model="searchInfo.kind" placeholder="请选择模板类型" @change="changeScanType(searchInfo)">
-                            <el-option
+                    <el-select v-model="searchInfo.kind" placeholder="请选择模板类型" @change="changeScanType(searchInfo, 'kind')">
+                        <el-option
+
                             v-for="type in typeNameList"
                             :key="type.value"
                             :label="type.label"
                             :value="type.value"
                             :disabled="type.disabled"
-                            />
+
+                        />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="设备类型"  class="sec-lab"> 
-                    <el-select v-model="searchInfo.tagOne" placeholder="请选择执行方式" @change="changeScanType(searchInfo)">
+                    <el-select v-model="searchInfo.tagOne" placeholder="请选择执行方式" @change="changeScanType(searchInfo, 'tagOne')">
                         <el-option label="全部" value=""></el-option>
                         <el-option v-for="(tagOne, key) in tagList.tag1" :label="tagOne" :value="tagOne" :key="key" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="系统类型"  class="sec-lab">
-                    <el-select v-model="searchInfo.tagTwo" placeholder="请选择执行方式" @change="changeScanType(searchInfo)">
+                    <el-select v-model="searchInfo.tagTwo" placeholder="请选择执行方式" @change="changeScanType(searchInfo, 'tagTwo')">
+
                         <el-option label="全部" value=""></el-option>
                         <el-option v-for="(tagTwo, key) in tagList.tag2" :label="tagTwo" :value="tagTwo" :key="key" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="厂商名称"  class="sec-lab" >
-                    <el-select v-model="searchInfo.tagThree" placeholder="请选择执行方式" @change="changeScanType(searchInfo)">
+                    <el-select v-model="searchInfo.tagThree" placeholder="请选择执行方式" @change="changeScanType(searchInfo, 'tagThree')">
                         <el-option label="全部" value=""></el-option>
                         <el-option v-for="(tagThree, key) in tagList.tag3" :label="tagThree" :value="tagThree" :key="key" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="产品型号"  class="sec-lab">
-                    <el-select v-model="searchInfo.tagFour" placeholder="请选择执行方式" @change="changeScanType(searchInfo)">
+
+                    <el-select v-model="searchInfo.tagFour" placeholder="请选择执行方式" @change="changeScanType(searchInfo, 'tagFour')">
                         <el-option label="全部" value=""></el-option>
                         <el-option v-for="(tagFour, key) in tagList.tag4" :label="tagFour" :value="tagFour" :key="key" />
                     </el-select>
@@ -192,8 +196,12 @@
 </template>
 <script setup>
 import { ref, reactive } from 'vue' 
-import { getPolicyList } from '@/api/policy'
+import { getPolicyList, createPolicy, updatePolicy, getPolicyId } from '@/api/policy'
 import { getTemplateTagList, getTemplateList } from '@/api/template'
+import router from '@/router/index'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { useRoute } from 'vue-router';
+
 
 const formRef = ref(null)
 const form = ref(
@@ -250,11 +258,43 @@ getTemplateTagData()
 // 获取模板
 const checkAll = ref(false)
 const indeterminate = ref(false)
-// 筛选模板
-const changeScanType = (i, e) => {
-    getTemplateData()
+
+// 筛选模板联动
+const changeScanType = (e, f) => {
+    if(f == 'kind') {
+        searchInfo.value.templates = []
+    }
+    updatetmpOption(e.kind)
 }
 
+const updatetmpOption = async (kind) => {
+    const table = await getTemplateList({
+        page: 1,
+        pageSize: 99999,
+        isAll: false,
+        tag1: searchInfo.value.tagOne,
+        tag2: searchInfo.value.tagTwo,
+        tag3: searchInfo.value.tagThree,
+        tag4: searchInfo.value.tagFour,
+    });
+    tmpOption[kind - 1] = []
+    table.data.list.forEach(e => {
+        tmpOption[kind - 1].push({label:e.templateName, value: e.ID})
+    })
+}
+
+const route = useRoute();
+const id = ref(route.query.id);
+const initForm = async () => {
+    // 修改
+    if(id.value  != undefined) {
+        let data = await getPolicyId({id: id.value})
+        form.value = data.data
+    }
+}
+initForm();
+
+>>>>>>> dev-feat-rui.chen
 // 全选模板
 const handleCheckAll = (e, f) => {
     if(e) {
@@ -306,7 +346,6 @@ const handleCheckAll = (e, f) => {
         page: 1,
         pageSize: 99999,
         isAll: false,
-        ...searchInfo,
     });
     table.data.list.forEach(e => {
         if(e.templateType == 1) {
@@ -333,14 +372,38 @@ const closeDialog = ()=> {
 }
 
 const onReset = () => {
+<<<<<<< HEAD
     searchRef.value = {}
+=======
+    searchInfo.value = {}
+    searchInfo.value.templates = []
+>>>>>>> dev-feat-rui.chen
 }
 
 // 保存模板选择
 const enterDialog = () => {
     let pushData = JSON.parse(JSON.stringify(searchInfo.value))
+<<<<<<< HEAD
     form.value.policyConfig.push(pushData)
     closeDialog()
+=======
+    // 如果已经添加同一类型就提醒不能添加
+    let flag = false
+    form.value.policyConfig.forEach(item => {
+        if(item.kind === pushData.kind) {
+            flag =  true
+        }
+    });
+    if(!flag) {
+        form.value.policyConfig.push(pushData)
+        closeDialog()
+    }else {
+        ElMessage({
+            type: 'warning',
+            message: '策略已经存在相同类型模板!'
+        })
+    }
+>>>>>>> dev-feat-rui.chen
 }
 
 // 删除模板配置
@@ -351,14 +414,52 @@ const deleteTemplateConfig = () => {
 // 获取模板类型 
 const getKind = (e)=> {
     const item = typeNameList.find(item => item.id === e);
+<<<<<<< HEAD
     console.log(e, item)
     return item ? item.label : null;
 }
+=======
+    return item ? item.label : null;
+}
+
+const goStep = () => {
+    window.history.go(-1)
+}
+
+const savePolicy = async () => {
+    formRef.value.validate(async valid => {
+        if(form.value.id != '' && form.value.id == undefined) {
+
+            const res = await createPolicy(form.value)
+             if (res.code === 0) {
+               ElMessage({
+                 type: 'success',
+                 message: '添加成功!'
+               })
+               window.history.go(-1)
+            }
+        }else {
+            const res = await updatePolicy(form.value)
+              if (res.code === 0) {
+                ElMessage({
+                  type: 'success',
+                  message: '修改成功!'
+                })
+                window.history.go(-1)
+            }
+        }
+    })  
+}
+>>>>>>> dev-feat-rui.chen
 </script>
 <style lang='scss' scoped>
 .btn-save {
     display: flex;
+<<<<<<< HEAD
     justify-content:flex-end;
+=======
+    justify-content:center;
+>>>>>>> dev-feat-rui.chen
     margin: 10px;
 }
 </style>
