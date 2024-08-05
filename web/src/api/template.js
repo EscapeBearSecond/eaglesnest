@@ -15,13 +15,15 @@ export const getTemplateList = (data) => {
       data
     })
 }
-export const getTemplateTagList = (data) => {
+
+export const getTemplateTagList = (params) => {
     return service({
       url: '/template/tags',
-      method: 'post',
-      data
+      method: 'get',
+      params
     })
 }
+
 
 export const getTemplate = (param) => {
     return service({
