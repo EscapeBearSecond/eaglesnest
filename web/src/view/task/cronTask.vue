@@ -277,7 +277,6 @@ const tableColumns = reactive([
       return res[row.status]
   }},
   { label:'计划配置', prop:'planConfig'},
-  { label:'描述', prop:'taskDesc'},
 ])
 
 const rules = reactive({
