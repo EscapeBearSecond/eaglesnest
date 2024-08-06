@@ -530,7 +530,7 @@ const getTableData = async() => {
   const table = await getMenuList({
     page: page.value,
     pageSize: pageSize.value,
-    ...searchInfo.value,
+    ...searchInfo,
   })
   if (table.code === 0) {
     tableData.value = table.data.list

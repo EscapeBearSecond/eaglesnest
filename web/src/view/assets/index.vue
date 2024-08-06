@@ -1,6 +1,32 @@
 <template>
   <div>
     <div class="gva-table-box">
+      <div class="gva-search-box">
+       <el-form
+         ref="searchForm"
+         :inline="true"
+         :model="searchInfo"
+       >
+         <el-form-item label="名称">
+           <el-input
+             v-model="searchInfo.areaName"
+             placeholder="请输入区域名称"
+           />
+         </el-form-item>
+
+         <el-form-item>
+           <el-button
+             type="primary"
+             icon="search"
+             @click="onSubmit"
+           >查询</el-button>
+           <el-button
+             icon="refresh"
+             @click="onReset"
+           >重置</el-button>
+         </el-form-item>
+       </el-form>
+     </div>
       <div class="gva-btn-list">
         <el-button
           type="primary"
@@ -131,8 +157,16 @@ const statusData = reactive([
 ])
 
 const searchInfo = reactive({
-    areaName:''
+   areaName:''
 })
+const onSubmit = () => {
+   listQuery.page = 1
+   getTableData()
+ }
+
+ const onReset = () => {
+   searchInfo.value = {}
+ }
 
 // 查询
 const getTableData = async() => {
