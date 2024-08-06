@@ -43,6 +43,11 @@
           icon="plus"
           @click="addTemplate"
         >新增模板</el-button>
+        <el-button
+          type="primary"
+          icon="plus"
+          @click="addTemplateFile"
+        >批量新增</el-button>
       </div>
       <advance-table
         :columns="tableColumns"
@@ -117,6 +122,8 @@
         </el-form-item>
       </el-form>
     </el-drawer>
+
+
   </div>
 </template>
 
@@ -281,6 +288,12 @@ const handleClickUpdate = (row) => {
     row.templateType = row.templateType + ''
     tempFormData.value = JSON.parse(JSON.stringify(row))
     templateDialog.value = true
+}
+
+// 批量上传
+
+const addTemplateFile = () => {
+
 }
 
 </script>

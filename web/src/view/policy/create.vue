@@ -258,11 +258,6 @@ const indeterminate = ref(false)
 
 // 筛选模板联动
 const changeScanType = (e, f) => {
-    console.log(
-    '%c 🍱 CONSOLE_INFO: ',
-    'font-size:20px;background-color: #ED9EC7;color:#fff;',
-    e, f
-    );
     if(f == 'kind') {
         searchInfo.value.templates = []
     }
@@ -364,7 +359,15 @@ const handleCheckAll = (e, f) => {
 
 const templateDialog = ref(false)
 const addTemplate = () => {
-    templateDialog.value = true
+    if(form.value.policyConfig <3) {
+        templateDialog.value = true
+    }else {
+        ElMessage({
+            type: 'warning',
+            message: '策略无法再添加更多模板!'
+        })
+    }
+    
 }
 
 const closeDialog = ()=> {
@@ -416,7 +419,6 @@ const goStep = () => {
 const savePolicy = async () => {
     formRef.value.validate(async valid => {
         if(form.value.id != '' && form.value.id == undefined) {
-
             const res = await createPolicy(form.value)
              if (res.code === 0) {
                ElMessage({
