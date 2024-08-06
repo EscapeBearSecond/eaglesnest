@@ -241,7 +241,6 @@ func (t *TemplateApi) ImportTemplates(c *gin.Context) {
 }
 
 func (t *TemplateApi) TemplateTags(c *gin.Context) {
-	fmt.Println("111111111111")
 	var tag1s []string
 	var tag2s []string
 	var tag3s []string

@@ -11,6 +11,7 @@ import (
 	request2 "47.103.136.241/goprojects/curescan/server/model/curescan/request"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type TemplateService struct {
@@ -53,6 +54,7 @@ func (t *TemplateService) GetTemplatesByIds(ids []int64) ([]*curescan.Template, 
 	}
 	return templates, nil
 }
+
 
 // GetTemplateList 获取模板列表，该方法返回除模板内容外的所有信息。如果想要获取模板内容，需要调用GetTemplateById方法。
 func (t *TemplateService) GetTemplateList(searchTemplate request2.SearchTemplate) (list interface{}, total int64, err error) {
@@ -136,7 +138,10 @@ func (t *TemplateService) UpdateTemplate(template *curescan.Template) error {
 }
 
 func (t *TemplateService) BatchAdd(templates []*curescan.Template) error {
-	return global.GVA_DB.Model(&curescan.Template{}).CreateInBatches(templates, 100).Error
+	return global.GVA_DB.Clauses(clause.OnConflict{
+		Columns:   []clause.Column{{Name: "template_id"}},
+		DoUpdates: clause.AssignmentColumns([]string{"template_name", "template_desc", "template_content", "tag1", "tag2", "tag3", "tag4"}), // 更新的列
+	}).CreateInBatches(templates, 100).Error
 }
 
 func (t *TemplateService) ParseTemplateContent(template *curescan.Template) (err error) {
