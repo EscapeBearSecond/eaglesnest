@@ -15,6 +15,7 @@
         :statusData="statusData"
         :pagination="handleCurrentChange"
         :index="true"
+        :statusWidth="220"
       >
       <template v-slot:customTaskPlan="slotProps">
         <!-- 自定义的字段 -->
@@ -162,7 +163,7 @@ const statusData = reactive([
   {
       name: "启动",
       type: "primary",
-      icon: "start",
+      icon: "SwitchButton",
       handleClick: (scope) => handleStart(scope.row),
       visible : (scope) => visibleStart(scope.row)
   },

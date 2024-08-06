@@ -125,7 +125,7 @@ const statusData = reactive([
   {
       name: "启动",
       type: "primary",
-      icon: "start",
+      icon: "SwitchButton",
       handleClick: (scope) => handleStart(scope.row),
       visible : (scope) => visibleStart(scope.row)
   },

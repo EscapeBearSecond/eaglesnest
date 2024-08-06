@@ -46,7 +46,7 @@
       label="操作"
       v-if="statusData"
       :width="statusWidth"
-      align="center"
+      align="left"
     >
       <template #default="scope">
           <template v-for="(btn, index) in statusData">
