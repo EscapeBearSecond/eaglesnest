@@ -1,10 +1,16 @@
 package core
 
 import (
+	"context"
+	"fmt"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+
 	"47.103.136.241/goprojects/curescan/server/global"
 	"47.103.136.241/goprojects/curescan/server/initialize"
 	"47.103.136.241/goprojects/curescan/server/service/system"
-	"fmt"
 	"go.uber.org/zap"
 )
 
@@ -38,5 +44,14 @@ func RunWindowsServer() {
 	** 版权所有方：南京治煜开发团队 **
 	** 版权持有公司：南京治煜信息科技有限公司 **
 `, address)
-	global.GVA_LOG.Error(s.ListenAndServe().Error())
+	go func() {
+		global.GVA_LOG.Error(s.ListenAndServe().Error())
+	}()
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
+	<-quit
+	if err := s.(*http.Server).Shutdown(context.Background()); err != nil {
+		global.GVA_LOG.Error("Server shutdown", zap.Error(err))
+	}
+	// TODO 从redis中获取正在运行的扫描任务，并停止
 }

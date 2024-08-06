@@ -1,5 +1,7 @@
 47.103.136.241/goprojects/eagleeye v0.0.0-20240723082521-de77b976c210 h1:Ecer9HwbsCzuGru3Fwyt12TtmDNfHNdNezUP0x/atR8=
 47.103.136.241/goprojects/eagleeye v0.0.0-20240723082521-de77b976c210/go.mod h1:D6NKrehq/wiiM8iExaOiRTrz4wHuLAdo/NnqET9y2SY=
+47.103.136.241/goprojects/eagleeye v0.0.0-20240805061519-7243583378de h1:DQX5eFYvUOxbUC2dqOc3HKbw4WP7tWqTvVjZUth+/fE=
+47.103.136.241/goprojects/eagleeye v0.0.0-20240805061519-7243583378de/go.mod h1:EYCoNt0BNSdOMcxDejcmPo8pew22aL/T8nhSQVpnF3c=
 aead.dev/minisign v0.2.0 h1:kAWrq/hBRu4AARY6AlciO83xhNnW9UaC8YipS2uhLPk=
 aead.dev/minisign v0.2.0/go.mod h1:zdq6LdSd9TbuSxchxwhpA9zEb9YXcVGoE8JakuiGaIQ=
 atomicgo.dev/assert v0.0.2 h1:FiKeMiZSgRrZsPo9qn/7vmr7mCsh5SZyXY4YGYiYwrg=
@@ -1390,6 +1392,8 @@ golang.org/x/image v0.0.0-20190802002840-cff245a6509b/go.mod h1:FeLwcggjj3mMvU+o
 golang.org/x/image v0.13.0/go.mod h1:6mmbMOeV28HuMTgA6OSRkdXKYw/t5W9Uwn2Yv1r3Yxk=
 golang.org/x/image v0.17.0 h1:nTRVVdajgB8zCMZVsViyzhnMKPwYeroEERRC64JuLco=
 golang.org/x/image v0.17.0/go.mod h1:4yyo5vMFQjVjUcVk4jEQcU9MGy/rulF5WvUILseCM2E=
+golang.org/x/image v0.18.0 h1:jGzIakQa/ZXI1I0Fxvaa9W7yP25TqT6cHIHn+6CqvSQ=
+golang.org/x/image v0.18.0/go.mod h1:4yyo5vMFQjVjUcVk4jEQcU9MGy/rulF5WvUILseCM2E=
 golang.org/x/lint v0.0.0-20181026193005-c67002cb31c3/go.mod h1:UVdnD1Gm6xHRNCYTkRU2/jEulfH38KcIWyp/GAMgvoE=
 golang.org/x/lint v0.0.0-20190227174305-5b3e6a55c961/go.mod h1:wehouNa3lNwaWXcvxsM5YxQ5yQlVC4a0KAMCusXpPoU=
 golang.org/x/lint v0.0.0-20190301231843-5614ed5bae6f/go.mod h1:UVdnD1Gm6xHRNCYTkRU2/jEulfH38KcIWyp/GAMgvoE=

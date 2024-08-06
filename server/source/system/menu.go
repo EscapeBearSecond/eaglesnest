@@ -81,6 +81,17 @@ func (i *initMenu) InitializeData(ctx context.Context) (next context.Context, er
 		{MenuLevel: 0, Hidden: false, ParentId: 24, Path: "pubPlug", Name: "pubPlug", Component: "view/systemTools/pubPlug/pubPlug.vue", Sort: 3, Meta: Meta{Title: "打包插件", Icon: "files"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 24, Path: "plugin-email", Name: "plugin-email", Component: "plugin/email/view/index.vue", Sort: 4, Meta: Meta{Title: "邮件插件", Icon: "message"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 15, Path: "exportTemplate", Name: "exportTemplate", Component: "view/systemTools/exportTemplate/exportTemplate.vue", Sort: 10, Meta: Meta{Title: "表格模板", Icon: "reading"}},
+		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "policy", Name: "policy", Component: "view/routerHolder.vue", Sort: 10, Meta: Meta{Title: "策略管理", Icon: "lollipop"}},
+		{MenuLevel: 0, Hidden: false, ParentId: 31, Path: "list", Name: "list", Component: "view/policy/list/list.vue", Sort: 0, Meta: Meta{Title: "策略列表", Icon: "list"}},
+		{MenuLevel: 0, Hidden: false, ParentId: 31, Path: "create", Name: "create", Component: "view/policy/create.vue", Sort: 3, Meta: Meta{Title: "创建策略", Icon: "briefcase"}},
+		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "task", Name: "task", Component: "view/routerHolder.vue", Sort: 11, Meta: Meta{Title: "扫描任务", Icon: "search"}},
+		{MenuLevel: 0, Hidden: false, ParentId: 34, Path: "cronTask", Name: "cronTask", Component: "view/task/cronTask.vue", Sort: 2, Meta: Meta{Title: "定时任务", Icon: "alarm-clock"}},
+		{MenuLevel: 0, Hidden: false, ParentId: 34, Path: "index", Name: "index", Component: "view/task/index.vue", Sort: 0, Meta: Meta{Title: "扫描任务", Icon: "bell"}},
+		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "template", Name: "template", Component: "view/template/index.vue", Sort: 16, Meta: Meta{Title: "模板管理", Icon: "document-copy"}},
+		{MenuLevel: 0, Hidden: false, ParentId: 37, Path: "basic", Name: "basic", Component: "view/template/index.vue", Sort: 1, Meta: Meta{Title: "模板列表", Icon: "copy-document"}},
+		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "assets", Name: "assets", Component: "view/routerHolder.vue", Sort: 12, Meta: Meta{Title: "资产管理", Icon: "guide"}},
+		{MenuLevel: 0, Hidden: false, ParentId: 39, Path: "assets/list", Name: "assets/list", Component: "view/assets/list.vue", Sort: 2, Meta: Meta{Title: "资产列表", Icon: "data-analysis"}},
+		{MenuLevel: 0, Hidden: false, ParentId: 39, Path: "district", Name: "district", Component: "view/assets/index.vue", Sort: 2, Meta: Meta{Title: "区域管理", Icon: "place"}},
 	}
 	if err = db.Create(&entities).Error; err != nil {
 		return ctx, errors.Wrap(err, SysBaseMenu{}.TableName()+"表数据初始化失败!")
