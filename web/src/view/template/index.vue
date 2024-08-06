@@ -368,6 +368,7 @@ const handleSubmit = async() => {
       ElMessage({ type: 'success', message: '提交成功' })
       closeUpload()
     }
+    getTableData()
 };
 
 const closeUpload = () => {
