@@ -126,25 +126,25 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="设备类型"  class="sec-lab"> 
-                    <el-select v-model="searchInfo.tagOne" placeholder="请选择执行方式" @change="changeScanType(searchInfo, 'tagOne')">
+                    <el-select v-model="searchInfo.tagOne" placeholder="请选择设备类型" @change="changeScanType(searchInfo, 'tagOne')">
                         <el-option label="全部" value=""></el-option>
                         <el-option v-for="(tagOne, key) in tagList.tag1" :label="tagOne" :value="tagOne" :key="key" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="系统类型"  class="sec-lab">
-                    <el-select v-model="searchInfo.tagTwo" placeholder="请选择执行方式" @change="changeScanType(searchInfo, 'tagTwo')">
+                    <el-select v-model="searchInfo.tagTwo" placeholder="请选择系统类型" @change="changeScanType(searchInfo, 'tagTwo')">
                         <el-option label="全部" value=""></el-option>
                         <el-option v-for="(tagTwo, key) in tagList.tag2" :label="tagTwo" :value="tagTwo" :key="key" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="厂商名称"  class="sec-lab" >
-                    <el-select v-model="searchInfo.tagThree" placeholder="请选择执行方式" @change="changeScanType(searchInfo, 'tagThree')">
+                    <el-select v-model="searchInfo.tagThree" placeholder="请选择厂商名称" @change="changeScanType(searchInfo, 'tagThree')">
                         <el-option label="全部" value=""></el-option>
                         <el-option v-for="(tagThree, key) in tagList.tag3" :label="tagThree" :value="tagThree" :key="key" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="产品型号"  class="sec-lab">
-                    <el-select v-model="searchInfo.tagFour" placeholder="请选择执行方式" @change="changeScanType(searchInfo, 'tagFour')">
+                    <el-select v-model="searchInfo.tagFour" placeholder="请选择产品型号" @change="changeScanType(searchInfo, 'tagFour')">
                         <el-option label="全部" value=""></el-option>
                         <el-option v-for="(tagFour, key) in tagList.tag4" :label="tagFour" :value="tagFour" :key="key" />
                     </el-select>

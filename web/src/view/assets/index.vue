@@ -156,16 +156,14 @@ const statusData = reactive([
   }
 ])
 
-const searchInfo = reactive({
-   areaName:''
-})
+const searchInfo = ref({})
 const onSubmit = () => {
    listQuery.page = 1
    getTableData()
  }
 
  const onReset = () => {
-   searchInfo.value = {}
+   searchInfo.value = {}   
  }
 
 // 查询

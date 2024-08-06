@@ -1,6 +1,55 @@
 <template>
   <div>
     <div class="gva-table-box">
+      <div class="gva-search-box">
+       <el-form
+         ref="searchForm"
+         :inline="true"
+         :model="searchInfo"
+       >
+         <el-form-item label="名称">
+           <el-input
+             v-model="searchInfo.assetName"
+             placeholder="请输入区域名称"
+           />
+         </el-form-item>
+         <el-form-item label="设备类型"  class="sec-lab"> 
+              <el-select v-model="searchInfo.assetType" placeholder="请选择设备类型">
+                  <el-option label="全部" value=""></el-option>
+                  <el-option v-for="(tagOne, key) in tagList.tag1" :label="tagOne" :value="tagOne" :key="key" />
+              </el-select>
+          </el-form-item>
+          <el-form-item label="系统类型"  class="sec-lab">
+              <el-select v-model="searchInfo.systemType" placeholder="请选择系统类型" >
+                  <el-option label="全部" value=""></el-option>
+                  <el-option v-for="(tagTwo, key) in tagList.tag2" :label="tagTwo" :value="tagTwo" :key="key" />
+              </el-select>
+          </el-form-item>
+          <el-form-item label="厂商名称"  class="sec-lab" >
+              <el-select v-model="searchInfo.manufacturer" placeholder="请选择厂商名称" >
+                  <el-option label="全部" value=""></el-option>
+                  <el-option v-for="(tagThree, key) in tagList.tag3" :label="tagThree" :value="tagThree" :key="key" />
+              </el-select>
+          </el-form-item>
+          <el-form-item label="产品型号"  class="sec-lab">
+              <el-select v-model="searchInfo.assetModel" placeholder="请选择产品型号" >
+                  <el-option label="全部" value=""></el-option>
+                  <el-option v-for="(tagFour, key) in tagList.tag4" :label="tagFour" :value="tagFour" :key="key" />
+              </el-select>
+          </el-form-item>
+         <el-form-item>
+           <el-button
+             type="primary"
+             icon="search"
+             @click="onSubmit"
+           >查询</el-button>
+           <el-button
+             icon="refresh"
+             @click="onReset"
+           >重置</el-button>
+         </el-form-item>
+       </el-form>
+     </div>
       <div class="gva-btn-list">
         <!-- <el-button
           type="primary"
@@ -38,7 +87,7 @@
 <script setup>
 import { getListApi } from "@/api/assets"
 import { getAreaList } from "@/api/area"
-
+import { getTemplateTagList } from '@/api/template'
 import { ref, reactive } from 'vue'
 
 defineOptions({
@@ -74,6 +123,14 @@ const listQuery = reactive({
    pageSize: 10,
 })
 
+//获取四层筛选
+const tagList = ref({})
+const getTemplateTagData = async () => {
+     const data = await getTemplateTagList()
+     tagList.value = data.data
+}
+getTemplateTagData()
+
 const handleCurrentChange = (val) => {
   page.value = val
   getTableData()
@@ -82,16 +139,22 @@ const handleCurrentChange = (val) => {
 // 操作
 const statusData = reactive([])
 
-const searchInfo = reactive({
-    areaName:''
-})
+const searchInfo = ref({})
+const onSubmit = () => {
+   listQuery.page = 1
+   getTableData()
+ }
+
+ const onReset = () => {
+   searchInfo.value = {}   
+ }
 
 // 查询
 const getTableData = async() => {
   const table = await getListApi({
       page: listQuery.page,
       pageSize: listQuery.pageSize,
-      ...searchInfo,
+      // ...searchInfo,
     });
     if (table.code === 0) {
       tableData.value = table.data.list;
