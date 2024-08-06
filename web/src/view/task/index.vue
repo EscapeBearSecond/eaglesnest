@@ -1,6 +1,48 @@
 <template>
   <div>
     <div class="gva-table-box">
+      <div class="gva-search-box">
+       <el-form
+         ref="searchForm"
+         :inline="true"
+         :model="searchInfo"
+       >
+         <el-form-item label="名称">
+           <el-input
+             v-model="searchInfo.taskName"
+             placeholder="请输入任务名称"
+           />
+         </el-form-item>
+         <el-form-item label="执行方式">
+          <el-select v-model="searchInfo.taskPlan" placeholder="请选择执行方式" >
+            <el-option label="立即执行" :value="1" />
+            <el-option label="稍后执行" :value="2" />
+          </el-select>
+         </el-form-item>
+         <el-form-item label="状态">
+          <el-select v-model="searchInfo.status" placeholder="请选择状态">
+            <el-option label="创建中" :value="0" />
+            <el-option label="执行中" :value="1" />
+            <el-option label="已完成" :value="2" />
+            <el-option label="执行失败" :value="3" />
+            <el-option label="已终止" :value="4" />
+            <el-option label="运行中" :value="5" />
+            <el-option label="已停止" :value="6" />
+          </el-select>
+         </el-form-item>
+         <el-form-item>
+           <el-button
+             type="primary"
+             icon="search"
+             @click="onSubmit"
+           >查询</el-button>
+           <el-button
+             icon="refresh"
+             @click="onReset"
+           >重置</el-button>
+         </el-form-item>
+       </el-form>
+     </div>
       <div class="gva-btn-list">
         <el-button
           type="primary"
@@ -15,6 +57,7 @@
         :statusData="statusData"
         :pagination="handleCurrentChange"
         :index="true"
+        :statusWidth="220"
       >
       <template v-slot:customTaskPlan="slotProps">
         <!-- 自定义的字段 -->
@@ -94,6 +137,27 @@
         </el-form-item>
       </el-form>
     </el-drawer>
+    <el-dialog
+      v-model="reportFlag"
+      title="报告类型"
+      width="500"
+      :before-close="handleClose"
+    >
+      <div class="el-form-item report">
+        <span class="el-form-item__label">报告类型</span>
+        <el-select v-model="exportType" placeholder="请选择导出报告类型">
+          <el-option label="word" value="word" />
+        </el-select>
+      </div>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="getReport">
+            确定
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -115,6 +179,16 @@ defineOptions({
   name: 'Task',
 })
 
+const searchInfo = ref({
+  taskName: '',
+})
+const onSubmit = () => {
+  listQuery.page = 1
+  getTableData()
+}
+const onReset = () => {
+  searchInfo.value = {}
+}
 
 
 const page = ref(1)
@@ -141,7 +215,7 @@ const statusData = reactive([
   {
       name: "启动",
       type: "primary",
-      icon: "start",
+      icon: "SwitchButton",
       handleClick: (scope) => handleStart(scope.row),
       visible : (scope) => visibleStart(scope.row)
   },
@@ -159,7 +233,7 @@ const statusData = reactive([
       handleClick: (scope) => handleDel(scope.row),
   },
   {
-      name: "生成报告",
+      name: "报告",
       type: "primary",
       icon: "Position",
       handleClick: (scope) => handleReport(scope.row),
@@ -167,17 +241,13 @@ const statusData = reactive([
   }
 ])
 
-const searchInfo = reactive({
-  taskName:''
-})
-
 // 查询
 const getTableData = async() => {
   const table = await getTaskList({
       page: listQuery.page,
       pageSize: listQuery.pageSize,
       isAll:true,
-      ...searchInfo,
+      ...searchInfo.value,
     });
     if (table.code === 0) {
       tableData.value = table.data.list;
@@ -271,8 +341,21 @@ const handleDel = (row) => {
 }
 
 // 下载报告
+const reportFlag = ref(false)
+const exportType = ref('word')
+const reportData = ref({})
 const handleReport =  async(row) =>{
-    await reportTask({ id: row.ID })
+  reportFlag.value = true
+    // await reportTask({ id: row.ID })
+    reportData.id = row.ID
+}
+
+const getReport = async() => {
+    // 下载报告未完成
+}
+
+const handleClose = () => {
+  reportFlag.value = false
 }
 
 // 获取执行方式
@@ -306,7 +389,6 @@ const tableColumns = reactive([
       let res = ['创建中','执行中','已完成', '执行失败', '已终止', '运行中', '已停止']
       return res[row.status]
   }},
-  { label:'描述', prop:'taskDesc'},
 ])
 
 //验证输入
@@ -436,4 +518,7 @@ const handleStart = (e) => {
 </script>
 
 <style lang="scss">
+.report {
+  padding: 2% 5%;
+}
 </style>
