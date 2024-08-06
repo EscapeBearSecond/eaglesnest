@@ -361,10 +361,8 @@ const handleSubmit = async() => {
   const formData = new FormData();
 
   formData.append('file', selectedFiles.value);
-  formData.append('templateType', templateType)
-  // selectedFiles.value.forEach(file => {
-
-  // });
+  formData.append('templateType', templateType.value)
+  
   let data = await postTemplateImports(formData)
   if (data.code === 0) {
       ElMessage({ type: 'success', message: '提交成功' })
