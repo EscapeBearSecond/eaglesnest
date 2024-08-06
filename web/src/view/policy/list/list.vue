@@ -12,6 +12,19 @@
              placeholder="请输入策略名称"
            />
          </el-form-item>
+         <el-form-item label="扫描类型">
+          <el-select v-model="searchInfo.scanType" placeholder="请选择扫描类型" multiple collapse-tags>
+            <el-option label="资产发现" value="1" />
+            <el-option label="漏洞扫描" value="2" />
+            <el-option label="弱口令" value="3" />
+          </el-select>
+         </el-form-item>
+         <el-form-item label="排序">
+          <el-select v-model="searchInfo.desc" placeholder="请选择排序方式">
+            <el-option label="默认" :value="false" />
+            <el-option label="倒序" :value="true" />
+          </el-select>
+         </el-form-item>
          <el-form-item>
            <el-button
              type="primary"
@@ -334,7 +347,7 @@ const typeNameList = reactive([
  const searchInfo = ref({})
  
  // 查询
- const getTableData = async() => {
+ const getTableData = async() => { 
    const table = await getPolicyList({ page: listQuery.value.page, pageSize: listQuery.value.pageSize, ...searchInfo.value })
    if (table.code === 0) {
      tableData.value = table.data.list
@@ -342,7 +355,6 @@ const typeNameList = reactive([
      listQuery.value.page = table.data.page
      listQuery.value.pageSize = table.data.pageSize
    }
-   setOptions()
  }
  
  getTableData()
@@ -427,11 +439,7 @@ const typeNameList = reactive([
        dialogFormVisible.value = false
      }
    })
- }
- const setOptions = () => {
-  getTemplateData()
- }
- 
+ } 
  // 新增策略
  const handleAdd = () => {
    router.push({ name: 'create'})
