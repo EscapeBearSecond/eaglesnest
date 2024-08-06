@@ -324,6 +324,7 @@ const searchInfo = ref({})
 
 const onReset = () => {
   searchInfo.value = {}
+  getTableData()
 }
 // 搜索
 

@@ -508,6 +508,7 @@ const typeNameList = reactive([
 
  const onReset = () => {
    searchInfo.value = {}
+   getTableData()
  }
  
  const addTmpData = () => {

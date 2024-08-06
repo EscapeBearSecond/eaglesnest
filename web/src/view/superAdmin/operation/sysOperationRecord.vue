@@ -200,6 +200,7 @@ const tableData = ref([])
 const searchInfo = ref({})
 const onReset = () => {
   searchInfo.value = {}
+  getTableData()
 }
 // 条件搜索前端看此方法
 const onSubmit = () => {
