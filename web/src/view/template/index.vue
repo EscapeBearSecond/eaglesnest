@@ -122,13 +122,36 @@
         </el-form-item>
       </el-form>
     </el-drawer>
-
+    <el-drawer v-model="drawerVisible" title="Upload Files">
+      <div>
+      <el-upload
+        ref="uploadRef"
+        class="upload-demo"
+        drag
+        :action="''"
+        :auto-upload="false"
+        multiple
+        @change="handleFileChange"
+      >
+          <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+          <div class="el-upload__text">
+            Drop file here or <em>click to upload</em>
+          </div>
+          <template #tip>
+            <div class="el-upload__tip">
+              jpg/png files with a size less than 500kb
+            </div>
+          </template>
+        </el-upload>
+        <el-button @click="handleSubmit" type="primary">Submit Files</el-button>
+      </div>
+  </el-drawer>
 
   </div>
 </template>
 
 <script setup>
-import { getTemplateList,  createTemplate, updateTemplate, delTemplate } from "@/api/template.js"
+import { getTemplateList,  createTemplate, updateTemplate, delTemplate, postTemplateImports } from "@/api/template.js"
 import { ref, reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
@@ -291,12 +314,45 @@ const handleClickUpdate = (row) => {
 }
 
 // 批量上传
-
-const addTemplateFile = () => {
-
+const drawerVisible = ref(false)
+const uploadRef = ref(null);
+const addTemplateFile =  () => {
+  drawerVisible.value = true
 }
+const selectedFiles = ref([]);
+const handleFileChange = (file, fileList) => {
+  selectedFiles.value = fileList.map(item => item.raw);
+};
+
+const handleSubmit = async() => {
+  
+  if (selectedFiles.value.length === 0) {
+    ElMessage({ type: 'error', message: '未选中文件' })
+    return;
+  }
+
+  const formData = new FormData();
+  console.log(
+    '%c 🍱 CONSOLE_INFO: ',
+    'font-size:20px;background-color: #ED9EC7;color:#fff;',
+    selectedFiles.value
+    );
+  selectedFiles.value.forEach(file => {
+    
+    
+    formData.append('file', file);
+  });
+  let data = await postTemplateImports(formData)
+
+  console.log(data);
+};
+
 
 </script>
 
 <style lang="scss">
+
+.el-upload__tip {
+  color: red;
+}
 </style>

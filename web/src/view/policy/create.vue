@@ -418,7 +418,7 @@ const goStep = () => {
 
 const savePolicy = async () => {
     formRef.value.validate(async valid => {
-        if(form.value.id != '' && form.value.id == undefined) {
+        if(form.value.id == '' && form.value.id == undefined) {
             const res = await createPolicy(form.value)
              if (res.code === 0) {
                ElMessage({
