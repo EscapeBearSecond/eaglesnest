@@ -139,7 +139,7 @@ func (t *TemplateService) UpdateTemplate(template *curescan.Template) error {
 func (t *TemplateService) BatchAdd(templates []*curescan.Template) error {
 	return global.GVA_DB.Clauses(clause.OnConflict{
 		Columns:   []clause.Column{{Name: "template_id"}},
-		DoUpdates: clause.AssignmentColumns([]string{"template_desc", "template_content", "tag1", "tag2", "tag3", "tag4"}), // 更新的列
+		DoUpdates: clause.AssignmentColumns([]string{"template_desc", "template_content", "tag1", "tag2", "tag3", "tag4", "template_type"}), // 更新的列
 	}).CreateInBatches(templates, 100).Error
 }
 
