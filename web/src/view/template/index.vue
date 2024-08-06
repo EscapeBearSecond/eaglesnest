@@ -127,7 +127,7 @@
         <div class="flex justify-between items-center">
           <span class="text-lg">批量上传</span>
           <div>
-            <el-button @click="drawerVisible == false">取 消</el-button>
+            <el-button @click="closeUpload">取 消</el-button>
             <el-button
               type="primary"
               @click="handleSubmit"
@@ -157,6 +157,7 @@
         :action="''"
         :auto-upload="false"
         multiple
+       :before-upload="beforeUpload"
         @change="handleFileChange"
       >
           <el-icon class="el-icon--upload"><upload-filled /></el-icon>
@@ -358,24 +359,23 @@ const handleSubmit = async() => {
   }
 
   const formData = new FormData();
-  console.log(
-    '%c 🍱 CONSOLE_INFO: ',
-    'font-size:20px;background-color: #ED9EC7;color:#fff;',
-    selectedFiles.value
-    );
+
   formData.append('file', selectedFiles.value);
   formData.append('templateType', templateType)
   // selectedFiles.value.forEach(file => {
 
   // });
   let data = await postTemplateImports(formData)
-  if (res.code === 0) {
+  if (data.code === 0) {
       ElMessage({ type: 'success', message: '提交成功' })
-      drawerVisible.value = false
+      closeUpload()
     }
 };
 
-
+const closeUpload = () => {
+  drawerVisible.value = false
+  selectedFiles.value = []
+} 
 </script>
 
 <style lang="scss">
