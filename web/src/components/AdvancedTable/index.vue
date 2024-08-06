@@ -26,13 +26,14 @@
       v-if="selection"
       reserve-selection
       type="selection"
-      width="45"
+      width="50"
     />
     <el-table-column
       v-for="(column, index)  in columns"
       :key="index"
       :label="column.label"
       :prop="column.prop"
+      :width="column.width"
       :formatter="column.formatter"
       align="center"
     >
@@ -46,7 +47,7 @@
       label="操作"
       v-if="statusData"
       :width="statusWidth"
-      align="center"
+      align="left"
     >
       <template #default="scope">
           <template v-for="(btn, index) in statusData">
