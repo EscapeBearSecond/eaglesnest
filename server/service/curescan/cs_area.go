@@ -1,11 +1,12 @@
 package curescan
 
 import (
+	"errors"
+	"fmt"
+
 	"47.103.136.241/goprojects/curescan/server/global"
 	"47.103.136.241/goprojects/curescan/server/model/common/request"
 	"47.103.136.241/goprojects/curescan/server/model/curescan"
-	"errors"
-	"fmt"
 	"gorm.io/gorm"
 )
 
@@ -67,14 +68,17 @@ func (a *AreaService) GetAreaById(id int) (*curescan.Area, error) {
 // GetAreaList 获取区域列表，该方法会根据页码信息和排序信息返回分页后的区域信息。调用该方法需要传递的参数有4个，第一个为过滤信息，也就是要查询的区域信息或关键字；
 // 第二个参数是分页信息；第三个参数是排序字段，第四个参数是是否倒序。如查询区域名称为“南京”，且要按照ID字段倒序排序，则参数 area.AreaName="南京", page.Page=1,
 // page.PageInfo=10, order="id", desc=true
-func (a *AreaService) GetAreaList(area curescan.Area, page request.PageInfo, order string, desc bool) (list interface{}, total int64, err error) {
+func (a *AreaService) GetAreaList(area *curescan.Area, page request.PageInfo, order string, desc bool) (list interface{}, total int64, err error) {
 	limit := page.PageSize
 	offset := page.PageSize * (page.Page - 1)
 	db := global.GVA_DB.Model(&curescan.Area{})
 	var areas []curescan.Area
-	if area.AreaName != "" {
-		db = db.Where("area_name LIKE ?", "%"+area.AreaName+"%")
+	if area != nil {
+		if area.AreaName != "" {
+			db = db.Where("area_name LIKE ?", "%"+area.AreaName+"%")
+		}
 	}
+
 	err = db.Count(&total).Error
 	if err != nil {
 		return areas, total, err

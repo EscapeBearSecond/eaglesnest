@@ -26,27 +26,30 @@ func (a *AssetService) GetAssetList(asset *curescan.Asset, page request.PageInfo
 	db := global.GVA_DB.Select("id", "asset_name", "asset_ip", "asset_area", "area_name", "asset_type", "open_ports", "system_type",
 		"ttl", "asset_model", "manufacturer", "created_at", "updated_at", "deleted_at").Model(&curescan.Asset{})
 	var assets []curescan.Asset
-	if asset.AssetName != "" {
-		db = db.Where("asset_name LIKE ?", "%"+asset.AssetName+"%")
+	if asset != nil {
+		if asset.AssetName != "" {
+			db = db.Where("asset_name LIKE ?", "%"+asset.AssetName+"%")
+		}
+		if asset.AreaName != "" {
+			db = db.Where("area_name LIKE ?", "%"+asset.AreaName+"%")
+		}
+		if asset.AssetArea != 0 {
+			db = db.Where("asset_area = ?", asset.AssetArea)
+		}
+		if asset.AssetIP != "" {
+			db = db.Where("asset_ip LIKE ?", "%"+asset.AssetIP+"%")
+		}
+		if asset.Manufacturer != "" {
+			db = db.Where("manufacturer LIKE ?", "%"+asset.Manufacturer+"%")
+		}
+		if asset.AssetModel != "" {
+			db = db.Where("asset_model LIKE ?", "%"+asset.AssetModel+"%")
+		}
+		if asset.SystemType != "" {
+			db = db.Where("system_type LIKE ?", "%"+asset.SystemType+"%")
+		}
 	}
-	if asset.AreaName != "" {
-		db = db.Where("area_name LIKE ?", "%"+asset.AreaName+"%")
-	}
-	if asset.AssetArea != 0 {
-		db = db.Where("asset_area = ?", asset.AssetArea)
-	}
-	if asset.AssetIP != "" {
-		db = db.Where("asset_ip LIKE ?", "%"+asset.AssetIP+"%")
-	}
-	if asset.Manufacturer != "" {
-		db = db.Where("manufacturer LIKE ?", "%"+asset.Manufacturer+"%")
-	}
-	if asset.AssetModel != "" {
-		db = db.Where("asset_model LIKE ?", "%"+asset.AssetModel+"%")
-	}
-	if asset.SystemType != "" {
-		db = db.Where("system_type LIKE ?", "%"+asset.SystemType+"%")
-	}
+
 	err = db.Count(&total).Error
 	if err != nil {
 		return assets, total, err

@@ -48,7 +48,17 @@ func (t *TaskApi) CreateTask(c *gin.Context) {
 	// 	Status:     createTask.Status,
 	// 	TargetIP:   ips,
 	// }
-	err = taskService.CreateTask(&createTask)
+	var task = curescan.Task{
+		TaskName:   createTask.TaskName,
+		TaskDesc:   createTask.TaskDesc,
+		TaskPlan:   createTask.TaskPlan,
+		PlanConfig: createTask.PlanConfig,
+		PolicyID:   createTask.PolicyID,
+		TargetIP:   createTask.TargetIP,
+		Flag:       createTask.Flag,
+	}
+	task.CreatedBy = utils.GetUserID(c)
+	err = taskService.CreateTask(&task)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -59,6 +69,7 @@ func (t *TaskApi) CreateTask(c *gin.Context) {
 func (t *TaskApi) GetTaskList(c *gin.Context) {
 	var searchTask request.SearchTask
 	err := c.ShouldBindJSON(&searchTask)
+	fmt.Println(searchTask)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return

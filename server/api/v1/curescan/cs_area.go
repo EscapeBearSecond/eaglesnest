@@ -128,7 +128,7 @@ func (csa *AreaApi) GetAreaList(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	list, total, err := areaService.GetAreaList(searchArea.Area, searchArea.PageInfo, searchArea.OrderKey, searchArea.Desc)
+	list, total, err := areaService.GetAreaList(&searchArea.Area, searchArea.PageInfo, searchArea.OrderKey, searchArea.Desc)
 	if err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败", c)

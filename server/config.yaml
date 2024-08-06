@@ -165,3 +165,6 @@ zap:
     show-line: true
     log-in-console: false
     retention-day: -1
+
+report:
+    customer: "治煜"

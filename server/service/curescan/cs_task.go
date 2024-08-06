@@ -9,15 +9,16 @@ import (
 	"strings"
 	"time"
 
-	"go.uber.org/zap"
-
 	"47.103.136.241/goprojects/curescan/server/global"
 	"47.103.136.241/goprojects/curescan/server/model/curescan"
 	"47.103.136.241/goprojects/curescan/server/model/curescan/request"
 	"47.103.136.241/goprojects/curescan/server/model/curescan/response"
+	"47.103.136.241/goprojects/curescan/server/service/system"
+	"47.103.136.241/goprojects/eagleeye/pkg/report"
 	eagleeye "47.103.136.241/goprojects/eagleeye/pkg/sdk"
 	"47.103.136.241/goprojects/eagleeye/pkg/types"
 	"github.com/robfig/cron/v3"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -30,6 +31,7 @@ var (
 	portScanService    = &PortScanService{}
 	onlineCheckService = &OnlineCheckService{}
 	jobResultService   = &JobResultService{}
+	userSerivce        = &system.UserService{}
 	// assetService       = &AssetService{}
 )
 
@@ -75,21 +77,12 @@ var (
 	TimeStopped = 6
 )
 
-func (s *TaskService) CreateTask(createTask *request.CreateTask) error {
-	if !errors.Is(global.GVA_DB.Select("task_name").First(&curescan.Task{}, "area_name=?", createTask.TaskName).Error, gorm.ErrRecordNotFound) {
-		return fmt.Errorf("任务'%s'已存在, 请勿重复创建", createTask.TaskName)
+func (s *TaskService) CreateTask(task *curescan.Task) error {
+	if !errors.Is(global.GVA_DB.Select("task_name").First(&curescan.Task{}, "area_name=?", task.TaskName).Error, gorm.ErrRecordNotFound) {
+		return fmt.Errorf("任务'%s'已存在, 请勿重复创建", task.TaskName)
 	}
 
-	var task = curescan.Task{
-		TaskName:   createTask.TaskName,
-		TaskDesc:   createTask.TaskDesc,
-		TaskPlan:   createTask.TaskPlan,
-		PlanConfig: createTask.PlanConfig,
-		PolicyID:   createTask.PolicyID,
-		TargetIP:   createTask.TargetIP,
-		Flag:       createTask.Flag,
-	}
-	if createTask.TaskPlan == ExecuteImmediately || createTask.TaskPlan == ExecuteLater {
+	if task.TaskPlan == ExecuteImmediately || task.TaskPlan == ExecuteLater {
 		// 普通任务创建后的状态为"创建"
 		task.Status = Created
 	} else {
@@ -101,15 +94,15 @@ func (s *TaskService) CreateTask(createTask *request.CreateTask) error {
 		return err
 	}
 	// 立即执行
-	if createTask.TaskPlan == ExecuteImmediately {
+	if task.TaskPlan == ExecuteImmediately {
 		return s.ExecuteTask(int(task.ID))
 	}
 	// 稍后执行
-	if createTask.TaskPlan == ExecuteLater {
+	if task.TaskPlan == ExecuteLater {
 		return nil
 	}
 	// 定时计划
-	if createTask.TaskPlan == ExecuteTiming {
+	if task.TaskPlan == ExecuteTiming {
 		// cronName := task.TaskName
 		err = s.ExecuteTask(int(task.ID))
 		// _, err = global.GVA_Timer.AddTaskByFunc(cronName, createTask.PlanConfig, func() { s.ExecuteTask(int(task.ID)) }, task.TaskName, cron.WithSeconds())
@@ -200,7 +193,7 @@ func (s *TaskService) DeleteTask(id int) error {
 func (s *TaskService) GetTaskById(id int) (*curescan.Task, error) {
 	var task *curescan.Task
 	err := global.GVA_DB.Select("id", "task_name", "task_desc", "status", "target_ip", "policy_id", "task_plan",
-		"plan_config", "created_at", "updated_at", "deleted_at", "flag").Where("id=?", id).First(&task).Error
+		"plan_config", "created_at", "updated_at", "deleted_at", "flag", "created_by", "updated_by").Where("id=?", id).First(&task).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("目标数据不存在")
@@ -275,6 +268,7 @@ func (s *TaskService) ExecuteTask(id int) error {
 
 	// 获取任务
 	task, err := s.GetTaskById(id)
+
 	if err != nil {
 		return err
 	}
@@ -433,6 +427,54 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 			if err != nil {
 				return err
 			}
+			info, err := userSerivce.FindUserById(int(task.CreatedBy))
+			if err != nil {
+				return err
+			}
+			err = s.GenerateReport(entry.Result(), info.NickName)
+			if err != nil {
+				return err
+			}
+			var assets = make([]*curescan.Asset, 0)
+			// 资产添加
+			for _, item := range taskResult.JobResultList {
+				nameSplit := strings.Split(item.Name, "_")
+				if item.Kind == "1" {
+					asset := &curescan.Asset{}
+					asset.AreaName = "未知"
+					asset.AssetArea = 0
+					asset.AssetName = item.Name
+					asset.AssetType = nameSplit[0]
+					if len(nameSplit) == 1 {
+						asset.SystemType = "未知"
+						asset.Manufacturer = "未知"
+						asset.AssetModel = "未知"
+					}
+					if len(nameSplit) == 2 {
+						asset.SystemType = nameSplit[1]
+						asset.Manufacturer = "未知"
+						asset.AssetModel = "未知"
+					}
+					if len(nameSplit) == 3 {
+						asset.SystemType = nameSplit[1]
+						asset.Manufacturer = nameSplit[2]
+						asset.AssetModel = "未知"
+					}
+					if len(nameSplit) == 4 {
+						asset.SystemType = nameSplit[1]
+						asset.Manufacturer = nameSplit[2]
+						asset.AssetModel = nameSplit[3]
+					}
+					asset.AssetIP = item.Host
+					port, _ := strconv.Atoi(item.Port)
+					asset.OpenPorts = []int64{int64(port)}
+					assets = append(assets, asset)
+				}
+			}
+			err = tx.Model(&curescan.Asset{}).CreateInBatches(assets, 100).Error
+			if err != nil {
+				return err
+			}
 			return nil
 		})
 		if err != nil {
@@ -493,6 +535,14 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 				return err
 			}
 			err = jobResultService.BatchAddWithTransaction(tx, taskResult.JobResultList)
+			if err != nil {
+				return err
+			}
+			info, err := userSerivce.FindUserById(int(task.CreatedBy))
+			if err != nil {
+				return err
+			}
+			err = s.GenerateReport(entry.Result(), info.NickName)
 			if err != nil {
 				return err
 			}
@@ -642,5 +692,17 @@ func (s *TaskService) StopTask(id int) error {
 		global.GVA_Timer.StopCron(cronName)
 	}
 	// global.GVA_LOG.Info("任务已停止", zap.Int("id", id))
+	return nil
+}
+
+func (s *TaskService) GenerateReport(ret *types.EntryResult, reporter string) error {
+	err := report.Generate(
+		report.WithJobIndexes(0),
+		report.WithEntryResult(ret),
+		report.WithCustomer(global.GVA_CONFIG.Report.Customer),
+		report.WithReporter(reporter))
+	if err != nil {
+		return err
+	}
 	return nil
 }
