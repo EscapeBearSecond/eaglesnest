@@ -1,24 +1,41 @@
-FROM golang:alpine as builder
+FROM golang:1.22-alpine AS builder
 
-WORKDIR /go/src/47.103.136.241/goprojects/curescan/server
+WORKDIR /opt/goprojects/curescan/server
 COPY . .
 
+# 安装编译时必要的依赖
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories \
+    && apk update \
+    && apk add --no-cache git gcc musl-dev libpcap libpcap-dev
+
+# 配置git
+RUN git config --global credential.helper 'store --file=/root/.git-credentials' \
+    && echo 'http://zy:%23XWUT%2AKjkM6tqP@47.103.136.241' > /root/.git-credentials
+
+# 配置go 编译环境
 RUN go env -w GO111MODULE=on \
     && go env -w GOPROXY=https://goproxy.cn,direct \
-    && go env -w CGO_ENABLED=0 \
+    && go env -w CGO_ENABLED=1 \
+    && go env -w GOPRIVATE=47.103.136.241/goprojects \
+    && go env -w GOINSECURE=47.103.136.241/goprojects \
     && go env \
     && go mod tidy \
-    && go build -o server .
+    && GODEBUG=tlsrsakex=1 go build -o server .
 
 FROM alpine:latest
 
-LABEL MAINTAINER="SliverHorn@sliver_horn@qq.com"
+LABEL MAINTAINER="lu.zhaocong@cursec.cn"
 
-WORKDIR /go/src/47.103.136.241/goprojects/curescan/server
+# 安装运行时必要的依赖
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories \
+    && apk update \
+    && apk add --no-cache libpcap libpcap-dev
 
-COPY --from=0 /go/src/47.103.136.241/goprojects/curescan/server/server ./
-COPY --from=0 /go/src/47.103.136.241/goprojects/curescan/server/resource ./resource/
-COPY --from=0 /go/src/47.103.136.241/goprojects/curescan/server/config.docker.yaml ./
+WORKDIR /opt/goprojects/curescan/server
+
+COPY --from=0 /opt/goprojects/curescan/server/server ./
+COPY --from=0 /opt/goprojects/curescan/server/resource ./resource/
+COPY --from=0 /opt/goprojects/curescan/server/config.docker.yaml ./
 
 EXPOSE 8888
-ENTRYPOINT ./server -c config.docker.yaml
+ENTRYPOINT ["./server", "-c", "config.docker.yaml"]

@@ -1,16 +1,16 @@
-# 47.103.136.241/goprojects/curescan/server Global Configuration
+# /opt/goprojects/curescan/server Global Configuration
 
 # jwt configuration
 jwt:
-  signing-key: qmPlus
-  expires-time: 7d
+  signing-key: ^MSrR##5g6J6m!w6VeDL
+  expires-time: 1d
   buffer-time: 1d
-  issuer: qmPlus
+  issuer: zy
 # zap logger configuration
 zap:
   level: info
   format: console
-  prefix: "[47.103.136.241/goprojects/curescan/server]"
+  prefix: "[curescan]"
   director: log
   show-line: true
   encode-level: LowercaseColorLevelEncoder
@@ -20,8 +20,8 @@ zap:
 # redis configuration
 redis:
   db: 0
-  addr: 177.7.0.14:6379
-  password: ""
+  addr: 127.0.0.1:6379 # redis 地址
+  password: "ZtGf2B2T5b"
 
 # mongo configuration
 mongo:
@@ -53,11 +53,11 @@ email:
 system:
   env: public # Change to "develop" to skip authentication for development mode
   addr: 8888
-  db-type: mysql
+  db-type: pgsql
   oss-type: local # 控制oss选择走本地还是 七牛等其他仓 自行增加其他oss仓可以在 server/utils/upload/upload.go 中 NewOss函数配置
-  use-redis: false # 使用redis
+  use-redis: true # 使用redis
   use-mongo: false # 使用mongo
-  use-multipoint: false
+  use-multipoint: true
   # IP限制次数 一个小时15000次
   iplimit-count: 15000
   #  IP限制一个小时
@@ -88,12 +88,12 @@ mysql:
 # pgsql connect configuration
 # 未初始化之前请勿手动修改数据库信息！！！如果一定要手动初始化请看（https://curescan.com/docs/first_master）
 pgsql:
-  path: ""
-  port: ""
-  config: ""
-  db-name: ""
-  username: ""
-  password: ""
+  path: "127.0.0.1" # 数据库地址
+  port: "5432"
+  config: "sslmode=disable TimeZone=Asia/Shanghai"
+  db-name: "curescan" # 数据库名，需要手动初始化创建，页面上初始化的数据库名称须与此处一致
+  username: "curescan" # 数据库用户名，页面上初始化的数据库用户名须与此处一致
+  password: "H9nWDpM86K" # 数据库密码，页面上初始化的数据库密码须与此处一致
   max-idle-conns: 10
   max-open-conns: 100
   log-mode: ""

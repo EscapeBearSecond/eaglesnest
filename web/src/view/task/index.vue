@@ -303,7 +303,7 @@ const tableColumns = reactive([
   { label:'执行方式', prop:'taskPlan', slot: 'customTaskPlan'},
   { label:'策略', prop:'policyName'},
   { label:'状态', prop:'status', formatter(row, column) {
-      let res = ['创建中','执行中','已完成', '执行失败']
+      let res = ['创建中','执行中','已完成', '执行失败', '已终止', '运行中', '已停止']
       return res[row.status]
   }},
   { label:'描述', prop:'taskDesc'},
