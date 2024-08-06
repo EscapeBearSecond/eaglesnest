@@ -30,6 +30,8 @@ services:
       redis:
         condition: service_healthy
     network_mode: host
+    privileged: true # 启用扩展权限
+    user: root # 以root用户运行
 
   postgres:
     image: postgres:13.3 # 使用PostgreSQL 13.3镜像
