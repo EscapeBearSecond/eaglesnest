@@ -94,6 +94,27 @@
         </el-form-item>
       </el-form>
     </el-drawer>
+    <el-dialog
+      v-model="reportFlag"
+      title="报告类型"
+      width="500"
+      :before-close="handleClose"
+    >
+      <div class="el-form-item report">
+        <span class="el-form-item__label">报告类型</span>
+        <el-select v-model="exportType" placeholder="请选择导出报告类型">
+          <el-option label="word" value="word" />
+        </el-select>
+      </div>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="getReport">
+            确定
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -159,7 +180,7 @@ const statusData = reactive([
       handleClick: (scope) => handleDel(scope.row),
   },
   {
-      name: "生成报告",
+      name: "报告",
       type: "primary",
       icon: "Position",
       handleClick: (scope) => handleReport(scope.row),
@@ -271,8 +292,21 @@ const handleDel = (row) => {
 }
 
 // 下载报告
+const reportFlag = ref(false)
+const exportType = ref('word')
+const reportData = ref({})
 const handleReport =  async(row) =>{
-    await reportTask({ id: row.ID })
+  reportFlag.value = true
+    // await reportTask({ id: row.ID })
+    reportData.id = row.ID
+}
+
+const getReport = async() => {
+
+}
+
+const handleClose = () => {
+  reportFlag.value = false
 }
 
 // 获取执行方式
@@ -306,7 +340,6 @@ const tableColumns = reactive([
       let res = ['创建中','执行中','已完成', '执行失败', '已终止', '运行中', '已停止']
       return res[row.status]
   }},
-  { label:'描述', prop:'taskDesc'},
 ])
 
 //验证输入
@@ -436,4 +469,7 @@ const handleStart = (e) => {
 </script>
 
 <style lang="scss">
+.report {
+  padding: 2% 5%;
+}
 </style>
