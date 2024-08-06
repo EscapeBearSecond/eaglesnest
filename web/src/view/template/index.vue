@@ -122,8 +122,34 @@
         </el-form-item>
       </el-form>
     </el-drawer>
-    <el-drawer v-model="drawerVisible" title="Upload Files">
+    <el-drawer v-model="drawerVisible" size="45%" :show-close="false">
+      <template #header>
+        <div class="flex justify-between items-center">
+          <span class="text-lg">批量上传</span>
+          <div>
+            <el-button @click="drawerVisible == false">取 消</el-button>
+            <el-button
+              type="primary"
+              @click="handleSubmit"
+            >确 定</el-button>
+          </div>
+        </div>
+      </template>
       <div>
+      <span class="el-form-item__label">模板类型</span> 
+      <el-select
+        v-model="templateType"
+        placeholder="类型"
+        size="large"
+        >
+        <el-option
+            v-for="item in templateOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+        />
+        </el-select>
+      <span class="el-form-item__label">选择文件</span> 
       <el-upload
         ref="uploadRef"
         class="upload-demo"
@@ -135,15 +161,14 @@
       >
           <el-icon class="el-icon--upload"><upload-filled /></el-icon>
           <div class="el-upload__text">
-            Drop file here or <em>click to upload</em>
+            拖动文件到这里 或<em> 点击上传</em>
           </div>
           <template #tip>
             <div class="el-upload__tip">
-              jpg/png files with a size less than 500kb
+             注：仅可以上传Yaml文件，单个文件小于10M,数量不超过100
             </div>
           </template>
         </el-upload>
-        <el-button @click="handleSubmit" type="primary">Submit Files</el-button>
       </div>
   </el-drawer>
 
@@ -316,6 +341,7 @@ const handleClickUpdate = (row) => {
 // 批量上传
 const drawerVisible = ref(false)
 const uploadRef = ref(null);
+const templateType = ref('1');
 const addTemplateFile =  () => {
   drawerVisible.value = true
 }
@@ -337,14 +363,16 @@ const handleSubmit = async() => {
     'font-size:20px;background-color: #ED9EC7;color:#fff;',
     selectedFiles.value
     );
-  selectedFiles.value.forEach(file => {
-    
-    
-    formData.append('file', file);
-  });
-  let data = await postTemplateImports(formData)
+  formData.append('file', selectedFiles.value);
+  formData.append('templateType', templateType)
+  // selectedFiles.value.forEach(file => {
 
-  console.log(data);
+  // });
+  let data = await postTemplateImports(formData)
+  if (res.code === 0) {
+      ElMessage({ type: 'success', message: '提交成功' })
+      drawerVisible.value = false
+    }
 };
 
 
