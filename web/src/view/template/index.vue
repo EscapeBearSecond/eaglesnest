@@ -223,11 +223,11 @@ const statusData = reactive([
 const searchInfo = ref({})
 const onReset = () => {
   searchInfo.value = {}
+  getTableData()
 }
 
 const onSubmit = () => {
   listQuery.page = 1
-  listQuery.pageSize = 10
   getTableData()
 }
 
@@ -237,7 +237,7 @@ const getTableData = async() => {
       page: listQuery.page,
       pageSize: listQuery.pageSize,
       isAll:true,
-      ...searchInfo,
+      ...searchInfo.value,
     });
     if (table.code === 0) {
       tableData.value = table.data.list;
