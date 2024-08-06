@@ -43,6 +43,11 @@
           icon="plus"
           @click="addTemplate"
         >新增模板</el-button>
+        <el-button
+          type="primary"
+          icon="plus"
+          @click="addTemplateFile"
+        >批量新增</el-button>
       </div>
       <advance-table
         :columns="tableColumns"
@@ -117,11 +122,62 @@
         </el-form-item>
       </el-form>
     </el-drawer>
+    <el-drawer v-model="drawerVisible" size="45%" :show-close="false">
+      <template #header>
+        <div class="flex justify-between items-center">
+          <span class="text-lg">批量上传</span>
+          <div>
+            <el-button @click="closeUpload">取 消</el-button>
+            <el-button
+              type="primary"
+              @click="handleSubmit"
+            >确 定</el-button>
+          </div>
+        </div>
+      </template>
+      <div>
+      <span class="el-form-item__label">模板类型</span> 
+      <el-select
+        v-model="templateType"
+        placeholder="类型"
+        size="large"
+        >
+        <el-option
+            v-for="item in templateOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+        />
+        </el-select>
+      <span class="el-form-item__label">选择文件</span> 
+      <el-upload
+        ref="uploadRef"
+        class="upload-demo"
+        drag
+        :action="''"
+        :auto-upload="false"
+        multiple
+       :before-upload="beforeUpload"
+        @change="handleFileChange"
+      >
+          <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+          <div class="el-upload__text">
+            拖动文件到这里 或<em> 点击上传</em>
+          </div>
+          <template #tip>
+            <div class="el-upload__tip">
+             注：仅可以上传Yaml文件，单个文件小于10M,数量不超过100
+            </div>
+          </template>
+        </el-upload>
+      </div>
+  </el-drawer>
+
   </div>
 </template>
 
 <script setup>
-import { getTemplateList,  createTemplate, updateTemplate, delTemplate } from "@/api/template.js"
+import { getTemplateList,  createTemplate, updateTemplate, delTemplate, postTemplateImports } from "@/api/template.js"
 import { ref, reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
@@ -283,7 +339,48 @@ const handleClickUpdate = (row) => {
     templateDialog.value = true
 }
 
+// 批量上传
+const drawerVisible = ref(false)
+const uploadRef = ref(null);
+const templateType = ref('1');
+const addTemplateFile =  () => {
+  drawerVisible.value = true
+}
+const selectedFiles = ref([]);
+const handleFileChange = (file, fileList) => {
+  selectedFiles.value = fileList.map(item => item.raw);
+};
+
+const handleSubmit = async() => {
+  
+  if (selectedFiles.value.length === 0) {
+    ElMessage({ type: 'error', message: '未选中文件' })
+    return;
+  }
+
+  const formData = new FormData();
+
+  formData.append('file', selectedFiles.value);
+  formData.append('templateType', templateType)
+  // selectedFiles.value.forEach(file => {
+
+  // });
+  let data = await postTemplateImports(formData)
+  if (data.code === 0) {
+      ElMessage({ type: 'success', message: '提交成功' })
+      closeUpload()
+    }
+};
+
+const closeUpload = () => {
+  drawerVisible.value = false
+  selectedFiles.value = []
+} 
 </script>
 
 <style lang="scss">
+
+.el-upload__tip {
+  color: red;
+}
 </style>
