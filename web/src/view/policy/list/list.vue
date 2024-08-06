@@ -299,8 +299,8 @@ const typeNameList = reactive([
 
  const tableColumns = ref([
       { label:'名称', prop:'policyName'},
-      { label:'在线检测', prop:'onlineCheck', slot: 'custOnline'},
-      { label:'端口检测', prop:'portScan' , slot: 'custPortScan'},
+      { label:'在线检测', prop:'onlineCheck', slot: 'custOnline',width: '80'},
+      { label:'端口检测', prop:'portScan' , slot: 'custPortScan',width: '80'},
       { label:'扫描类型', prop:'scanType' , slot: 'custScanType'},
       { label:'描述', prop:'policyDesc'},
     ])
