@@ -48,7 +48,7 @@
   </template>
   
   <script setup>
-  import { getCveList } from "@/api/area"
+  import { getCveList } from "@/api/cve.js"
   import { ref, watch, reactive } from 'vue'
   
   defineOptions({
