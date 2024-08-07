@@ -101,6 +101,7 @@ func Routers() *gin.Engine {
 		curescanRouter.InitPolicyRouter(PublicGroup)
 		curescanRouter.InitOnlineCheckRouter(PublicGroup)
 		curescanRouter.InitTaskRouter(PublicGroup)
+		curescanRouter.InitVulnRouter(PublicGroup)
 	}
 
 	// 插件路由安装

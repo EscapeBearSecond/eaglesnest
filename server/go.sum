@@ -971,6 +971,7 @@ github.com/projectdiscovery/n3iwf v0.0.0-20230523120440-b8cd232ff1f5 h1:L/e8z8yw
 github.com/projectdiscovery/n3iwf v0.0.0-20230523120440-b8cd232ff1f5/go.mod h1:pGW2ncnTxTxHtP9wzcIJAB+3/NMp6IiuQWd2NK7K+oc=
 github.com/projectdiscovery/naabu/v2 v2.3.0 h1:nSwo7EdIBL5il6+gfeiQs/lgQ8lBipPUlwjqyg3twks=
 github.com/projectdiscovery/naabu/v2 v2.3.0/go.mod h1:efC2NRkWrXO7Ia0CjojIPMrvsQLhK6ZJfGsD+rCxx3E=
+github.com/projectdiscovery/naabu/v2 v2.3.1 h1:CpYIH9ogqGsFNANH2YVLQjxnmvdaqRZfiEai4yXJIn8=
 github.com/projectdiscovery/naabu/v2 v2.3.1/go.mod h1:r3hRgTtz7+Wh+HGr4rtzFgWCPABZ3RFmmGV6xXqORko=
 github.com/projectdiscovery/networkpolicy v0.0.9 h1:IrlDoYZagNNO8y+7iZeHT8k5izE+nek7TdtvEBwCxqk=
 github.com/projectdiscovery/networkpolicy v0.0.9/go.mod h1:XFJ2Lnv8BE/ziQCFjBHMsH1w6VmkPiQtk+NlBpdMU7M=

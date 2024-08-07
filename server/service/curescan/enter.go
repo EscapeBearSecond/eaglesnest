@@ -9,4 +9,5 @@ type ServiceGroup struct {
 	PortScanService
 	TaskService
 	JobResultService
+	VulnService
 }

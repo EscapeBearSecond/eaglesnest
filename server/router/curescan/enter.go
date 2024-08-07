@@ -8,4 +8,5 @@ type RouterGroup struct {
 	OnlineCheckRouter
 	PortScanRouter
 	TaskRouter
+	VulnRouter
 }

@@ -67,6 +67,7 @@ func (e *ensureTables) MigrateTable(ctx context.Context) (context.Context, error
 		curescan.OnlineCheck{},
 		curescan.PortScan{},
 		curescan.Template{},
+		curescan.Vuln{},
 	}
 	for _, t := range tables {
 		_ = db.AutoMigrate(&t)
@@ -111,7 +112,7 @@ func (e *ensureTables) TableCreated(ctx context.Context) bool {
 		curescan.Task{},
 		curescan.Policy{},
 		curescan.Template{},
-		curescan.PortScan{}, 
+		curescan.PortScan{},
 		curescan.OnlineCheck{},
 		curescan.JobResultItem{},
 	}
