@@ -706,3 +706,12 @@ func (s *TaskService) GenerateReport(ret *types.EntryResult, reporter string) er
 	}
 	return nil
 }
+
+// func (s *TaskService) DownloadReport(entryID string, format string) error {
+// 	file, err := os.OpenFile("", os.O_RDONLY, 0666)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	defer file.Close()
+//
+// }

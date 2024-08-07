@@ -1,8 +1,12 @@
 package curescan
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
+	"io"
+	"os"
+	"path/filepath"
 	"strconv"
 
 	"47.103.136.241/goprojects/curescan/server/global"
@@ -219,4 +223,36 @@ func (t *TaskApi) StopTask(c *gin.Context) {
 		return
 	}
 	response.Ok(c)
+}
+
+func (t *TaskApi) DownloadReport(c *gin.Context) {
+	entryID := c.Query("entryId")
+	format := c.Query("format")
+	if entryID == "" || format == "" {
+		response.FailWithMessage("参数有误", c)
+		return
+	}
+	filePath := filepath.Join(global.GVA_CONFIG.AutoCode.Root, "server", "reports", "report_"+entryID+"."+format)
+	fmt.Println(filePath)
+	if utils.FileExists(filePath) {
+		file, err := os.Open(filePath)
+		if err != nil {
+			response.FailWithMessage(err.Error(), c)
+			return
+		}
+		defer file.Close()
+
+		c.Writer.Header().Add("Content-Disposition", fmt.Sprintf("attachment; filename=%s", "report_"+entryID+".docx"))
+		c.Writer.Header().Add("Content-Type", "application/octet-stream")
+
+		if _, err := io.Copy(c.Writer, bufio.NewReader(file)); err != nil {
+			global.GVA_LOG.Error("下载文件失败", zap.Error(err))
+			response.FailWithMessage("下载文件失败", c)
+			return
+		}
+		response.Ok(c)
+	} else {
+		response.FailWithMessage("文件不存在", c)
+		return
+	}
 }
