@@ -26,9 +26,9 @@ export const getTaskList = (data) => {
 
 export const reportTask = (data) => {
     return service({
-      url: `/task/execute/${data.id}`,
+      url: '/task/report',
       method: 'post',
-      data
+      data,
     })
 }
 

@@ -145,8 +145,8 @@
     >
       <div class="el-form-item report">
         <span class="el-form-item__label">报告类型</span>
-        <el-select v-model="exportType" placeholder="请选择导出报告类型">
-          <el-option label="word" value="word" />
+        <el-select v-model="reportData.format" placeholder="请选择导出报告类型">
+          <el-option label="word" value="docx" />
         </el-select>
       </div>
       <template #footer>
@@ -347,12 +347,13 @@ const exportType = ref('word')
 const reportData = ref({})
 const handleReport =  async(row) =>{
   reportFlag.value = true
-    // await reportTask({ id: row.ID })
-    reportData.id = row.ID
+  reportData.value.entryId = row.entryId
+
+  
 }
 
 const getReport = async() => {
-    // 下载报告未完成
+    let data = reportTask({...reportData.value})   
 }
 
 const handleClose = () => {
