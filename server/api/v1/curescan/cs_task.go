@@ -233,8 +233,9 @@ func (t *TaskApi) DownloadReport(c *gin.Context) {
 		response.FailWithMessage("参数有误", c)
 		return
 	}
-	filePath := filepath.Join(global.GVA_CONFIG.AutoCode.Root, "server", "reports", "report_"+entryID+"."+format)
-	if utils.FileExists(filePath) {
+	filePath := filepath.Join(global.GVA_CONFIG.AutoCode.Root, "server", "reports")
+	fileName := "report_" + entryID + "." + format
+	if utils.FileExists(filepath.Join(filePath, fileName)) {
 		file, err := os.Open(filePath)
 		if err != nil {
 			response.FailWithMessage(err.Error(), c)
@@ -242,7 +243,7 @@ func (t *TaskApi) DownloadReport(c *gin.Context) {
 		}
 		defer file.Close()
 
-		c.Writer.Header().Add("Content-Disposition", fmt.Sprintf("attachment; filename=%s", "report_"+entryID+"."+format))
+		c.Writer.Header().Add("Content-Disposition", fmt.Sprintf("attachment; filename=%s", fileName))
 		switch format {
 		case "docx":
 			c.Writer.Header().Add("Content-Type", "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
