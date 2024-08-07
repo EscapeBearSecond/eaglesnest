@@ -146,7 +146,7 @@
       <div class="el-form-item report">
         <span class="el-form-item__label">报告类型</span>
         <el-select v-model="reportData.format" placeholder="请选择导出报告类型">
-          <el-option label="word" value="docx" />
+          <el-option label="Word类型" value="docx" />
         </el-select>
       </div>
       <template #footer>
@@ -343,7 +343,7 @@ const handleDel = (row) => {
 
 // 下载报告
 const reportFlag = ref(false)
-const exportType = ref('word')
+const exportType = ref('docx')
 const reportData = ref({})
 const handleReport =  async(row) =>{
   reportFlag.value = true
@@ -353,7 +353,18 @@ const handleReport =  async(row) =>{
 }
 
 const getReport = async() => {
-    let data = reportTask({...reportData.value})   
+  let data = reportTask({...reportData.value });
+  const url = window.URL.createObjectURL(new Blob([(await data).data]))
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute(
+    "download",
+    `report_${reportData.value.entryId}.${reportData.value.format}`
+  )
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeobjectURL(url);
 }
 
 const handleClose = () => {

@@ -78,6 +78,12 @@ service.interceptors.response.use(
       }
       return response.data
     } else {
+      console.log(
+      '%c 🍱 CONSOLE_INFO: ',
+      'font-size:20px;background-color: #ED9EC7;color:#fff;',
+        response
+      );
+      
       ElMessage({
         showClose: true,
         message: response.data.msg || decodeURI(response.headers.msg),
