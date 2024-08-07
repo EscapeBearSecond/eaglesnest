@@ -1,17 +1,72 @@
 <template>
-  <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 py-2 gap-4 md:gap-2 gva-container2">
-    <gva-card custom-class="col-span-1 lg:col-span-2 h-32">
-      <gva-chart :type="1" title="访问人数" />
-      这是测试
-    </gva-card>
-
-
+  <div class="view-content ">
+      <div class="chat-content bg">
+          <div class="serious-char bg">1</div>
+          <div class="height-char bg">2</div>
+          <div class="medium-char bg">3</div>
+          <div class="medium-char bg">4</div>
+      </div>
+      <div class="task-content bg-t">
+         <span>1</span>
+         <span>2</span>
+         <span>3</span>
+         <span>4</span>
+         <span>5</span>
+         <span>6</span>
+      </div>
+      <div class="top-content bg-f">
+        <div>1</div>
+        <div>2</div>
+      </div>
   </div>
 </template>
 
 <script setup>
-import { GvaPluginTable,GvaTable, GvaChart, GvaWiki , GvaNotice , GvaQuickLink , GvaCard , GvaBanner } from "./componenst"
+
 </script>
 
 <style lang="scss" scoped>
+.view-content {
+  display: grid;
+  height: ceil(100vh - 80);
+  grid-template-rows: 3fr 1fr 3fr;
+  row-gap: 15px;
+
+  .chat-content {
+    height: 35vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    column-span: 10px;
+    justify-items: center;
+    align-items: center;
+  }
+
+  .task-content {
+    display: grid;
+    height: 10vh;
+    grid-template-columns: repeat(6, 1fr);
+    justify-items: center;
+    align-items: center;
+  }
+
+  .top-content {
+    display: grid;
+    height: 35vh;
+    grid-template-columns: 1fr 1fr;
+    justify-items: center;
+    align-items: center;
+  }
+}
+
+.bg {
+  background-color:antiquewhite;
+}
+
+.bg-t {
+  background-color: aqua;
+}
+
+.bg-f {
+  background-color: aquamarine;
+}
 </style>
