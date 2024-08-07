@@ -242,8 +242,17 @@ func (t *TaskApi) DownloadReport(c *gin.Context) {
 		}
 		defer file.Close()
 
-		c.Writer.Header().Add("Content-Disposition", fmt.Sprintf("attachment; filename=%s", "report_"+entryID+".docx"))
-		c.Writer.Header().Add("Content-Type", "application/octet-stream")
+		c.Writer.Header().Add("Content-Disposition", fmt.Sprintf("attachment; filename=%s", "report_"+entryID+"."+format))
+		switch format {
+		case "docx":
+			c.Writer.Header().Add("Content-Type", "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+		case "pdf":
+			c.Writer.Header().Set("Content-Type", "application/pdf")
+		case "html":
+			c.Writer.Header().Set("Content-Type", "text/html")
+		default:
+			c.Writer.Header().Set("Content-Type", "application/octet-stream")
+		}
 
 		if _, err := io.Copy(c.Writer, bufio.NewReader(file)); err != nil {
 			global.GVA_LOG.Error("下载文件失败", zap.Error(err))

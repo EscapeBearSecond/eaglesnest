@@ -77,6 +77,14 @@ var (
 	TimeStopped = 6
 )
 
+var portAssetMap = map[int64]*curescan.Asset{
+	3306: {AssetName: "MySQL", AssetType: "服务器设备", AssetModel: "MySQL", SystemType: "MySQL", Manufacturer: "MySQL"},
+	3389: {AssetName: "Windows远程桌面", AssetType: "服务器设备", AssetModel: "MySQL", SystemType: "Windows", Manufacturer: "Microsoft"},
+	23:   {AssetName: "telnet", AssetType: "网络设备", AssetModel: "telnet", SystemType: "telnet", Manufacturer: "telnet"},
+	554:  {AssetName: "rtsp", AssetType: "视频设备", AssetModel: "rtsp", SystemType: "rtsp", Manufacturer: "rtsp"},
+	// 5432: {AssetName: "PgSQL", AssetType: "服务器设备", AssetModel: "PgSQL", SystemType: "PgSQL", Manufacturer: "PgSQL"},
+}
+
 func (s *TaskService) CreateTask(task *curescan.Task) error {
 	if !errors.Is(global.GVA_DB.Select("task_name").First(&curescan.Task{}, "task_name=?", task.TaskName).Error, gorm.ErrRecordNotFound) {
 		return fmt.Errorf("任务'%s'已存在, 请勿重复创建", task.TaskName)
@@ -440,6 +448,7 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 			for _, item := range taskResult.JobResultList {
 				nameSplit := strings.Split(item.Name, "_")
 				if item.Kind == "1" {
+					fmt.Println("资产添加", item.Name)
 					asset := &curescan.Asset{}
 					asset.AreaName = "未知"
 					asset.AssetArea = 0
@@ -469,6 +478,25 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 					port, _ := strconv.Atoi(item.Port)
 					asset.OpenPorts = []int64{int64(port)}
 					assets = append(assets, asset)
+				}
+			}
+			for _, item := range taskResult.PortScanList {
+				for _, port := range item.Ports {
+					if assetInfo, ok := portAssetMap[port]; ok {
+						fmt.Println("发现端口", port, "与资产", assetInfo.AssetName, "匹配")
+						asset := &curescan.Asset{
+							OpenPorts:    []int64{port},
+							AreaName:     "未知",
+							AssetArea:    0,
+							AssetIP:      item.IP,
+							AssetName:    assetInfo.AssetName,
+							AssetType:    assetInfo.AssetType,
+							AssetModel:   assetInfo.AssetModel,
+							SystemType:   assetInfo.SystemType,
+							Manufacturer: assetInfo.Manufacturer,
+						}
+						assets = append(assets, asset)
+					}
 				}
 			}
 			err = tx.Model(&curescan.Asset{}).CreateInBatches(assets, 100).Error
