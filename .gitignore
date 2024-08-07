@@ -32,6 +32,7 @@ yarn-error.log*
 /server/.air.toml
 /server/tmp
 /server/reports
+/server/results
 *.iml
 web/.pnpm-debug.log
 web/pnpm-lock.yaml

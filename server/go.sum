@@ -4,6 +4,8 @@
 47.103.136.241/goprojects/eagleeye v0.0.0-20240805061519-7243583378de/go.mod h1:EYCoNt0BNSdOMcxDejcmPo8pew22aL/T8nhSQVpnF3c=
 47.103.136.241/goprojects/eagleeye v0.0.0-20240806020100-b2e8e4c6eeb1 h1:UZiFA9QEldnkTND+s0bKAgGtxHZMLo6IHXpjjuH3Qu8=
 47.103.136.241/goprojects/eagleeye v0.0.0-20240806020100-b2e8e4c6eeb1/go.mod h1:EYCoNt0BNSdOMcxDejcmPo8pew22aL/T8nhSQVpnF3c=
+47.103.136.241/goprojects/eagleeye v0.0.0-20240807055943-885644fb0ecf h1:hsB5eH+opiUK/3lqBlR1YLRIW/0YfMYtlt1bCOXiq2Y=
+47.103.136.241/goprojects/eagleeye v0.0.0-20240807055943-885644fb0ecf/go.mod h1:2RXpxJ+pyHHSLS3+bCr+Fr1NwRJ80+O4kn8xRubsdsI=
 aead.dev/minisign v0.2.0 h1:kAWrq/hBRu4AARY6AlciO83xhNnW9UaC8YipS2uhLPk=
 aead.dev/minisign v0.2.0/go.mod h1:zdq6LdSd9TbuSxchxwhpA9zEb9YXcVGoE8JakuiGaIQ=
 atomicgo.dev/assert v0.0.2 h1:FiKeMiZSgRrZsPo9qn/7vmr7mCsh5SZyXY4YGYiYwrg=
@@ -969,6 +971,7 @@ github.com/projectdiscovery/n3iwf v0.0.0-20230523120440-b8cd232ff1f5 h1:L/e8z8yw
 github.com/projectdiscovery/n3iwf v0.0.0-20230523120440-b8cd232ff1f5/go.mod h1:pGW2ncnTxTxHtP9wzcIJAB+3/NMp6IiuQWd2NK7K+oc=
 github.com/projectdiscovery/naabu/v2 v2.3.0 h1:nSwo7EdIBL5il6+gfeiQs/lgQ8lBipPUlwjqyg3twks=
 github.com/projectdiscovery/naabu/v2 v2.3.0/go.mod h1:efC2NRkWrXO7Ia0CjojIPMrvsQLhK6ZJfGsD+rCxx3E=
+github.com/projectdiscovery/naabu/v2 v2.3.1/go.mod h1:r3hRgTtz7+Wh+HGr4rtzFgWCPABZ3RFmmGV6xXqORko=
 github.com/projectdiscovery/networkpolicy v0.0.9 h1:IrlDoYZagNNO8y+7iZeHT8k5izE+nek7TdtvEBwCxqk=
 github.com/projectdiscovery/networkpolicy v0.0.9/go.mod h1:XFJ2Lnv8BE/ziQCFjBHMsH1w6VmkPiQtk+NlBpdMU7M=
 github.com/projectdiscovery/ratelimit v0.0.45 h1:h28oF+hJ0CHcdBZozT1Go7ppWmzTxSXDKNNh2G1Ot9Q=

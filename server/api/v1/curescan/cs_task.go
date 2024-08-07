@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -233,7 +234,6 @@ func (t *TaskApi) DownloadReport(c *gin.Context) {
 		return
 	}
 	filePath := filepath.Join(global.GVA_CONFIG.AutoCode.Root, "server", "reports", "report_"+entryID+"."+format)
-	fmt.Println(filePath)
 	if utils.FileExists(filePath) {
 		file, err := os.Open(filePath)
 		if err != nil {
@@ -255,4 +255,26 @@ func (t *TaskApi) DownloadReport(c *gin.Context) {
 		response.FailWithMessage("文件不存在", c)
 		return
 	}
+}
+
+func (t *TaskApi) DownloadResultDocs(c *gin.Context) {
+	entryID := c.Query("entryId")
+	if entryID == "" {
+		response.FailWithMessage("参数有误", c)
+		return
+	}
+	dir := filepath.Join(global.GVA_CONFIG.AutoCode.Root, "server", "results", entryID)
+	existed, _ := utils.PathExists(dir)
+	if !existed {
+		response.FailWithMessage("目录不存在", c)
+		return
+	}
+	buf, err := utils.CreateZipFromDir(dir)
+	if err != nil {
+		response.FailWithMessage("获取结果文件失败", c)
+		return
+	}
+	// 设置 Content-Disposition 头部以指示浏览器下载文件
+	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.zip\"", entryID))
+	c.DataFromReader(http.StatusOK, int64(buf.Len()), "application/zip", buf, nil)
 }

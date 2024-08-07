@@ -22,5 +22,6 @@ func (t *TaskRouter) InitTaskRouter(Router *gin.RouterGroup) {
 		taskRouter.POST("execute/:id", taskRouterApi.ExecuteTask)
 		taskRouter.POST("stop/:id", taskRouterApi.StopTask)
 		taskRouter.POST("report", taskRouterApi.DownloadReport)
+		taskRouter.POST("docs", taskRouterApi.DownloadResultDocs)
 	}
 }

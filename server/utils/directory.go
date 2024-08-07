@@ -1,7 +1,11 @@
 package utils
 
 import (
+	"archive/zip"
+	"bytes"
 	"errors"
+	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -121,4 +125,70 @@ func FileExist(path string) bool {
 		return !fi.IsDir()
 	}
 	return !os.IsNotExist(err)
+}
+
+func CreateZipFromDir(dir string) (*bytes.Buffer, error) {
+	var buf bytes.Buffer
+	zw := zip.NewWriter(&buf)
+	defer zw.Close()
+	err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		// 忽略目录本身
+		if path == dir {
+			return nil
+		}
+
+		file, err := os.Open(path)
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+
+		// 获取文件信息
+		info, err := file.Stat()
+		if err != nil {
+			return err
+		}
+
+		header, err := zip.FileInfoHeader(info)
+		if err != nil {
+			return err
+		}
+
+		// 从文件路径中移除目录前缀
+		header.Name, err = filepath.Rel(dir, path)
+		if err != nil {
+			return err
+		}
+
+		// 如果是目录，则创建目录条目
+		if info.IsDir() {
+			header.Name += "/"
+		} else {
+			header.Method = zip.Deflate
+		}
+
+		writer, err := zw.CreateHeader(header)
+		if err != nil {
+			return err
+		}
+
+		// 如果是文件，则写入文件内容
+		if !info.IsDir() {
+			_, err = io.Copy(writer, file)
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &buf, nil
 }
