@@ -45,7 +45,7 @@
     <el-table-column
       prop="status"
       label="操作"
-      v-if="statusData"
+      v-if="statusData && statusData.length > 0"
       :width="statusWidth"
       align="left"
     >
