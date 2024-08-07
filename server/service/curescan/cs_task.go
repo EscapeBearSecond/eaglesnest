@@ -78,7 +78,7 @@ var (
 )
 
 func (s *TaskService) CreateTask(task *curescan.Task) error {
-	if !errors.Is(global.GVA_DB.Select("task_name").First(&curescan.Task{}, "area_name=?", task.TaskName).Error, gorm.ErrRecordNotFound) {
+	if !errors.Is(global.GVA_DB.Select("task_name").First(&curescan.Task{}, "task_name=?", task.TaskName).Error, gorm.ErrRecordNotFound) {
 		return fmt.Errorf("任务'%s'已存在, 请勿重复创建", task.TaskName)
 	}
 
