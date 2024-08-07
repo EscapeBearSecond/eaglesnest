@@ -227,8 +227,8 @@ func (t *TaskApi) StopTask(c *gin.Context) {
 }
 
 func (t *TaskApi) DownloadReport(c *gin.Context) {
-	entryID := c.Query("entryId")
-	format := c.Query("format")
+	entryID := c.PostForm("entryId")
+	format := c.PostForm("format")
 	if entryID == "" || format == "" {
 		response.FailWithMessage("参数有误", c)
 		return
@@ -258,7 +258,7 @@ func (t *TaskApi) DownloadReport(c *gin.Context) {
 }
 
 func (t *TaskApi) DownloadResultDocs(c *gin.Context) {
-	entryID := c.Query("entryId")
+	entryID := c.PostForm("entryId")
 	if entryID == "" {
 		response.FailWithMessage("参数有误", c)
 		return
