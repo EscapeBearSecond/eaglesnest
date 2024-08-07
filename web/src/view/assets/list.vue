@@ -146,7 +146,8 @@ const onSubmit = () => {
  }
 
  const onReset = () => {
-   searchInfo.value = {}   
+   searchInfo.value = {}
+   getTableData()   
  }
 
 // 查询

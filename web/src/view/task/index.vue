@@ -188,6 +188,7 @@ const onSubmit = () => {
 }
 const onReset = () => {
   searchInfo.value = {}
+  getTableData()
 }
 
 
