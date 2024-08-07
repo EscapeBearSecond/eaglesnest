@@ -29,7 +29,7 @@ export const reportTask = (data) => {
       url: '/task/report',
       method: 'post',
       data,
-      headers: {'Content-Type': 'multipart/form-data'}
+      responseType: 'blob',
     })
 }
 
