@@ -13,7 +13,6 @@
                placeholder="请输入漏洞名称"
              />
            </el-form-item>
-  
            <el-form-item>
              <el-button
                type="primary"
@@ -106,68 +105,67 @@
      searchInfo.value = {}   
    }
   
-  // 查询
-  const getTableData = async() => {
+// 查询
+const getTableData = async() => {
     const table = await getCveList({
         page: listQuery.page,
         pageSize: listQuery.pageSize,
         ...searchInfo,
-      });
-      if (table.code === 0) {
+    });
+    if (table.code === 0) {
         tableData.value = table.data.list;
         listQuery.total = table.data.total;
         listQuery.page = table.data.page;
         listQuery.pageSize = table.data.pageSize;
-      }
-  }
-  getTableData()
+    }
+}
+getTableData()
   
-  const tableColumns = reactive([
-      { label:'名称', prop:'name'},
-      { label:'等级', prop:'severity', slot: 'customSeverity' },
-      { label:'关联模板', prop:'templateId'},
-  ])  
+const tableColumns = reactive([
+    { label:'名称', prop:'name'},
+    { label:'等级', prop:'severity', slot: 'customSeverity' },
+    { label:'关联模板', prop:'templateId'},
+])  
 
-  const getStyle = (e) => {
-    switch (e) {
-        case 'critical':
-            return 'danger';
-            break;
-        case 'height':
-            return 'warning';
-            break
-        case 'medium':
-            return 'info';
-            break;
-        default:
-            return 'primary'
-            break;
-    }
-  }
-  const getSeverityName = (e) => {
-    switch (e) {
-        case 'critical':
-            return '严重';
-            break;
-        case 'height':
-            return '高危';
-            break
-        case 'medium':
-            return '中危';
-            break;
-        default:
-            return '低危'
-            break;
-    }
-  }
+const getStyle = (e) => {
+switch (e) {
+    case 'critical':
+        return 'danger';
+        break;
+    case 'height':
+        return 'warning';
+        break
+    case 'medium':
+        return 'info';
+        break;
+    default:
+        return 'primary'
+        break;
+}
+}
+const getSeverityName = (e) => {
+switch (e) {
+    case 'critical':
+        return '严重';
+        break;
+    case 'height':
+        return '高危';
+        break
+    case 'medium':
+        return '中危';
+        break;
+    default:
+        return '低危'
+        break;
+}
+}
 const showFlag = ref(false)
 const showData = ref({})
 const handleShow = (e) => {
     showFlag.value = true
     showData.value = JSON.parse(JSON.stringify(e))
 }
-  </script>
-  
-  <style lang="scss">
-  </style>
-  
+</script>
+
+<style lang="scss">
+</style>

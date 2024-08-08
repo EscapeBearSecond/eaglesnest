@@ -139,12 +139,19 @@
     </el-drawer>
     <el-dialog
       v-model="reportFlag"
-      title="报告类型"
+      title="导出"
       width="500"
       :before-close="handleClose"
     >
       <div class="el-form-item report">
-        <span class="el-form-item__label">报告类型</span>
+        <span class="el-form-item__label">导出类型</span>
+        <el-select v-model="reportData.type" placeholder="请选择导出类型类型">
+          <el-option label="默认报告" value="1" />
+          <el-option label="任务结果" value="2" />
+        </el-select>
+      </div>
+      <div class="el-form-item report" v-if="reportData.type == 1">
+        <span class="el-form-item__label">导出类型</span>
         <el-select v-model="reportData.format" placeholder="请选择导出报告类型">
           <el-option label="Word" value="docx" />
         </el-select>
@@ -235,19 +242,12 @@ const statusData = reactive([
       handleClick: (scope) => handleDel(scope.row),
   },
   {
-      name: "报告",
+      name: "导出",
       type: "primary",
       icon: "Position",
       handleClick: (scope) => handleReport(scope.row),
       visible : (scope) => visibleReport(scope.row)
   },
-  {
-      name: "结果",
-      type: "primary",
-      icon: "Position",
-      handleClick: (scope) => handleResult(scope.row),
-      visible : (scope) => visibleReport(scope.row)
-  }
 ])
 
 // 查询
@@ -351,32 +351,47 @@ const handleDel = (row) => {
 
 // 下载报告
 const reportFlag = ref(false)
-const exportType = ref('docx')
 const reportData = ref({})
 const handleReport =  async(row) =>{
   reportFlag.value = true
   reportData.value.entryId = row.entryId
-
-  
 }
 
 const getReport = async() => {
-  let data = reportTask({...reportData.value });
-  if(data == 7) {
-    ElMessage({ type: 'error', message: data.data.msg })
+  let date = new Date();
+  let timestamp = date.getTime();
+  if(reportData.value.type == 1) {
+    let data = reportTask({...reportData.value });
+    if(data == 7) {
+      ElMessage({ type: 'error', message: data.data.msg })
+    }else {
+      const url = window.URL.createObjectURL(new Blob([(await data).data]))
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute(
+        "download",
+        `report_${reportData.value.entryId}.${reportData.value.format}`
+      )
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeobjectURL(url);
+    }
   }else {
+    const data = reportTaskDoc({entryId: reportData.value.entryId})
     const url = window.URL.createObjectURL(new Blob([(await data).data]))
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute(
-      "download",
-      `report_${reportData.value.entryId}.${reportData.value.format}`
-    )
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeobjectURL(url);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute(
+        "download",
+        `report_${timestamp}.zip`
+      )
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeobjectURL(url);
   }
+  
 }
 
 const handleClose = () => {
@@ -539,19 +554,6 @@ const handleStart = (e) => {
       })
     })
 }
-
-const handleResult = (row) => {
-  reportTaskDoc({entryId: row.entryId}).then(res=> {
-    console.log(
-    '%c 🍱 CONSOLE_INFO: ',
-    'font-size:20px;background-color: #ED9EC7;color:#fff;',
-    res
-    );
-    
-  })
-}
-
-
 
 </script>
 
