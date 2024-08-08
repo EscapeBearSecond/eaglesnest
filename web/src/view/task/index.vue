@@ -169,6 +169,7 @@ import {
   delTask,
   startTask,
   reportTask,
+  reportTaskDoc
 } from '@/api/task.js'
 import { getPolicyList } from '@/api/policy.js'
 import { getAreaList } from '@/api/area.js'
@@ -238,6 +239,13 @@ const statusData = reactive([
       type: "primary",
       icon: "Position",
       handleClick: (scope) => handleReport(scope.row),
+      visible : (scope) => visibleReport(scope.row)
+  },
+  {
+      name: "结果",
+      type: "primary",
+      icon: "Position",
+      handleClick: (scope) => handleResult(scope.row),
       visible : (scope) => visibleReport(scope.row)
   }
 ])
@@ -531,6 +539,19 @@ const handleStart = (e) => {
       })
     })
 }
+
+const handleResult = (row) => {
+  reportTaskDoc({entryId: row.entryId}).then(res=> {
+    console.log(
+    '%c 🍱 CONSOLE_INFO: ',
+    'font-size:20px;background-color: #ED9EC7;color:#fff;',
+    res
+    );
+    
+  })
+}
+
+
 
 </script>
 
