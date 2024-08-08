@@ -244,7 +244,7 @@ const statusData = reactive([
   {
       name: "导出",
       type: "primary",
-      icon: "Position",
+      icon: "Download",
       handleClick: (scope) => handleReport(scope.row),
       visible : (scope) => visibleReport(scope.row)
   },
@@ -378,8 +378,8 @@ const getReport = async() => {
       window.URL.revokeobjectURL(url);
     }
   }else {
-    const data = reportTaskDoc({entryId: reportData.value.entryId})
-    const url = window.URL.createObjectURL(new Blob([(await data).data]))
+    reportTaskDoc({entryId: reportData.value.entryId}).then(res => {
+      const url = window.URL.createObjectURL(new Blob([(res).data]))
       const link = document.createElement("a");
       link.href = url;
       link.setAttribute(
@@ -392,6 +392,8 @@ const getReport = async() => {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url); 
       }, 250);
+    })
+    
   }
   reportFlag.value = false
 }
