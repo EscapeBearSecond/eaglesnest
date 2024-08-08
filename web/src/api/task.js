@@ -33,6 +33,15 @@ export const reportTask = (data) => {
     })
 }
 
+export const reportTaskDoc = (data) => {
+    return service({
+      url: '/task/docs',
+      method: 'post',
+      data,
+      responseType: 'blob',
+    })
+}
+
 export const startTask = (data) => {
     return service({
       url: `/task/execute/${data.id}`,
