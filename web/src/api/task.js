@@ -30,6 +30,7 @@ export const reportTask = (data) => {
       method: 'post',
       data,
       responseType: 'blob',
+      headers: {'Content-Type': 'multipart/form-data'}
     })
 }
 
@@ -39,6 +40,7 @@ export const reportTaskDoc = (data) => {
       method: 'post',
       data,
       responseType: 'blob',
+      headers: {'Content-Type': 'multipart/form-data'}
     })
 }
 

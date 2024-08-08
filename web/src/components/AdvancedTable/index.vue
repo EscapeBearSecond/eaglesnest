@@ -91,7 +91,7 @@ export default defineComponent({
     },
     selection: { default: false, type: Boolean },
     statusData: { default: null, type: Array },
-    statusWidth: { default: null, type: String },
+    statusWidth: { default: null, type:  [String, Number] },
     index: { default: false, type: Boolean },
     pagination: { default: null, type: Function },
     changePageSize:{default:null, type:Function},

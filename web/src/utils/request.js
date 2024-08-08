@@ -77,13 +77,7 @@ service.interceptors.response.use(
         response.data.msg = decodeURI(response.headers.msg)
       }
       return response.data
-    } else {
-      console.log(
-      '%c 🍱 CONSOLE_INFO: ',
-      'font-size:20px;background-color: #ED9EC7;color:#fff;',
-      response.data
-      );
-      
+    } else {     
       ElMessage({
         showClose: true,
         message: response.data.msg || decodeURI(response.headers.msg),
