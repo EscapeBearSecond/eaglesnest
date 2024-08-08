@@ -388,8 +388,10 @@ const getReport = async() => {
       )
       document.body.appendChild(link);
       link.click();
-      document.body.removeChild(link);
-      window.URL.revokeobjectURL(url);
+      setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url); 
+      }, 250);
   }
   reportFlag.value = false
 }
