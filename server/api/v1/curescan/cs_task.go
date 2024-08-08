@@ -233,10 +233,11 @@ func (t *TaskApi) DownloadReport(c *gin.Context) {
 		response.FailWithMessage("参数有误", c)
 		return
 	}
-	filePath := filepath.Join(global.GVA_CONFIG.AutoCode.Root, "server", "reports")
+	dir := filepath.Join(global.GVA_CONFIG.AutoCode.Root, "server", "reports")
 	fileName := "report_" + entryID + "." + format
-	if utils.FileExists(filepath.Join(filePath, fileName)) {
-		file, err := os.Open(filePath)
+	fullPath := filepath.Join(dir, fileName)
+	if utils.FileExists(fullPath) {
+		file, err := os.Open(dir)
 		if err != nil {
 			response.FailWithMessage(err.Error(), c)
 			return

@@ -30,8 +30,13 @@ func (a *VulnApi) GetVulnList(c *gin.Context) {
 			Remediation: "remediation",
 		}
 	}
-	response.OkWithData(vulnList, c)
-
+	resMap := map[string]interface{}{
+		"list":     vulnList,
+		"total":    10,
+		"page":     1,
+		"pageSize": 10,
+	}
+	response.OkWithData(resMap, c)
 }
 
 func (a *VulnApi) MigrateTable(c *gin.Context) {
