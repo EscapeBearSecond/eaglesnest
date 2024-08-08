@@ -375,7 +375,7 @@ const getReport = async() => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      window.URL.revokeobjectURL(url);
+      window.URL.revokeObjectURL(url);
     }
   }else {
     reportTaskDoc({entryId: reportData.value.entryId}).then(res => {
