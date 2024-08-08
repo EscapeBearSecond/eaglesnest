@@ -57,7 +57,7 @@
         :statusData="statusData"
         :pagination="handleCurrentChange"
         :index="true"
-        :statusWidth="220"
+        :statusWidth="statusWidth"
       >
       <template v-slot:customTaskPlan="slotProps">
         <!-- 自定义的字段 -->
@@ -207,7 +207,7 @@ const listQuery = reactive({
    total: 0,
    pageSize: 10,
 })
-
+const statusWidth = ref('220')
 const templateOptions = reactive([
     {label: "漏洞扫描", value: '1'},
     {label: "资产发现", value: '2'},
