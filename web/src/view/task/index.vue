@@ -57,7 +57,7 @@
         :statusData="statusData"
         :pagination="handleCurrentChange"
         :index="true"
-        :statusWidth="220"
+        :statusWidth="statusWidth"
       >
       <template v-slot:customTaskPlan="slotProps">
         <!-- 自定义的字段 -->
@@ -144,14 +144,14 @@
       :before-close="handleClose"
     >
       <div class="el-form-item report">
-        <span class="el-form-item__label">导出类型</span>
+        <span class="el-form-item__label">报告类型</span>
         <el-select v-model="reportData.type" placeholder="请选择导出类型类型">
           <el-option label="默认报告" value="1" />
           <el-option label="任务结果" value="2" />
         </el-select>
       </div>
       <div class="el-form-item report" v-if="reportData.type == 1">
-        <span class="el-form-item__label">导出类型</span>
+        <span class="el-form-item__label">文件类型</span>
         <el-select v-model="reportData.format" placeholder="请选择导出报告类型">
           <el-option label="Word" value="docx" />
         </el-select>
@@ -207,7 +207,7 @@ const listQuery = reactive({
    total: 0,
    pageSize: 10,
 })
-
+const statusWidth = ref('220')
 const templateOptions = reactive([
     {label: "漏洞扫描", value: '1'},
     {label: "资产发现", value: '2'},
@@ -391,7 +391,7 @@ const getReport = async() => {
       document.body.removeChild(link);
       window.URL.revokeobjectURL(url);
   }
-  
+  reportFlag.value = false
 }
 
 const handleClose = () => {
