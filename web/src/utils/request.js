@@ -78,12 +78,15 @@ service.interceptors.response.use(
       }
       return response.data
     } else {
-      console.log(response);     
-      ElMessage({
-        showClose: true,
-        message: response.data.msg || decodeURI(response.headers.msg),
-        type: 'error'
-      })
+      console.log(response);
+      if(response.data.type == 'application/json' && response.data.msg != undefined) {
+        ElMessage({
+          showClose: true,
+          message: response.data.msg || decodeURI(response.headers.msg),
+          type: 'error'
+        })
+      }     
+      
       return response.data.msg ? response.data : response
     }
   },
