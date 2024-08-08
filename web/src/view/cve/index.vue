@@ -160,12 +160,12 @@
             break;
     }
   }
- const showFlag = ref(false)
- const showData = ref({})
-  const handleShow = (e) => {
-        showFlag.value = true
-        showData.value = e
-  }
+const showFlag = ref(false)
+const showData = ref({})
+const handleShow = (e) => {
+    showFlag.value = true
+    showData.value = JSON.parse(JSON.stringify(e))
+}
   </script>
   
   <style lang="scss">
