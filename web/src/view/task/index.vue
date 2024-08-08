@@ -391,7 +391,7 @@ const getReport = async() => {
       document.body.removeChild(link);
       window.URL.revokeobjectURL(url);
   }
-  
+  reportFlag.value = false
 }
 
 const handleClose = () => {
