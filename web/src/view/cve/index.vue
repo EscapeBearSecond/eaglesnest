@@ -9,11 +9,10 @@
          >
            <el-form-item label="名称">
              <el-input
-               v-model="searchInfo.cveName"
+               v-model="searchInfo.name"
                placeholder="请输入漏洞名称"
              />
            </el-form-item>
-  
            <el-form-item>
              <el-button
                type="primary"
@@ -35,21 +34,39 @@
           :pagination="handleCurrentChange"
           :index="true"
         >
-        <template v-slot:customSeverity="slotProps">
-        <!-- 自定义的字段 -->
-        <span>
-          <el-tag effect="dark" >{{ slotProps.row.severity }}</el-tag>
-        </span>
-      </template>
+            <template v-slot:customSeverity="slotProps">
+            <!-- 自定义的字段 -->
+                <span>
+                    <el-tag :effect="getStyle(slotProps.row.severity)">{{ getSeverityName(slotProps.row.severity) }}</el-tag>
+                </span>
+            </template>
         </advance-table>
-  
       </div>
+      <el-dialog v-model="showFlag" title="漏洞" width="800">
+        <el-descriptions
+            title=""
+            direction="vertical"
+            :column="4"
+            :size="size"
+            border
+        >
+            <el-descriptions-item label="名称">{{ showData.name }}</el-descriptions-item>
+            <el-descriptions-item label="编号">{{ showData.classification.cve }}</el-descriptions-item>
+            <el-descriptions-item label="作者" :span="2">{{ showData.author }}</el-descriptions-item>
+            <el-descriptions-item label="等级">
+                <el-tag :effect="getStyle(showData.severity)">{{ getSeverityName(showData.severity) }}</el-tag>
+            </el-descriptions-item>
+            <el-descriptions-item label="描述">
+            {{ showData.description }}
+            </el-descriptions-item>
+        </el-descriptions>
+      </el-dialog>
     </div>
   </template>
   
   <script setup>
   import { getCveList } from "@/api/cve.js"
-  import { ref, watch, reactive } from 'vue'
+  import { ref, reactive } from 'vue'
   
   defineOptions({
     name: 'CveData',
@@ -69,7 +86,14 @@
   }
   
   // 操作按钮
-  const statusData = reactive([])
+  const statusData = reactive([
+  {
+        name: "查看",
+        type: "primary",
+        icon: "View",
+        handleClick: (scope) => handleShow(scope.row),
+    },  
+  ])
   const searchInfo = ref({})
   //查询
   const onSubmit = () => {
@@ -81,29 +105,67 @@
      searchInfo.value = {}   
    }
   
-  // 查询
-  const getTableData = async() => {
+// 查询
+const getTableData = async() => {
     const table = await getCveList({
         page: listQuery.page,
         pageSize: listQuery.pageSize,
         ...searchInfo,
-      });
-      if (table.code === 0) {
+    });
+    if (table.code === 0) {
         tableData.value = table.data.list;
         listQuery.total = table.data.total;
         listQuery.page = table.data.page;
         listQuery.pageSize = table.data.pageSize;
-      }
-  }
-  getTableData()
+    }
+}
+getTableData()
   
-  const tableColumns = reactive([
-      { label:'名称', prop:'name'},
-      { label:'等级', prop:'severity', slot: 'customSeverity' },
-      { label:'关联模板', prop:'templateId'},
-  ])  
-  </script>
-  
-  <style lang="scss">
-  </style>
-  
+const tableColumns = reactive([
+    { label:'名称', prop:'name'},
+    { label:'等级', prop:'severity', slot: 'customSeverity' },
+    { label:'关联模板', prop:'templateId'},
+])  
+
+const getStyle = (e) => {
+switch (e) {
+    case 'critical':
+        return 'danger';
+        break;
+    case 'height':
+        return 'warning';
+        break
+    case 'medium':
+        return 'info';
+        break;
+    default:
+        return 'primary'
+        break;
+}
+}
+const getSeverityName = (e) => {
+switch (e) {
+    case 'critical':
+        return '严重';
+        break;
+    case 'height':
+        return '高危';
+        break
+    case 'medium':
+        return '中危';
+        break;
+    default:
+        return '低危'
+        break;
+}
+}
+const showFlag = ref(false)
+const showData = ref({})
+const handleShow = (e) => {
+    showFlag.value = true
+    showData.value = JSON.parse(JSON.stringify(e))
+}
+</script>
+
+<style lang="scss">
+</style>

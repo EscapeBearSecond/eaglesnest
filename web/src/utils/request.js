@@ -81,7 +81,7 @@ service.interceptors.response.use(
       console.log(
       '%c 🍱 CONSOLE_INFO: ',
       'font-size:20px;background-color: #ED9EC7;color:#fff;',
-        response
+      response.data
       );
       
       ElMessage({
