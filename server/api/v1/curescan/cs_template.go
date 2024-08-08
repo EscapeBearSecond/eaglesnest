@@ -180,16 +180,24 @@ func (t *TemplateApi) UpdateTemplate(c *gin.Context) {
 }
 
 func (t *TemplateApi) ImportTemplates(c *gin.Context) {
+	fmt.Println(c.PostForm("file"))
+	file, header, err2 := c.Request.FormFile("file")
 	form, err := c.MultipartForm()
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+
 	files := form.File["file"]
+	if len(files) == 0 {
+		response.FailWithMessage("没有上传文件", c)
+		return
+	}
 	errorStrings := make([]string, 0)
 	types := form.Value["templateType"]
 	templateType := types[0]
 	templates := make([]*curescan.Template, 0)
+	fmt.Println("len files", len(files))
 	for _, fh := range files {
 
 		file, err := fh.Open()
@@ -212,11 +220,6 @@ func (t *TemplateApi) ImportTemplates(c *gin.Context) {
 		}
 		file.Close()
 
-		if err != nil {
-			errorStrings = append(errorStrings, fmt.Sprintf("parse template type [%s] error, err: [%s]", templateType, err.Error()))
-			continue
-		}
-
 		template := &curescan.Template{}
 		template.TemplateContent = string(buffer)
 		template.TemplateType = templateType
@@ -229,7 +232,8 @@ func (t *TemplateApi) ImportTemplates(c *gin.Context) {
 	}
 	err = templateService.BatchAdd(templates)
 	if err != nil {
-		response.FailWithDetailed(errorStrings, err.Error(), c)
+		global.GVA_LOG.Error("上传模板失败", zap.String("uri", c.Request.RequestURI), zap.String("error", err.Error()))
+		response.FailWithDetailed(errorStrings, "上传模板失败", c)
 		return
 	}
 	if len(errorStrings) > 0 {
@@ -249,22 +253,18 @@ func (t *TemplateApi) TemplateTags(c *gin.Context) {
 		template := curescan.Template{}
 		err := tx.Model(template).Select("tag1").Where("tag1 IS NOT NULL AND tag1 != ''").Distinct("tag1").Find(&tag1s).Error
 		if err != nil {
-			fmt.Println(1)
 			return err
 		}
 		err = tx.Model(template).Select("tag2").Where("tag2 IS NOT NULL AND tag2 != ''").Distinct("tag2").Find(&tag2s).Error
 		if err != nil {
-			fmt.Println(2)
 			return err
 		}
 		err = tx.Model(template).Select("tag3").Where("tag2 IS NOT NULL AND tag3 != ''").Distinct("tag3").Find(&tag3s).Error
 		if err != nil {
-			fmt.Println(3)
 			return err
 		}
 		err = tx.Model(template).Select("tag4").Where("tag3 IS NOT NULL AND tag4 != ''").Distinct("tag4").Find(&tag4s).Error
 		if err != nil {
-			fmt.Println(4)
 			return err
 		}
 		return nil
