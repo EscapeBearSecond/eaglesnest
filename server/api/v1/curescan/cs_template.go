@@ -181,7 +181,7 @@ func (t *TemplateApi) UpdateTemplate(c *gin.Context) {
 
 func (t *TemplateApi) ImportTemplates(c *gin.Context) {
 	fmt.Println(c.PostForm("file"))
-	// file, header, err2 := c.Request.FormFile("file")
+	file, header, err2 := c.Request.FormFile("file")
 	form, err := c.MultipartForm()
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)

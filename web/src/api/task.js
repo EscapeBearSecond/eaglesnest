@@ -1,59 +1,53 @@
 import service from '@/utils/request'
 
 export const createTask = (data) => {
-  return service({
-    url: '/task',
-    method: 'post',
-    data
-  })
+    return service({
+        url: '/task',
+        method: 'post',
+        data
+    })
 }
 
 export const stopTask = (data) => {
-  return service({
-    url: `/task/stop/${data.id}`,
-    method: 'post',
-    data
-  })
+    return service({
+      url: `/task/stop/${data.id}`,
+      method: 'post',
+      data
+    })
 }
 
 export const getTaskList = (data) => {
-  return service({
-    url: '/task/list',
-    method: 'post',
-    data
-  })
+    return service({
+      url: '/task/list',
+      method: 'post',
+      data
+    })
 }
 
 export const reportTask = (data) => {
-  return service({
-    url: '/task/report',
-    method: 'post',
-    data,
-    responseType: 'blob',
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  })
+    return service({
+      url: '/task/report',
+      method: 'post',
+      data,
+      responseType: 'blob',
+    })
 }
 
 export const reportTaskDoc = (data) => {
-  return service({
-    url: '/task/docs',
-    method: 'post',
-    data,
-    responseType: 'blob',
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  })
+    return service({
+      url: '/task/docs',
+      method: 'post',
+      data,
+      responseType: 'blob',
+    })
 }
 
 export const startTask = (data) => {
-  return service({
-    url: `/task/execute/${data.id}`,
-    method: 'post',
-    data
-  })
+    return service({
+      url: `/task/execute/${data.id}`,
+      method: 'post',
+      data
+    })
 }
 
 export const delTask = (data) => {

@@ -236,7 +236,7 @@ func (t *TaskApi) DownloadReport(c *gin.Context) {
 	dir := filepath.Join(global.GVA_CONFIG.AutoCode.Root, "server", "reports")
 	fileName := "report_" + entryID + "." + format
 	fullPath := filepath.Join(dir, fileName)
-	if utils.FileExist(fullPath) {
+	if utils.FileExists(fullPath) {
 		file, err := os.Open(dir)
 		if err != nil {
 			response.FailWithMessage(err.Error(), c)
