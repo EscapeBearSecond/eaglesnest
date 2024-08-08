@@ -144,14 +144,14 @@
       :before-close="handleClose"
     >
       <div class="el-form-item report">
-        <span class="el-form-item__label">导出类型</span>
+        <span class="el-form-item__label">报告类型</span>
         <el-select v-model="reportData.type" placeholder="请选择导出类型类型">
           <el-option label="默认报告" value="1" />
           <el-option label="任务结果" value="2" />
         </el-select>
       </div>
       <div class="el-form-item report" v-if="reportData.type == 1">
-        <span class="el-form-item__label">导出类型</span>
+        <span class="el-form-item__label">文件类型</span>
         <el-select v-model="reportData.format" placeholder="请选择导出报告类型">
           <el-option label="Word" value="docx" />
         </el-select>
