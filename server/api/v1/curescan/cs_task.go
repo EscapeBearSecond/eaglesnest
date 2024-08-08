@@ -237,7 +237,7 @@ func (t *TaskApi) DownloadReport(c *gin.Context) {
 	fileName := "report_" + entryID + "." + format
 	fullPath := filepath.Join(dir, fileName)
 	if utils.FileExists(fullPath) {
-		file, err := os.Open(dir)
+		file, err := os.Open(fullPath)
 		if err != nil {
 			response.FailWithMessage(err.Error(), c)
 			return
@@ -261,7 +261,7 @@ func (t *TaskApi) DownloadReport(c *gin.Context) {
 			response.FailWithMessage("下载文件失败", c)
 			return
 		}
-		response.Ok(c)
+		// response.Ok(c)
 	} else {
 		response.FailWithMessage("文件不存在", c)
 		return
