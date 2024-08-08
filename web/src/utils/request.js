@@ -77,7 +77,8 @@ service.interceptors.response.use(
         response.data.msg = decodeURI(response.headers.msg)
       }
       return response.data
-    } else {     
+    } else {
+      console.log(response);     
       ElMessage({
         showClose: true,
         message: response.data.msg || decodeURI(response.headers.msg),
