@@ -604,16 +604,15 @@ const visibleStart = (e) => {
 
 const handleStart = (e) => {  
   ElMessageBox.confirm(
-    'proxy will permanently delete the file. Continue?',
-    'Warning',
+    '确定要启动任务吗?',
+    '提示',
     {
-      confirmButtonText: 'OK',
-      cancelButtonText: 'Cancel',
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
       type: 'warning',
-      center: true,
     }
   ).then(async() => {
-      const res = await startTask({ id: row.ID })
+      const res = await startTask({ id: e.ID })
       if (res.code === 0) {
         ElMessage({
           type: 'success',
@@ -621,11 +620,6 @@ const handleStart = (e) => {
         })
         getTableData()
       }
-    }).catch(() => {
-      ElMessage({
-        type: 'info',
-        message: '已取消启动任务'
-      })
     })
 }
 
