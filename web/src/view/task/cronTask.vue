@@ -50,6 +50,7 @@
         :listQuery="listQuery"
         :statusData="statusData"
         :pagination="handleCurrentChange"
+        :changePageSize="changeSize"
         :index="true"
       >
       <template v-slot:customTaskPlan="slotProps">
@@ -144,6 +145,11 @@ const listQuery = reactive({
    total: 0,
    pageSize: 10,
 })
+
+const changeSize = (e) => {
+  listQuery.pageSize = e
+  getTableData()
+}
 
 const templateOptions = reactive([
     {label: "漏洞扫描", value: '1'},

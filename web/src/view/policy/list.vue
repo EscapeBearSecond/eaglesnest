@@ -51,6 +51,7 @@
          :tableData="tableData"
          :listQuery="listQuery"
          :statusData="statusData"
+         :changePageSize="changeSize"
          :pagination="pagination"
          :index="true"
        >
@@ -328,6 +329,10 @@ const typeNameList = reactive([
      total: 0,
      pageSize: 10
  })
+ const changeSize = (e) => {
+    listQuery.pageSize = e
+    getTableData()
+  }
  const statusData = ref([
    {
       name: "修改",

@@ -56,6 +56,7 @@
         :listQuery="listQuery"
         :statusData="statusData"
         :pagination="handleCurrentChange"
+        :changePageSize="changeSize"
         :index="true"
         :statusWidth="statusWidth"
       >
@@ -231,7 +232,7 @@ const statusData = reactive([
   {
       name: "停止",
       type: "primary",
-      icon: "edit",
+      icon: "VideoPause",
       handleClick: (scope) => handleStop(scope.row),
       visible : (scope) => visibleStop(scope.row)
   },
@@ -361,46 +362,74 @@ const getReport = async() => {
   let date = new Date();
   let timestamp = date.getTime();
   if(reportData.value.type == 1) {
-    let data = reportTask({...reportData.value });
-    if(data == 7) {
-      ElMessage({ type: 'error', message: data.data.msg })
-    }else {
-      const url = window.URL.createObjectURL(new Blob([(await data).data]))
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute(
-        "download",
-        `report_${reportData.value.entryId}.${reportData.value.format}`
-      )
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    }
+    reportTask({...reportData.value }).then(res => {
+        const blob = res.data;
+        let resData =  new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+          try {
+            // 如果是个json对象
+            const json = JSON.parse(reader.result);
+            reject(json);
+          } catch (e) {
+            // 如果是 blob 
+            resolve(blob);
+          }
+        };
+        reader.onerror = () => {
+          reject(new Error('未读取到文件对象'));
+        };
+        reader.readAsText(blob); 
+
+        resData.then(blob => {
+        // 创建下载链接并触发下载
+        const url = window.URL.createObjectURL(new Blob([blob]))
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute(
+          "download",
+          `report_${timestamp}.zip`
+        )
+        document.body.appendChild(link);
+        link.click();
+        setTimeout(() => {
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url); 
+        }, 250);
+      }).catch(error => {
+          if (typeof error === 'object' && error !== null) {
+            ElMessage({
+              type: 'error',
+              message: `${error.msg}`
+            })
+          } else {
+            ElMessage({
+              type: 'error',
+              message: '下载文档时发生了错误！'
+            })
+          }
+        });
+      })
+    })
   }else {
     reportTaskDoc({entryId: reportData.value.entryId}).then(res => {
-      console.log(
-      '%c 🍱 CONSOLE_INFO: ',
-      'font-size:20px;background-color: #ED9EC7;color:#fff;',
-      res
-      );
-      const blob = res.data;
-      let resData =  new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-        try {
-          // 如果是个json对象
-          const json = JSON.parse(reader.result);
-          reject(json);
-        } catch (e) {
-          // 如果是 blob 
-          resolve(blob);
-        }
-      };
-      reader.onerror = () => {
-        reject(new Error('Error reading blob data'));
-      };
-      reader.readAsText(blob); 
+        const blob = res.data;
+        let resData =  new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+          try {
+            // 如果是个json对象
+            const json = JSON.parse(reader.result);
+            reject(json);
+          } catch (e) {
+            // 如果是 blob 
+            resolve(blob);
+          }
+        };
+        reader.onerror = () => {
+          reject(new Error('未读取到文件对象'));
+        };
+        reader.readAsText(blob); 
       })
       
       resData.then(blob => {
@@ -602,6 +631,10 @@ const handleStart = (e) => {
     })
 }
 
+const changeSize = (e) => {
+  listQuery.pageSize = e
+  getTableData()
+}
 </script>
 
 <style lang="scss">
