@@ -181,6 +181,7 @@
 import { getTemplateList,  createTemplate, updateTemplate, delTemplate, postTemplateImports } from "@/api/template.js"
 import { ref, reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { getDict } from '@/utils/dictionary'
 
 defineOptions({
   name: 'Template',
@@ -199,11 +200,7 @@ const changeSize = (e) => {
   getTableData()
 }
 
-const templateOptions = reactive([
-    {label: "资产发现", value: '1'},
-    {label: "漏洞扫描", value: '2'},
-    {label: "弱口令", value: '3'},
-])
+let templateOptions = ref([])
 
 const handleCurrentChange = (val) => {
   page.value = val
@@ -255,6 +252,14 @@ const getTableData = async() => {
 
 const initPage = async() => {
   getTableData()
+  getOptionDict()
+}
+
+const getOptionDict = async() => {
+  const res = await getDict('templateType')
+  res && res.forEach(item => {
+      templateOptions.value.push({label: item.label, value: item.value})
+  })  
 }
 
 initPage()

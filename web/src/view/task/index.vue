@@ -184,6 +184,7 @@ import { getAreaList } from '@/api/area.js'
 import WarningBar from '@/components/warningBar/warningBar.vue'
 import { ref, reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+
 defineOptions({
   name: 'Task',
 })
@@ -209,12 +210,6 @@ const listQuery = reactive({
    pageSize: 10,
 })
 const statusWidth = ref('220')
-const templateOptions = reactive([
-    {label: "资产发现", value: '1'},
-    {label: "漏洞扫描", value: '2'},
-    {label: "弱口令", value: '3'},
-])
-
 const handleCurrentChange = (val) => {
   page.value = val
   getTableData()
@@ -252,7 +247,7 @@ const statusData = reactive([
 ])
 
 // 查询
-const getTableData = async() => {
+const getTableData = async() => {  
   const table = await getTaskList({
       page: listQuery.page,
       pageSize: listQuery.pageSize,
