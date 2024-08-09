@@ -362,15 +362,7 @@ const handleCheckAll = (e, f) => {
 
 const templateDialog = ref(false)
 const addTemplate = () => {
-    if(form.value.policyConfig <3) {
-        templateDialog.value = true
-    }else {
-        ElMessage({
-            type: 'warning',
-            message: '策略无法再添加更多模板!'
-        })
-    }
-    
+    templateDialog.value = true
 }
 
 const closeDialog = ()=> {
