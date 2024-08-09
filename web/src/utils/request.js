@@ -77,12 +77,16 @@ service.interceptors.response.use(
         response.data.msg = decodeURI(response.headers.msg)
       }
       return response.data
-    } else {     
-      ElMessage({
-        showClose: true,
-        message: response.data.msg || decodeURI(response.headers.msg),
-        type: 'error'
-      })
+    } else {
+      console.log(response);
+      if(response.data.type == 'application/json' && response.data.msg != undefined) {
+        ElMessage({
+          showClose: true,
+          message: response.data.msg || decodeURI(response.headers.msg),
+          type: 'error'
+        })
+      }     
+      
       return response.data.msg ? response.data : response
     }
   },

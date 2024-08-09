@@ -244,7 +244,7 @@ const statusData = reactive([
   {
       name: "导出",
       type: "primary",
-      icon: "Position",
+      icon: "Download",
       handleClick: (scope) => handleReport(scope.row),
       visible : (scope) => visibleReport(scope.row)
   },
@@ -375,21 +375,68 @@ const getReport = async() => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      window.URL.revokeobjectURL(url);
+      window.URL.revokeObjectURL(url);
     }
   }else {
-    const data = reportTaskDoc({entryId: reportData.value.entryId})
-    const url = window.URL.createObjectURL(new Blob([(await data).data]))
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute(
-        "download",
-        `report_${timestamp}.zip`
-      )
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeobjectURL(url);
+    reportTaskDoc({entryId: reportData.value.entryId}).then(res => {
+      console.log(
+      '%c 🍱 CONSOLE_INFO: ',
+      'font-size:20px;background-color: #ED9EC7;color:#fff;',
+      res
+      );
+      const blob = res.data;
+      let resData =  new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+        try {
+          // 如果是个json对象
+          const json = JSON.parse(reader.result);
+          reject(json);
+        } catch (e) {
+          // 如果是 blob 
+          resolve(blob);
+        }
+      };
+      reader.onerror = () => {
+        reject(new Error('Error reading blob data'));
+      };
+      reader.readAsText(blob); 
+      })
+      
+      resData.then(blob => {
+        // 创建下载链接并触发下载
+        const url = window.URL.createObjectURL(new Blob([blob]))
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute(
+          "download",
+          `report_${timestamp}.zip`
+        )
+        document.body.appendChild(link);
+        link.click();
+        setTimeout(() => {
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url); 
+        }, 250);
+      }).catch(error => {
+          if (typeof error === 'object' && error !== null) {
+            ElMessage({
+              type: 'error',
+              message: `${error.msg}`
+            })
+          } else {
+            ElMessage({
+              type: 'error',
+              message: '下载文档时发生了错误！'
+            })
+          }
+        });
+      }).catch(error => {
+        ElMessage({
+          type:'error',
+          message: '下载文档时发生了错误!'
+        })
+      });    
   }
   reportFlag.value = false
 }
