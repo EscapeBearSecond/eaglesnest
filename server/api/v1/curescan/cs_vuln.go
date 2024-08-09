@@ -4,7 +4,8 @@ import (
 	"47.103.136.241/goprojects/curescan/server/global"
 	"47.103.136.241/goprojects/curescan/server/model/common/response"
 	"47.103.136.241/goprojects/curescan/server/model/curescan"
-	"fmt"
+	"47.103.136.241/goprojects/curescan/server/model/curescan/request"
+	"47.103.136.241/goprojects/curescan/server/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,33 +13,29 @@ type VulnApi struct {
 }
 
 func (a *VulnApi) GetVulnList(c *gin.Context) {
-	vulnList := make([]*curescan.Vuln, 10)
-	for i := range 10 {
-		vulnList[i] = &curescan.Vuln{
-			TemplateID:  fmt.Sprintf("template_id_%d", i),
-			Description: fmt.Sprintf("vuln_desc_%d", i),
-			Name:        fmt.Sprintf("vuln_name_%d", i),
-			Severity:    "high",
-			Author:      "author",
-			Reference:   "reference",
-			Classification: map[string]interface{}{
-				"cve":    "cve_id",
-				"cwe":    "cwe_id",
-				"cvss":   "cvss_id",
-				"cvssv3": "cvssv3_id",
-			},
-			Remediation: "remediation",
-		}
+	var searchVuln request.SearchVuln
+	err := c.ShouldBindJSON(&searchVuln)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
 	}
-	resMap := map[string]interface{}{
-		"list":     vulnList,
-		"total":    10,
-		"page":     1,
-		"pageSize": 10,
+	err = utils.Verify(searchVuln.PageInfo, utils.PageInfoVerify)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
 	}
-	response.OkWithData(resMap, c)
+	list, total, err := vulnService.GetVulnList(&searchVuln)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	response.OkWithDetailed(response.PageResult{
+		List:     list,
+		Total:    total,
+		Page:     searchVuln.Page,
+		PageSize: searchVuln.PageSize,
+	}, "获取成功", c)
 }
-
 func (a *VulnApi) MigrateTable(c *gin.Context) {
 	err := global.GVA_DB.AutoMigrate(&curescan.Vuln{})
 	if err != nil {
