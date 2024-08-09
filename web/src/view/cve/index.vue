@@ -31,6 +31,7 @@
           :tableData="tableData"
           :listQuery="listQuery"
           :statusData="statusData"
+          :changePageSize="changeSize"
           :pagination="handleCurrentChange"
           :index="true"
         >
@@ -79,6 +80,11 @@
      total: 0,
      pageSize: 10,
   })
+ 
+  const changeSize = (e) => {
+    listQuery.pageSize = e
+    getTableData()
+  }
   
   const handleCurrentChange = (val) => {
     page.value = val
