@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"path"
 	"strconv"
 	"strings"
 	"time"
@@ -615,7 +614,7 @@ func getAssetFromResult(result *response.TaskResult) []*curescan.Asset {
 func (s *TaskService) generateJob(jobConfig []*request.JobConfig, taskResult *response.TaskResult) ([]types.JobOptions, error) {
 	jobs := make([]types.JobOptions, len(jobConfig))
 	for i, job := range jobConfig {
-		dir := path.Join(global.GVA_CONFIG.AutoCode.Root, "server", "templates", job.Name)
+		// dir := path.Join(global.GVA_CONFIG.AutoCode.Root, "server", "templates", job.Name)
 		jobs[i].Name = job.Name
 		jobs[i].Kind = job.Kind
 		jobs[i].Concurrency = job.Concurrency
@@ -649,23 +648,23 @@ func (s *TaskService) generateJob(jobConfig []*request.JobConfig, taskResult *re
 			taskResult.JobResultList = data
 			return nil
 		}
-		// jobs[i].GetTemplates = func() []*types.RawTemplate {
-		// 	var rawTemplates []*types.RawTemplate
-		// 	templates, err := templateService.GetTemplatesByIds(job.Templates)
-		// 	if err != nil {
-		// 		return nil
-		// 	}
-		// 	for _, template := range templates {
-		// 		fmt.Println(template.TemplateContent)
-		// 		rawTemplates = append(rawTemplates, &types.RawTemplate{
-		// 			ID:       template.TemplateId,
-		// 			Original: template.TemplateContent,
-		// 		})
-		// 	}
-		// 	return rawTemplates
-		// }
+		jobs[i].GetTemplates = func() []*types.RawTemplate {
+			var rawTemplates []*types.RawTemplate
+			templates, err := templateService.GetTemplatesByIds(job.Templates)
+			if err != nil {
+				return nil
+			}
+			for _, template := range templates {
+				fmt.Println(template.TemplateContent)
+				rawTemplates = append(rawTemplates, &types.RawTemplate{
+					ID:       template.TemplateId,
+					Original: template.TemplateContent,
+				})
+			}
+			return rawTemplates
+		}
 		// return jobs, nil
-		jobs[i].Template = dir
+		// jobs[i].Template = dir
 
 	}
 	return jobs, nil

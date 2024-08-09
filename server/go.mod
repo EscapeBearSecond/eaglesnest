@@ -3,7 +3,7 @@ module 47.103.136.241/goprojects/curescan/server
 go 1.22
 
 require (
-	47.103.136.241/goprojects/eagleeye v0.0.0-20240808041454-889a066eaff0
+	47.103.136.241/goprojects/eagleeye v0.0.0-20240808141903-1a54d9b8e05f
 	github.com/aliyun/aliyun-oss-go-sdk v2.2.7+incompatible
 	github.com/aws/aws-sdk-go v1.44.307
 	github.com/casbin/casbin/v2 v2.87.1
@@ -58,6 +58,7 @@ require (
 	git.mills.io/prologic/smtpd v0.0.0-20210710122116-a525b76c287a // indirect
 	github.com/Azure/go-ntlmssp v0.0.0-20221128193559-754e69321358 // indirect
 	github.com/Jarnpher553/nuclei/v3 v3.3.0 // indirect
+	github.com/Jarnpher553/tcp-shaker v0.0.0-20240808125115-60b47575086b // indirect
 	github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/Masterminds/semver/v3 v3.2.1 // indirect
@@ -356,7 +357,7 @@ require (
 	golang.org/x/mod v0.18.0 // indirect
 	golang.org/x/net v0.27.0 // indirect
 	golang.org/x/oauth2 v0.18.0 // indirect
-	golang.org/x/sys v0.22.0 // indirect
+	golang.org/x/sys v0.23.0 // indirect
 	golang.org/x/term v0.22.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 	golang.org/x/tools v0.22.0 // indirect
