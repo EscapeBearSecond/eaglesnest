@@ -180,11 +180,12 @@ func (t *TemplateApi) UpdateTemplate(c *gin.Context) {
 }
 
 func (t *TemplateApi) ImportTemplates(c *gin.Context) {
-	fmt.Println(c.PostForm("file"))
+	// fmt.Println(c.PostForm("file"))
 	// file, header, err2 := c.Request.FormFile("file")
 	form, err := c.MultipartForm()
 	if err != nil {
-		response.FailWithMessage(err.Error(), c)
+		global.GVA_LOG.Error("获取文件失败", zap.String("uri", c.Request.RequestURI), zap.String("error", err.Error()))
+		response.FailWithMessage("获取文件失败", c)
 		return
 	}
 

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"path"
 	"strconv"
 	"strings"
 	"time"
@@ -103,7 +104,10 @@ func (s *TaskService) CreateTask(task *curescan.Task) error {
 	}
 	// 立即执行
 	if task.TaskPlan == ExecuteImmediately {
-		return s.ExecuteTask(int(task.ID))
+		go func() {
+			s.ExecuteTask(int(task.ID))
+		}()
+		return nil
 	}
 	// 稍后执行
 	if task.TaskPlan == ExecuteLater {
@@ -294,7 +298,7 @@ func (s *TaskService) ExecuteTask(id int) error {
 	// 解析策略
 	var onlineConfig request.OnlineConfig
 	var portScanConfig request.PortScanConfig
-	var jobConfig []request.JobConfig
+	var jobConfig []*request.JobConfig
 	if policy.OnlineCheck {
 		err = json.Unmarshal([]byte(policy.OnlineConfig), &onlineConfig)
 		if err != nil {
@@ -396,6 +400,7 @@ func (s *TaskService) ExecuteTask(id int) error {
 // 对于普通任务如果需要复用, 需要重新创建一条任务
 func (s *TaskService) processTask(task *curescan.Task, options *types.Options, taskResult *response.TaskResult) {
 	entry, err := global.EagleeyeEngine.NewEntry(options)
+	fmt.Println(options.Jobs)
 	if err != nil {
 		global.GVA_LOG.Error("创建任务entry失败", zap.String("taskName", task.TaskName), zap.Error(err))
 		return
@@ -607,19 +612,21 @@ func getAssetFromResult(result *response.TaskResult) []*curescan.Asset {
 }
 
 // generateJob 生成任务， 根据任务配置生成任务
-func (s *TaskService) generateJob(jobConfig []request.JobConfig, taskResult *response.TaskResult) ([]types.JobOptions, error) {
+func (s *TaskService) generateJob(jobConfig []*request.JobConfig, taskResult *response.TaskResult) ([]types.JobOptions, error) {
 	jobs := make([]types.JobOptions, len(jobConfig))
 	for i, job := range jobConfig {
-		// dir := path.Join(global.GVA_CONFIG.AutoCode.Root, "templates", job.Name)
+		dir := path.Join(global.GVA_CONFIG.AutoCode.Root, "server", "templates", job.Name)
 		jobs[i].Name = job.Name
 		jobs[i].Kind = job.Kind
 		jobs[i].Concurrency = job.Concurrency
 		jobs[i].Count = job.Count
 		jobs[i].Format = job.Format
+		jobs[i].Timeout = job.Timeout
 		jobs[i].RateLimit = job.RateLimit
 		jobs[i].ResultCallback = func(c context.Context, result *types.JobResult) error {
 			var data []*curescan.JobResultItem
 			for _, item := range result.Items {
+				fmt.Println("发现了一个结果")
 				var item = &curescan.JobResultItem{
 					Name:             result.Name,
 					Kind:             result.Kind,
@@ -642,21 +649,24 @@ func (s *TaskService) generateJob(jobConfig []request.JobConfig, taskResult *res
 			taskResult.JobResultList = data
 			return nil
 		}
-		jobs[i].GetTemplates = func() []*types.RawTemplate {
-			var rawTemplates []*types.RawTemplate
-			templates, err := templateService.GetTemplatesByIds(job.Templates)
-			if err != nil {
-				return nil
-			}
-			for _, template := range templates {
-				rawTemplates = append(rawTemplates, &types.RawTemplate{
-					ID:       template.TemplateId,
-					Original: template.TemplateContent,
-				})
-			}
-			return rawTemplates
-		}
-		return jobs, nil
+		// jobs[i].GetTemplates = func() []*types.RawTemplate {
+		// 	var rawTemplates []*types.RawTemplate
+		// 	templates, err := templateService.GetTemplatesByIds(job.Templates)
+		// 	if err != nil {
+		// 		return nil
+		// 	}
+		// 	for _, template := range templates {
+		// 		fmt.Println(template.TemplateContent)
+		// 		rawTemplates = append(rawTemplates, &types.RawTemplate{
+		// 			ID:       template.TemplateId,
+		// 			Original: template.TemplateContent,
+		// 		})
+		// 	}
+		// 	return rawTemplates
+		// }
+		// return jobs, nil
+		jobs[i].Template = dir
+
 	}
 	return jobs, nil
 }
