@@ -63,6 +63,7 @@
         :listQuery="listQuery"
         :statusData="statusData"
         :pagination="handleCurrentChange"
+        :changePageSize="changeSize"
         :index="true"
       >
       <template v-slot:customAreaName="slotProps">
@@ -122,6 +123,10 @@ const listQuery = reactive({
    total: 0,
    pageSize: 10,
 })
+const changeSize = (e) => {
+  listQuery.pageSize = e
+  getTableData()
+}
 
 //获取四层筛选
 const tagList = ref({})

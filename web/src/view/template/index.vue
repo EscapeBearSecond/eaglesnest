@@ -54,6 +54,7 @@
         :tableData="tableData"
         :listQuery="listQuery"
         :statusData="statusData"
+        :changePageSize="changeSize"
         :pagination="handleCurrentChange"
         :index="true"
       >
@@ -192,6 +193,11 @@ const listQuery = reactive({
    total: 0,
    pageSize: 10,
 })
+
+const changeSize = (e) => {
+  listQuery.pageSize = e
+  getTableData()
+}
 
 const templateOptions = reactive([
     {label: "漏洞扫描", value: '1'},

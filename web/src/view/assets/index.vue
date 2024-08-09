@@ -40,6 +40,7 @@
         :listQuery="listQuery"
         :statusData="statusData"
         :pagination="handleCurrentChange"
+        :changePageSize="changeSize"
         :index="true"
       >
       </advance-table>
@@ -134,6 +135,11 @@ const listQuery = reactive({
    total: 0,
    pageSize: 10,
 })
+
+const changeSize = (e) => {
+  listQuery.pageSize = e
+  getTableData()
+}
 
 const handleCurrentChange = (val) => {
   page.value = val
