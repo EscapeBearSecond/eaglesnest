@@ -74,7 +74,6 @@ func (t *TaskApi) CreateTask(c *gin.Context) {
 func (t *TaskApi) GetTaskList(c *gin.Context) {
 	var searchTask request.SearchTask
 	err := c.ShouldBindJSON(&searchTask)
-	fmt.Println(searchTask)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return

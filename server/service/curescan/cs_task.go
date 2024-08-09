@@ -443,7 +443,13 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 			if err != nil {
 				return err
 			}
-			err = s.GenerateReport(entry.Result(), info.NickName)
+			var indexMap = make(map[string]int, 1)
+			for i, item := range options.Jobs {
+				if item.Kind == "2" {
+					indexMap["vuln"] = i
+				}
+			}
+			err = s.GenerateReport(entry.Result(), info.NickName, indexMap)
 			if err != nil {
 				return err
 			}
@@ -521,7 +527,13 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 			if err != nil {
 				return err
 			}
-			err = s.GenerateReport(entry.Result(), info.NickName)
+			var indexMap = make(map[string]int, 1)
+			for i, item := range options.Jobs {
+				if item.Kind == "2" {
+					indexMap["vuln"] = i
+				}
+			}
+			err = s.GenerateReport(entry.Result(), info.NickName, indexMap)
 			if err != nil {
 				return err
 			}
@@ -655,7 +667,6 @@ func (s *TaskService) generateJob(jobConfig []*request.JobConfig, taskResult *re
 				return nil
 			}
 			for _, template := range templates {
-				fmt.Println(template.TemplateContent)
 				rawTemplates = append(rawTemplates, &types.RawTemplate{
 					ID:       template.TemplateId,
 					Original: template.TemplateContent,
@@ -704,16 +715,22 @@ func (s *TaskService) StopTask(id int) error {
 	return nil
 }
 
-func (s *TaskService) GenerateReport(ret *types.EntryResult, reporter string) error {
-	err := report.Generate(
-		report.WithJobIndexes(0),
-		report.WithEntryResult(ret),
-		report.WithCustomer(global.GVA_CONFIG.Report.Customer),
-		report.WithReporter(reporter))
-	if err != nil {
-		return err
+func (s *TaskService) GenerateReport(ret *types.EntryResult, reporter string, indexMap map[string]int) error {
+	var err error
+	if index, ok := indexMap["vuln"]; ok {
+		err = report.Generate(
+			report.WithJobIndexes(index),
+			report.WithEntryResult(ret),
+			report.WithCustomer(global.GVA_CONFIG.Report.Customer),
+			report.WithReporter(reporter))
+
+	} else {
+		err = report.Generate(
+			report.WithEntryResult(ret),
+			report.WithCustomer(global.GVA_CONFIG.Report.Customer),
+			report.WithReporter(reporter))
 	}
-	return nil
+	return err
 }
 
 // func (s *TaskService) DownloadReport(entryID string, format string) error {

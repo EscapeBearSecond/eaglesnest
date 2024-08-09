@@ -198,7 +198,6 @@ func (t *TemplateApi) ImportTemplates(c *gin.Context) {
 	types := form.Value["templateType"]
 	templateType := types[0]
 	templates := make([]*curescan.Template, 0)
-	fmt.Println("len files", len(files))
 	for _, fh := range files {
 
 		file, err := fh.Open()
