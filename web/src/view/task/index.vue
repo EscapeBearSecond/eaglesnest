@@ -210,7 +210,7 @@ const listQuery = reactive({
 })
 const statusWidth = ref('220')
 const templateOptions = reactive([
-{label: "资产发现", value: '1'},
+    {label: "资产发现", value: '1'},
     {label: "漏洞扫描", value: '2'},
     {label: "弱口令", value: '3'},
 ])
