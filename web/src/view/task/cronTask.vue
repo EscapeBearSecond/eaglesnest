@@ -152,8 +152,8 @@ const changeSize = (e) => {
 }
 
 const templateOptions = reactive([
-    {label: "漏洞扫描", value: '1'},
-    {label: "资产发现", value: '2'},
+    {label: "资产发现", value: '1'},
+    {label: "漏洞扫描", value: '2'},
     {label: "弱口令", value: '3'},
 ])
 

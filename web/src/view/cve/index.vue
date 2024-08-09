@@ -38,7 +38,7 @@
             <template v-slot:customSeverity="slotProps">
             <!-- 自定义的字段 -->
                 <span>
-                    <el-tag :effect="getStyle(slotProps.row.severity)">{{ getSeverityName(slotProps.row.severity) }}</el-tag>
+                    <el-tag  effect="dark" :type="getStyle(slotProps.row.severity)">{{ getSeverityName(slotProps.row.severity) }}</el-tag>
                 </span>
             </template>
         </advance-table>
@@ -55,7 +55,7 @@
             <el-descriptions-item label="编号">{{ showData.classification.cve }}</el-descriptions-item>
             <el-descriptions-item label="作者" :span="2">{{ showData.author }}</el-descriptions-item>
             <el-descriptions-item label="等级">
-                <el-tag :effect="getStyle(showData.severity)">{{ getSeverityName(showData.severity) }}</el-tag>
+                <el-tag effect="dark" :type="getStyle(showData.severity)">{{ getSeverityName(showData.severity) }}</el-tag>
             </el-descriptions-item>
             <el-descriptions-item label="描述">
             {{ showData.description }}
