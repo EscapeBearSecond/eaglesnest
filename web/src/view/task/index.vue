@@ -231,7 +231,7 @@ const statusData = reactive([
   {
       name: "停止",
       type: "primary",
-      icon: "edit",
+      icon: "VideoPause",
       handleClick: (scope) => handleStop(scope.row),
       visible : (scope) => visibleStop(scope.row)
   },
