@@ -20,8 +20,8 @@ func (s *VulnService) GetVulnList(searchVuln *request.SearchVuln) (list interfac
 	offset := page.PageSize * (page.Page - 1)
 
 	var db *gorm.DB
-	db = global.GVA_DB.Model(&curescan.Template{})
-	var templates []curescan.Template
+	db = global.GVA_DB.Model(&curescan.Vuln{})
+	var vulns []*curescan.Vuln
 	if vuln.Name != "" {
 		db = db.Where("name LIKE", "%"+vuln.Name+"%")
 	}
@@ -37,7 +37,7 @@ func (s *VulnService) GetVulnList(searchVuln *request.SearchVuln) (list interfac
 
 	err = db.Count(&total).Error
 	if err != nil {
-		return templates, total, err
+		return vulns, total, err
 	}
 	db = db.Limit(limit).Offset(offset)
 	OrderStr := "id desc"
@@ -50,14 +50,14 @@ func (s *VulnService) GetVulnList(searchVuln *request.SearchVuln) (list interfac
 		orderMap["reference"] = true
 		if !orderMap[order] {
 			err = fmt.Errorf("非法的排序字段: %s", order)
-			return templates, total, err
+			return vulns, total, err
 		}
 		OrderStr = order
 		if desc {
 			OrderStr += " desc"
 		}
 	}
-	err = db.Order(OrderStr).Find(&templates).Error
-	return templates, total, err
+	err = db.Order(OrderStr).Find(&vulns).Error
+	return vulns, total, err
 
 }
