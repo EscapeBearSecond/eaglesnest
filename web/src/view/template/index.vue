@@ -359,8 +359,9 @@ const handleSubmit = async() => {
   }
 
   const formData = new FormData();
-
-  formData.append('file', selectedFiles.value);
+  for(let i = 0; i < selectedFiles.value.length; i++) {
+    formData.append('file', selectedFiles.value[i]);
+  }
   formData.append('templateType', templateType.value)
   
   let data = await postTemplateImports(formData)
