@@ -399,7 +399,6 @@ func (s *TaskService) ExecuteTask(id int) error {
 // 对于普通任务如果需要复用, 需要重新创建一条任务
 func (s *TaskService) processTask(task *curescan.Task, options *types.Options, taskResult *response.TaskResult) {
 	entry, err := global.EagleeyeEngine.NewEntry(options)
-	fmt.Println(options.Jobs)
 	if err != nil {
 		global.GVA_LOG.Error("创建任务entry失败", zap.String("taskName", task.TaskName), zap.Error(err))
 		return
@@ -731,6 +730,15 @@ func (s *TaskService) GenerateReport(ret *types.EntryResult, reporter string, in
 			report.WithReporter(reporter))
 	}
 	return err
+}
+
+func (s *TaskService) GetTaskStage(entryID string) (*types.Stage, error) {
+	entry := global.EagleeyeEngine.Entry(entryID)
+	if entry == nil {
+		return nil, errors.New("任务未开始或已结束")
+	}
+	stage := entry.Stage()
+	return &stage, nil
 }
 
 // func (s *TaskService) DownloadReport(entryID string, format string) error {

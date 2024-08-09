@@ -7,3 +7,6 @@ type TaskResult struct {
 	OnlineCheckList []*curescan.OnlineCheck
 	JobResultList   []*curescan.JobResultItem
 }
+
+type Stage struct {
+}

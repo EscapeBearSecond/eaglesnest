@@ -288,3 +288,17 @@ func (t *TaskApi) DownloadResultDocs(c *gin.Context) {
 	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.zip\"", entryID))
 	c.DataFromReader(http.StatusOK, int64(buf.Len()), "application/zip", buf, nil)
 }
+
+func (t *TaskApi) GetTaskStage(c *gin.Context) {
+	entryID := c.Query("entryId")
+	if entryID == "" {
+		response.FailWithMessage("参数有误", c)
+		return
+	}
+	stage, err := taskService.GetTaskStage(entryID)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	response.OkWithData(stage, c)
+}
