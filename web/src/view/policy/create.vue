@@ -373,6 +373,7 @@ const addTemplate = () => {
         "concurrency": 150,
         "templates":[]
     }
+    checkAll.value = false
 }
 
 const closeDialog = ()=> {
