@@ -81,7 +81,7 @@
                     <el-table-column prop="count" label="探活轮次" />
                     <el-table-column prop="tag" label="操作" width="80" >
                         <template #default="scope">
-                            <el-button type="primary" @click="deleteTemplateConfig">删除</el-button>
+                            <el-button type="primary" @click="deleteTemplateConfig(scope.$index, scope.row)">删除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -112,7 +112,7 @@
             </div>
             </div>
         </template>
-        <el-form ref="searchRef" :rules="searchRules" :model="searchInfo" label-width="80px">
+        <el-form ref="tmpFormRef" :rules="searchRules" :model="searchInfo" label-width="80px">
                 <el-form-item label="模板类型"  class="sec-lab" prop="kind">
                     <el-select v-model="searchInfo.kind" placeholder="请选择模板类型" @change="changeScanType(searchInfo, 'kind')">
                         <el-option
@@ -160,9 +160,6 @@
                 </el-form-item>
                     </el-col>
                 </el-row>
-
-
-
                 <el-form-item label="模板选择" :label-position="itemLabelPosition"  class="sec-lab" v-if="searchInfo.kind != ''" prop="templates">
                     <el-select 
                         v-model="searchInfo.templates" 
@@ -172,22 +169,22 @@
                         collapse-tags
                         collapse-tags-tooltip
                     >
-                    <template #header>
-                        <el-checkbox
-                        v-model="checkAll"
-                        :indeterminate="indeterminate"
-                        @change="handleCheckAll(checkAll, searchInfo.kind)"
-                        >
-                        全选
+                        <template #header>
+                            <el-checkbox
+                            v-model="checkAll"
+                            :indeterminate="indeterminate"
+                            @change="handleCheckAll(checkAll, searchInfo.kind)"
+                            >
+                            全选
                         </el-checkbox>
-                    </template>
-                        <el-option
-                        v-for="item in tmpOption[searchInfo.kind - 1]"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                        :disabled="item.disabled"
-                        />
+                        </template>
+                            <el-option
+                            v-for="item in tmpOption[searchInfo.kind - 1]"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                            :disabled="item.disabled"
+                            />
                     </el-select>
                 </el-form-item>  
                 <el-form-item label="最大并发" :label-position="itemLabelPosition" class="sec-lab" prop="concurrency">
@@ -272,8 +269,11 @@ const indeterminate = ref(false)
 
 // 筛选模板联动
 const changeScanType = (e, f) => {
-    console.log(e, f);
     searchInfo.value.templates = []
+    searchInfo.value.tagOne = ""
+    searchInfo.value.tagTwo = ""
+    searchInfo.value.tagThree = ""
+    searchInfo.value.tagFour = ""
     updatetmpOption(e.kind)
     checkAll.value = false
 }
@@ -314,8 +314,7 @@ const initForm = async () => {
 initForm();
 
 // 全选模板
-const handleCheckAll = (e, f) => {
-
+const handleCheckAll = (e, f) => {    
     if(e) {
         searchInfo.value.templates = tmpOption[f - 1].map((_)=> _.value)
     } else {
@@ -345,21 +344,8 @@ const handleCheckAll = (e, f) => {
     ]
  })
  const tmpOption = [[],[],[]]
- const searchRef = ref(null)
- const searchInfo = ref({
-    "tagOne":"",
-    "tagTwo":"",
-    "tagThree":"",
-    "tagFour":"",
-    "name": "",
-    "kind": "1",
-    "timeout": "5s",
-    "count": 1,
-    "format": "",
-    "rateLimit": 150,
-    "concurrency": 150,
-    "templates":[]
- })
+ const tmpFormRef = ref(null)
+ const searchInfo = ref()
  const getTemplateData = async () => {
     const table = await getTemplateList({
         page: 1,
@@ -378,11 +364,13 @@ const handleCheckAll = (e, f) => {
         }
     });    
  }
- getTemplateData()
+
 
 const templateDialog = ref(false)
 const addTemplate = () => {
     templateDialog.value = true
+    checkAll.value = false
+    
     searchInfo.value = {
         "tagOne":"",
         "tagTwo":"",
@@ -397,8 +385,9 @@ const addTemplate = () => {
         "concurrency": 150,
         "templates":[]
     }
-    checkAll.value = false
 }
+getTemplateData()
+
 
 const closeDialog = ()=> {
     onReset()
@@ -423,6 +412,7 @@ const enterDialog = () => {
     if(!flag) {
         form.value.policyConfig.push(pushData)
         closeDialog()
+        tmpFormRef.value.resetFields()
     }else {
         ElMessage({
             type: 'warning',
@@ -432,8 +422,9 @@ const enterDialog = () => {
 }
 
 // 删除模板配置
-const deleteTemplateConfig = () => {
-    form.value.policyConfig.pop()
+const deleteTemplateConfig = (e, f) => {
+    console.log(form.value.policyConfig);
+    form.value.policyConfig = form.value.policyConfig.splice(e-1, 1)    
 }
 
 // 获取模板类型 
