@@ -290,12 +290,16 @@ func (t *TaskApi) DownloadResultDocs(c *gin.Context) {
 }
 
 func (t *TaskApi) GetTaskStage(c *gin.Context) {
-	entryID := c.Query("entryId")
-	if entryID == "" {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
 		response.FailWithMessage("参数有误", c)
 		return
 	}
-	stage, err := taskService.GetTaskStage(entryID)
+	if id == 0 {
+		response.FailWithMessage("参数有误", c)
+		return
+	}
+	stage, err := taskService.GetTaskStage(id)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
