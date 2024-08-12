@@ -44,7 +44,7 @@
                     </el-form-item>
                     <div v-if="form.portScanConfig.use">
                         <el-form-item label="端口范围"  class="sec-lab">
-                            <el-input v-model="form.portScanConfig.ports" />
+                            <el-input v-model="form.portScanConfig.ports" placeholder="例：http；top100；top1000；80,81-90；"/>
                         </el-form-item>
                         <el-form-item  label="并发数量"  class="sec-lab">
                             <el-input v-model="form.portScanConfig.rateLimit" />
@@ -116,38 +116,36 @@
                 <el-form-item label="模板类型"  class="sec-lab" prop="kind">
                     <el-select v-model="searchInfo.kind" placeholder="请选择模板类型" @change="changeScanType(searchInfo, 'kind')">
                         <el-option
-
                             v-for="type in typeNameList"
                             :key="type.value"
                             :label="type.label"
                             :value="type.value"
                             :disabled="type.disabled"
-
                         />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="设备类型"  class="sec-lab"> 
-                    <el-select v-model="searchInfo.tagOne" placeholder="请选择设备类型" @change="changeScanType(searchInfo, 'tagOne')" filterable>
-                        <el-option label="全部" value=""></el-option>
+                    <el-select v-model="searchInfo.tagOne" placeholder="请选择设备类型" @change="changeScanTagOne(searchInfo, 'tagOne')" filterable>
+                        <el-option label="全部" value="''"></el-option>
                         <el-option v-for="(tagOne, key) in tagList.tag1" :label="tagOne" :value="tagOne" :key="key" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="系统类型"  class="sec-lab">
-                    <el-select v-model="searchInfo.tagTwo" placeholder="请选择系统类型" @change="changeScanType(searchInfo, 'tagTwo')" filterable>
-                        <el-option label="全部" value=""></el-option>
+                    <el-select v-model="searchInfo.tagTwo" placeholder="请选择系统类型" @change="changeScanTagOne(searchInfo, 'tagTwo')" filterable>
+                        <el-option label="全部" value="''"></el-option>
                         <el-option v-for="(tagTwo, key) in tagList.tag2" :label="tagTwo" :value="tagTwo" :key="key" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="厂商名称"  class="sec-lab" >
-                    <el-select v-model="searchInfo.tagThree" placeholder="请选择厂商名称" @change="changeScanType(searchInfo, 'tagThree')" filterable>
-                        <el-option label="全部" value=""></el-option>
+                    <el-select v-model="searchInfo.tagThree" placeholder="请选择厂商名称" @change="changeScanTagOne(searchInfo, 'tagThree')" filterable>
+                        <el-option label="全部" value="''"></el-option>
                         <el-option v-for="(tagThree, key) in tagList.tag3" :label="tagThree" :value="tagThree" :key="key" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="产品型号"  class="sec-lab">
 
-                    <el-select v-model="searchInfo.tagFour" placeholder="请选择产品型号" @change="changeScanType(searchInfo, 'tagFour')" filterable>
-                        <el-option label="全部" value=""></el-option>
+                    <el-select v-model="searchInfo.tagFour" placeholder="请选择产品型号" @change="changeScanTagOne(searchInfo, 'tagFour')" filterable>
+                        <el-option label="全部" value="''"></el-option>
                         <el-option v-for="(tagFour, key) in tagList.tag4" :label="tagFour" :value="tagFour" :key="key" />
                     </el-select>
                 </el-form-item>
@@ -198,7 +196,6 @@
 import { ref, reactive } from 'vue' 
 import { getPolicyList, createPolicy, updatePolicy, getPolicyId } from '@/api/policy'
 import { getTemplateTagList, getTemplateList } from '@/api/template'
-import router from '@/router/index'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRoute } from 'vue-router';
 
@@ -261,10 +258,17 @@ const indeterminate = ref(false)
 
 // 筛选模板联动
 const changeScanType = (e, f) => {
-    if(f == 'kind') {
-        searchInfo.value.templates = []
-    }
+    console.log(e, f);
+    searchInfo.value.templates = []
     updatetmpOption(e.kind)
+    checkAll.value = false
+}
+
+//四联动
+const changeScanTagOne = (e, f) => {
+    searchInfo.value.templates = []
+    updatetmpOption(e.kind)
+    checkAll.value = false
 }
 
 const updatetmpOption = async (kind) => {
@@ -272,6 +276,7 @@ const updatetmpOption = async (kind) => {
         page: 1,
         pageSize: 99999,
         isAll: false,
+        templateType: kind,
         tag1: searchInfo.value.tagOne,
         tag2: searchInfo.value.tagTwo,
         tag3: searchInfo.value.tagThree,
@@ -296,8 +301,9 @@ initForm();
 
 // 全选模板
 const handleCheckAll = (e, f) => {
+
     if(e) {
-        searchInfo.value.templates = tmpOption[e - 1].map((_)=> _.value)
+        searchInfo.value.templates = tmpOption[f - 1].map((_)=> _.value)
     } else {
         searchInfo.value.templates = []
     }
@@ -362,15 +368,22 @@ const handleCheckAll = (e, f) => {
 
 const templateDialog = ref(false)
 const addTemplate = () => {
-    if(form.value.policyConfig <3) {
-        templateDialog.value = true
-    }else {
-        ElMessage({
-            type: 'warning',
-            message: '策略无法再添加更多模板!'
-        })
+    templateDialog.value = true
+    searchInfo.value = {
+        "tagOne":"",
+        "tagTwo":"",
+        "tagThree":"",
+        "tagFour":"",
+        "name": "",
+        "kind": "1",
+        "timeout": "5s",
+        "count": 1,
+        "format": "",
+        "rateLimit": 150,
+        "concurrency": 150,
+        "templates":[]
     }
-    
+    checkAll.value = false
 }
 
 const closeDialog = ()=> {

@@ -306,7 +306,14 @@ const handleStop = (row) => {
           type: 'success',
           message: '任务停止成功!'
         })
-        getTableData()
+        setTimeout(()=> {
+          getTableData()
+        }, 1000)
+      }else {
+        ElMessage({
+          type: 'error',
+          message: res.msg
+        })
       }
     })
     .catch(() => {
@@ -362,28 +369,28 @@ const getReport = async() => {
         let resData =  new Promise((resolve, reject) => {
           const reader = new FileReader();
           reader.onload = () => {
-          try {
-            // 如果是个json对象
-            const json = JSON.parse(reader.result);
-            reject(json);
-          } catch (e) {
-            // 如果是 blob 
-            resolve(blob);
-          }
-        };
-        reader.onerror = () => {
-          reject(new Error('未读取到文件对象'));
-        };
-        reader.readAsText(blob); 
-
-        resData.then(blob => {
+            try {
+              // 如果是个json对象
+              const json = JSON.parse(reader.result);
+              reject(json);
+            } catch (e) {
+              // 如果是 blob 
+              resolve(blob);
+            }
+          };
+          reader.onerror = () => {
+            reject(new Error('未读取到文件对象'));
+          };
+          reader.readAsText(blob);
+      })
+      resData.then(blob => {
         // 创建下载链接并触发下载
         const url = window.URL.createObjectURL(new Blob([blob]))
         const link = document.createElement("a");
         link.href = url;
         link.setAttribute(
           "download",
-          `report_${timestamp}.zip`
+          `report_${timestamp}.docx`
         )
         document.body.appendChild(link);
         link.click();
@@ -404,7 +411,6 @@ const getReport = async() => {
             })
           }
         });
-      })
     })
   }else {
     reportTaskDoc({entryId: reportData.value.entryId}).then(res => {
