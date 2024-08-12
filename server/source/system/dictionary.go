@@ -54,6 +54,7 @@ func (i *initDict) InitializeData(ctx context.Context) (next context.Context, er
 		{Name: "执行方式", Type: "executeType", Status: &True, Desc: "执行方式"},
 		{Name: "模板类型", Type: "templateType", Status: &True, Desc: "模板类型"},
 		{Name: "任务状态", Type: "taskStatus", Status: &True, Desc: "任务状态"},
+		{Name: "漏洞等级", Type: "severity", Status: &True, Desc: "漏洞等级"},
 	}
 
 	if err = db.Create(&entities).Error; err != nil {
