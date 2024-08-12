@@ -9,4 +9,8 @@ type TaskResult struct {
 }
 
 type Stage struct {
+	Name    string  `json:"name"`
+	Percent float64 `json:"percent"`
+	Total   int     `json:"total"`
+	Running int     `json:"running"`
 }
