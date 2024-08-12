@@ -158,7 +158,6 @@
         :action="''"
         :auto-upload="false"
         multiple
-       :before-upload="beforeUpload"
         @change="handleFileChange"
       >
           <el-icon class="el-icon--upload"><upload-filled /></el-icon>

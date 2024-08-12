@@ -4,7 +4,7 @@
 import chalk from "chalk";
 
 const config = {
-  appName: 'Gin-Vue-Admin',
+  appName: 'ZY-Admin',
   appLogo: 'logo.png',
   showViteLogo: false,
   logs: [],

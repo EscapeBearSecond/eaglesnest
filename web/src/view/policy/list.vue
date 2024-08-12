@@ -19,12 +19,6 @@
             <el-option label="弱口令" value="3" />
           </el-select>
          </el-form-item>
-         <el-form-item label="排序">
-          <el-select v-model="searchInfo.desc" placeholder="请选择排序方式">
-            <el-option label="默认" :value="false" />
-            <el-option label="倒序" :value="true" />
-          </el-select>
-         </el-form-item>
          <el-form-item>
            <el-button
              type="primary"
