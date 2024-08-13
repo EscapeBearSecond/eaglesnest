@@ -2,6 +2,7 @@ package curescan
 
 import (
 	"fmt"
+	"gorm.io/gorm/clause"
 
 	"47.103.136.241/goprojects/curescan/server/global"
 	"47.103.136.241/goprojects/curescan/server/model/common/request"
@@ -14,7 +15,11 @@ type AssetService struct {
 // BatchAdd 批量添加资产, 该方法适用于在资产扫描完成后, 已经得到了所有资产后, 调用该方法将资产全部添加到数据库中.
 // 该方法分批次添加, 每个批次最多添加100条数据, 即如果有1000条待添加的资产, 该方法会分10次添加, 会产生10条SQL.
 func (a *AssetService) BatchAdd(assets []*curescan.Asset) error {
-	return global.GVA_DB.Model(&curescan.Asset{}).CreateInBatches(assets, 100).Error
+	return global.GVA_DB.Clauses(clause.OnConflict{
+		Columns:   []clause.Column{{Name: "asset_ip"}},
+		DoUpdates: clause.AssignmentColumns([]string{"asset_name", "asset_ip", "asset_area", "asset_type", "open_ports", "system_type", "ttl", "asset_model", "manufacturer"}),
+	}).Create(assets).Error
+	// return global.GVA_DB.Model(&curescan.Asset{}).CreateInBatches(assets, 100).Error
 }
 
 // GetAssetList 获取资产列表, 该方法会根据页码信息和排序信息返回分页后的资产信息. 调用该方法需要传递的参数有4个, 第一个为过滤信息, 也就是要查询的资产信息或关键字;
