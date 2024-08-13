@@ -393,4 +393,11 @@ const closeUpload = () => {
 .el-upload__tip {
   color: red;
 }
+
+v-deep{
+  .el-upload-list {
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr;
+  }
+}
 </style>

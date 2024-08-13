@@ -118,6 +118,12 @@ func (i *initDictDetail) InitializeData(ctx context.Context) (context.Context, e
 		{Label: "运行", Value: "5", Status: &True, Extend: "普通任务", Sort: 6},
 		{Label: "停止", Value: "6", Status: &True, Extend: "普通任务", Sort: 7},
 	}
+	dicts[9].SysDictionaryDetails = []sysModel.SysDictionaryDetail{
+		{Label: "严重", Value: "critical", Status: &True, Sort: 1},
+		{Label: "高危", Value: "high", Status: &True, Sort: 2},
+		{Label: "中危", Value: "medium", Status: &True, Sort: 3},
+		{Label: "低危", Value: "low", Status: &True, Sort: 4},
+	}
 
 	for _, dict := range dicts {
 		if err := db.Model(&dict).Association("SysDictionaryDetails").

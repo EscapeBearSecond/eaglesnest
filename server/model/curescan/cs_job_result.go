@@ -14,7 +14,7 @@ type JobResultItem struct {
 	Host             string   `json:"host" gorm:"type:text;column:host;comment:主机"`
 	Port             string   `json:"port" gorm:"type:text;column:port;comment:端口"`
 	Scheme           string   `json:"scheme" gorm:"type:text;column:scheme;comment:协议"`
-	URL              string   `json:"url" gorm:"type:text;column:url;comment:url"`
+	URL              string   `json:"url" gorm:"type:text;column:url;comment:url,unique"`
 	Path             string   `json:"path" gorm:"type:text;column:path;comment:路径"`
 	Matched          string   `json:"matched" gorm:"type:text;column:matched;comment:匹配结果"`
 	ExtractedResults []string `json:"extracted_results" gorm:"type:text[];column:extracted_results;comment:提取结果"`

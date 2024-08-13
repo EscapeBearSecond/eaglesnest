@@ -92,6 +92,8 @@ func (i *initMenu) InitializeData(ctx context.Context) (next context.Context, er
 		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "assets", Name: "assets", Component: "view/routerHolder.vue", Sort: 12, Meta: Meta{Title: "资产管理", Icon: "guide"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 39, Path: "assets/list", Name: "assets/list", Component: "view/assets/list.vue", Sort: 2, Meta: Meta{Title: "资产列表", Icon: "data-analysis"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 39, Path: "district", Name: "district", Component: "view/assets/index.vue", Sort: 2, Meta: Meta{Title: "区域管理", Icon: "place"}},
+		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "cve", Name: "cve", Component: "view/routerHolder.vue", Sort: 17, Meta: Meta{Title: "漏洞管理", Icon: "data-analysis"}},
+		{MenuLevel: 0, Hidden: false, ParentId: 42, Path: "data", Name: "data", Component: "view/cve/index.vue", Sort: 1, Meta: Meta{Title: "漏洞数据库", Icon: "expand"}},
 	}
 	if err = db.Create(&entities).Error; err != nil {
 		return ctx, errors.Wrap(err, SysBaseMenu{}.TableName()+"表数据初始化失败!")

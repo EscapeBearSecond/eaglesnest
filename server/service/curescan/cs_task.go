@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
-	"strings"
 	"time"
 
 	"47.103.136.241/goprojects/curescan/server/global"
@@ -32,7 +31,7 @@ var (
 	onlineCheckService = &OnlineCheckService{}
 	jobResultService   = &JobResultService{}
 	userService        = &system.UserService{}
-	// assetService       = &AssetService{}
+	assetService       = &AssetService{}
 )
 
 // 执行方式
@@ -399,7 +398,6 @@ func (s *TaskService) ExecuteTask(id int) error {
 // 对于普通任务如果需要复用, 需要重新创建一条任务
 func (s *TaskService) processTask(task *curescan.Task, options *types.Options, taskResult *response.TaskResult) {
 	entry, err := global.EagleeyeEngine.NewEntry(options)
-	fmt.Println(options.Jobs)
 	if err != nil {
 		global.GVA_LOG.Error("创建任务entry失败", zap.String("taskName", task.TaskName), zap.Error(err))
 		return
@@ -456,7 +454,9 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 
 			// 资产添加
 			assets := getAssetFromResult(taskResult)
-			err = tx.Model(&curescan.Asset{}).CreateInBatches(assets, 100).Error
+			// TODO 批量添加资产
+			err = assetService.BatchAdd(assets)
+			// err = tx.Model(&curescan.Asset{}).CreateInBatches(assets, 100).Error
 			if err != nil {
 				return err
 			}
@@ -566,40 +566,41 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 func getAssetFromResult(result *response.TaskResult) []*curescan.Asset {
 	assets := make([]*curescan.Asset, 0)
 	for _, item := range result.JobResultList {
-		nameSplit := strings.Split(item.Name, "_")
+		// typeSplit := strings.Split(item.TemplateID, "_")
 		if item.Kind == "1" {
 			fmt.Println("资产添加", item.Name)
 			asset := &curescan.Asset{}
 			asset.AreaName = "未知"
 			asset.AssetArea = 0
 			asset.AssetName = item.Name
-			asset.AssetType = nameSplit[0]
-			if len(nameSplit) == 1 {
-				asset.SystemType = "未知"
-				asset.Manufacturer = "未知"
-				asset.AssetModel = "未知"
-			}
-			if len(nameSplit) == 2 {
-				asset.SystemType = nameSplit[1]
-				asset.Manufacturer = "未知"
-				asset.AssetModel = "未知"
-			}
-			if len(nameSplit) == 3 {
-				asset.SystemType = nameSplit[1]
-				asset.Manufacturer = nameSplit[2]
-				asset.AssetModel = "未知"
-			}
-			if len(nameSplit) == 4 {
-				asset.SystemType = nameSplit[1]
-				asset.Manufacturer = nameSplit[2]
-				asset.AssetModel = nameSplit[3]
-			}
-			asset.AssetIP = item.Host
+			asset.AssetType = item.Type
+			// if len(typeSplit) == 1 {
+			asset.SystemType = "未知"
+			asset.Manufacturer = "未知"
+			asset.AssetModel = "未知"
+			// }
+			// if len(typeSplit) == 2 {
+			// 	asset.SystemType = typeSplit[1]
+			// 	asset.Manufacturer = "未知"
+			// 	asset.AssetModel = "未知"
+			// }
+			// if len(typeSplit) == 3 {
+			// 	asset.SystemType = typeSplit[1]
+			// 	asset.Manufacturer = typeSplit[2]
+			// 	asset.AssetModel = "未知"
+			// }
+			// if len(typeSplit) == 4 {
+			// 	asset.SystemType = typeSplit[1]
+			// 	asset.Manufacturer = typeSplit[2]
+			// 	asset.AssetModel = typeSplit[3]
+			// }
+			asset.AssetIP = item.URL
 			port, _ := strconv.Atoi(item.Port)
 			asset.OpenPorts = []int64{int64(port)}
 			assets = append(assets, asset)
 		}
 	}
+
 	for _, item := range result.PortScanList {
 		for _, port := range item.Ports {
 			if assetInfo, ok := portAssetMap[port]; ok {
@@ -638,8 +639,8 @@ func (s *TaskService) generateJob(jobConfig []*request.JobConfig, taskResult *re
 			var data []*curescan.JobResultItem
 			for _, item := range result.Items {
 				fmt.Println("发现了一个结果")
-				var item = &curescan.JobResultItem{
-					Name:             result.Name,
+				var oneRes = &curescan.JobResultItem{
+					Name:             item.TemplateName,
 					Kind:             result.Kind,
 					TemplateID:       item.TemplateID,
 					TemplateName:     item.TemplateName,
@@ -655,7 +656,7 @@ func (s *TaskService) generateJob(jobConfig []*request.JobConfig, taskResult *re
 					Description:      item.Description,
 					EntryID:          result.EntryID,
 				}
-				data = append(data, item)
+				data = append(data, oneRes)
 			}
 			taskResult.JobResultList = data
 			return nil
@@ -731,6 +732,57 @@ func (s *TaskService) GenerateReport(ret *types.EntryResult, reporter string, in
 			report.WithReporter(reporter))
 	}
 	return err
+}
+
+func (s *TaskService) GetTaskStage(id int64) (*response.Stage, error) {
+	task, err := s.GetTaskById(int(id))
+	if err != nil {
+		return nil, errors.New("目标数据不存在")
+	}
+	entry := global.EagleeyeEngine.Entry(task.EntryID)
+	if entry == nil {
+		return nil, errors.New("任务未开始或已结束")
+	}
+	policy, err := policyService.GetPolicyById(int(task.PolicyID))
+	if err != nil {
+		return nil, errors.New("目标数据的策略不存在")
+	}
+	modelStage := &response.Stage{}
+	stage := entry.Stage()
+	modelStage.Percent = stage.Percent
+	var jobConfig []*response.JobConfig
+	var onlineCheckConfig *response.OnlineConfig
+	var portScanConfig *response.PortScanConfig
+	count := 0
+	err = json.Unmarshal([]byte(policy.OnlineConfig), &onlineCheckConfig)
+	if err == nil && onlineCheckConfig != nil {
+		count++
+	}
+	err = json.Unmarshal([]byte(policy.PortScanConfig), &portScanConfig)
+	if err == nil && portScanConfig != nil {
+		count++
+	}
+	err = json.Unmarshal([]byte(policy.PolicyConfig), &jobConfig)
+	if err == nil && jobConfig != nil {
+		count += len(jobConfig)
+	}
+	switch stage.Name {
+	case "PortScanning":
+		modelStage.Name = "端口扫描"
+		modelStage.Running = 2
+	case "HostDiscovery":
+		modelStage.Name = "在线检测"
+		modelStage.Running = 1
+	case "Job":
+		index, ok := stage.Entries[types.StageEntryJobIndex]
+		modelStage.Running = index.(int) + (count - len(jobConfig)) + 1
+		if !ok {
+			return nil, errors.New("策略数据错误")
+		}
+		modelStage.Name = jobConfig[index.(int)].Name
+	}
+	modelStage.Total = count
+	return modelStage, nil
 }
 
 // func (s *TaskService) DownloadReport(entryID string, format string) error {

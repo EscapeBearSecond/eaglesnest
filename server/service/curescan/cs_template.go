@@ -79,16 +79,16 @@ func (t *TemplateService) GetTemplateList(searchTemplate request2.SearchTemplate
 	if template.TemplateId != "" {
 		db = db.Where("template_id = ?", template.TemplateId)
 	}
-	if template.Tag1 != "" {
+	if template.Tag1 != "" && template.Tag1 != "''" {
 		db = db.Where("tag1 = ?", template.Tag1)
 	}
-	if template.Tag2 != "" {
+	if template.Tag2 != "" && template.Tag2 != "''" {
 		db = db.Where("tag2 = ?", template.Tag2)
 	}
-	if template.Tag3 != "" {
+	if template.Tag3 != "" && template.Tag3 != "''" {
 		db = db.Where("tag3 = ?", template.Tag3)
 	}
-	if template.Tag4 != "" {
+	if template.Tag4 != "" && template.Tag4 != "''" {
 		db = db.Where("tag4 = ?", template.Tag4)
 	}
 	err = db.Count(&total).Error
