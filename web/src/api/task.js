@@ -59,3 +59,19 @@ export const delTask = (data) => {
     data
   })
 }
+
+
+export const getTask = (param) => {
+  return service({
+    url: `/task/${param.id}`,
+    method: 'get',
+    param
+  })
+}
+export const getTaskStage = (param) => {
+  return service({
+    url: `/task/stage/${param.id}`,
+    method: 'get',
+    param
+  })
+}

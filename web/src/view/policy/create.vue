@@ -423,7 +423,6 @@ const enterDialog = () => {
 
 // 删除模板配置
 const deleteTemplateConfig = (e, f) => {
-    console.log(form.value.policyConfig);
     form.value.policyConfig = form.value.policyConfig.splice(e-1, 1)    
 }
 

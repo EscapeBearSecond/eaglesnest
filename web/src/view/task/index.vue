@@ -166,11 +166,51 @@
         </div>
       </template>
     </el-dialog>
+    <el-dialog v-model="showDialogFlag"  title="任务" :show-close="false" width="50%">
+
+     <el-descriptions
+        title=""
+        direction="horizontal"
+        :column="2"
+        :size="showSize"
+        border
+      >
+        <el-descriptions-item label="任务名称" >
+          {{  showInfo.taskName }}
+        </el-descriptions-item>
+        <el-descriptions-item label="执行方式" >{{  showInfo.taskPlan == 1 ? '立即执行' : '稍后执行' }}</el-descriptions-item>
+        <el-descriptions-item label="关联策略" >{{  showInfo.policyName }}</el-descriptions-item>
+        <el-descriptions-item label="当前状态" >
+          <el-tag size="small">{{  getStatus(showInfo.status) }}</el-tag>
+        </el-descriptions-item>
+        <el-descriptions-item label="正在执行" v-if="showInfo.status == 1">
+            {{  stageData.name }}
+        </el-descriptions-item>
+        <el-descriptions-item label="当前进度" v-if="showInfo.status == 1">
+          <el-progress type="dashboard" :percentage="stageData.percent * 100" :color="colors" />
+        </el-descriptions-item>
+        <el-descriptions-item label="任务数量" v-if="showInfo.status == 1">
+            {{  stageData.total }}
+        </el-descriptions-item>
+        <el-descriptions-item label="进度序号" v-if="showInfo.status == 1">
+            {{  stageData.running }}
+        </el-descriptions-item>
+        <el-descriptions-item label="扫描IP" :span="2">
+          {{  IpToStr(showInfo.targetIp) }}
+        </el-descriptions-item>
+        <el-descriptions-item label="描述" :span="2">
+          {{  showInfo.taskDesc }}
+        </el-descriptions-item>
+       
+      </el-descriptions>
+  </el-dialog>
   </div>
 </template>
 
 <script setup>
 import {
+  getTask,
+  getTaskStage,
   getTaskList,
   createTask,
   stopTask,
@@ -209,7 +249,7 @@ const listQuery = reactive({
    total: 0,
    pageSize: 10,
 })
-const statusWidth = ref('220')
+const statusWidth = ref('280')
 const handleCurrentChange = (val) => {
   page.value = val
   getTableData()
@@ -223,6 +263,13 @@ const statusData = reactive([
       icon: "SwitchButton",
       handleClick: (scope) => handleStart(scope.row),
       visible : (scope) => visibleStart(scope.row)
+  },
+  {
+      name: "查看",
+      type: "primary",
+      icon: "View",
+      handleClick: (scope) => handleShow(scope.row),
+      // visible : (scope) => visibleStart(scope.row)
   },
   {
       name: "停止",
@@ -499,7 +546,6 @@ const getTypeTagName = (e) => {
 // 表头
 const tableColumns = reactive([
   { label:'名称', prop:'taskName'},
-  { label:'目标', prop:'targetIp'},
   { label:'执行方式', prop:'taskPlan', slot: 'customTaskPlan'},
   { label:'策略', prop:'policyName'},
   { label:'状态', prop:'status', formatter(row, column) {
@@ -562,11 +608,6 @@ const enterAddDialog = async() => {
 
 const templateDialog = ref(false)
 const closeAddDialog = () => {
-  console.log(
-  '%c 🍱 CONSOLE_INFO: ',
-  'font-size:20px;background-color: #ED9EC7;color:#fff;',
-  form.value
-  );
   form.value.resetFields()
   templateDialog.value = false
 }
@@ -591,6 +632,24 @@ function getIpArr(e) {
     }else {
       return [e]
     }
+}
+
+function IpToStr(e) {
+   console.log(e)
+   if(Array.isArray(e)) {
+      if(e.length > 0) {
+          return e.join(',')
+      }else {
+        return e[0]
+      }
+   }else {
+    return '';
+   }
+}
+
+function getStatus (e) {
+  let res = ['创建中','执行中','已完成', '执行失败', '已终止', '运行中', '已停止']
+  return res[e]
 }
 
 // 根据状态来判断是否显示停止按钮
@@ -633,10 +692,47 @@ const changeSize = (e) => {
   listQuery.pageSize = e
   getTableData()
 }
+
+const showDialogFlag = ref(false)
+const showSize = ref('large')
+const showInfo = ref({})
+let stageData = ref({
+  name:'',  
+  percent:'',  
+  total:'',  
+  running:'',  
+})
+const colors = ref([
+  { color: '#f56c6c', percentage: 20 },
+  { color: '#e6a23c', percentage: 40 },
+  { color: '#5cb87a', percentage: 60 },
+  { color: '#1989fa', percentage: 80 },
+  { color: '#6f7ad3', percentage: 100 },
+]) 
+
+const handleShow = async(e)=> {
+    let data = await getTask({id: e.ID})
+    console.log(data.data.status)
+    if(data.data.status == 1) {
+        let data = await getTaskStage({id:e.ID})
+        stageData = data.data
+    }
+    showInfo.value = data.data
+    showDialogFlag.value = true
+
+
+    
+}
 </script>
 
 <style lang="scss">
 .report {
   padding: 2% 5%;
+}
+
+.my-header {
+  display: grid;
+  grid-template-columns: auto  50px;
+  align-items: center;
 }
 </style>
