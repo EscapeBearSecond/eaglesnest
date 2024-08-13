@@ -228,7 +228,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 defineOptions({
   name: 'Task',
 })
-
+const itemLabelPosition = ref('right')
 const searchInfo = ref({
   taskName: '',
 })
@@ -584,24 +584,23 @@ const enterAddDialog = async() => {
         ...taskForm.value
       }
       // 这里加了判断 是否是默认执行方式，如果是默认 就是 区域选择 如果是自定义就是输入内容
-      req.targetIp = getIpArr(req.targetIpStr)
-      
+      req.scanIpType != 1 ? (req.targetIp = getIpArr(req.targetIpStr)): req.targetIp = req.areaIp;
+      console.log(req);
       if (dialogFlag.value === 'add') {  
         const res = await createTask(req)
         if (res.code === 0) {
           ElMessage({ type: 'success', message: '创建成功' })
-          await getTableData()
-          closeAddDialog()
         }
       }
       if (dialogFlag.value === 'edit') {
         const res = await updateTemplate(req)
         if (res.code === 0) {
           ElMessage({ type: 'success', message: '编辑成功' })
-          await getTableData()
-          closeAddDialog()
         }
       }
+
+      await getTableData()
+      closeAddDialog()
     }
   })
 }
@@ -627,6 +626,7 @@ const handleClickUpdate = (row) => {
 }
 
 function getIpArr(e) {
+    console.log(e)
     if(e.includes(',')) {
         return e.split(',')
     }else {
