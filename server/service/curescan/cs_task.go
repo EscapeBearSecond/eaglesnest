@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
-	"strings"
 	"time"
 
 	"47.103.136.241/goprojects/curescan/server/global"
@@ -32,7 +31,7 @@ var (
 	onlineCheckService = &OnlineCheckService{}
 	jobResultService   = &JobResultService{}
 	userService        = &system.UserService{}
-	// assetService       = &AssetService{}
+	assetService       = &AssetService{}
 )
 
 // 执行方式
@@ -455,7 +454,9 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 
 			// 资产添加
 			assets := getAssetFromResult(taskResult)
-			err = tx.Model(&curescan.Asset{}).CreateInBatches(assets, 100).Error
+			// TODO 批量添加资产
+			err = assetService.BatchAdd(assets)
+			// err = tx.Model(&curescan.Asset{}).CreateInBatches(assets, 100).Error
 			if err != nil {
 				return err
 			}
@@ -565,35 +566,35 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 func getAssetFromResult(result *response.TaskResult) []*curescan.Asset {
 	assets := make([]*curescan.Asset, 0)
 	for _, item := range result.JobResultList {
-		nameSplit := strings.Split(item.Name, "_")
+		// nameSplit := strings.Split(item.Name, "_")
 		if item.Kind == "1" {
 			fmt.Println("资产添加", item.Name)
 			asset := &curescan.Asset{}
 			asset.AreaName = "未知"
 			asset.AssetArea = 0
 			asset.AssetName = item.Name
-			asset.AssetType = nameSplit[0]
-			if len(nameSplit) == 1 {
-				asset.SystemType = "未知"
-				asset.Manufacturer = "未知"
-				asset.AssetModel = "未知"
-			}
-			if len(nameSplit) == 2 {
-				asset.SystemType = nameSplit[1]
-				asset.Manufacturer = "未知"
-				asset.AssetModel = "未知"
-			}
-			if len(nameSplit) == 3 {
-				asset.SystemType = nameSplit[1]
-				asset.Manufacturer = nameSplit[2]
-				asset.AssetModel = "未知"
-			}
-			if len(nameSplit) == 4 {
-				asset.SystemType = nameSplit[1]
-				asset.Manufacturer = nameSplit[2]
-				asset.AssetModel = nameSplit[3]
-			}
-			asset.AssetIP = item.Host
+			asset.AssetType = item.Type
+			// if len(nameSplit) == 1 {
+			// 	asset.SystemType = "未知"
+			// 	asset.Manufacturer = "未知"
+			// 	asset.AssetModel = "未知"
+			// }
+			// if len(nameSplit) == 2 {
+			// 	asset.SystemType = nameSplit[1]
+			// 	asset.Manufacturer = "未知"
+			// 	asset.AssetModel = "未知"
+			// // }
+			// if len(nameSplit) == 3 {
+			// 	asset.SystemType = nameSplit[1]
+			// 	asset.Manufacturer = nameSplit[2]
+			// 	asset.AssetModel = "未知"
+			// }
+			// if len(nameSplit) == 4 {
+			// 	asset.SystemType = nameSplit[1]
+			// 	asset.Manufacturer = nameSplit[2]
+			// 	asset.AssetModel = nameSplit[3]
+			// }
+			asset.AssetIP = item.URL
 			port, _ := strconv.Atoi(item.Port)
 			asset.OpenPorts = []int64{int64(port)}
 			assets = append(assets, asset)
@@ -637,8 +638,8 @@ func (s *TaskService) generateJob(jobConfig []*request.JobConfig, taskResult *re
 			var data []*curescan.JobResultItem
 			for _, item := range result.Items {
 				fmt.Println("发现了一个结果")
-				var item = &curescan.JobResultItem{
-					Name:             result.Name,
+				var oneRes = &curescan.JobResultItem{
+					Name:             item.TemplateName,
 					Kind:             result.Kind,
 					TemplateID:       item.TemplateID,
 					TemplateName:     item.TemplateName,
@@ -654,7 +655,7 @@ func (s *TaskService) generateJob(jobConfig []*request.JobConfig, taskResult *re
 					Description:      item.Description,
 					EntryID:          result.EntryID,
 				}
-				data = append(data, item)
+				data = append(data, oneRes)
 			}
 			taskResult.JobResultList = data
 			return nil

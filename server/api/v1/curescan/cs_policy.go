@@ -55,7 +55,7 @@ func (p *PolicyApi) CreatePolicy(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if len(createPolicy.PolicyConfig) == 0 && !createPolicy.OnlineConfig.Use && !createPolicy.PortScanConfig.Use{
+	if len(createPolicy.PolicyConfig) == 0 && !createPolicy.OnlineConfig.Use && !createPolicy.PortScanConfig.Use {
 		err = fmt.Errorf("至少选择一种扫描类型")
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -198,7 +198,7 @@ func (p *PolicyApi) GetPolicyById(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	policyDetil := &csresponse.PolicyDetail{
+	policyDetail := &csresponse.PolicyDetail{
 		GvaModel:       policy.GvaModel,
 		PolicyName:     policy.PolicyName,
 		PolicyDesc:     policy.PolicyDesc,
@@ -211,7 +211,7 @@ func (p *PolicyApi) GetPolicyById(c *gin.Context) {
 		Templates:      policy.Templates,
 		IgnoredIP:      policy.IgnoredIP,
 	}
-	response.OkWithData(policyDetil, c)
+	response.OkWithData(policyDetail, c)
 }
 
 func (p *PolicyApi) GetPolicyList(c *gin.Context) {
