@@ -557,7 +557,6 @@ const typeNameList = reactive([
  }
 
  const changeScanType = (e)=> {
-      console.log(e)
       e.templates = []
  }
 

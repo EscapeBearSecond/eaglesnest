@@ -634,8 +634,7 @@ function getIpArr(e) {
     }
 }
 
-function IpToStr(e) {
-   console.log(e)
+function IpToStr(e) {   
    if(Array.isArray(e)) {
       if(e.length > 0) {
           return e.join(',')
