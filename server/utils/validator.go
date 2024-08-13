@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/robfig/cron/v3"
 	"net"
 	"reflect"
 	"regexp"
@@ -337,4 +338,9 @@ func validateIp(ip string) bool {
 		}
 	}
 	return true
+}
+
+func IsValidCron(expr string) bool {
+	_, err := cron.ParseStandard(expr)
+	return err == nil
 }

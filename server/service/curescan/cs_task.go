@@ -1,6 +1,7 @@
 package curescan
 
 import (
+	"47.103.136.241/goprojects/curescan/server/utils"
 	"context"
 	"encoding/json"
 	"errors"
@@ -113,6 +114,9 @@ func (s *TaskService) CreateTask(task *curescan.Task) error {
 	}
 	// 定时计划
 	if task.TaskPlan == ExecuteTiming {
+		if !utils.IsValidCron(task.PlanConfig) {
+			return fmt.Errorf("错误的cron表达式")
+		}
 		// cronName := task.TaskName
 		err = s.ExecuteTask(int(task.ID))
 		// _, err = global.GVA_Timer.AddTaskByFunc(cronName, createTask.PlanConfig, func() { s.ExecuteTask(int(task.ID)) }, task.TaskName, cron.WithSeconds())
@@ -489,7 +493,8 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 			EntryID:    entry.EntryID,
 			Flag:       task.Flag,
 		}
-		err = global.GVA_DB.Create(newTask).Error
+		err = s.CreateTask(newTask)
+		// err = global.GVA_DB.Create(newTask).Error
 		if err != nil {
 			global.GVA_LOG.Error("任务开始执行失败", zap.String("taskName", newTask.TaskName), zap.String("error", err.Error()))
 			return
@@ -609,7 +614,7 @@ func getAssetFromResult(result *response.TaskResult) []*curescan.Asset {
 					OpenPorts:    []int64{port},
 					AreaName:     "未知",
 					AssetArea:    0,
-					AssetIP:      item.IP,
+					AssetIP:      fmt.Sprintf("%s:%d", item.IP, port),
 					AssetName:    assetInfo.AssetName,
 					AssetType:    assetInfo.AssetType,
 					AssetModel:   assetInfo.AssetModel,
