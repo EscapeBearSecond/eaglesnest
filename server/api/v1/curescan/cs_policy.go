@@ -1,6 +1,7 @@
 package curescan
 
 import (
+	"47.103.136.241/goprojects/curescan/server/model/curescan/common"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -61,15 +62,16 @@ func (p *PolicyApi) CreatePolicy(c *gin.Context) {
 		return
 	}
 	for _, policyConfig := range createPolicy.PolicyConfig {
-		if policyConfig.Kind == "1" {
-			policyConfig.Name = "资产发现"
-		}
-		if policyConfig.Kind == "2" {
-			policyConfig.Name = "漏洞扫描"
-		}
-		if policyConfig.Kind == "3" {
-			policyConfig.Name = "弱口令"
-		}
+		policyConfig.Name = common.JobTypeName[policyConfig.Kind]
+		// if policyConfig.Kind == common.AssetDiscovery {
+		// 	policyConfig.Name = "资产发现"
+		// }
+		// if policyConfig.Kind == common.VulnerabilityScan {
+		// 	policyConfig.Name = "漏洞扫描"
+		// }
+		// if policyConfig.Kind == common.WeakPassword {
+		// 	policyConfig.Name = "弱口令"
+		// }
 	}
 	policyConfig, err := json.Marshal(createPolicy.PolicyConfig)
 	if err != nil {
