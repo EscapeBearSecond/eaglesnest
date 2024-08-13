@@ -1,10 +1,14 @@
 <template>
   <div class="view-content ">
       <div class="chat-content bg">
-          <div class="serious-char bg">1</div>
-          <div class="height-char bg">2</div>
-          <div class="medium-char bg">3</div>
-          <div class="medium-char bg">4</div>
+          <div class="serious-char bg">
+            <gva-card title="内容数据" custom-class="col-span-1 md:col-span-3 row-span-2">
+              <gva-chart :type="4" />
+            </gva-card>
+          </div>
+          <div class="height-char bg"> <gva-card title="内容数据" custom-class="col-span-1 md:col-span-3 row-span-2">
+              <gva-chart :type="4" />
+            </gva-card></div>
       </div>
       <div class="task-content">
          <span> <el-statistic title="Daily active users" :value="268500" /></span>
@@ -40,14 +44,23 @@
           <el-statistic title="Daily active users" :value="268500" />
         </span>
       </div>
-      <div class="top-content bg-f">
-        <div>1</div>
-        <div>2</div>
+      <div class="top-content">
+        <div>
+          <gva-card title="最新更新" custom-class="col-span-1 md:col-span-3 row-span-2">
+            <gva-table />
+          </gva-card>
+        </div>
+        <div>
+          <gva-card title="最新插件" custom-class="col-span-1 md:col-span-3 row-span-2">
+            <gva-plugin-table />
+          </gva-card>
+        </div>
       </div>
   </div>
 </template>
 
 <script setup>
+import { GvaPluginTable,GvaTable, GvaChart, GvaWiki , GvaNotice , GvaQuickLink , GvaCard , GvaBanner } from "./componenst"
 import { ref, reactive } from 'vue'
 import { useTransition } from '@vueuse/core'
 defineOptions({
@@ -73,9 +86,8 @@ source.value = 172000
   .chat-content {
     height: 35vh;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     column-span: 10px;
-    justify-items: center;
     align-items: center;
   }
 
@@ -91,7 +103,6 @@ source.value = 172000
     display: grid;
     height: 35vh;
     grid-template-columns: 1fr 1fr;
-    justify-items: center;
     align-items: center;
   }
 }
