@@ -566,7 +566,7 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 func getAssetFromResult(result *response.TaskResult) []*curescan.Asset {
 	assets := make([]*curescan.Asset, 0)
 	for _, item := range result.JobResultList {
-		// nameSplit := strings.Split(item.Name, "_")
+		// typeSplit := strings.Split(item.TemplateID, "_")
 		if item.Kind == "1" {
 			fmt.Println("资产添加", item.Name)
 			asset := &curescan.Asset{}
@@ -574,25 +574,25 @@ func getAssetFromResult(result *response.TaskResult) []*curescan.Asset {
 			asset.AssetArea = 0
 			asset.AssetName = item.Name
 			asset.AssetType = item.Type
-			// if len(nameSplit) == 1 {
-			// 	asset.SystemType = "未知"
+			// if len(typeSplit) == 1 {
+			asset.SystemType = "未知"
+			asset.Manufacturer = "未知"
+			asset.AssetModel = "未知"
+			// }
+			// if len(typeSplit) == 2 {
+			// 	asset.SystemType = typeSplit[1]
 			// 	asset.Manufacturer = "未知"
 			// 	asset.AssetModel = "未知"
 			// }
-			// if len(nameSplit) == 2 {
-			// 	asset.SystemType = nameSplit[1]
-			// 	asset.Manufacturer = "未知"
-			// 	asset.AssetModel = "未知"
-			// // }
-			// if len(nameSplit) == 3 {
-			// 	asset.SystemType = nameSplit[1]
-			// 	asset.Manufacturer = nameSplit[2]
+			// if len(typeSplit) == 3 {
+			// 	asset.SystemType = typeSplit[1]
+			// 	asset.Manufacturer = typeSplit[2]
 			// 	asset.AssetModel = "未知"
 			// }
-			// if len(nameSplit) == 4 {
-			// 	asset.SystemType = nameSplit[1]
-			// 	asset.Manufacturer = nameSplit[2]
-			// 	asset.AssetModel = nameSplit[3]
+			// if len(typeSplit) == 4 {
+			// 	asset.SystemType = typeSplit[1]
+			// 	asset.Manufacturer = typeSplit[2]
+			// 	asset.AssetModel = typeSplit[3]
 			// }
 			asset.AssetIP = item.URL
 			port, _ := strconv.Atoi(item.Port)
@@ -600,6 +600,7 @@ func getAssetFromResult(result *response.TaskResult) []*curescan.Asset {
 			assets = append(assets, asset)
 		}
 	}
+
 	for _, item := range result.PortScanList {
 		for _, port := range item.Ports {
 			if assetInfo, ok := portAssetMap[port]; ok {
