@@ -175,34 +175,35 @@
         :size="showSize"
         border
       >
-        <el-descriptions-item label="任务名称" >
+        <el-descriptions-item label="任务名称" align="center">
           {{  showInfo.taskName }}
         </el-descriptions-item>
-        <el-descriptions-item label="执行方式" >{{  showInfo.taskPlan == 1 ? '立即执行' : '稍后执行' }}</el-descriptions-item>
-        <el-descriptions-item label="关联策略" >{{  showInfo.policyName }}</el-descriptions-item>
-        <el-descriptions-item label="当前状态" >
+        <el-descriptions-item label="执行方式" align="center">{{  showInfo.taskPlan == 1 ? '立即执行' : '稍后执行' }}</el-descriptions-item>
+        <el-descriptions-item label="关联策略" align="center">{{  showInfo.policyName }}</el-descriptions-item>
+        <el-descriptions-item label="当前状态" align="center">
           <el-tag size="small">{{  getStatus(showInfo.status) }}</el-tag>
         </el-descriptions-item>
-        <el-descriptions-item label="正在执行" v-if="showInfo.status == 1">
-            {{  stageData.name }}
-        </el-descriptions-item>
-        <el-descriptions-item label="当前进度" v-if="showInfo.status == 1">
-          <el-progress type="dashboard" :percentage="stageData.percent * 100" :color="colors" />
-        </el-descriptions-item>
-        <el-descriptions-item label="任务数量" v-if="showInfo.status == 1">
+        <el-descriptions-item label="任务数量" v-if="showInfo.status == 1" align="center">
             {{  stageData.total }}
         </el-descriptions-item>
-        <el-descriptions-item label="进度序号" v-if="showInfo.status == 1">
+        <el-descriptions-item label="执行序号" v-if="showInfo.status == 1" align="center">
             {{  stageData.running }}
         </el-descriptions-item>
-        <el-descriptions-item label="扫描IP" :span="2">
-          {{  IpToStr(showInfo.targetIp) }}
+        <el-descriptions-item label="正在执行" v-if="showInfo.status == 1" align="center">
+            {{  stageData.name }}
         </el-descriptions-item>
-        <el-descriptions-item label="描述" :span="2">
-          {{  showInfo.taskDesc }}
+        <el-descriptions-item label="当前进度" v-if="showInfo.status == 1" align="center">
+          <el-progress type="dashboard" :percentage="stageData.percent * 100" :color="colors" />
         </el-descriptions-item>
        
+        <el-descriptions-item label="扫描IP" :span="2" align="center">
+          {{  IpToStr(showInfo.targetIp) }}
+        </el-descriptions-item>
+        <el-descriptions-item label="描述" :span="2" align="center">
+          {{  showInfo.taskDesc }}
+        </el-descriptions-item>
       </el-descriptions>
+      <div class="close-btn"><el-button type="primary" @click="showDialogFlag = false">关闭</el-button></div>
   </el-dialog>
   </div>
 </template>
@@ -228,7 +229,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 defineOptions({
   name: 'Task',
 })
-
+const itemLabelPosition = ref('right')
 const searchInfo = ref({
   taskName: '',
 })
@@ -584,24 +585,23 @@ const enterAddDialog = async() => {
         ...taskForm.value
       }
       // 这里加了判断 是否是默认执行方式，如果是默认 就是 区域选择 如果是自定义就是输入内容
-      req.targetIp = getIpArr(req.targetIpStr)
-      
+      req.scanIpType != 1 ? (req.targetIp = getIpArr(req.targetIpStr)): req.targetIp = req.areaIp;
+      console.log(req);
       if (dialogFlag.value === 'add') {  
         const res = await createTask(req)
         if (res.code === 0) {
           ElMessage({ type: 'success', message: '创建成功' })
-          await getTableData()
-          closeAddDialog()
         }
       }
       if (dialogFlag.value === 'edit') {
         const res = await updateTemplate(req)
         if (res.code === 0) {
           ElMessage({ type: 'success', message: '编辑成功' })
-          await getTableData()
-          closeAddDialog()
         }
       }
+
+      await getTableData()
+      closeAddDialog()
     }
   })
 }
@@ -627,6 +627,7 @@ const handleClickUpdate = (row) => {
 }
 
 function getIpArr(e) {
+    console.log(e)
     if(e.includes(',')) {
         return e.split(',')
     }else {
@@ -634,8 +635,7 @@ function getIpArr(e) {
     }
 }
 
-function IpToStr(e) {
-   console.log(e)
+function IpToStr(e) {   
    if(Array.isArray(e)) {
       if(e.length > 0) {
           return e.join(',')
@@ -734,5 +734,13 @@ const handleShow = async(e)=> {
   display: grid;
   grid-template-columns: auto  50px;
   align-items: center;
+}
+
+.close-btn {
+  display: grid;
+  grid-template-rows: 1fr;
+  align-items: center;
+  justify-items: center;
+  margin: 10px 0px;
 }
 </style>
