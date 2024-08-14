@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"47.103.136.241/goprojects/curescan/server/global"
 	"47.103.136.241/goprojects/curescan/server/model/curescan"
@@ -57,6 +58,7 @@ func (t *TemplateService) GetTemplatesByIds(ids []int64) ([]*curescan.Template, 
 
 // GetTemplateList 获取模板列表，该方法返回除模板内容外的所有信息。如果想要获取模板内容，需要调用GetTemplateById方法。
 func (t *TemplateService) GetTemplateList(searchTemplate request2.SearchTemplate) (list []*curescan.Template, total int64, err error) {
+	start := time.Now()
 	template := searchTemplate.Template
 	page := searchTemplate.PageInfo
 	order := searchTemplate.OrderKey
@@ -117,6 +119,8 @@ func (t *TemplateService) GetTemplateList(searchTemplate request2.SearchTemplate
 			OrderStr += " desc"
 		}
 	}
+	cost := time.Since(start)
+	fmt.Println("构建查询信息花费：", cost)
 	err = db.Order(OrderStr).Find(&templates).Error
 	return templates, total, err
 }
