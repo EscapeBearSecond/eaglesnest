@@ -260,9 +260,20 @@ const getTemplateTagData = async () => {
      const data = await getTemplateTagList()
      tagList.value = data.data
 }
-getTemplateTagData()
 
 
+const initPage = async() => {
+   getTemplateTagData()
+  getOptionDict()
+}
+initPage()
+
+const getOptionDict = async() => {
+    const res = await getDict('templateType')
+    res && res.forEach(item => {
+        templateOptions.value.push({label: item.label, value: item.value})
+    })
+}
 // 获取模板
 const checkAll = ref(false)
 const indeterminate = ref(false)
