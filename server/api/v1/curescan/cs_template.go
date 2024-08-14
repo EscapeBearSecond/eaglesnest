@@ -135,20 +135,21 @@ func (t *TemplateApi) GetTemplateList(c *gin.Context) {
 	}
 	start := time.Now()
 	list, total, err := templateService.GetTemplateList(searchTemplate)
-
+	getTemplateListDuration := time.Since(start)
+	fmt.Println("GetTemplateList 花费 ", getTemplateListDuration)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+	start = time.Now()
 	response.OkWithDetailed(response.PageResult{
 		List:     list,
 		Total:    total,
 		Page:     searchTemplate.Page,
 		PageSize: searchTemplate.PageSize,
 	}, "获取成功", c)
-	end := time.Now()
-	cost := end.Sub(start)
-	fmt.Println("花费 ", cost)
+	responseDuration := time.Since(start)
+	fmt.Println("Response 花费 ", responseDuration)
 }
 
 func (t *TemplateApi) UpdateTemplate(c *gin.Context) {
