@@ -135,28 +135,35 @@ func (t *TemplateApi) GetTemplateList(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+
+	c.Writer.Header().Set("Content-Type", "application/json")
+	c.Writer.WriteHeader(http.StatusOK)
+
+	encoder := json.NewEncoder(c.Writer)
+
 	start := time.Now()
 	list, total, err := templateService.GetTemplateList(searchTemplate)
-	getTemplateListDuration := time.Since(start)
-	fmt.Println("GetTemplateList 花费 ", getTemplateListDuration)
 	if err != nil {
-		response.FailWithMessage(err.Error(), c)
+		response.FailWithMessage("获取数据失败", c)
 		return
 	}
-	start = time.Now()
-	responseData := response.PageResult{
-		List:     list,
+	getTemplateListDuration := time.Since(start)
+	fmt.Println("GetTemplateList 花费 ", getTemplateListDuration)
+	// 写入分页信息
+	encoder.Encode(response.PageResult{
+		List:     nil, // 暂时写入空数据
 		Total:    total,
 		Page:     searchTemplate.Page,
 		PageSize: searchTemplate.PageSize,
+	})
+	start = time.Now()
+	for _, item := range list {
+		if err = encoder.Encode(item); err != nil {
+			fmt.Println("数据编码错误： ", err.Error())
+			return
+		}
 	}
-	responseDataJson, err := json.Marshal(responseData)
-	if err != nil {
-		response.FailWithMessage("处理数据失败", c)
-		return
-	}
-	c.Data(http.StatusOK, "application/json", responseDataJson)
-	//
+	c.Writer.Flush()
 	// response.OkWithDetailed(response.PageResult{
 	// 	List:     list,
 	// 	Total:    total,

@@ -56,7 +56,7 @@ func (t *TemplateService) GetTemplatesByIds(ids []int64) ([]*curescan.Template, 
 }
 
 // GetTemplateList 获取模板列表，该方法返回除模板内容外的所有信息。如果想要获取模板内容，需要调用GetTemplateById方法。
-func (t *TemplateService) GetTemplateList(searchTemplate request2.SearchTemplate) (list interface{}, total int64, err error) {
+func (t *TemplateService) GetTemplateList(searchTemplate request2.SearchTemplate) (list []*curescan.Template, total int64, err error) {
 	template := searchTemplate.Template
 	page := searchTemplate.PageInfo
 	order := searchTemplate.OrderKey
@@ -69,7 +69,7 @@ func (t *TemplateService) GetTemplateList(searchTemplate request2.SearchTemplate
 	} else {
 		db = global.GVA_DB.Model(&curescan.Template{}).Omit("template_content")
 	}
-	var templates []curescan.Template
+	var templates []*curescan.Template
 	if template.TemplateType != "" {
 		db = db.Where("template_type = ?", template.TemplateType)
 	}
