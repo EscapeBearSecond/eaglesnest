@@ -88,18 +88,33 @@
         :model="taskForm"
         label-width="100px"
       >
-        <el-form-item label="扫描名称：" :label-position="itemLabelPosition" prop="taskName">
+      <el-form-item label="扫描名称：" :label-position="itemLabelPosition" prop="taskName">
           <el-input v-model="taskForm.taskName" placeholder="请输入扫描名称" />
         </el-form-item>
-        <el-form-item label="扫描状态：" :label-position="itemLabelPosition" prop="status">
-          <el-select v-model="taskForm.status" placeholder="请选择扫描状态">
-            <el-option label="开启" value="1" />
-            <el-option label="关闭" value="0" />
+        <el-form-item label="执行方式：" :label-position="itemLabelPosition" prop="taskPlan">
+          <el-select v-model="taskForm.taskPlan" placeholder="请选择执行方式">
+            <el-option label="立即执行" value="1" />
+            <el-option label="稍后执行" value="2" />
           </el-select>
         </el-form-item>
-        <p style="margin-left:100px"><warning-bar title="注：多个地址段请用逗号分隔" /></p>
-        <el-form-item label="扫描I P：" :label-position="itemLabelPosition" prop="targetIp">
-          <el-input type="textarea" :rows="4" v-model="taskForm.targetIpStr" placeholder="请输入扫描IP, 例：10.0.0.1/24, 10.0.0.1 ~ 10.0.0.255 "></el-input>
+        <el-form-item label="IP类型：" :label-position="itemLabelPosition" prop="targetIp">
+          <el-radio-group v-model="taskForm.scanIpType">
+            <el-radio-button label="默认" value="1" />
+            <el-radio-button label="自定义" value="2" />
+          </el-radio-group>
+        </el-form-item>
+        <p style="margin-left:100px" v-if="taskForm.scanIpType == 2"><warning-bar title="注：多个地址段请用逗号分隔！" /></p>
+        <el-form-item label="IP地址：" v-if="taskForm.scanIpType == 2">
+          <el-input  type="textarea" :rows="4" v-model="taskForm.targetIpStr" placeholder="请输入扫描IP, 例：10.0.0.1/24, 10.0.0.1 ~ 10.0.0.255 "></el-input>
+        </el-form-item>
+        <el-form-item label="扫描区域：" v-if="taskForm.scanIpType == 1">
+          <el-select  v-model="taskForm.areaIp" multiple placeholder="请选择扫描任务区域,可多选">
+            <el-option  
+              v-for="item in areaOption"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value" />
+          </el-select>
         </el-form-item>
         <el-form-item label="扫描策略：" :label-position="itemLabelPosition" prop="policyId">
           <el-select v-model="taskForm.policyId" placeholder="请选择策略模板">
@@ -131,6 +146,7 @@ import {
   reportTask,
 } from '@/api/task.js'
 import { getPolicyList } from '@/api/policy.js'
+import { getAreaList } from '@/api/area.js'
 import WarningBar from '@/components/warningBar/warningBar.vue'
 import { ref, reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -140,6 +156,7 @@ defineOptions({
 
 const page = ref(1)
 const tableData = ref([])
+const itemLabelPosition = ref('right')
 const listQuery = reactive({
    page : 1,
    total: 0,
@@ -225,11 +242,17 @@ const getTableData = async() => {
 
 // 获取策略模板
 const policyOption = ref([])
+const areaOption = ref([])
 const setPolicyOption = async() => {
     const data = await getPolicyList({ page: 1, pageSize: 99999 })
     
     policyOption.value = data.data.list.map((item)=> {
       return {label: item.policyName, value: item.ID}
+    })
+
+    const areaData = await getAreaList({ page: 1, pageSize: 99999 })
+    areaOption.value = areaData.data.list.map((item)=> {
+        return { label: item.areaName, value: item.areaIp.join(',') }
     })
 }
 
@@ -310,13 +333,13 @@ const getTypeTagName = (e) => {
 const taskForm = ref({
   taskName:"",
   taskDesc:"",
-  status:"",
   targetIp:"",
   targetIpStr:"",
   policyId:"",
   taskPlan:[3],
   date:"",
   frequency:"",
+  scanIpType: '1',
 })
 
 const tableColumns = reactive([
@@ -355,24 +378,22 @@ const enterAddDialog = async() => {
       const req = {
         ...taskForm.value
       }
-      // req.areaIp = getIpArr(req.areaIpStr)
+      req.scanIpType != 1 ? (req.targetIp = getIpArr(req.targetIpStr)): req.targetIp = req.areaIp;
       if (dialogFlag.value === 'add') {
-        req.targetIp = getIpArr(req.targetIpStr)
         const res = await createTask(req)
         if (res.code === 0) {
           ElMessage({ type: 'success', message: '创建成功' })
-          await getTableData()
-          closeAddDialog()
+         
         }
       }
       if (dialogFlag.value === 'edit') {
         const res = await updateTemplate(req)
         if (res.code === 0) {
           ElMessage({ type: 'success', message: '编辑成功' })
-          await getTableData()
-          closeAddDialog()
         }
       }
+      await getTableData()
+      closeAddDialog()
     }
   })
 }
