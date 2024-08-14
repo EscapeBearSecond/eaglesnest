@@ -7,7 +7,7 @@
   <div>
     <el-table :data="tableData" stripe style="width: 100%">
       <el-table-column prop="ranking" label="排名" width="80" align="center" />
-      <el-table-column prop="title" label="IP" show-overflow-tooltip />
+      <el-table-column prop="title" label="IP" />
       <el-table-column prop="critical" label="超危" width="100" />
       <el-table-column prop="high" label="高危" width="100" />
       <el-table-column prop="medium" label="中危" width="100" />

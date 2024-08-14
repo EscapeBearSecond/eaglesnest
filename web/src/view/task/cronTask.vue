@@ -14,13 +14,12 @@
          </el-form-item>
          <el-form-item label="状态">
           <el-select v-model="searchInfo.status" placeholder="请选择状态">
-            <el-option label="创建中" :value="0" />
-            <el-option label="执行中" :value="1" />
-            <el-option label="已完成" :value="2" />
-            <el-option label="执行失败" :value="3" />
-            <el-option label="已终止" :value="4" />
-            <el-option label="运行中" :value="5" />
-            <el-option label="已停止" :value="6" />
+            <el-option
+              v-for="item in statusOption"
+              :key="item.value"
+              :label="item.label"
+              :value="parseInt(item.value)"
+          />
           </el-select>
          </el-form-item>
          <el-form-item>
@@ -144,6 +143,8 @@ import { getAreaList } from '@/api/area.js'
 import WarningBar from '@/components/warningBar/warningBar.vue'
 import { ref, reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { getDict } from '@/utils/dictionary'
+
 defineOptions({
   name: 'Task',
 })
@@ -231,6 +232,7 @@ const getTableData = async() => {
 // 获取策略模板
 const policyOption = ref([])
 const areaOption = ref([])
+const statusOption = ref([])
 const setPolicyOption = async() => {
     const data = await getPolicyList({ page: 1, pageSize: 99999 })
     policyOption.value = data.data.list.map((item)=> {
@@ -240,6 +242,11 @@ const setPolicyOption = async() => {
     const areaData = await getAreaList({ page: 1, pageSize: 99999 })
     areaOption.value = areaData.data.list.map((item)=> {
         return { label: item.areaName, value: item.areaIp.join(',') }
+    })
+
+    const res = await getDict('taskStatus')
+    res && res.forEach(item => {
+      statusOption.value.push({label: item.label, value: item.value})
     })
 }
 

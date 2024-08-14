@@ -84,7 +84,6 @@ source.value = 172000
   row-gap: 15px;
 
   .chat-content {
-    height: 35vh;
     display: grid;
     grid-template-columns: 1fr 1fr;
     column-span: 10px;
