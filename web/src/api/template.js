@@ -13,7 +13,7 @@ export const getTemplateList = (data) => {
       url: '/template/list',
       method: 'post',
       data,
-      timeout: 20000,
+      timeout: 30000,
     })
 }
 export const postTemplateImports = (data) => {
