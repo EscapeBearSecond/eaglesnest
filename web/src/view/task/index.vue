@@ -194,10 +194,10 @@
           <el-progress type="dashboard" :percentage="stageData.percent * 100" :color="colors" />
         </el-descriptions-item>
        
-        <el-descriptions-item label="扫描IP" :span="2" align="center">
+        <el-descriptions-item label="扫描 IP" :span="2" align="center">
           {{  IpToStr(showInfo.targetIp) }}
         </el-descriptions-item>
-        <el-descriptions-item label="描述" :span="2" align="center">
+        <el-descriptions-item label="任务描述" :span="2" align="center">
           {{  showInfo.taskDesc }}
         </el-descriptions-item>
       </el-descriptions>

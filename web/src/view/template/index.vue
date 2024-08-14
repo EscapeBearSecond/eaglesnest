@@ -258,7 +258,7 @@ const getOptionDict = async() => {
   const res = await getDict('templateType')
   res && res.forEach(item => {
       templateOptions.value.push({label: item.label, value: item.value})
-  })  
+  })
 }
 
 initPage()
