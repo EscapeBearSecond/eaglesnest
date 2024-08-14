@@ -13,12 +13,6 @@
              placeholder="请输入任务名称"
            />
          </el-form-item>
-         <el-form-item label="执行方式">
-          <el-select v-model="searchInfo.taskPlan" placeholder="请选择执行方式" >
-            <el-option label="立即执行" :value="1" />
-            <el-option label="稍后执行" :value="2" />
-          </el-select>
-         </el-form-item>
          <el-form-item label="状态">
           <el-select v-model="searchInfo.status" placeholder="请选择状态">
             <el-option
@@ -98,9 +92,14 @@
           <el-input v-model="taskForm.taskName" placeholder="请输入扫描名称" />
         </el-form-item>
         <el-form-item label="执行方式：" :label-position="itemLabelPosition" prop="taskPlan">
-          <el-select v-model="taskForm.taskPlan" placeholder="请选择执行方式">
-            <el-option label="立即执行" value="1" />
-            <el-option label="稍后执行" value="2" />
+          <el-select v-model="taskForm.taskPlan" placeholder="请选择执行方式" >
+            <el-option
+                v-for="item in executeTypeOption"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+                :disabled="item.value == 3"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="IP类型：" :label-position="itemLabelPosition" prop="targetIp">
@@ -314,6 +313,7 @@ const getTableData = async() => {
 const policyOption = ref([])
 const areaOption = ref([])
 const statusOption = ref([])
+const executeTypeOption = ref([])
 const setPolicyOption = async() => {
     const data = await getPolicyList({ page: 1, pageSize: 99999 })
     policyOption.value = data.data.list.map((item)=> {
@@ -324,13 +324,16 @@ const setPolicyOption = async() => {
     areaOption.value = areaData.data.list.map((item)=> {
         return { label: item.areaName, value: item.areaIp.join(',') }
     })
-
     
     const res = await getDict('taskStatus')
     res && res.forEach(item => {
       statusOption.value.push({label: item.label, value: item.value})
     })
-    console.log(res);
+
+    const executeTypeData = await getDict('executeType')
+    executeTypeData && executeTypeData.forEach(item => {
+      executeTypeOption.value.push({label: item.label, value: item.value})
+    })
 }
 
 // 获取策略名称
@@ -557,8 +560,8 @@ const tableColumns = reactive([
   { label:'执行方式', prop:'taskPlan', slot: 'customTaskPlan'},
   { label:'策略', prop:'policyName'},
   { label:'状态', prop:'status', formatter(row, column) {
-      let res = ['创建中','执行中','已完成', '执行失败', '已终止', '运行中', '已停止']
-      return res[row.status]
+      let opt = statusOption.value.find(item => item.value == row.status)
+      return opt.label
   }},
 ])
 

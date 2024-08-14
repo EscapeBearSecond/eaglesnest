@@ -180,7 +180,7 @@ const statusData = reactive([
   {
       name: "停止",
       type: "primary",
-      icon: "edit",
+      icon: "VideoPause",
       handleClick: (scope) => handleStop(scope.row),
       visible : (scope) => visibleStop(scope.row)
   },
@@ -201,6 +201,7 @@ const statusData = reactive([
 
 const searchInfo = ref({
   taskName: '',
+  status: null,
 })
 const onSubmit = () => {
   listQuery.page = 1
@@ -219,7 +220,7 @@ const getTableData = async() => {
       pageSize: listQuery.pageSize,
       isAll:true,
       taskPlan: [3],
-      ...searchInfo,
+      ...searchInfo.value,
     });
     if (table.code === 0) {
       tableData.value = table.data.list;
@@ -333,8 +334,11 @@ const tableColumns = reactive([
   { label:'目标', prop:'targetIp'},
   { label:'执行方式', prop:'taskPlan', slot: 'customTaskPlan'},
   { label:'状态', prop:'status', formatter(row, column) {
-      let res = ['创建中','执行中','已完成', '执行失败', '已终止', '运行中', '已停止']
-      return res[row.status]
+      let opt = statusOption.value.find(item => item.value == row.status)
+      if (!opt) {
+          return ''
+      }
+      return opt.label
   }},
   { label:'计划配置', prop:'planConfig'},
 ])
