@@ -91,12 +91,6 @@
       <el-form-item label="扫描名称：" :label-position="itemLabelPosition" prop="taskName">
           <el-input v-model="taskForm.taskName" placeholder="请输入扫描名称" />
         </el-form-item>
-        <el-form-item label="执行方式：" :label-position="itemLabelPosition" prop="taskPlan">
-          <el-select v-model="taskForm.taskPlan" placeholder="请选择执行方式">
-            <el-option label="立即执行" value="1" />
-            <el-option label="稍后执行" value="2" />
-          </el-select>
-        </el-form-item>
         <el-form-item label="IP类型：" :label-position="itemLabelPosition" prop="targetIp">
           <el-radio-group v-model="taskForm.scanIpType">
             <el-radio-button label="默认" value="1" />
