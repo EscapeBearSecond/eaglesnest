@@ -330,9 +330,7 @@ const taskForm = ref({
   targetIp:"",
   targetIpStr:"",
   policyId:"",
-  taskPlan:[3],
-  date:"",
-  frequency:"",
+  taskPlan:"3",
   scanIpType: '1',
 })
 
