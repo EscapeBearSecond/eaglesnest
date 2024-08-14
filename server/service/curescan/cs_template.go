@@ -70,11 +70,9 @@ func (t *TemplateService) GetTemplateList(searchTemplate request2.SearchTemplate
 		db = global.GVA_DB.Model(&curescan.Template{}).Omit("template_content")
 	}
 	var templates []*curescan.Template
+
 	if template.TemplateType != "" {
 		db = db.Where("template_type = ?", template.TemplateType)
-	}
-	if template.TemplateName != "" {
-		db = db.Where("template_name LIKE ?", "%"+template.TemplateName+"%")
 	}
 	if template.TemplateId != "" {
 		db = db.Where("template_id = ?", template.TemplateId)
@@ -90,6 +88,9 @@ func (t *TemplateService) GetTemplateList(searchTemplate request2.SearchTemplate
 	}
 	if template.Tag4 != "" && template.Tag4 != "''" {
 		db = db.Where("tag4 = ?", template.Tag4)
+	}
+	if template.TemplateName != "" {
+		db = db.Where("template_name LIKE ?", "%"+template.TemplateName+"%")
 	}
 	err = db.Count(&total).Error
 	if err != nil {
