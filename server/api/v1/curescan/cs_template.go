@@ -135,9 +135,7 @@ func (t *TemplateApi) GetTemplateList(c *gin.Context) {
 	}
 	start := time.Now()
 	list, total, err := templateService.GetTemplateList(searchTemplate)
-	end := time.Now()
-	cost := end.Sub(start)
-	fmt.Println("花费 ", cost)
+
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -148,6 +146,9 @@ func (t *TemplateApi) GetTemplateList(c *gin.Context) {
 		Page:     searchTemplate.Page,
 		PageSize: searchTemplate.PageSize,
 	}, "获取成功", c)
+	end := time.Now()
+	cost := end.Sub(start)
+	fmt.Println("花费 ", cost)
 }
 
 func (t *TemplateApi) UpdateTemplate(c *gin.Context) {
