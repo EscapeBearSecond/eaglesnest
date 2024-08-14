@@ -234,6 +234,7 @@ const getTableData = async() => {
 const policyOption = ref([])
 const areaOption = ref([])
 const statusOption = ref([])
+const executeTypeOption = ref([])
 const setPolicyOption = async() => {
     const data = await getPolicyList({ page: 1, pageSize: 99999 })
     policyOption.value = data.data.list.map((item)=> {
@@ -248,6 +249,11 @@ const setPolicyOption = async() => {
     const res = await getDict('taskStatus')
     res && res.forEach(item => {
       statusOption.value.push({label: item.label, value: item.value})
+    })
+
+    const executeTypeData = await getDict('executeType')
+    executeTypeData && executeTypeData.forEach(item => {
+      executeTypeOption.value.push({label: item.label, value: item.value})
     })
 }
 
@@ -314,8 +320,11 @@ const handleReport =  async(row) =>{
 }
 
 const getTypeTagName = (e) => {
-    let status = ['其他', '立即执行', '稍后执行','定时执行']
-    return status[e]
+    let opt = executeTypeOption.value.find(item => item.value == e)
+      if(!opt) {
+        return ''
+      }
+      return opt.label
 }
 
 // 弹窗相关
