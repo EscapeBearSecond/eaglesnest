@@ -162,12 +162,6 @@ const changeSize = (e) => {
   getTableData()
 }
 
-const templateOptions = reactive([
-    {label: "资产发现", value: '1'},
-    {label: "漏洞扫描", value: '2'},
-    {label: "弱口令", value: '3'},
-])
-
 const handleCurrentChange = (val) => {
   page.value = val
   getTableData()
@@ -239,7 +233,6 @@ const policyOption = ref([])
 const areaOption = ref([])
 const setPolicyOption = async() => {
     const data = await getPolicyList({ page: 1, pageSize: 99999 })
-    
     policyOption.value = data.data.list.map((item)=> {
       return {label: item.policyName, value: item.ID}
     })
@@ -249,12 +242,6 @@ const setPolicyOption = async() => {
         return { label: item.areaName, value: item.areaIp.join(',') }
     })
 }
-
-const getPolicyName = (id) => {
-   let item = policyOption.value.find((item) => item.value == id);   
-   return item.label
-}
-
 
 const initPage = async() => {
   setPolicyOption()
@@ -392,11 +379,6 @@ const enterAddDialog = async() => {
 
 const templateDialog = ref(false)
 const closeAddDialog = () => {
-  console.log(
-  '%c 🍱 CONSOLE_INFO: ',
-  'font-size:20px;background-color: #ED9EC7;color:#fff;',
-  form.value
-  );
   form.value.resetFields()
   templateDialog.value = false
 }
@@ -405,13 +387,6 @@ const dialogFlag = ref('add')
 
 const handleClickAdd = () => {
   dialogFlag.value = 'add'
-  templateDialog.value = true
-}
-
-const handleClickUpdate = (row) => {
-  console.log(row)
-  dialogFlag.value = 'edit'
-  taskForm.value = JSON.parse(JSON.stringify(row))
   templateDialog.value = true
 }
 
