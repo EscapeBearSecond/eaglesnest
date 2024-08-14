@@ -11,6 +11,7 @@ import (
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 	"strconv"
+	"time"
 )
 
 type TemplateApi struct {
@@ -132,7 +133,11 @@ func (t *TemplateApi) GetTemplateList(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+	start := time.Now()
 	list, total, err := templateService.GetTemplateList(searchTemplate)
+	end := time.Now()
+	cost := end.Sub(start)
+	fmt.Println("花费 ", cost)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
