@@ -6,6 +6,7 @@ import (
 	"47.103.136.241/goprojects/curescan/server/model/curescan"
 	"47.103.136.241/goprojects/curescan/server/model/curescan/request"
 	"47.103.136.241/goprojects/curescan/server/utils"
+	"compress/gzip"
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -121,6 +122,16 @@ func (t *TemplateApi) GetTemplateById(c *gin.Context) {
 	response.OkWithData(template, c)
 }
 
+// gzipWriter 结构体
+type gzipWriter struct {
+	gin.ResponseWriter
+	Writer *gzip.Writer
+}
+
+func (w *gzipWriter) Write(data []byte) (int, error) {
+	return w.Writer.Write(data)
+}
+
 // GetTemplateList
 // 返回分页排序后的模板列表，不返回模板内容
 func (t *TemplateApi) GetTemplateList(c *gin.Context) {
@@ -136,10 +147,17 @@ func (t *TemplateApi) GetTemplateList(c *gin.Context) {
 		return
 	}
 
+	// 设置响应头，指明内容使用了gzip压缩
+	c.Writer.Header().Set("Content-Encoding", "gzip")
 	c.Writer.Header().Set("Content-Type", "application/json")
 	c.Writer.WriteHeader(http.StatusOK)
 
-	encoder := json.NewEncoder(c.Writer)
+	// 创建gzip.Writer
+	gz := gzip.NewWriter(c.Writer)
+	defer gz.Close()
+
+	// 使用 gzipWriter 进行压缩写入
+	gzipWriter := &gzipWriter{Writer: gz, ResponseWriter: c.Writer}
 
 	start := time.Now()
 	list, total, err := templateService.GetTemplateList(searchTemplate)
@@ -149,27 +167,22 @@ func (t *TemplateApi) GetTemplateList(c *gin.Context) {
 	}
 	getTemplateListDuration := time.Since(start)
 	fmt.Println("GetTemplateList 花费 ", getTemplateListDuration)
-	// 写入分页信息
-	encoder.Encode(response.PageResult{
-		List:     nil, // 暂时写入空数据
+
+	// 构建响应结果
+	result := response.PageResult{
+		List:     list,
 		Total:    total,
 		Page:     searchTemplate.Page,
 		PageSize: searchTemplate.PageSize,
-	})
-	start = time.Now()
-	for _, item := range list {
-		if err = encoder.Encode(item); err != nil {
-			fmt.Println("数据编码错误： ", err.Error())
-			return
-		}
 	}
-	c.Writer.Flush()
-	// response.OkWithDetailed(response.PageResult{
-	// 	List:     list,
-	// 	Total:    total,
-	// 	Page:     searchTemplate.Page,
-	// 	PageSize: searchTemplate.PageSize,
-	// }, "获取成功", c)
+
+	// 编码并写入数据到gzipWriter
+	start = time.Now()
+	if err := json.NewEncoder(gzipWriter).Encode(result); err != nil {
+		fmt.Println("数据编码错误：", err.Error())
+		return
+	}
+	gzipWriter.Flush()
 	responseDuration := time.Since(start)
 	fmt.Println("Response 花费 ", responseDuration)
 }
