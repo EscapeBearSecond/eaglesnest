@@ -6,10 +6,12 @@ import (
 	"47.103.136.241/goprojects/curescan/server/model/curescan"
 	"47.103.136.241/goprojects/curescan/server/model/curescan/request"
 	"47.103.136.241/goprojects/curescan/server/utils"
+	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
+	"net/http"
 	"strconv"
 	"time"
 )
@@ -142,12 +144,25 @@ func (t *TemplateApi) GetTemplateList(c *gin.Context) {
 		return
 	}
 	start = time.Now()
-	response.OkWithDetailed(response.PageResult{
+	responseData := response.PageResult{
 		List:     list,
 		Total:    total,
 		Page:     searchTemplate.Page,
 		PageSize: searchTemplate.PageSize,
-	}, "获取成功", c)
+	}
+	responseDataJson, err := json.Marshal(responseData)
+	if err != nil {
+		response.FailWithMessage("处理数据失败", c)
+		return
+	}
+	c.Data(http.StatusOK, "application/json", responseDataJson)
+	//
+	// response.OkWithDetailed(response.PageResult{
+	// 	List:     list,
+	// 	Total:    total,
+	// 	Page:     searchTemplate.Page,
+	// 	PageSize: searchTemplate.PageSize,
+	// }, "获取成功", c)
 	responseDuration := time.Since(start)
 	fmt.Println("Response 花费 ", responseDuration)
 }
