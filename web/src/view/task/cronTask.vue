@@ -159,6 +159,7 @@ const listQuery = reactive({
 })
 
 const changeSize = (e) => {
+  listQuery.page = 1
   listQuery.pageSize = e
   getTableData()
 }
