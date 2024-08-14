@@ -7,9 +7,10 @@
   <div>
     <el-table :data="tableData" stripe style="width: 100%">
       <el-table-column prop="ranking" label="排名" width="80" align="center" />
-      <el-table-column prop="title" label="内容标题" show-overflow-tooltip />
-      <el-table-column prop="click_num" label="关注度" width="100" />
-      <el-table-column prop="hot" label="热度值" width="100"  />
+      <el-table-column prop="title" label="IP" />
+      <el-table-column prop="critical" label="超危" width="100" />
+      <el-table-column prop="high" label="高危" width="100" />
+      <el-table-column prop="medium" label="中危" width="100" />
     </el-table>
   </div>
 </template>
@@ -18,34 +19,40 @@
 const tableData = [
   {
     ranking: 1,
-    title : "更简洁的使用界面，更快速的操作体验",
-    click_num : 523,
-    hot : 263
+    title : "192.168.1.1",
+    critical : 263,
+    high : 20,
+    medium : 63
   },
   {
     ranking: 2,
-    title : "更优质的服务，更便捷的使用体验",
-    click_num : 416,
-    hot : 223
+    title : "192.168.1.1",
+    critical : 193,
+    high : 263,
+    medium : 33
   },
   {
     ranking: 3,
-    title : "更快速的创意实现，更高效的工作效率",
-    click_num : 337,
-    hot : 176
+    title : "192.168.1.1",
+    critical : 181,
+    high : 30,
+    medium : 23
   },
   {
     ranking: 4,
-    title : "更多的创意资源，更多的创意灵感",
-    click_num : 292,
-    hot : 145
+    title : "192.168.1.1",
+    critical : 166,
+    high : 73,
+    medium : 13
   },
   {
     ranking: 5,
-    title : "更合理的代码结构，更清晰的代码逻辑",
-    click_num : 173,
-    hot : 110
+    title : "192.168.1.1",
+    critical : 106,
+    high : 73,
+    medium : 163
   },
+ 
 ]
 </script>
 

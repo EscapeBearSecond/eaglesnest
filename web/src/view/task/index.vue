@@ -13,21 +13,14 @@
              placeholder="请输入任务名称"
            />
          </el-form-item>
-         <el-form-item label="执行方式">
-          <el-select v-model="searchInfo.taskPlan" placeholder="请选择执行方式" >
-            <el-option label="立即执行" :value="1" />
-            <el-option label="稍后执行" :value="2" />
-          </el-select>
-         </el-form-item>
          <el-form-item label="状态">
           <el-select v-model="searchInfo.status" placeholder="请选择状态">
-            <el-option label="创建中" :value="0" />
-            <el-option label="执行中" :value="1" />
-            <el-option label="已完成" :value="2" />
-            <el-option label="执行失败" :value="3" />
-            <el-option label="已终止" :value="4" />
-            <el-option label="运行中" :value="5" />
-            <el-option label="已停止" :value="6" />
+            <el-option
+              v-for="item in statusOption"
+              :key="item.value"
+              :label="item.label"
+              :value="parseInt(item.value)"
+          />
           </el-select>
          </el-form-item>
          <el-form-item>
@@ -99,9 +92,14 @@
           <el-input v-model="taskForm.taskName" placeholder="请输入扫描名称" />
         </el-form-item>
         <el-form-item label="执行方式：" :label-position="itemLabelPosition" prop="taskPlan">
-          <el-select v-model="taskForm.taskPlan" placeholder="请选择执行方式">
-            <el-option label="立即执行" value="1" />
-            <el-option label="稍后执行" value="2" />
+          <el-select v-model="taskForm.taskPlan" placeholder="请选择执行方式" >
+            <el-option
+                v-for="item in executeTypeOption"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+                :disabled="item.value == 3"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="IP类型：" :label-position="itemLabelPosition" prop="targetIp">
@@ -175,34 +173,34 @@
         :size="showSize"
         border
       >
-        <el-descriptions-item label="任务名称" >
+        <el-descriptions-item label="任务名称" align="center">
           {{  showInfo.taskName }}
         </el-descriptions-item>
-        <el-descriptions-item label="执行方式" >{{  showInfo.taskPlan == 1 ? '立即执行' : '稍后执行' }}</el-descriptions-item>
-        <el-descriptions-item label="关联策略" >{{  showInfo.policyName }}</el-descriptions-item>
-        <el-descriptions-item label="当前状态" >
+        <el-descriptions-item label="执行方式" align="center">{{  showInfo.taskPlan == 1 ? '立即执行' : '稍后执行' }}</el-descriptions-item>
+        <el-descriptions-item label="关联策略" align="center">{{  showInfo.policyName }}</el-descriptions-item>
+        <el-descriptions-item label="当前状态" align="center">
           <el-tag size="small">{{  getStatus(showInfo.status) }}</el-tag>
         </el-descriptions-item>
-        <el-descriptions-item label="正在执行" v-if="showInfo.status == 1">
-            {{  stageData.name }}
-        </el-descriptions-item>
-        <el-descriptions-item label="当前进度" v-if="showInfo.status == 1">
-          <el-progress type="dashboard" :percentage="stageData.percent * 100" :color="colors" />
-        </el-descriptions-item>
-        <el-descriptions-item label="任务数量" v-if="showInfo.status == 1">
+        <el-descriptions-item label="任务数量" v-if="showInfo.status == 1" align="center">
             {{  stageData.total }}
         </el-descriptions-item>
-        <el-descriptions-item label="进度序号" v-if="showInfo.status == 1">
+        <el-descriptions-item label="执行序号" v-if="showInfo.status == 1" align="center">
             {{  stageData.running }}
         </el-descriptions-item>
-        <el-descriptions-item label="扫描IP" :span="2">
+        <el-descriptions-item label="正在执行" v-if="showInfo.status == 1" align="center">
+            {{  stageData.name }}
+        </el-descriptions-item>
+        <el-descriptions-item label="当前进度" v-if="showInfo.status == 1" align="center">
+          <el-progress type="dashboard" :percentage="stageData.percent * 100" :color="colors" />
+        </el-descriptions-item>
+        <el-descriptions-item label="扫描 IP" :span="2" align="center">
           {{  IpToStr(showInfo.targetIp) }}
         </el-descriptions-item>
-        <el-descriptions-item label="描述" :span="2">
+        <el-descriptions-item label="任务描述" :span="2" align="center">
           {{  showInfo.taskDesc }}
         </el-descriptions-item>
-       
       </el-descriptions>
+      <div class="close-btn"><el-button type="primary" @click="showDialogFlag = false">关闭</el-button></div>
   </el-dialog>
   </div>
 </template>
@@ -224,11 +222,12 @@ import { getAreaList } from '@/api/area.js'
 import WarningBar from '@/components/warningBar/warningBar.vue'
 import { ref, reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { getDict } from '@/utils/dictionary'
 
 defineOptions({
   name: 'Task',
 })
-
+const itemLabelPosition = ref('right')
 const searchInfo = ref({
   taskName: '',
 })
@@ -298,7 +297,7 @@ const getTableData = async() => {
   const table = await getTaskList({
       page: listQuery.page,
       pageSize: listQuery.pageSize,
-      isAll:true,
+      isAll: true,
       ...searchInfo.value,
     });
     if (table.code === 0) {
@@ -312,6 +311,8 @@ const getTableData = async() => {
 // 获取策略模板
 const policyOption = ref([])
 const areaOption = ref([])
+const statusOption = ref([])
+const executeTypeOption = ref([])
 const setPolicyOption = async() => {
     const data = await getPolicyList({ page: 1, pageSize: 99999 })
     policyOption.value = data.data.list.map((item)=> {
@@ -322,7 +323,16 @@ const setPolicyOption = async() => {
     areaOption.value = areaData.data.list.map((item)=> {
         return { label: item.areaName, value: item.areaIp.join(',') }
     })
+    
+    const res = await getDict('taskStatus')
+    res && res.forEach(item => {
+      statusOption.value.push({label: item.label, value: item.value})
+    })
 
+    const executeTypeData = await getDict('executeType')
+    executeTypeData && executeTypeData.forEach(item => {
+      executeTypeOption.value.push({label: item.label, value: item.value})
+    })
 }
 
 // 获取策略名称
@@ -549,8 +559,8 @@ const tableColumns = reactive([
   { label:'执行方式', prop:'taskPlan', slot: 'customTaskPlan'},
   { label:'策略', prop:'policyName'},
   { label:'状态', prop:'status', formatter(row, column) {
-      let res = ['创建中','执行中','已完成', '执行失败', '已终止', '运行中', '已停止']
-      return res[row.status]
+      let opt = statusOption.value.find(item => item.value == row.status)
+      return opt.label
   }},
 ])
 
@@ -584,24 +594,23 @@ const enterAddDialog = async() => {
         ...taskForm.value
       }
       // 这里加了判断 是否是默认执行方式，如果是默认 就是 区域选择 如果是自定义就是输入内容
-      req.targetIp = getIpArr(req.targetIpStr)
-      
+      req.scanIpType != 1 ? (req.targetIp = getIpArr(req.targetIpStr)): req.targetIp = req.areaIp;
+      console.log(req);
       if (dialogFlag.value === 'add') {  
         const res = await createTask(req)
         if (res.code === 0) {
           ElMessage({ type: 'success', message: '创建成功' })
-          await getTableData()
-          closeAddDialog()
         }
       }
       if (dialogFlag.value === 'edit') {
         const res = await updateTemplate(req)
         if (res.code === 0) {
           ElMessage({ type: 'success', message: '编辑成功' })
-          await getTableData()
-          closeAddDialog()
         }
       }
+
+      await getTableData()
+      closeAddDialog()
     }
   })
 }
@@ -627,6 +636,7 @@ const handleClickUpdate = (row) => {
 }
 
 function getIpArr(e) {
+    console.log(e)
     if(e.includes(',')) {
         return e.split(',')
     }else {
@@ -634,8 +644,7 @@ function getIpArr(e) {
     }
 }
 
-function IpToStr(e) {
-   console.log(e)
+function IpToStr(e) {   
    if(Array.isArray(e)) {
       if(e.length > 0) {
           return e.join(',')
@@ -734,5 +743,13 @@ const handleShow = async(e)=> {
   display: grid;
   grid-template-columns: auto  50px;
   align-items: center;
+}
+
+.close-btn {
+  display: grid;
+  grid-template-rows: 1fr;
+  align-items: center;
+  justify-items: center;
+  margin: 10px 0px;
 }
 </style>
