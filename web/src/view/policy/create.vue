@@ -209,7 +209,7 @@ import { getPolicyList, createPolicy, updatePolicy, getPolicyId } from '@/api/po
 import { getTemplateTagList, getTemplateList } from '@/api/template'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRoute } from 'vue-router';
-
+import { getDict } from '@/utils/dictionary'
 
 const formRef = ref(null)
 const form = ref(
@@ -260,7 +260,18 @@ const getTemplateTagData = async () => {
      const data = await getTemplateTagList()
      tagList.value = data.data
 }
-getTemplateTagData()
+
+// const getOptionDict = async() => {
+//     const res = await getDict('templateType')
+//     res && res.forEach(item => {
+//         typeNameList.value.push({label: item.label, value: item.value})
+//     })
+// }
+const initPage = async() => {
+   getTemplateTagData()
+//    getOptionDict()
+}
+initPage()
 
 
 // 获取模板
@@ -349,7 +360,7 @@ const handleCheckAll = (e, f) => {
  const getTemplateData = async () => {
     const table = await getTemplateList({
         page: 1,
-        pageSize: 99999,
+        pageSize: 9999,
         isAll: false,
     });
     table.data.list.forEach(e => {

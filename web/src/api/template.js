@@ -12,7 +12,8 @@ export const getTemplateList = (data) => {
     return service({
       url: '/template/list',
       method: 'post',
-      data
+      data,
+      timeout: 30000,
     })
 }
 export const postTemplateImports = (data) => {

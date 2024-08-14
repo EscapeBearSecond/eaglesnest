@@ -335,12 +335,6 @@ const setPolicyOption = async() => {
     })
 }
 
-// 获取策略名称
-const getPolicyName = (id) => {
-   let item = policyOption.value.find((item) => item.value == id);   
-   return item.label
-}
-
 // 初始化
 const initPage = async() => {
   setPolicyOption()
@@ -534,8 +528,11 @@ const handleClose = () => {
 
 // 获取执行方式
 const getTypeTagName = (e) => {
-    let status = ['其他', '立即执行', '稍后执行','定时执行']
-    return status[e]
+    let opt = executeTypeOption.value.find(item => item.value == e)
+      if(!opt) {
+        return ''
+      }
+      return opt.label
 }
 
 // 表单
@@ -560,6 +557,9 @@ const tableColumns = reactive([
   { label:'策略', prop:'policyName'},
   { label:'状态', prop:'status', formatter(row, column) {
       let opt = statusOption.value.find(item => item.value == row.status)
+      if(!opt) {
+        return ''
+      }
       return opt.label
   }},
 ])
@@ -628,13 +628,6 @@ const handleClickAdd = () => {
   templateDialog.value = true
 }
 
-const handleClickUpdate = (row) => {
-  console.log(row)
-  dialogFlag.value = 'edit'
-  taskForm.value = JSON.parse(JSON.stringify(row))
-  templateDialog.value = true
-}
-
 function getIpArr(e) {
     console.log(e)
     if(e.includes(',')) {
@@ -657,8 +650,11 @@ function IpToStr(e) {
 }
 
 function getStatus (e) {
-  let res = ['创建中','执行中','已完成', '执行失败', '已终止', '运行中', '已停止']
-  return res[e]
+  let opt = statusOption.value.find(item => item.value == e)
+  if (!opt) {
+      return ''
+  }
+  return opt.label
 }
 
 // 根据状态来判断是否显示停止按钮
@@ -698,6 +694,7 @@ const handleStart = (e) => {
 }
 
 const changeSize = (e) => {
+  listQuery.page = 1
   listQuery.pageSize = e
   getTableData()
 }
