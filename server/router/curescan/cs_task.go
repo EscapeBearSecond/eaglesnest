@@ -12,6 +12,7 @@ func (t *TaskRouter) InitTaskRouter(Router *gin.RouterGroup) {
 	taskRouter := Router.Group("task")
 
 	taskRouterApi := v1.ApiGroupApp.CurescanApiGroup.TaskApi
+	statisticsApi := v1.ApiGroupApp.CurescanApiGroup.StatisticsApi
 	{
 		taskRouter.POST("", taskRouterApi.CreateTask)      // 创建Task
 		taskRouter.GET(":id", taskRouterApi.GetTaskById)   // 获取单条Task消息
@@ -24,5 +25,6 @@ func (t *TaskRouter) InitTaskRouter(Router *gin.RouterGroup) {
 		taskRouter.POST("report", taskRouterApi.DownloadReport)
 		taskRouter.POST("docs", taskRouterApi.DownloadResultDocs)
 		taskRouter.GET("stage/:id", taskRouterApi.GetTaskStage)
+		taskRouter.GET("statistics", statisticsApi.GetTaskInfo)
 	}
 }

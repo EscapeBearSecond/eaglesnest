@@ -196,9 +196,10 @@ func (s *TaskService) GetTaskList(st request.SearchTask) (list interface{}, tota
 	if len(st.TaskPlan) != 0 {
 		db = db.Where("task_plan in (?)", st.TaskPlan)
 	}
-	if st.Status != 0 {
+	if st.Status != -1 {
 		db = db.Where("status=?", st.Status)
 	}
+
 	err = db.Count(&total).Error
 	if err != nil {
 		return tasks, total, err

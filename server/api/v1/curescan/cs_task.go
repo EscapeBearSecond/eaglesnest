@@ -26,7 +26,8 @@ func (t *TaskApi) CreateTask(c *gin.Context) {
 	var createTask request.CreateTask
 	err := c.ShouldBindJSON(&createTask)
 	if err != nil {
-		response.FailWithMessage(err.Error(), c)
+		global.GVA_LOG.Error("参数错误", zap.String("uri", c.Request.URL.Path), zap.Error(err))
+		response.FailWithMessage("参数错误", c)
 		return
 	}
 	err = utils.Verify(createTask, utils.CreateTaskVerify)
@@ -65,7 +66,8 @@ func (t *TaskApi) CreateTask(c *gin.Context) {
 	task.CreatedBy = utils.GetUserID(c)
 	err = taskService.CreateTask(&task)
 	if err != nil {
-		response.FailWithMessage(err.Error(), c)
+		global.GVA_LOG.Error("创建失败!", zap.String("uri", c.Request.URL.Path), zap.Error(err))
+		response.FailWithMessage("创建失败!", c)
 		return
 	}
 	response.Ok(c)
