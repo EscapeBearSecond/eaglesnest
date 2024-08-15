@@ -175,10 +175,14 @@ func (t *TemplateApi) GetTemplateList(c *gin.Context) {
 		Page:     searchTemplate.Page,
 		PageSize: searchTemplate.PageSize,
 	}
+	mapRest := make(map[string]interface{})
+	mapRest["data"] = result
+	mapRest["code"] = response.SUCCESS
+	mapRest["msg"] = "查询成功"
 
 	// 编码并写入数据到gzipWriter
 	start = time.Now()
-	if err := json.NewEncoder(gzipWriter).Encode(result); err != nil {
+	if err := json.NewEncoder(gzipWriter).Encode(mapRest); err != nil {
 		fmt.Println("数据编码错误：", err.Error())
 		return
 	}
