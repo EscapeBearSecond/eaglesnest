@@ -78,7 +78,8 @@ service.interceptors.response.use(
       }
       return response.data
     } else {
-      if(response.data.type == 'application/json' && response.data.msg != undefined) {
+      console.log(response.data)
+      if(response.data.type == 'application/json' || response.data.msg != undefined) {
         ElMessage({
           showClose: true,
           message: response.data.msg || decodeURI(response.headers.msg),
