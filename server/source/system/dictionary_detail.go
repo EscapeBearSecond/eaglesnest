@@ -107,7 +107,7 @@ func (i *initDictDetail) InitializeData(ctx context.Context) (context.Context, e
 	dicts[7].SysDictionaryDetails = []sysModel.SysDictionaryDetail{
 		{Label: "资产发现", Value: "1", Status: &True, Sort: 1},
 		{Label: "漏洞扫描", Value: "2", Status: &True, Sort: 2},
-		{Label: "弱口令", Value: "2", Status: &True, Sort: 3},
+		{Label: "弱口令", Value: "3", Status: &True, Sort: 3},
 	}
 	dicts[8].SysDictionaryDetails = []sysModel.SysDictionaryDetail{
 		{Label: "创建", Value: "0", Status: &True, Extend: "普通任务", Sort: 1},

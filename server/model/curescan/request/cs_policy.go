@@ -41,6 +41,7 @@ type JobConfig struct {
 	Format      string  `json:"format"`
 	RateLimit   int     `json:"rateLimit"`
 	Concurrency int     `json:"concurrency"`
+	IsAll       bool    `json:"isAll"`
 	Templates   []int64 `json:"templates"`
 }
 

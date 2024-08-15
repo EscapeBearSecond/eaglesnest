@@ -6,11 +6,15 @@ import (
 	"47.103.136.241/goprojects/curescan/server/model/curescan"
 	"47.103.136.241/goprojects/curescan/server/model/curescan/request"
 	"47.103.136.241/goprojects/curescan/server/utils"
+	"compress/gzip"
+	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
+	"net/http"
 	"strconv"
+	"time"
 )
 
 type TemplateApi struct {
@@ -118,6 +122,16 @@ func (t *TemplateApi) GetTemplateById(c *gin.Context) {
 	response.OkWithData(template, c)
 }
 
+// gzipWriter 结构体
+type gzipWriter struct {
+	gin.ResponseWriter
+	Writer *gzip.Writer
+}
+
+func (w *gzipWriter) Write(data []byte) (int, error) {
+	return w.Writer.Write(data)
+}
+
 // GetTemplateList
 // 返回分页排序后的模板列表，不返回模板内容
 func (t *TemplateApi) GetTemplateList(c *gin.Context) {
@@ -132,17 +146,49 @@ func (t *TemplateApi) GetTemplateList(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+
+	// 设置响应头，指明内容使用了gzip压缩
+	c.Writer.Header().Set("Content-Encoding", "gzip")
+	c.Writer.Header().Set("Content-Type", "application/json")
+	c.Writer.WriteHeader(http.StatusOK)
+
+	// 创建gzip.Writer
+	gz := gzip.NewWriter(c.Writer)
+	defer gz.Close()
+
+	// 使用 gzipWriter 进行压缩写入
+	gzipWriter := &gzipWriter{Writer: gz, ResponseWriter: c.Writer}
+
+	start := time.Now()
 	list, total, err := templateService.GetTemplateList(searchTemplate)
 	if err != nil {
-		response.FailWithMessage(err.Error(), c)
+		response.FailWithMessage("获取数据失败", c)
 		return
 	}
-	response.OkWithDetailed(response.PageResult{
+	getTemplateListDuration := time.Since(start)
+	fmt.Println("GetTemplateList 花费 ", getTemplateListDuration)
+
+	// 构建响应结果
+	result := response.PageResult{
 		List:     list,
 		Total:    total,
 		Page:     searchTemplate.Page,
 		PageSize: searchTemplate.PageSize,
-	}, "获取成功", c)
+	}
+	mapRest := make(map[string]interface{})
+	mapRest["data"] = result
+	mapRest["code"] = response.SUCCESS
+	mapRest["msg"] = "查询成功"
+
+	// 编码并写入数据到gzipWriter
+	start = time.Now()
+	if err := json.NewEncoder(gzipWriter).Encode(mapRest); err != nil {
+		fmt.Println("数据编码错误：", err.Error())
+		return
+	}
+	gzipWriter.Flush()
+	responseDuration := time.Since(start)
+	fmt.Println("Response 花费 ", responseDuration)
 }
 
 func (t *TemplateApi) UpdateTemplate(c *gin.Context) {

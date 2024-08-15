@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"47.103.136.241/goprojects/curescan/server/global"
 	"47.103.136.241/goprojects/curescan/server/model/curescan"
@@ -56,7 +57,8 @@ func (t *TemplateService) GetTemplatesByIds(ids []int64) ([]*curescan.Template, 
 }
 
 // GetTemplateList 获取模板列表，该方法返回除模板内容外的所有信息。如果想要获取模板内容，需要调用GetTemplateById方法。
-func (t *TemplateService) GetTemplateList(searchTemplate request2.SearchTemplate) (list interface{}, total int64, err error) {
+func (t *TemplateService) GetTemplateList(searchTemplate request2.SearchTemplate) (list []*curescan.Template, total int64, err error) {
+	start := time.Now()
 	template := searchTemplate.Template
 	page := searchTemplate.PageInfo
 	order := searchTemplate.OrderKey
@@ -69,12 +71,10 @@ func (t *TemplateService) GetTemplateList(searchTemplate request2.SearchTemplate
 	} else {
 		db = global.GVA_DB.Model(&curescan.Template{}).Omit("template_content")
 	}
-	var templates []curescan.Template
+	var templates []*curescan.Template
+
 	if template.TemplateType != "" {
 		db = db.Where("template_type = ?", template.TemplateType)
-	}
-	if template.TemplateName != "" {
-		db = db.Where("template_name LIKE ?", "%"+template.TemplateName+"%")
 	}
 	if template.TemplateId != "" {
 		db = db.Where("template_id = ?", template.TemplateId)
@@ -90,6 +90,9 @@ func (t *TemplateService) GetTemplateList(searchTemplate request2.SearchTemplate
 	}
 	if template.Tag4 != "" && template.Tag4 != "''" {
 		db = db.Where("tag4 = ?", template.Tag4)
+	}
+	if template.TemplateName != "" {
+		db = db.Where("template_name LIKE ?", "%"+template.TemplateName+"%")
 	}
 	err = db.Count(&total).Error
 	if err != nil {
@@ -116,6 +119,8 @@ func (t *TemplateService) GetTemplateList(searchTemplate request2.SearchTemplate
 			OrderStr += " desc"
 		}
 	}
+	cost := time.Since(start)
+	fmt.Println("构建查询信息花费：", cost)
 	err = db.Order(OrderStr).Find(&templates).Error
 	return templates, total, err
 }
@@ -137,10 +142,29 @@ func (t *TemplateService) UpdateTemplate(template *curescan.Template) error {
 }
 
 func (t *TemplateService) BatchAdd(templates []*curescan.Template) error {
-	return global.GVA_DB.Clauses(clause.OnConflict{
-		Columns:   []clause.Column{{Name: "template_id"}},
-		DoUpdates: clause.AssignmentColumns([]string{"template_desc", "template_content", "tag1", "tag2", "tag3", "tag4", "template_type", "deleted_at"}), // 更新的列
-	}).CreateInBatches(templates, 100).Error
+	// 开启事务，确保批量操作的原子性
+	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+		// 执行批量插入，处理冲突
+		if err := tx.Clauses(clause.OnConflict{
+			Columns: []clause.Column{{Name: "template_id"}},
+			DoUpdates: clause.AssignmentColumns([]string{
+				"template_desc",
+				"template_content",
+				"tag1",
+				"tag2",
+				"tag3",
+				"tag4",
+				"template_type",
+				"template_name",
+				"deleted_at",
+				"updated_at", // 确保更新操作时更新时间戳
+				"updated_by", // 确保更新操作时更新操作用户
+			}),
+		}).CreateInBatches(templates, 100).Error; err != nil {
+			return err // 如果发生错误，回滚事务
+		}
+		return nil // 提交事务
+	})
 }
 
 func (t *TemplateService) ParseTemplateContent(template *curescan.Template) (err error) {

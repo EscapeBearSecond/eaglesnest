@@ -24,6 +24,7 @@ type SearchTask struct {
 	TaskName string `json:"taskName"`
 	Status   int    `json:"status"`
 	TaskPlan []int  `json:"taskPlan"`
+	PolicyId int    `json:"policyId"`
 	request.PageInfo
 	OrderKey string `json:"orderKey"` // 排序
 	Desc     bool   `json:"desc"`     // 排序方式:升序false(默认)|降序true
