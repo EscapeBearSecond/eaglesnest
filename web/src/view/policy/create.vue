@@ -190,8 +190,11 @@
                     </el-col>
                    
                 </el-row>
+                
                 <el-row :gutter="20" v-if="searchInfo.isAll == false">
-                    <el-col :span="24">
+                    <span style="margin: 0 0 10px 0;padding-left: 40px;width: 100%;"><el-alert title="请选择策略需要使用的模板" type="success"/></span>
+                    <el-col :span="23" :offset="1">
+                        
                         <advance-table
                             :columns="tableColumns"
                             :tableData="tableData"
