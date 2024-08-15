@@ -160,7 +160,7 @@
                 </el-form-item>
                     </el-col>
                 </el-row>
-                <el-form-item label="模板选择" :label-position="itemLabelPosition"  class="sec-lab" v-if="searchInfo.kind != ''" prop="templates">
+                <el-form-item label="模板选择" :label-position="itemLabelPosition"  class="sec-lab" v-if="isLoading" prop="templates">
                     <el-select 
                         v-model="searchInfo.templates" 
                         placeholder="请选择模板，可多选"   
@@ -179,7 +179,7 @@
                         </el-checkbox>
                         </template>
                             <el-option
-                            v-for="item in tmpOption[searchInfo.kind - 1]"
+                            v-for="item in tmpOption"
                             :key="item.value"
                             :label="item.label"
                             :value="item.value"
@@ -204,277 +204,234 @@
 </div>
 </template>
 <script setup>
-import { ref, reactive } from 'vue' 
-import { getPolicyList, createPolicy, updatePolicy, getPolicyId } from '@/api/policy'
-import { getTemplateTagList, getTemplateList } from '@/api/template'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ref, reactive } from 'vue';
+import { createPolicy, updatePolicy, getPolicyId } from '@/api/policy';
+import { getTemplateTagList, getTemplateList } from '@/api/template';
+import { ElMessage } from 'element-plus';
 import { useRoute } from 'vue-router';
-import { getDict } from '@/utils/dictionary'
 
-const formRef = ref(null)
-const form = ref(
-    {
-        policyName: '',
-         policyDesc: '',
-         headlessFlg: '',
-         scanType: '',
-         scanRate: '',
-         policyConfig: [],
-         "onlineConfig": {
-          "use": true,
-          "timeout": "5s",
-          "count": 1,
-          "format": "csv",
-          "rateLimit": 150,
-          "concurrency": 150
-         },
-         "portScanConfig": {
-          "use": true,
-          "timeout": "5s",
-          "count": 1,
-          "format": "csv",
-          "ports": "http",
-          "rateLimit": 150,
-          "concurrency": 150
-         }
-    }
-)
+const formRef = ref(null);
+const form = ref({
+  policyName: '',
+  policyDesc: '',
+  headlessFlg: '',
+  scanType: '',
+  scanRate: '',
+  policyConfig: [],
+  onlineConfig: {
+    use: true,
+    timeout: '5s',
+    count: 1,
+    format: 'csv',
+    rateLimit: 150,
+    concurrency: 150
+  },
+  portScanConfig: {
+    use: true,
+    timeout: '5s',
+    count: 1,
+    format: 'csv',
+    ports: 'http',
+    rateLimit: 150,
+    concurrency: 150
+  }
+});
 const rules = ref({
-  policyName: [
-     { required: true, message: '请输入策略名称', trigger: 'blur' }
-  ],
- })
-const labelPosition = ref('left')
-const itemLabelPosition = ref('left')
+  policyName: [{ required: true, message: '请输入策略名称', trigger: 'blur' }],
+});
+const labelPosition = ref('left');
+const itemLabelPosition = ref('left');
+const editableTabsValue = ref('config1');
 
-const editableTabsValue = ref('config1')
-//模板类型筛选
+// 模板类型筛选
 const typeNameList = reactive([
-  {id: '1', label: '资产发现', value:'1', disabled: false},
-  {id: '2', label: '漏洞扫描', value:'2', disabled: false},
-  {id: '3', label: '弱口令', value:'3', disabled: false}
-])
-//获取四层筛选
-const tagList = ref({})
+  { id: '1', label: '资产发现', value: '1', disabled: false },
+  { id: '2', label: '漏洞扫描', value: '2', disabled: false },
+  { id: '3', label: '弱口令', value: '3', disabled: false }
+]);
+
+// 四层筛选
+const tagList = ref({});
+const templateCache = reactive({});  // 用于缓存模板数据
+
 const getTemplateTagData = async () => {
-     const data = await getTemplateTagList()
-     tagList.value = data.data
+  const data = await getTemplateTagList();
+  tagList.value = data.data;
 }
 
-// const getOptionDict = async() => {
-//     const res = await getDict('templateType')
-//     res && res.forEach(item => {
-//         typeNameList.value.push({label: item.label, value: item.value})
-//     })
-// }
-const initPage = async() => {
-   getTemplateTagData()
-//    getOptionDict()
+const initPage = async () => {
+  getTemplateTagData();
 }
-initPage()
 
+initPage();
 
-// 获取模板
-const checkAll = ref(false)
-const indeterminate = ref(false)
+const checkAll = ref(false);
+const indeterminate = ref(false);
 
 // 筛选模板联动
 const changeScanType = (e, f) => {
-    searchInfo.value.templates = []
-    searchInfo.value.tagOne = ""
-    searchInfo.value.tagTwo = ""
-    searchInfo.value.tagThree = ""
-    searchInfo.value.tagFour = ""
-    updatetmpOption(e.kind)
-    checkAll.value = false
+  searchInfo.value.templates = [];
+  searchInfo.value.tagOne = '';
+  searchInfo.value.tagTwo = '';
+  searchInfo.value.tagThree = '';
+  searchInfo.value.tagFour = '';
+  updatetmpOption(e.kind);
+  checkAll.value = false;
 }
 
-//四联动
+// 四联动
 const changeScanTagOne = (e, f) => {
-    searchInfo.value.templates = []
-    updatetmpOption(e.kind)
-    checkAll.value = false
+  searchInfo.value.templates = [];
+  tmpOption.value = [];
+  checkAll.value = false;
+  updatetmpOption(e.kind);
 }
 
-const updatetmpOption = async (kind) => {
-    const table = await getTemplateList({
-        page: 1,
-        pageSize: 99999,
-        isAll: false,
-        templateType: kind,
-        tag1: searchInfo.value.tagOne,
-        tag2: searchInfo.value.tagTwo,
-        tag3: searchInfo.value.tagThree,
-        tag4: searchInfo.value.tagFour,
+const isLoading = ref(true);
+
+const updatetmpOption = (kind) => {
+  const cacheKey = `${kind}-${searchInfo.value.tagOne}-${searchInfo.value.tagTwo}-${searchInfo.value.tagThree}-${searchInfo.value.tagFour}`;
+  
+  if (templateCache[cacheKey]) {
+    tmpOption.value = templateCache[cacheKey];
+  } else {
+    getTemplateList({
+      page: 1,
+      pageSize: 99999,
+      isAll: false,
+      templateType: kind,
+      tag1: searchInfo.value.tagOne,
+      tag2: searchInfo.value.tagTwo,
+      tag3: searchInfo.value.tagThree,
+      tag4: searchInfo.value.tagFour,
+    }).then(res => {
+      tmpOption.value = res.data.list.map(e => ({ label: e.templateName, value: e.ID }));
+      templateCache[cacheKey] = tmpOption.value;  // 缓存数据
     });
-    tmpOption[kind - 1] = []
-    table.data.list.forEach(e => {
-        tmpOption[kind - 1].push({label:e.templateName, value: e.ID})
-    })
+  }
 }
 
 const route = useRoute();
 const id = ref(route.query.id);
+
 const initForm = async () => {
-    // 修改
-    if(id.value  != undefined) {
-        let data = await getPolicyId({id: id.value})
-        form.value = data.data
-    }
+  if (id.value !== undefined) {
+    const data = await getPolicyId({ id: id.value });
+    form.value = data.data;
+  }
 }
+
 initForm();
 
 // 全选模板
 const handleCheckAll = (e, f) => {    
-    if(e) {
-        searchInfo.value.templates = tmpOption[f - 1].map((_)=> _.value)
-    } else {
-        searchInfo.value.templates = []
-    }
+  if (e) {
+    searchInfo.value.templates = tmpOption.value.map((_) => _.value);
+  } else {
+    searchInfo.value.templates = [];
+  }
 }
 
- // 配置选中扫描类型时返回模板
- const searchRules = ref({
-    kind: [
-      { required: true, message: '请选择模板类型', trigger: 'blur' }
-    ],
-    concurrency: [
-      { required: true, message: '最大并发未填写', trigger: 'blur' }
-    ],
-    timeout: [
-      { required: true, message: '超时时间未填写', trigger: 'blur' }
-    ],
-    rateLimit: [
-      { required: true, message: '限流速度未填写', trigger: 'blur' }
-    ],
-    count: [
-      { required: true, message: '探活轮次未填写', trigger: 'blur' }
-    ],
-    templates:[
-        { required: true, message: '请选择模板', trigger: 'blur' }
-    ]
- })
- const tmpOption = [[],[],[]]
- const tmpFormRef = ref(null)
- const searchInfo = ref()
- const getTemplateData = async () => {
-    const table = await getTemplateList({
-        page: 1,
-        pageSize: 9999,
-        isAll: false,
-    });
-    table.data.list.forEach(e => {
-        if(e.templateType == 1) {
-          tmpOption[0].push({label:e.templateName, value: e.ID})
-        }
-        if(e.templateType == 2) {
-          tmpOption[1].push({label:e.templateName, value: e.ID})
-        }
-        if(e.templateType == 3) {
-          tmpOption[2].push({label:e.templateName, value: e.ID})
-        }
-    });    
- }
+const searchRules = ref({
+  kind: [{ required: true, message: '请选择模板类型', trigger: 'blur' }],
+  concurrency: [{ required: true, message: '最大并发未填写', trigger: 'blur' }],
+  timeout: [{ required: true, message: '超时时间未填写', trigger: 'blur' }],
+  rateLimit: [{ required: true, message: '限流速度未填写', trigger: 'blur' }],
+  count: [{ required: true, message: '探活轮次未填写', trigger: 'blur' }],
+  templates: [{ required: true, message: '请选择模板', trigger: 'blur' }],
+});
 
+const tmpOption = ref([]);
+const tmpFormRef = ref(null);
+const searchInfo = ref({
+  tagOne: '',
+  tagTwo: '',
+  tagThree: '',
+  tagFour: '',
+});
 
-const templateDialog = ref(false)
+const templateDialog = ref(false);
+
 const addTemplate = () => {
-    templateDialog.value = true
-    checkAll.value = false
-    
-    searchInfo.value = {
-        "tagOne":"",
-        "tagTwo":"",
-        "tagThree":"",
-        "tagFour":"",
-        "name": "",
-        "kind": "1",
-        "timeout": "5s",
-        "count": 1,
-        "format": "",
-        "rateLimit": 150,
-        "concurrency": 150,
-        "templates":[]
-    }
+  templateDialog.value = true;
+  checkAll.value = false;
+  tmpOption.value = [];
+  searchInfo.value = {
+    tagOne: '',
+    tagTwo: '',
+    tagThree: '',
+    tagFour: '',
+    name: '',
+    kind: '1',
+    timeout: '5s',
+    count: 1,
+    format: '',
+    rateLimit: 150,
+    concurrency: 150,
+    templates: []
+  };
+  updatetmpOption('1');
 }
-getTemplateData()
 
-
-const closeDialog = ()=> {
-    onReset()
-    templateDialog.value = false
+const closeDialog = () => {
+  onReset();
+  templateDialog.value = false;
 }
 
 const onReset = () => {
-    searchInfo.value = {}
-    searchInfo.value.templates = []
+  searchInfo.value = {};
+  searchInfo.value.templates = [];
 }
 
-// 保存模板选择
 const enterDialog = () => {
-    let pushData = JSON.parse(JSON.stringify(searchInfo.value))
-    // 如果已经添加同一类型就提醒不能添加
-    let flag = false
-    form.value.policyConfig.forEach(item => {
-        if(item.kind === pushData.kind) {
-            flag =  true
-        }
+  const pushData = JSON.parse(JSON.stringify(searchInfo.value));
+  const existingType = form.value.policyConfig.find(item => item.kind === pushData.kind);
+  
+  if (!existingType) {
+    form.value.policyConfig.push(pushData);
+    closeDialog();
+    tmpFormRef.value.resetFields();
+  } else {
+    ElMessage({
+      type: 'warning',
+      message: '策略已经存在相同类型模板!'
     });
-    if(!flag) {
-        form.value.policyConfig.push(pushData)
-        closeDialog()
-        tmpFormRef.value.resetFields()
-    }else {
-        ElMessage({
-            type: 'warning',
-            message: '策略已经存在相同类型模板!'
-        })
-    }
+  }
 }
 
-// 删除模板配置
 const deleteTemplateConfig = (e, f) => {
-    form.value.policyConfig = form.value.policyConfig.splice(e-1, 1)    
+  form.value.policyConfig.splice(e, 1);
 }
 
-// 获取模板类型 
-const getKind = (e)=> {
-    const item = typeNameList.find(item => item.id === e);
-    return item ? item.label : null;
+const getKind = (e) => {
+  const item = typeNameList.find(item => item.id === e);
+  return item ? item.label : null;
 }
 
 const goStep = () => {
-    window.history.go(-1)
+  window.history.go(-1);
 }
 
 const savePolicy = async () => {
-    formRef.value.validate(async valid => {
-        if(form.value.id == '' && form.value.id == undefined) {
-            const res = await createPolicy(form.value)
-             if (res.code === 0) {
-               ElMessage({
-                 type: 'success',
-                 message: '添加成功!'
-               })
-               window.history.go(-1)
-            }
-        }else {
-            const res = await updatePolicy(form.value)
-              if (res.code === 0) {
-                ElMessage({
-                  type: 'success',
-                  message: '修改成功!'
-                })
-                window.history.go(-1)
-            }
-        }
-    })  
+  formRef.value.validate(async valid => {
+    if (valid) {
+      const res = form.value.id ? await updatePolicy(form.value) : await createPolicy(form.value);
+      if (res.code === 0) {
+        ElMessage({
+          type: 'success',
+          message: form.value.id ? '修改成功!' : '添加成功!'
+        });
+        window.history.go(-1);
+      }
+    }
+  });
 }
 </script>
+
 <style lang='scss' scoped>
 .btn-save {
-    display: flex;
-    justify-content:center;
-    margin: 10px;
+  display: flex;
+  justify-content: center;
+  margin: 10px;
 }
 </style>
