@@ -95,7 +95,7 @@
     </el-row>
     <el-drawer
       v-model="templateDialog"
-      size="45%"
+      size="46%"
       :show-close="false"
       :close-on-press-escape="false"
       :close-on-click-modal="false"
@@ -112,93 +112,104 @@
             </div>
             </div>
         </template>
-        <el-form ref="tmpFormRef" :rules="searchRules" :model="searchInfo" label-width="80px">
-                <el-form-item label="模板类型"  class="sec-lab" prop="kind">
-                    <el-select v-model="searchInfo.kind" placeholder="请选择模板类型" @change="changeScanType(searchInfo, 'kind')">
-                        <el-option
-                            v-for="type in typeNameList"
-                            :key="type.value"
-                            :label="type.label"
-                            :value="type.value"
-                            :disabled="type.disabled"
-                        />
-                    </el-select>
-                </el-form-item>
-                <el-row :gutter="10">
-                    <el-col :span="12">
-                        <el-form-item label="设备类型"  class="sec-lab"> 
-                    <el-select v-model="searchInfo.tagOne" placeholder="请选择设备类型" @change="changeScanTagOne(searchInfo, 'tagOne')" filterable>
-                        <el-option label="全部" value="''"></el-option>
-                        <el-option v-for="(tagOne, key) in tagList.tag1" :label="tagOne" :value="tagOne" :key="key" />
-                    </el-select>
-                </el-form-item>
+        <el-form ref="tmpFormRef" :rules="searchRules" :model="searchInfo" label-width="80px" >
+            <el-row :gutter="10">
+                <el-col :span="12">
+                    <el-form-item label="最大并发" :label-position="itemLabelPosition" class="sec-lab" prop="concurrency">
+                        <el-input v-model="searchInfo.concurrency" placeholder="请输入最大并发"  />
+                    </el-form-item>
                 </el-col>
+                <el-col :span="12">
+                    <el-form-item label="超时时间" :label-position="itemLabelPosition" class="sec-lab"  prop="timeout" >
+                        <el-input v-model="searchInfo.timeout" placeholder="请输入超时时间"  />
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="限流速度" :label-position="itemLabelPosition" class="sec-lab"  prop="rateLimit">
+                        <el-input v-model="searchInfo.rateLimit" placeholder="请输入限流速度"  />
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="探活轮次" :label-position="itemLabelPosition" class="sec-lab"  prop="count">
+                        <el-input v-model="searchInfo.count" placeholder="请输入探活轮次"  />
+                    </el-form-item> 
+                </el-col>
+                </el-row>   
+                <el-row :gutter="10">
+                    <el-col :span=12>
+                        <el-form-item label="模板类型"  class="sec-lab" prop="kind" >
+                            <el-select v-model="searchInfo.kind" placeholder="请选择模板类型" @change="selectTemplate">
+                                <el-option
+                                    v-for="type in typeNameList"
+                                    :key="type.value"
+                                    :label="type.label"
+                                    :value="type.value"
+                                    :disabled="type.disabled"
+                                />
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
                     <el-col :span="12">
+                        <el-form-item label="模板选择"  class="sec-lab">
+                            <el-radio-group v-model="searchInfo.isAll">
+                            <el-radio-button label="全选" :value="true" />
+                            <el-radio-button label="自定义" :value="false" />
+                        </el-radio-group>   
+                        </el-form-item>
+                    </el-col>
+                   
+                    <el-col :span="12" v-if="searchInfo.isAll == false">
+                        <el-form-item label="设备类型"  class="sec-lab"> 
+                            <el-select v-model="searchInfo.tagOne" placeholder="请选择设备类型" filterable  @change="selectTemplateTag" clearable>
+                                <el-option v-for="(tagOne, key) in tagList.tag1" :label="tagOne" :value="tagOne" :key="key" />
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12" v-if="searchInfo.isAll == false">
                         <el-form-item label="系统类型"  class="sec-lab">
-                            <el-select v-model="searchInfo.tagTwo" placeholder="请选择系统类型" @change="changeScanTagOne(searchInfo, 'tagTwo')" filterable>
-                                <el-option label="全部" value="''"></el-option>
+                            <el-select v-model="searchInfo.tagTwo" placeholder="请选择系统类型" filterable @change="selectTemplateTag" clearable>
                                 <el-option v-for="(tagTwo, key) in tagList.tag2" :label="tagTwo" :value="tagTwo" :key="key" />
                             </el-select>
                         </el-form-item>
                     </el-col>
                 </el-row>
-                <el-row :gutter="10">
+                <el-row :gutter="10" v-if="searchInfo.isAll == false">
                     <el-col :span="12">
                         <el-form-item label="厂商名称"  class="sec-lab" >
-                            <el-select v-model="searchInfo.tagThree" placeholder="请选择厂商名称" @change="changeScanTagOne(searchInfo, 'tagThree')" filterable>
-                                <el-option label="全部" value="''"></el-option>
+                            <el-select v-model="searchInfo.tagThree" placeholder="请选择厂商名称"  filterable @change="selectTemplateTag" clearable>
                                 <el-option v-for="(tagThree, key) in tagList.tag3" :label="tagThree" :value="tagThree" :key="key" />
                             </el-select>
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
                         <el-form-item label="产品型号"  class="sec-lab">
-                <el-select v-model="searchInfo.tagFour" placeholder="请选择产品型号" @change="changeScanTagOne(searchInfo, 'tagFour')" filterable>
-                    <el-option label="全部" value="''"></el-option>
-                    <el-option v-for="(tagFour, key) in tagList.tag4" :label="tagFour" :value="tagFour" :key="key" />
-                </el-select>
-                </el-form-item>
+                            <el-select v-model="searchInfo.tagFour" placeholder="请选择产品型号"  filterable @change="selectTemplateTag" clearable>
+                                <el-option v-for="(tagFour, key) in tagList.tag4" :label="tagFour" :value="tagFour" :key="key" />
+                            </el-select>
+                        </el-form-item>
                     </el-col>
+                   
                 </el-row>
-                <el-form-item label="模板选择" :label-position="itemLabelPosition"  class="sec-lab" v-if="isLoading" prop="templates">
-                    <el-select 
-                        v-model="searchInfo.templates" 
-                        placeholder="请选择模板，可多选"   
-                        multiple
-                        filterable
-                        collapse-tags
-                        collapse-tags-tooltip
-                    >
-                        <template #header>
-                            <el-checkbox
-                            v-model="checkAll"
-                            :indeterminate="indeterminate"
-                            @change="handleCheckAll(checkAll, searchInfo.kind)"
-                            >
-                            全选
-                        </el-checkbox>
+                <el-row :gutter="20" v-if="searchInfo.isAll == false">
+                    <el-col :span="24">
+                        <advance-table
+                            :columns="tableColumns"
+                            :tableData="tableData"
+                            :listQuery="listQuery"
+                            :statusData="statusData"
+                            :changePageSize="changeSize"
+                            :pagination="handleCurrentChange"
+                            :index="false"
+                            :selection ="true"
+                            :selectionRow="selectionTemplateRow"
+                            :selectionAll="selectionTemplateAll"
+                        >
+                        <template v-slot:custType="slotProps">
+                            <el-tag>{{ getKind(slotProps.row.templateType) }}</el-tag>
                         </template>
-                            <el-option
-                            v-for="item in tmpOption"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                            :disabled="item.disabled"
-                            />
-                    </el-select>
-                </el-form-item>  
-                <el-form-item label="最大并发" :label-position="itemLabelPosition" class="sec-lab" prop="concurrency">
-                    <el-input v-model="searchInfo.concurrency" placeholder="请输入最大并发"  />
-                </el-form-item>
-                <el-form-item label="超时时间" :label-position="itemLabelPosition" class="sec-lab"  prop="timeout">
-                    <el-input v-model="searchInfo.timeout" placeholder="请输入超时时间"  />
-                </el-form-item>
-                <el-form-item label="限流速度" :label-position="itemLabelPosition" class="sec-lab"  prop="rateLimit">
-                    <el-input v-model="searchInfo.rateLimit" placeholder="请输入限流速度"  />
-                </el-form-item>
-                <el-form-item label="探活轮次" :label-position="itemLabelPosition" class="sec-lab"  prop="count">
-                    <el-input v-model="searchInfo.count" placeholder="请输入探活轮次"  />
-                </el-form-item> 
+                    </advance-table>
+                    </el-col>
+                </el-row>                
         </el-form>
     </el-drawer>     
 </div>
@@ -259,57 +270,56 @@ const getTemplateTagData = async () => {
   tagList.value = data.data;
 }
 
-const initPage = async () => {
-  getTemplateTagData();
-}
-
-initPage();
-
-const checkAll = ref(false);
-const indeterminate = ref(false);
-
-// 筛选模板联动
-const changeScanType = (e, f) => {
-  searchInfo.value.templates = [];
-  searchInfo.value.tagOne = '';
-  searchInfo.value.tagTwo = '';
-  searchInfo.value.tagThree = '';
-  searchInfo.value.tagFour = '';
-  updatetmpOption(e.kind);
-  checkAll.value = false;
-}
-
-// 四联动
-const changeScanTagOne = (e, f) => {
-  searchInfo.value.templates = [];
-  tmpOption.value = [];
-  checkAll.value = false;
-  updatetmpOption(e.kind);
-}
-
-const isLoading = ref(true);
-
-const updatetmpOption = (kind) => {
-  const cacheKey = `${kind}-${searchInfo.value.tagOne}-${searchInfo.value.tagTwo}-${searchInfo.value.tagThree}-${searchInfo.value.tagFour}`;
-  
-  if (templateCache[cacheKey]) {
-    tmpOption.value = templateCache[cacheKey];
-  } else {
-    getTemplateList({
-      page: 1,
-      pageSize: 99999,
-      isAll: false,
-      templateType: kind,
+const listQuery = reactive({
+   page : 1,
+   total: 0,
+   pageSize: 50,
+})
+const searchInfo = ref({kind : '1'});
+const tableData = ref([])
+// 查询
+const getTableData = async() => {
+  const table = await getTemplateList({
+      page: listQuery.page,
+      pageSize: listQuery.pageSize,
+      isAll:false,
+      templateType: searchInfo.value.kind,
       tag1: searchInfo.value.tagOne,
       tag2: searchInfo.value.tagTwo,
       tag3: searchInfo.value.tagThree,
       tag4: searchInfo.value.tagFour,
-    }).then(res => {
-      tmpOption.value = res.data.list.map(e => ({ label: e.templateName, value: e.ID }));
-      templateCache[cacheKey] = tmpOption.value;  // 缓存数据
+
     });
-  }
+    console.log(table.data.code);
+    if (table.code === 0) {
+      tableData.value = table.data.list;
+      listQuery.total = table.data.total;
+      listQuery.page = table.data.page;
+      listQuery.pageSize = table.data.pageSize;
+    }
 }
+
+const checkAll = ref(false);
+
+const tableColumns = reactive([
+    { label:'名称', prop:'templateName'},
+    { label:'I D', prop:'templateId'},
+    { label:'类型', prop:'templateType',  slot: 'custType', width: '120'},
+])
+const statusData = ref([])
+
+
+const changeSize = (e) => {
+  listQuery.page = 1
+  listQuery.pageSize = e
+  getTableData()
+}
+
+const handleCurrentChange = (val) => {
+  listQuery.page = val
+  getTableData()
+}
+
 
 const route = useRoute();
 const id = ref(route.query.id);
@@ -323,15 +333,6 @@ const initForm = async () => {
 
 initForm();
 
-// 全选模板
-const handleCheckAll = (e, f) => {    
-  if (e) {
-    searchInfo.value.templates = tmpOption.value.map((_) => _.value);
-  } else {
-    searchInfo.value.templates = [];
-  }
-}
-
 const searchRules = ref({
   kind: [{ required: true, message: '请选择模板类型', trigger: 'blur' }],
   concurrency: [{ required: true, message: '最大并发未填写', trigger: 'blur' }],
@@ -343,12 +344,7 @@ const searchRules = ref({
 
 const tmpOption = ref([]);
 const tmpFormRef = ref(null);
-const searchInfo = ref({
-  tagOne: '',
-  tagTwo: '',
-  tagThree: '',
-  tagFour: '',
-});
+
 
 const templateDialog = ref(false);
 
@@ -368,9 +364,10 @@ const addTemplate = () => {
     format: '',
     rateLimit: 150,
     concurrency: 150,
+    isAll: true,
     templates: []
   };
-  updatetmpOption('1');
+  
 }
 
 const closeDialog = () => {
@@ -426,6 +423,38 @@ const savePolicy = async () => {
     }
   });
 }
+
+const selectionTemplateRow = (e, f , d) => {
+    searchInfo.value.templates = e.map(item => {
+         return item.ID
+    })
+}
+const selectionTemplateAll = (e) => {
+    searchInfo.value.templates = e.map(item=> {
+        return item.ID
+    })
+}
+
+const selectTemplate = () => {
+    searchInfo.value.templates = []
+    searchInfo.value.tagOne =  ''
+    searchInfo.value.tagTwo = ''
+    searchInfo.value.tagThree = ''
+    searchInfo.value.tagFour = ''
+    getTableData()
+}
+
+const selectTemplateTag = ()=> {
+    getTableData()
+}
+
+const initPage = async () => {
+  getTemplateTagData();
+  getTableData();
+  console.log(123123123);
+}
+
+initPage();
 </script>
 
 <style lang='scss' scoped>

@@ -7,6 +7,7 @@
     @select="onTableSelect"
     @select-all="onTableSelectAll" 
     :fit="true"
+    border
     :style="{'thead-tr-height': '20px', 'width': '100%', 'overflow-x': 'hidden'}">
     <!-- <template #empty>
       <el-empty description="未查询到相关数据" />
@@ -95,6 +96,8 @@ export default defineComponent({
     index: { default: false, type: Boolean },
     pagination: { default: null, type: Function },
     changePageSize:{default:null, type:Function},
+    selectionRow:{ default:null, type:Function},
+    selectionAll:{ default:null, type:Function}
   },
   emits: ['update:tableData', 'update:listQuery', 'pagination'],
   setup(props, { emit }) {
@@ -109,7 +112,7 @@ export default defineComponent({
     const onTableSelect = (selection, row) => {
       const selectedStatus = selection.length && selection.includes(row);
       props.selectionRow && props.selectionRow(selection, row, selectedStatus);
-      };
+    };
     const onTableSelectAll = (selection) => {
       props.selectionAll && props.selectionAll(selection);
     };

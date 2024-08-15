@@ -65,6 +65,7 @@ service.interceptors.request.use(
 // http response 拦截器
 service.interceptors.response.use(
   response => {
+    console.log(3333333333, response)
     const userStore = useUserStore()
     if (!response.config.donNotShowLoading) {
       closeLoading()
@@ -78,7 +79,6 @@ service.interceptors.response.use(
       }
       return response.data
     } else {
-      console.log(response.data)
       if(response.data.type == 'application/json' || response.data.msg != undefined) {
         ElMessage({
           showClose: true,
