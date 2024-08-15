@@ -63,21 +63,21 @@ func (p *PolicyApi) CreatePolicy(c *gin.Context) {
 	}
 	for _, policyConfig := range createPolicy.PolicyConfig {
 		policyConfig.Name = common.JobTypeName[policyConfig.Kind]
-		// if policyConfig.Kind == common.AssetDiscovery {
-		// 	policyConfig.Name = "资产发现"
-		// }
-		// if policyConfig.Kind == common.VulnerabilityScan {
-		// 	policyConfig.Name = "漏洞扫描"
-		// }
-		// if policyConfig.Kind == common.WeakPassword {
-		// 	policyConfig.Name = "弱口令"
-		// }
+		if policyConfig.IsAll {
+			err = global.GVA_DB.Model(&curescan.Template{}).Select("id").Where("template_type", policyConfig.Kind).Scan(&policyConfig.Templates).Error
+			if err != nil {
+				response.FailWithMessage("全选模板失败", c)
+				return
+			}
+		}
+
 	}
 	policyConfig, err := json.Marshal(createPolicy.PolicyConfig)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+
 	onlineConfg, err := json.Marshal(createPolicy.OnlineConfig)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)

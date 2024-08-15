@@ -142,10 +142,29 @@ func (t *TemplateService) UpdateTemplate(template *curescan.Template) error {
 }
 
 func (t *TemplateService) BatchAdd(templates []*curescan.Template) error {
-	return global.GVA_DB.Clauses(clause.OnConflict{
-		Columns:   []clause.Column{{Name: "template_id"}},
-		DoUpdates: clause.AssignmentColumns([]string{"template_desc", "template_content", "tag1", "tag2", "tag3", "tag4", "template_type", "deleted_at"}), // 更新的列
-	}).CreateInBatches(templates, 100).Error
+	// 开启事务，确保批量操作的原子性
+	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+		// 执行批量插入，处理冲突
+		if err := tx.Clauses(clause.OnConflict{
+			Columns: []clause.Column{{Name: "template_id"}},
+			DoUpdates: clause.AssignmentColumns([]string{
+				"template_desc",
+				"template_content",
+				"tag1",
+				"tag2",
+				"tag3",
+				"tag4",
+				"template_type",
+				"template_name",
+				"deleted_at",
+				"updated_at", // 确保更新操作时更新时间戳
+				"updated_by", // 确保更新操作时更新操作用户
+			}),
+		}).CreateInBatches(templates, 100).Error; err != nil {
+			return err // 如果发生错误，回滚事务
+		}
+		return nil // 提交事务
+	})
 }
 
 func (t *TemplateService) ParseTemplateContent(template *curescan.Template) (err error) {
