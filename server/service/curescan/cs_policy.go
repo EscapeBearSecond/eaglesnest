@@ -1,8 +1,10 @@
 package curescan
 
 import (
+	request2 "47.103.136.241/goprojects/curescan/server/model/curescan/request"
 	"errors"
 	"fmt"
+	"math"
 
 	"47.103.136.241/goprojects/curescan/server/model/common/request"
 
@@ -13,6 +15,10 @@ import (
 
 type PolicyService struct {
 }
+
+var (
+	taskService = &TaskService{}
+)
 
 // CreatePolicy 创建策略, 不允许有重复的策略名称.
 func (p *PolicyService) CreatePolicy(policy *curescan.Policy) error {
@@ -40,6 +46,18 @@ func (p *PolicyService) UpdatePolicy(policy *curescan.Policy) error {
 
 // DeletePolicy 根据策略ID删除策略, 该删除是逻辑删除, 通过将deleted_at字段的置为当前时间来进行删除.
 func (p *PolicyService) DeletePolicy(id int) error {
+	searchTask := request2.SearchTask{}
+	searchTask.PageSize = math.MaxInt64
+	searchTask.Page = 1
+	searchTask.PolicyId = id
+	_, total, err := taskService.GetTaskList(searchTask)
+	if err != nil {
+		return err
+	}
+	if total > 0 {
+		return fmt.Errorf("策略存在关联任务，不允许删除，请先处理相关任务")
+	}
+
 	return global.GVA_DB.Delete(&curescan.Policy{}, id).Error
 }
 
