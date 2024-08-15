@@ -95,7 +95,7 @@
     </el-row>
     <el-drawer
       v-model="templateDialog"
-      size="50%"
+      size="46%"
       :show-close="false"
       :close-on-press-escape="false"
       :close-on-click-modal="false"
@@ -151,66 +151,46 @@
                     </el-col>
                     <el-col :span="12">
                         <el-form-item label="模板选择"  class="sec-lab">
-                            <el-radio-group v-model="searchInfo.templateSelect">
-                            <el-radio-button label="全选" value="1" />
-                            <el-radio-button label="自定义" value="2" />
+                            <el-radio-group v-model="searchInfo.isAll">
+                            <el-radio-button label="全选" :value="true" />
+                            <el-radio-button label="自定义" :value="false" />
                         </el-radio-group>   
                         </el-form-item>
                     </el-col>
                    
-                    <el-col :span="12" v-if="searchInfo.templateSelect == 2">
+                    <el-col :span="12" v-if="searchInfo.isAll == false">
                         <el-form-item label="设备类型"  class="sec-lab"> 
-                            <el-select v-model="searchInfo.tagOne" placeholder="请选择设备类型"     
-                                filterable  
-                                multiple
-                                collapse-tags
-                                collapse-tags-tooltip
-                            >
+                            <el-select v-model="searchInfo.tagOne" placeholder="请选择设备类型" filterable  @change="selectTemplateTag" clearable>
                                 <el-option v-for="(tagOne, key) in tagList.tag1" :label="tagOne" :value="tagOne" :key="key" />
                             </el-select>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="12" v-if="searchInfo.templateSelect == 2">
+                    <el-col :span="12" v-if="searchInfo.isAll == false">
                         <el-form-item label="系统类型"  class="sec-lab">
-                            <el-select v-model="searchInfo.tagTwo" placeholder="请选择系统类型"  
-                                filterable  
-                                multiple
-                                collapse-tags
-                                collapse-tags-tooltip
-                            >
+                            <el-select v-model="searchInfo.tagTwo" placeholder="请选择系统类型" filterable @change="selectTemplateTag" clearable>
                                 <el-option v-for="(tagTwo, key) in tagList.tag2" :label="tagTwo" :value="tagTwo" :key="key" />
                             </el-select>
                         </el-form-item>
                     </el-col>
                 </el-row>
-                <el-row :gutter="10" v-if="searchInfo.templateSelect == 2">
+                <el-row :gutter="10" v-if="searchInfo.isAll == false">
                     <el-col :span="12">
                         <el-form-item label="厂商名称"  class="sec-lab" >
-                            <el-select v-model="searchInfo.tagThree" placeholder="请选择厂商名称"  
-                                filterable  
-                                multiple
-                                collapse-tags
-                                collapse-tags-tooltip
-                            >
+                            <el-select v-model="searchInfo.tagThree" placeholder="请选择厂商名称"  filterable @change="selectTemplateTag" clearable>
                                 <el-option v-for="(tagThree, key) in tagList.tag3" :label="tagThree" :value="tagThree" :key="key" />
                             </el-select>
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
                         <el-form-item label="产品型号"  class="sec-lab">
-                            <el-select v-model="searchInfo.tagFour" placeholder="请选择产品型号" 
-                                filterable  
-                                multiple
-                                collapse-tags
-                                collapse-tags-tooltip
-                            >
+                            <el-select v-model="searchInfo.tagFour" placeholder="请选择产品型号"  filterable @change="selectTemplateTag" clearable>
                                 <el-option v-for="(tagFour, key) in tagList.tag4" :label="tagFour" :value="tagFour" :key="key" />
                             </el-select>
                         </el-form-item>
                     </el-col>
                    
                 </el-row>
-                <el-row :gutter="20" v-if="searchInfo.templateSelect == 2">
+                <el-row :gutter="20" v-if="searchInfo.isAll == false">
                     <el-col :span="24">
                         <advance-table
                             :columns="tableColumns"
@@ -298,16 +278,16 @@ const listQuery = reactive({
 const searchInfo = ref({kind : '1'});
 const tableData = ref([])
 // 查询
-const getTableData = async(templateType) => {
+const getTableData = async() => {
   const table = await getTemplateList({
       page: listQuery.page,
       pageSize: listQuery.pageSize,
-      isAll:true,
+      isAll:false,
       templateType: searchInfo.value.kind,
-      tagOne: searchInfo.value.tagOne,
-      tagTwo: searchInfo.value.tagTwo,
-      tagThree: searchInfo.value.tagThree,
-      tagFour: searchInfo.value.tagFour,
+      tag1: searchInfo.value.tagOne,
+      tag2: searchInfo.value.tagTwo,
+      tag3: searchInfo.value.tagThree,
+      tag4: searchInfo.value.tagFour,
 
     });
     console.log(table.data.code);
@@ -384,7 +364,7 @@ const addTemplate = () => {
     format: '',
     rateLimit: 150,
     concurrency: 150,
-    templateSelect:'1',
+    isAll: true,
     templates: []
   };
   
@@ -461,6 +441,10 @@ const selectTemplate = () => {
     searchInfo.value.tagTwo = ''
     searchInfo.value.tagThree = ''
     searchInfo.value.tagFour = ''
+    getTableData()
+}
+
+const selectTemplateTag = ()=> {
     getTableData()
 }
 
