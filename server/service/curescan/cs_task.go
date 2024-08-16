@@ -400,8 +400,7 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 			if err != nil {
 				return err
 			}
-			return errors.New("诶，就是玩")
-			// return nil
+			return nil
 		})
 		if err != nil {
 			if errors.Is(err, eagleeye.ErrHasBeenStopped) {
