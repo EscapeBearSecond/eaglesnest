@@ -65,7 +65,6 @@ service.interceptors.request.use(
 // http response 拦截器
 service.interceptors.response.use(
   response => {
-    console.log(3333333333, response)
     const userStore = useUserStore()
     if (!response.config.donNotShowLoading) {
       closeLoading()

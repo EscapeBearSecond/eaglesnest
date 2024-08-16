@@ -168,10 +168,9 @@
 
      <el-descriptions
         title=""
-        direction="horizontal"
+        direction="vertical"
         :column="2"
         :size="showSize"
-        label-width="180px"
         border
       >
         <el-descriptions-item label="任务名称" align="center">
@@ -758,7 +757,7 @@ const handleShow = async(e)=> {
   text-align: left;
   white-space: normal;
 }
-::v-deep .el-descriptions__label {
+::v-deep .el-descriptions__cell , .el-descriptions__label{
     width: 180px;
 }
 </style>
