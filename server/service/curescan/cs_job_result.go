@@ -16,7 +16,9 @@ func (j *JobResultService) BatchAdd(data []*curescan.JobResultItem) error {
 }
 
 func (j *JobResultService) BatchAddWithTransaction(tx *gorm.DB, data []*curescan.JobResultItem) error {
-	return tx.Model(&curescan.JobResultItem{}).CreateInBatches(data, 100).Error
+	return tx.Transaction(func(tx1 *gorm.DB) error {
+		return tx1.Model(&curescan.JobResultItem{}).CreateInBatches(data, 100).Error
+	})
 }
 
 func (j *JobResultService) GetJobResultList(info *request.SearchJobResult) (list interface{}, total int64, err error) {
