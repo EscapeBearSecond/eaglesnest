@@ -1,6 +1,7 @@
 package curescan
 
 import (
+	"47.103.136.241/goprojects/curescan/server/model/curescan/common"
 	"bufio"
 	"encoding/json"
 	"fmt"
@@ -40,7 +41,7 @@ func (t *TaskApi) CreateTask(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if !utils.IsValidCron(createTask.PlanConfig) {
+	if createTask.TaskPlan == common.ExecuteTiming && !utils.IsValidCron(createTask.PlanConfig) {
 		response.FailWithMessage("非法的cron达式", c)
 		return
 
