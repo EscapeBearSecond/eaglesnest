@@ -341,6 +341,7 @@ func validateIp(ip string) bool {
 }
 
 func IsValidCron(expr string) bool {
-	_, err := cron.ParseStandard(expr)
+	parser := cron.NewParser(cron.Second | cron.Minute | cron.Hour | cron.Dom | cron.Month | cron.Dow | cron.Descriptor)
+	_, err := parser.Parse(expr)
 	return err == nil
 }

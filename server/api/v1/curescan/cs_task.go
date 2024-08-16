@@ -40,20 +40,12 @@ func (t *TaskApi) CreateTask(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	// bytes, err := json.Marshal(&createTask.PlanConfig)
-	// if err != nil {
-	// 	response.FailWithMessage(err.Error(), c)
-	// 	return
-	// }
-	// var modelTask = curescan.Task{
-	// 	TaskName:   createTask.TaskName,
-	// 	TaskDesc:   createTask.TaskDesc,
-	// 	TaskPlan:   createTask.TaskPlan,
-	// 	PlanConfig: string(bytes),
-	// 	PolicyID:   createTask.PolicyID,
-	// 	Status:     createTask.Status,
-	// 	TargetIP:   ips,
-	// }
+	if !utils.IsValidCron(createTask.PlanConfig) {
+		response.FailWithMessage("非法的cron达式", c)
+		return
+
+	}
+
 	var task = curescan.Task{
 		TaskName:   createTask.TaskName,
 		TaskDesc:   createTask.TaskDesc,
@@ -62,6 +54,7 @@ func (t *TaskApi) CreateTask(c *gin.Context) {
 		PolicyID:   createTask.PolicyID,
 		TargetIP:   createTask.TargetIP,
 		Flag:       createTask.Flag,
+		CsModel:    global.CsModel{CreatedBy: utils.GetUserID(c)},
 	}
 	task.CreatedBy = utils.GetUserID(c)
 	err = taskService.CreateTask(&task)

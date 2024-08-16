@@ -61,72 +61,17 @@ func (s *TaskService) CreateTask(task *curescan.Task) error {
 	if err != nil {
 		return err
 	}
-	// 立即执行
-	if task.TaskPlan == common.ExecuteImmediately {
-		go func() {
-			s.ExecuteTask(int(task.ID))
-		}()
-		return nil
-	}
 	// 稍后执行
 	if task.TaskPlan == common.ExecuteLater {
 		return nil
 	}
-	// 定时计划
-	if task.TaskPlan == common.ExecuteTiming {
-		if !utils.IsValidCron(task.PlanConfig) {
-			return fmt.Errorf("错误的cron表达式")
-		}
-		// cronName := task.TaskName
-		err = s.ExecuteTask(int(task.ID))
-		// _, err = global.GVA_Timer.AddTaskByFunc(cronName, createTask.PlanConfig, func() { s.ExecuteTask(int(task.ID)) }, task.TaskName, cron.WithSeconds())
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
 
-func (s *TaskService) CreateTaskToDel(createTask *request.CreateTask) error {
-
-	var task = curescan.Task{
-		TaskName:   createTask.TaskName,
-		TaskDesc:   createTask.TaskDesc,
-		TaskPlan:   createTask.TaskPlan,
-		PlanConfig: createTask.PlanConfig,
-		PolicyID:   createTask.PolicyID,
-		Status:     createTask.Status,
-		TargetIP:   createTask.TargetIP,
-	}
-	// if !errors.Is(global.GVA_DB.Select("task_name").First(&curescan.Task{}, "task_name=?", task.TaskName).Error, gorm.ErrRecordNotFound) {
-	// 	return errors.New("存在相同任务名称，不允许创建")
-	// }
-
-	err := global.GVA_DB.Create(&task).Error
-	if err != nil {
-		return err
-	}
-	// 立即执行
-	if createTask.TaskPlan == 1 {
-		return s.ExecuteTask(int(task.ID))
-	}
-	// 稍后执行
-	if createTask.TaskPlan == 2 {
-		return nil
-	}
-	// 定时计划
-	if createTask.TaskPlan == 3 {
-		cronName := task.TaskName
-		task.Status = 5
-		err = s.UpdateTask(&task)
+	go func() {
+		err := s.ExecuteTask(int(task.ID))
 		if err != nil {
-			return err
+			return
 		}
-		_, err = global.GVA_Timer.AddTaskByFunc(cronName, createTask.PlanConfig, func() { s.ExecuteTask(int(task.ID)) }, task.TaskName, cron.WithSeconds())
-		if err != nil {
-			return err
-		}
-	}
+	}()
 	return nil
 }
 
@@ -241,6 +186,7 @@ func (s *TaskService) GetTaskList(st request.SearchTask) (list interface{}, tota
 
 // ExecuteTask 执行任务
 func (s *TaskService) ExecuteTask(id int) error {
+	fmt.Println("111111111111")
 	// 接收回调中的任务结果
 	var taskResult response.TaskResult
 
@@ -371,11 +317,14 @@ func (s *TaskService) ExecuteTask(id int) error {
 		// 处理任务
 		go s.processTask(task, options, &taskResult)
 	}
+	fmt.Println("task", task.TaskName)
 	if task.TaskPlan == common.ExecuteTiming {
+		fmt.Println("??????????")
 		task.Status = common.TimeRunning
 		s.UpdateTask(task)
 		cronName := task.TaskName
 		global.GVA_Timer.AddTaskByFunc(cronName, task.PlanConfig, func() { s.processTask(task, options, &taskResult) }, task.TaskName, cron.WithSeconds())
+		fmt.Println("list", global.GVA_Timer.FindCronList())
 	}
 	return nil
 }
@@ -479,6 +428,7 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 			PlanConfig: "",
 			EntryID:    entry.EntryID,
 			Flag:       task.Flag,
+			CsModel:    global.CsModel{CreatedBy: task.CreatedBy},
 		}
 		err = s.CreateTask(newTask)
 		// err = global.GVA_DB.Create(newTask).Error
@@ -486,75 +436,76 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 			global.GVA_LOG.Error("任务开始执行失败", zap.String("taskName", newTask.TaskName), zap.String("error", err.Error()))
 			return
 		}
-		err = global.GVA_DB.Transaction(func(tx *gorm.DB) error {
-			// 更新任务状态为执行中
-
-			global.GVA_LOG.Info("任务开始执行...", zap.String("taskName", newTask.TaskName))
-			// 在Redis中记录任务和entryID的关联
-			err = global.GVA_REDIS.Set(context.Background(), "task_"+strconv.Itoa(int(newTask.ID)), entry.EntryID, 0).Err()
-			if err != nil {
-				return err
-			}
-			// global.GVA_REDIS.Set(context.Background(), "task_"+strconv.Itoa(int(newTask.ID)), entry.EntryID, -1)
-			// 执行任务的入口
-			err = entry.Run(context.Background())
-			if err != nil {
-				return err
-			}
-			// result := entry.Result()
-			// fmt.Println(result)
-			fmt.Println("该入结果库的数据：", len(taskResult.JobResultList))
-			// 任务执行成功 批量添加任务结果
-			err = portScanService.BatchAddWithTransaction(tx, taskResult.PortScanList)
-			if err != nil {
-				return err
-			}
-			err = onlineCheckService.BatchAddWithTransaction(tx, taskResult.OnlineCheckList)
-			if err != nil {
-				return err
-			}
-			err = jobResultService.BatchAddWithTransaction(tx, taskResult.JobResultList)
-			if err != nil {
-				return err
-			}
-			info, err := userService.FindUserById(int(task.CreatedBy))
-			if err != nil {
-				return err
-			}
-			var indexMap = make(map[string]int, 1)
-			for i, item := range options.Jobs {
-				if item.Kind == "2" {
-					indexMap["vuln"] = i
-				}
-			}
-			err = s.GenerateReport(entry.Result(), info.NickName, indexMap)
-			if err != nil {
-				return err
-			}
-			// 资产添加
-			assets := getAssetFromResult(taskResult)
-			if len(assets) > 0 {
-				err = tx.Model(&curescan.Asset{}).CreateInBatches(assets, 100).Error
-				if err != nil {
-					return err
-				}
-			}
-			return nil
-		})
-		if err != nil {
-			if errors.Is(err, eagleeye.ErrHasBeenStopped) {
-				global.GVA_LOG.Error("任务终止...", zap.String("taskName", newTask.TaskName), zap.Error(err))
-				newTask.Status = common.Stopped
-			} else {
-				global.GVA_LOG.Error("任务执行失败", zap.String("taskName", newTask.TaskName), zap.Error(err))
-				newTask.Status = common.Failed
-			}
-		} else {
-			newTask.Status = common.Success
-			global.GVA_LOG.Info("任务执行成功", zap.String("taskName", newTask.TaskName))
-		}
-		// 更新任务状态为 失败或成功
-		s.UpdateTask(newTask)
+		s.processTask(newTask, options, taskResult)
+		// err = global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+		// 	// 更新任务状态为执行中
+		//
+		// 	global.GVA_LOG.Info("任务开始执行...", zap.String("taskName", newTask.TaskName))
+		// 	// 在Redis中记录任务和entryID的关联
+		// 	err = global.GVA_REDIS.Set(context.Background(), "task_"+strconv.Itoa(int(newTask.ID)), entry.EntryID, 0).Err()
+		// 	if err != nil {
+		// 		return err
+		// 	}
+		// 	// global.GVA_REDIS.Set(context.Background(), "task_"+strconv.Itoa(int(newTask.ID)), entry.EntryID, -1)
+		// 	// 执行任务的入口
+		// 	err = entry.Run(context.Background())
+		// 	if err != nil {
+		// 		return err
+		// 	}
+		// 	// result := entry.Result()
+		// 	// fmt.Println(result)
+		// 	fmt.Println("该入结果库的数据：", len(taskResult.JobResultList))
+		// 	// 任务执行成功 批量添加任务结果
+		// 	err = portScanService.BatchAddWithTransaction(tx, taskResult.PortScanList)
+		// 	if err != nil {
+		// 		return err
+		// 	}
+		// 	err = onlineCheckService.BatchAddWithTransaction(tx, taskResult.OnlineCheckList)
+		// 	if err != nil {
+		// 		return err
+		// 	}
+		// 	err = jobResultService.BatchAddWithTransaction(tx, taskResult.JobResultList)
+		// 	if err != nil {
+		// 		return err
+		// 	}
+		// 	info, err := userService.FindUserById(int(task.CreatedBy))
+		// 	if err != nil {
+		// 		return err
+		// 	}
+		// 	var indexMap = make(map[string]int, 1)
+		// 	for i, item := range options.Jobs {
+		// 		if item.Kind == "2" {
+		// 			indexMap["vuln"] = i
+		// 		}
+		// 	}
+		// 	err = s.GenerateReport(entry.Result(), info.NickName, indexMap)
+		// 	if err != nil {
+		// 		return err
+		// 	}
+		// 	// 资产添加
+		// 	assets := getAssetFromResult(taskResult)
+		// 	if len(assets) > 0 {
+		// 		err = tx.Model(&curescan.Asset{}).CreateInBatches(assets, 100).Error
+		// 		if err != nil {
+		// 			return err
+		// 		}
+		// 	}
+		// 	return nil
+		// })
+		// if err != nil {
+		// 	if errors.Is(err, eagleeye.ErrHasBeenStopped) {
+		// 		global.GVA_LOG.Error("任务终止...", zap.String("taskName", newTask.TaskName), zap.Error(err))
+		// 		newTask.Status = common.Stopped
+		// 	} else {
+		// 		global.GVA_LOG.Error("任务执行失败", zap.String("taskName", newTask.TaskName), zap.Error(err))
+		// 		newTask.Status = common.Failed
+		// 	}
+		// } else {
+		// 	newTask.Status = common.Success
+		// 	global.GVA_LOG.Info("任务执行成功", zap.String("taskName", newTask.TaskName))
+		// }
+		// // 更新任务状态为 失败或成功
+		// s.UpdateTask(newTask)
 	}
 
 }

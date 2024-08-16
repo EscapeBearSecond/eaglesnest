@@ -29,7 +29,7 @@ var JobTypeName = map[string]string{
 // 普通任务状态
 var (
 	// 创建
-	Created = 0
+	Created = 7
 	// 执行中
 	Running = 1
 	// 成功
