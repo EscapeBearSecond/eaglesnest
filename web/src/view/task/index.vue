@@ -168,7 +168,7 @@
 
      <el-descriptions
         title=""
-        direction="horizontal"
+        direction="vertical"
         :column="2"
         :size="showSize"
         border
@@ -194,7 +194,9 @@
           <el-progress type="dashboard" :percentage="stageData.percent * 100" :color="colors" />
         </el-descriptions-item>
         <el-descriptions-item label="扫描 IP" :span="2" align="center">
-          {{  IpToStr(showInfo.targetIp) }}
+          <div class="ip-content"> 
+            {{  IpToStr(showInfo.targetIp) }}
+          </div>
         </el-descriptions-item>
         <el-descriptions-item label="任务描述" :span="2" align="center">
           {{  showInfo.taskDesc }}
@@ -640,7 +642,11 @@ function getIpArr(e) {
 function IpToStr(e) {   
    if(Array.isArray(e)) {
       if(e.length > 0) {
-          return e.join(',')
+        let result = [];
+        for (let i = 0; i < e.length; i += 2) {
+            result.push(e.slice(i, i + 2).join(','));
+        }
+        return result.join('\n');
       }else {
         return e[0]
       }
@@ -700,7 +706,7 @@ const changeSize = (e) => {
 }
 
 const showDialogFlag = ref(false)
-const showSize = ref('large')
+const showSize = ref('default')
 const showInfo = ref({})
 let stageData = ref({
   name:'',  
@@ -724,10 +730,7 @@ const handleShow = async(e)=> {
         stageData = data.data
     }
     showInfo.value = data.data
-    showDialogFlag.value = true
-
-
-    
+    showDialogFlag.value = true    
 }
 </script>
 
@@ -748,5 +751,13 @@ const handleShow = async(e)=> {
   align-items: center;
   justify-items: center;
   margin: 10px 0px;
+}
+
+.ip-content {
+  text-align: left;
+  white-space: normal;
+}
+::v-deep .el-descriptions__cell , .el-descriptions__label{
+    width: 180px;
 }
 </style>
