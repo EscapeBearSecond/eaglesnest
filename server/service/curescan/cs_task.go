@@ -255,6 +255,25 @@ func (s *TaskService) ExecuteTask(id int) error {
 		return errors.New("任务正在执行中，请勿重复执行")
 	}
 
+	if task.Status == common.Success {
+		task = &curescan.Task{
+			CsModel: global.CsModel{
+				CreatedBy: task.CreatedBy,
+				UpdatedBy: task.UpdatedBy,
+			},
+			TaskName:   task.TaskName + "_copy_" + utils.RandomString(6),
+			TaskDesc:   task.TaskDesc,
+			Status:     common.Created,
+			TargetIP:   task.TargetIP,
+			PolicyID:   task.PolicyID,
+			TaskPlan:   task.TaskPlan,
+			PlanConfig: task.PlanConfig,
+			Executions: 0,
+			EntryID:    "",
+			Flag:       task.Flag,
+		}
+	}
+
 	// 得到任务关联的策略
 	policy, err := policyService.GetPolicyById(int(task.PolicyID))
 	if err != nil {
