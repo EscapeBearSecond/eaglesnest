@@ -61,6 +61,13 @@ func (p *PolicyApi) CreatePolicy(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+	if createPolicy.OnlineConfig.Format == "" {
+		createPolicy.OnlineConfig.Format = "excel"
+	}
+	if createPolicy.PortScanConfig.Format == "" {
+		createPolicy.PortScanConfig.Format = "excel"
+	}
+
 	for _, policyConfig := range createPolicy.PolicyConfig {
 		policyConfig.Name = common.JobTypeName[policyConfig.Kind]
 		if policyConfig.IsAll {
@@ -69,6 +76,9 @@ func (p *PolicyApi) CreatePolicy(c *gin.Context) {
 				response.FailWithMessage("全选模板失败", c)
 				return
 			}
+		}
+		if policyConfig.Format == "" {
+			policyConfig.Format = "excel"
 		}
 
 	}

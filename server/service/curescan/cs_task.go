@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math"
 	"strconv"
 	"time"
 
@@ -196,7 +197,7 @@ func (s *TaskService) GetTaskList(st request.SearchTask) (list interface{}, tota
 	if len(st.TaskPlan) != 0 {
 		db = db.Where("task_plan in (?)", st.TaskPlan)
 	}
-	if st.Status != -1 {
+	if st.Status != 0 {
 		db = db.Where("status=?", st.Status)
 	}
 	if st.PolicyId != 0 {
@@ -421,8 +422,12 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 
 			// 资产添加
 			assets := getAssetFromResult(taskResult)
-			// TODO 批量添加资产
-			err = assetService.BatchAdd(assets)
+			if len(assets) > 0 {
+				err = tx.Model(&curescan.Asset{}).CreateInBatches(assets, 100).Error
+				if err != nil {
+					return err
+				}
+			}
 			// err = tx.Model(&curescan.Asset{}).CreateInBatches(assets, 100).Error
 			if err != nil {
 				return err
@@ -478,6 +483,8 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 				return err
 			}
 			// result := entry.Result()
+			// fmt.Println(result)
+			fmt.Println("该入结果库的数据：", len(taskResult.JobResultList))
 			// 任务执行成功 批量添加任务结果
 			err = portScanService.BatchAddWithTransaction(tx, taskResult.PortScanList)
 			if err != nil {
@@ -507,9 +514,11 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 			}
 			// 资产添加
 			assets := getAssetFromResult(taskResult)
-			err = tx.Model(&curescan.Asset{}).CreateInBatches(assets, 100).Error
-			if err != nil {
-				return err
+			if len(assets) > 0 {
+				err = tx.Model(&curescan.Asset{}).CreateInBatches(assets, 100).Error
+				if err != nil {
+					return err
+				}
 			}
 			return nil
 		})
@@ -594,6 +603,7 @@ func getAssetFromResult(result *response.TaskResult) []*curescan.Asset {
 // generateJob 生成任务， 根据任务配置生成任务
 func (s *TaskService) generateJob(jobConfig []*request.JobConfig, taskResult *response.TaskResult) ([]types.JobOptions, error) {
 	jobs := make([]types.JobOptions, len(jobConfig))
+	// data := make([]*curescan.JobResultItem, 0)
 	for i, job := range jobConfig {
 		// dir := path.Join(global.GVA_CONFIG.AutoCode.Root, "server", "templates", job.Name)
 		jobs[i].Name = job.Name
@@ -604,9 +614,7 @@ func (s *TaskService) generateJob(jobConfig []*request.JobConfig, taskResult *re
 		jobs[i].Timeout = job.Timeout
 		jobs[i].RateLimit = job.RateLimit
 		jobs[i].ResultCallback = func(c context.Context, result *types.JobResult) error {
-			var data []*curescan.JobResultItem
 			for _, item := range result.Items {
-				fmt.Println("发现了一个结果")
 				var oneRes = &curescan.JobResultItem{
 					Name:             item.TemplateName,
 					Kind:             result.Kind,
@@ -624,9 +632,8 @@ func (s *TaskService) generateJob(jobConfig []*request.JobConfig, taskResult *re
 					Description:      item.Description,
 					EntryID:          result.EntryID,
 				}
-				data = append(data, oneRes)
+				taskResult.JobResultList = append(taskResult.JobResultList, oneRes)
 			}
-			taskResult.JobResultList = data
 			return nil
 		}
 		jobs[i].GetTemplates = func() []*types.RawTemplate {
@@ -643,9 +650,6 @@ func (s *TaskService) generateJob(jobConfig []*request.JobConfig, taskResult *re
 			}
 			return rawTemplates
 		}
-		// return jobs, nil
-		// jobs[i].Template = dir
-
 	}
 	return jobs, nil
 }
@@ -717,7 +721,8 @@ func (s *TaskService) GetTaskStage(id int64) (*response.Stage, error) {
 	}
 	modelStage := &response.Stage{}
 	stage := entry.Stage()
-	modelStage.Percent = stage.Percent
+	// 保留四位小数
+	modelStage.Percent = math.Round(stage.Percent*10000) / 10000
 	var jobConfig []*response.JobConfig
 	var onlineCheckConfig *response.OnlineConfig
 	var portScanConfig *response.PortScanConfig
