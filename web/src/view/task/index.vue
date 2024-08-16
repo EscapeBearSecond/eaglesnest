@@ -20,6 +20,7 @@
               :key="item.value"
               :label="item.label"
               :value="parseInt(item.value)"
+              :disabled="item.value == 5 || item.value == 6 ? true : false"
           />
           </el-select>
          </el-form-item>
