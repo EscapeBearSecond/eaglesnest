@@ -758,10 +758,7 @@ const handleShow = async(e)=> {
   text-align: left;
   white-space: normal;
 }
-::v-deep {
-  .el-descriptions__label {
-    width: 280px;
-   
-  }
+::v-deep .el-descriptions__label {
+    width: 180px;
 }
 </style>
