@@ -147,7 +147,8 @@ func (t *TaskApi) DeleteTask(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if task.TaskPlan == common.Running || task.TaskPlan == common.TimeRunning {
+	fmt.Println("aaaa", task.TaskPlan)
+	if task.Status == common.Running || task.Status == common.TimeRunning {
 		response.FailWithMessage("任务正在运行中，不允许删除", c)
 		return
 	}
