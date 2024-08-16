@@ -386,7 +386,7 @@ const handleDel = (row) => {
     type: 'warning'
   })
     .then(async() => {
-      const res = await delTask({ id: row.id })
+      const res = await delTask({ id: row.ID })
       if (res.code === 0) {
         ElMessage({
           type: 'success',
