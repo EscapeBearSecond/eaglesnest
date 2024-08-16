@@ -10,32 +10,32 @@
           class="card_item"
         >
           <template #header>
-            <div>Runtime</div>
+            <div>运行中</div>
           </template>
           <div>
             <el-row :gutter="10">
-              <el-col :span="12">os:</el-col>
+              <el-col :span="12">系统:</el-col>
               <el-col
                 :span="12"
                 v-text="state.os.goos"
               />
             </el-row>
             <el-row :gutter="10">
-              <el-col :span="12">cpu nums:</el-col>
+              <el-col :span="12">cpu :</el-col>
               <el-col
                 :span="12"
                 v-text="state.os.numCpu"
               />
             </el-row>
             <el-row :gutter="10">
-              <el-col :span="12">compiler:</el-col>
+              <el-col :span="12">编译器:</el-col>
               <el-col
                 :span="12"
                 v-text="state.os.compiler"
               />
             </el-row>
             <el-row :gutter="10">
-              <el-col :span="12">go version:</el-col>
+              <el-col :span="12">go 版本:</el-col>
               <el-col
                 :span="12"
                 v-text="state.os.goVersion"
@@ -58,7 +58,7 @@
           :body-style="{ height: '180px', 'overflow-y': 'scroll' }"
         >
           <template #header>
-            <div>Disk</div>
+            <div>磁盘</div>
           </template>
           <div>
             <el-row
@@ -70,35 +70,35 @@
               <el-col :span="12">
 
                 <el-row :gutter="10">
-                  <el-col :span="12">MountPoint</el-col>
+                  <el-col :span="12">挂载点</el-col>
                   <el-col
                       :span="12"
                       v-text="item.mountPoint"
                   />
                 </el-row>
                 <el-row :gutter="10">
-                  <el-col :span="12">total (MB)</el-col>
+                  <el-col :span="12">总数 (MB)</el-col>
                   <el-col
                       :span="12"
                       v-text="item.totalMb"
                   />
                 </el-row>
                 <el-row :gutter="10">
-                  <el-col :span="12">used (MB)</el-col>
+                  <el-col :span="12">使用 (MB)</el-col>
                   <el-col
                       :span="12"
                       v-text="item.usedMb"
                   />
                 </el-row>
                 <el-row :gutter="10">
-                  <el-col :span="12">total (GB)</el-col>
+                  <el-col :span="12">总数 (GB)</el-col>
                   <el-col
                       :span="12"
                       v-text="item.totalGb"
                   />
                 </el-row>
                 <el-row :gutter="10">
-                  <el-col :span="12">used (GB)</el-col>
+                  <el-col :span="12">使用 (GB)</el-col>
                   <el-col
                       :span="12"
                       v-text="item.usedGb"
@@ -132,7 +132,7 @@
           </template>
           <div>
             <el-row :gutter="10">
-              <el-col :span="12">physical number of cores:</el-col>
+              <el-col :span="12">物理核心数:</el-col>
               <el-col
                 :span="12"
                 v-text="state.cpu.cores"
@@ -161,34 +161,34 @@
           class="card_item"
         >
           <template #header>
-            <div>Ram</div>
+            <div>内存</div>
           </template>
           <div>
             <el-row :gutter="10">
               <el-col :span="12">
                 <el-row :gutter="10">
-                  <el-col :span="12">total (MB)</el-col>
+                  <el-col :span="12">总数  (MB)</el-col>
                   <el-col
                     :span="12"
                     v-text="state.ram.totalMb"
                   />
                 </el-row>
                 <el-row :gutter="10">
-                  <el-col :span="12">used (MB)</el-col>
+                  <el-col :span="12">使用  (MB)</el-col>
                   <el-col
                     :span="12"
                     v-text="state.ram.usedMb"
                   />
                 </el-row>
                 <el-row :gutter="10">
-                  <el-col :span="12">total (GB)</el-col>
+                  <el-col :span="12">总数 (GB)</el-col>
                   <el-col
                     :span="12"
                     v-text="state.ram.totalMb / 1024"
                   />
                 </el-row>
                 <el-row :gutter="10">
-                  <el-col :span="12">used (GB)</el-col>
+                  <el-col :span="12">使用 (GB)</el-col>
                   <el-col
                     :span="12"
                     v-text="(state.ram.usedMb / 1024).toFixed(2)"
