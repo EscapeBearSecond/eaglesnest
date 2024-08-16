@@ -25,16 +25,16 @@
                     </el-form-item>
                     <div v-if="form.onlineConfig.use">
                         <el-form-item  label="并发数量"  class="sec-lab">
-                            <el-input v-model="form.onlineConfig.concurrency" />
+                            <el-input v-model.number="form.onlineConfig.concurrency" />
                         </el-form-item>
                         <el-form-item label="超时设置"  class="sec-lab">
                             <el-input v-model="form.onlineConfig.timeout" />
                         </el-form-item>
                         <el-form-item label="探活轮次"  class="sec-lab">
-                            <el-input v-model="form.onlineConfig.count" />
+                            <el-input v-model.number="form.onlineConfig.count" />
                         </el-form-item>
                         <el-form-item label="探活频率"  class="sec-lab">
-                            <el-input v-model="form.onlineConfig.rateLimit" />
+                            <el-input v-model.number="form.onlineConfig.rateLimit" />
                         </el-form-item>
                     </div>
                 </el-tab-pane>
@@ -47,19 +47,19 @@
                             <el-input v-model="form.portScanConfig.ports" placeholder="例：http；top100；top1000；80,81-90；"/>
                         </el-form-item>
                         <el-form-item  label="并发数量"  class="sec-lab">
-                            <el-input v-model="form.portScanConfig.rateLimit" />
+                            <el-input v-model.number="form.portScanConfig.rateLimit" />
                         </el-form-item>
                         <el-form-item label="超时设置"  class="sec-lab">
                             <el-input v-model="form.portScanConfig.timeout" />
                         </el-form-item>
                         <el-form-item label="探活轮次"  class="sec-lab">
-                            <el-input v-model="form.portScanConfig.count" />
+                            <el-input v-model.number="form.portScanConfig.count" />
                         </el-form-item>
                         <el-form-item label="探活频率"  class="sec-lab">
-                            <el-input v-model="form.portScanConfig.rateLimit" />
+                            <el-input v-model.number="form.portScanConfig.rateLimit" />
                         </el-form-item>
                         <el-form-item label="探活频率"  class="sec-lab">
-                            <el-input v-model="form.portScanConfig.rateLimit" />
+                            <el-input v-model.number="form.portScanConfig.rateLimit" />
                         </el-form-item>
                     </div>
                 </el-tab-pane>
@@ -116,7 +116,7 @@
             <el-row :gutter="10">
                 <el-col :span="12">
                     <el-form-item label="最大并发" :label-position="itemLabelPosition" class="sec-lab" prop="concurrency">
-                        <el-input v-model="searchInfo.concurrency" placeholder="请输入最大并发"  />
+                        <el-input v-model.number="searchInfo.concurrency" placeholder="请输入最大并发"  />
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
@@ -126,12 +126,12 @@
                 </el-col>
                 <el-col :span="12">
                     <el-form-item label="限流速度" :label-position="itemLabelPosition" class="sec-lab"  prop="rateLimit">
-                        <el-input v-model="searchInfo.rateLimit" placeholder="请输入限流速度"  />
+                        <el-input v-model.number="searchInfo.rateLimit" placeholder="请输入限流速度"  />
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
                     <el-form-item label="探活轮次" :label-position="itemLabelPosition" class="sec-lab"  prop="count">
-                        <el-input v-model="searchInfo.count" placeholder="请输入探活轮次"  />
+                        <el-input v-model.number="searchInfo.count" placeholder="请输入探活轮次"  />
                     </el-form-item> 
                 </el-col>
                 </el-row>   
