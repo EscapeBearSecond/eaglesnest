@@ -7,8 +7,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"math"
 	"strconv"
+	"strings"
 	"time"
 
 	"47.103.136.241/goprojects/curescan/server/global"
@@ -391,7 +391,7 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 			// 资产添加
 			assets := getAssetFromResult(taskResult)
 			if len(assets) > 0 {
-				err = tx.Model(&curescan.Asset{}).CreateInBatches(assets, 100).Error
+				err = assetService.BatchAddWithTransaction(tx, assets)
 				if err != nil {
 					return err
 				}
@@ -400,7 +400,8 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 			if err != nil {
 				return err
 			}
-			return nil
+			return errors.New("诶，就是玩")
+			// return nil
 		})
 		if err != nil {
 			if errors.Is(err, eagleeye.ErrHasBeenStopped) {
@@ -541,7 +542,7 @@ func getAssetFromResult(result *response.TaskResult) []*curescan.Asset {
 			// 	asset.Manufacturer = typeSplit[2]
 			// 	asset.AssetModel = typeSplit[3]
 			// }
-			asset.AssetIP = item.URL
+			asset.AssetIP = strings.Split(item.Host, ":")[0]
 			port, _ := strconv.Atoi(item.Port)
 			asset.OpenPorts = []int64{int64(port)}
 			assets = append(assets, asset)
@@ -692,7 +693,7 @@ func (s *TaskService) GetTaskStage(id int64) (*response.Stage, error) {
 	modelStage := &response.Stage{}
 	stage := entry.Stage()
 	// 保留四位小数
-	modelStage.Percent = math.Round(stage.Percent*10000) / 10000
+	modelStage.Percent, _ = strconv.ParseFloat(fmt.Sprintf("%.4f", stage.Percent), 64)
 	var jobConfig []*response.JobConfig
 	var onlineCheckConfig *response.OnlineConfig
 	var portScanConfig *response.PortScanConfig
