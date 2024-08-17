@@ -2,6 +2,7 @@ package curescan
 
 import (
 	v1 "47.103.136.241/goprojects/curescan/server/api/v1"
+	"47.103.136.241/goprojects/curescan/server/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -9,7 +10,7 @@ type AreaRouter struct {
 }
 
 func (a *AreaRouter) InitAreaRouter(Router *gin.RouterGroup) {
-	areaRouter := Router.Group("area")
+	areaRouter := Router.Group("area").Use(middleware.OperationRecord())
 
 	areaRouterApi := v1.ApiGroupApp.CurescanApiGroup.AreaApi
 	{

@@ -2,6 +2,7 @@ package curescan
 
 import (
 	v1 "47.103.136.241/goprojects/curescan/server/api/v1"
+	"47.103.136.241/goprojects/curescan/server/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -9,7 +10,7 @@ type TemplateRouter struct {
 }
 
 func (t *TemplateRouter) InitTemplateRouter(Router *gin.RouterGroup) {
-	templateRouter := Router.Group("template")
+	templateRouter := Router.Group("template").Use(middleware.OperationRecord())
 	templateRouterApi := v1.ApiGroupApp.CurescanApiGroup.TemplateApi
 
 	{

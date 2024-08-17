@@ -2,6 +2,7 @@ package curescan
 
 import (
 	v1 "47.103.136.241/goprojects/curescan/server/api/v1"
+	"47.103.136.241/goprojects/curescan/server/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -9,7 +10,7 @@ type TaskRouter struct {
 }
 
 func (t *TaskRouter) InitTaskRouter(Router *gin.RouterGroup) {
-	taskRouter := Router.Group("task")
+	taskRouter := Router.Group("task").Use(middleware.OperationRecord())
 
 	taskRouterApi := v1.ApiGroupApp.CurescanApiGroup.TaskApi
 	statisticsApi := v1.ApiGroupApp.CurescanApiGroup.StatisticsApi

@@ -160,6 +160,42 @@ func (i *initApi) InitializeData(ctx context.Context) (context.Context, error) {
 		{ApiGroup: "表格模板", Method: "GET", Path: "/sysExportTemplate/exportExcel", Description: "导出Excel"},
 		{ApiGroup: "表格模板", Method: "GET", Path: "/sysExportTemplate/exportTemplate", Description: "下载模板"},
 		{ApiGroup: "表格模板", Method: "POST", Path: "/sysExportTemplate/importExcel", Description: "导入Excel"},
+
+		{ApiGroup: "区域资产", Method: "POST", Path: "/area", Description: "添加区域"},
+		{ApiGroup: "区域资产", Method: "GET", Path: "/area/:id", Description: "查看区域信息"},
+		{ApiGroup: "区域资产", Method: "PUT", Path: "/area", Description: "修改区域"},
+		{ApiGroup: "区域资产", Method: "DELETE", Path: "/area/:id", Description: "删除区域"},
+		{ApiGroup: "区域资产", Method: "POST", Path: "/area/list", Description: "查看区域列表"},
+		{ApiGroup: "区域资产", Method: "POST", Path: "/asset/list", Description: "查看资产列表"},
+
+		{ApiGroup: "扫描模板", Method: "POST", Path: "/template", Description: "添加模板"},
+		{ApiGroup: "扫描模板", Method: "GET", Path: "/template/:id", Description: "查看模板详情"},
+		{ApiGroup: "扫描模板", Method: "PUT", Path: "/template", Description: "修改模板"},
+		{ApiGroup: "扫描模板", Method: "DELETE", Path: "/template/:id", Description: "删除模板"},
+		{ApiGroup: "扫描模板", Method: "POST", Path: "/template/list", Description: "模板列表"},
+		{ApiGroup: "扫描模板", Method: "POST", Path: "/template/imports", Description: "导入模板"},
+		{ApiGroup: "扫描模板", Method: "GET", Path: "/template/tags", Description: "模板标签"},
+
+		{ApiGroup: "扫描策略", Method: "POST", Path: "/policy", Description: "添加策略"},
+		{ApiGroup: "扫描策略", Method: "PUT", Path: "/policy", Description: "修改策略"},
+		{ApiGroup: "扫描策略", Method: "DELETE", Path: "/policy/:id", Description: "删除策略"},
+		{ApiGroup: "扫描策略", Method: "POST", Path: "/policy/list", Description: "策略列表"},
+		{ApiGroup: "扫描策略", Method: "GET", Path: "/policy/:id", Description: "策略详情"},
+
+		{ApiGroup: "扫描任务", Method: "POST", Path: "/task", Description: "添加任务"},
+		{ApiGroup: "扫描任务", Method: "GET", Path: "/task/:id", Description: "任务详情"},
+		{ApiGroup: "扫描任务", Method: "PUT", Path: "/task", Description: "修改任务"},
+		{ApiGroup: "扫描任务", Method: "DELETE", Path: "/task/:id", Description: "删除任务"},
+		{ApiGroup: "扫描任务", Method: "POST", Path: "/task/list", Description: "任务列表"},
+		{ApiGroup: "扫描任务", Method: "POST", Path: "/task/execute/:id", Description: "执行任务"},
+		{ApiGroup: "扫描任务", Method: "POST", Path: "/task/stop/:id", Description: "停止任务"},
+		{ApiGroup: "扫描任务", Method: "POST", Path: "/task/report", Description: "下载任务报告"},
+		{ApiGroup: "扫描任务", Method: "POST", Path: "/task/docs", Description: "下载任务结果"},
+		{ApiGroup: "扫描任务", Method: "GET", Path: "/task/stage/:id", Description: "任务执行阶段"},
+		{ApiGroup: "扫描任务", Method: "GET", Path: "/task/statistics", Description: "任务统计"},
+
+		{ApiGroup: "系统漏洞", Method: "GET", Path: "/vuln/statistics", Description: "漏洞统计"},
+		{ApiGroup: "系统漏洞", Method: "POST", Path: "/vuln/list", Description: "漏洞列表"},
 	}
 	if err := db.Create(&entities).Error; err != nil {
 		return ctx, errors.Wrap(err, sysModel.SysApi{}.TableName()+"表数据初始化失败!")

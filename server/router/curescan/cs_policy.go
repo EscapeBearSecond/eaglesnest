@@ -2,6 +2,7 @@ package curescan
 
 import (
 	v1 "47.103.136.241/goprojects/curescan/server/api/v1"
+	"47.103.136.241/goprojects/curescan/server/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -9,7 +10,7 @@ type PolicyRouter struct {
 }
 
 func (p *PolicyRouter) InitPolicyRouter(Router *gin.RouterGroup) {
-	policyRouter := Router.Group("policy")
+	policyRouter := Router.Group("policy").Use(middleware.OperationRecord())
 	policyRouterApi := v1.ApiGroupApp.CurescanApiGroup.PolicyApi
 	{
 		// policyRouter.GET("", policyRouterApi.MigrateTable)

@@ -95,13 +95,13 @@ func Routers() *gin.Engine {
 		systemRouter.InitSysExportTemplateRouter(PrivateGroup)      // 导出模板
 		exampleRouter.InitCustomerRouter(PrivateGroup)              // 客户路由
 		exampleRouter.InitFileUploadAndDownloadRouter(PrivateGroup) // 文件上传下载功能路由
-		curescanRouter.InitAreaRouter(PublicGroup)
-		curescanRouter.InitTemplateRouter(PublicGroup)
-		curescanRouter.InitAssetRouter(PublicGroup)
-		curescanRouter.InitPolicyRouter(PublicGroup)
-		curescanRouter.InitOnlineCheckRouter(PublicGroup)
-		curescanRouter.InitTaskRouter(PublicGroup)
-		curescanRouter.InitVulnRouter(PublicGroup)
+		curescanRouter.InitAreaRouter(PrivateGroup)
+		curescanRouter.InitTemplateRouter(PrivateGroup)
+		curescanRouter.InitAssetRouter(PrivateGroup)
+		curescanRouter.InitPolicyRouter(PrivateGroup)
+		curescanRouter.InitOnlineCheckRouter(PrivateGroup)
+		curescanRouter.InitTaskRouter(PrivateGroup)
+		curescanRouter.InitVulnRouter(PrivateGroup)
 	}
 
 	// 插件路由安装
