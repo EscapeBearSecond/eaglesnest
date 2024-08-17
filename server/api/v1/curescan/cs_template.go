@@ -26,6 +26,8 @@ func (t *TemplateApi) MigrateTable(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+	err = global.GVA_DB.AutoMigrate(&curescan.Area{})
+	err = global.GVA_DB.AutoMigrate(&curescan.JobResultItem{})
 	response.Ok(c)
 }
 

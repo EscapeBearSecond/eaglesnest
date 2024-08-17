@@ -13,7 +13,7 @@ func (t *TemplateRouter) InitTemplateRouter(Router *gin.RouterGroup) {
 	templateRouterApi := v1.ApiGroupApp.CurescanApiGroup.TemplateApi
 
 	{
-		// templateRouter.GET("", templateRouterApi.MigrateTable)
+		templateRouter.GET("", templateRouterApi.MigrateTable)
 		templateRouter.POST("", templateRouterApi.CreateTemplate) // 创建Template
 
 		templateRouter.GET(":id", templateRouterApi.GetTemplateById)   // 获取单条Template消息

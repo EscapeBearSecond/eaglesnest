@@ -3,7 +3,7 @@ module 47.103.136.241/goprojects/curescan/server
 go 1.22
 
 require (
-	47.103.136.241/goprojects/eagleeye v0.0.0-20240816020534-6098fe64a6d7
+	47.103.136.241/goprojects/eagleeye v0.0.0-20240816090948-9453f37d03a2
 	github.com/aliyun/aliyun-oss-go-sdk v2.2.7+incompatible
 	github.com/aws/aws-sdk-go v1.44.307
 	github.com/casbin/casbin/v2 v2.87.1
@@ -58,7 +58,6 @@ require (
 	git.mills.io/prologic/smtpd v0.0.0-20210710122116-a525b76c287a // indirect
 	github.com/Azure/go-ntlmssp v0.0.0-20221128193559-754e69321358 // indirect
 	github.com/Jarnpher553/nuclei/v3 v3.3.0 // indirect
-	github.com/Jarnpher553/tcp-shaker v0.0.0-20240808125115-60b47575086b // indirect
 	github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/Masterminds/semver/v3 v3.2.1 // indirect
@@ -92,7 +91,6 @@ require (
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/bahlo/generic-list-go v0.2.0 // indirect
-	github.com/benbjohnson/clock v1.3.0 // indirect
 	github.com/bits-and-blooms/bitset v1.13.0 // indirect
 	github.com/bluele/gcache v0.0.2 // indirect
 	github.com/bodgit/plumbing v1.2.0 // indirect
@@ -348,7 +346,6 @@ require (
 	github.com/zmap/zgrab2 v0.1.8-0.20230806160807-97ba87c0e706 // indirect
 	go.etcd.io/bbolt v1.3.10 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	go.uber.org/ratelimit v0.3.1 // indirect
 	go4.org v0.0.0-20200411211856-f5505b9728dd // indirect
 	goftp.io/server/v2 v2.0.1 // indirect
 	golang.org/x/arch v0.3.0 // indirect

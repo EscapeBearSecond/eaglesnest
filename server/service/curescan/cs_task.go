@@ -520,11 +520,11 @@ func getAssetFromResult(result *response.TaskResult) []*curescan.Asset {
 			asset.AreaName = "未知"
 			asset.AssetArea = 0
 			asset.AssetName = item.Name
-			asset.AssetType = item.Type
+			asset.AssetType = item.Tag1
 			// if len(typeSplit) == 1 {
-			asset.SystemType = "未知"
-			asset.Manufacturer = "未知"
-			asset.AssetModel = "未知"
+			asset.SystemType = item.Tag2
+			asset.Manufacturer = item.Tag3
+			asset.AssetModel = item.Tag4
 			// }
 			// if len(typeSplit) == 2 {
 			// 	asset.SystemType = typeSplit[1]
@@ -601,7 +601,34 @@ func (s *TaskService) generateJob(jobConfig []*request.JobConfig, taskResult *re
 					ExtractedResults: item.ExtractedResults,
 					Description:      item.Description,
 					EntryID:          result.EntryID,
+					Remediation:      item.Remediation,
 				}
+				tagSplit := strings.Split(item.Tags, "_")
+				if len(tagSplit) == 1 {
+					oneRes.Tag1 = tagSplit[0]
+					oneRes.Tag2 = "未知"
+					oneRes.Tag3 = "未知"
+					oneRes.Tag4 = "未知"
+				}
+				if len(tagSplit) == 2 {
+					oneRes.Tag1 = tagSplit[0]
+					oneRes.Tag2 = tagSplit[1]
+					oneRes.Tag3 = "未知"
+					oneRes.Tag4 = "未知"
+				}
+				if len(tagSplit) == 3 {
+					oneRes.Tag1 = tagSplit[0]
+					oneRes.Tag2 = tagSplit[1]
+					oneRes.Tag3 = tagSplit[2]
+					oneRes.Tag4 = "未知"
+				}
+				if len(tagSplit) == 4 {
+					oneRes.Tag1 = tagSplit[0]
+					oneRes.Tag2 = tagSplit[1]
+					oneRes.Tag3 = tagSplit[2]
+					oneRes.Tag4 = tagSplit[3]
+				}
+
 				taskResult.JobResultList = append(taskResult.JobResultList, oneRes)
 			}
 			return nil

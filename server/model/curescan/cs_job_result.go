@@ -21,6 +21,11 @@ type JobResultItem struct {
 	Description      string   `json:"description" gorm:"type:text;column:description;comment:描述"`
 	TaskID           uint     `json:"taskId" gorm:"type:int8;column:task_id;comment:任务ID"`
 	EntryID          string   `json:"entryId" gorm:"type:text;column:entry_id;comment:条目ID"`
+	Remediation      string   `json:"remediation" gorm:"type:text;column:remediation;comment:修复建议"`
+	Tag1             string   `json:"tag1" gorm:"type:text;column:tag1;"`
+	Tag2             string   `json:"tag2" gorm:"type:text;column:tag2;"`
+	Tag3             string   `json:"tag3" gorm:"type:text;column:tag3;"`
+	Tag4             string   `json:"tag4" gorm:"type:text;column:tag4;"`
 }
 
 func (JobResultItem) TableName() string {
