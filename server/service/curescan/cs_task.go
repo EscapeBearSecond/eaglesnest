@@ -66,12 +66,10 @@ func (s *TaskService) CreateTask(task *curescan.Task) error {
 		return nil
 	}
 
-	go func() {
-		err := s.ExecuteTask(int(task.ID))
-		if err != nil {
-			return
-		}
-	}()
+	err = s.ExecuteTask(int(task.ID))
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -186,7 +184,6 @@ func (s *TaskService) GetTaskList(st request.SearchTask) (list interface{}, tota
 
 // ExecuteTask 执行任务
 func (s *TaskService) ExecuteTask(id int) error {
-	fmt.Println("111111111111")
 	// 接收回调中的任务结果
 	var taskResult response.TaskResult
 
@@ -317,14 +314,11 @@ func (s *TaskService) ExecuteTask(id int) error {
 		// 处理任务
 		go s.processTask(task, options, &taskResult)
 	}
-	fmt.Println("task", task.TaskName)
 	if task.TaskPlan == common.ExecuteTiming {
-		fmt.Println("??????????")
 		task.Status = common.TimeRunning
 		s.UpdateTask(task)
 		cronName := task.TaskName
 		global.GVA_Timer.AddTaskByFunc(cronName, task.PlanConfig, func() { s.processTask(task, options, &taskResult) }, task.TaskName, cron.WithSeconds())
-		fmt.Println("list", global.GVA_Timer.FindCronList())
 	}
 	return nil
 }
@@ -333,7 +327,12 @@ func (s *TaskService) ExecuteTask(id int) error {
 // 对于普通任务来说, 不需要复制任务, 但是对于定时任务每次执行需要复制一次任务
 // 对于普通任务如果需要复用, 需要重新创建一条任务
 func (s *TaskService) processTask(task *curescan.Task, options *types.Options, taskResult *response.TaskResult) {
-	entry, err := global.EagleeyeEngine.NewEntry(options)
+	var entry *eagleeye.EagleeyeEntry
+	var err error
+	if task.TaskPlan != common.ExecuteTiming {
+		entry, err = global.EagleeyeEngine.NewEntry(options)
+		fmt.Println("entryID = ", entry.EntryID)
+	}
 	if err != nil {
 		global.GVA_LOG.Error("创建任务entry失败", zap.String("taskName", task.TaskName), zap.Error(err))
 		return
@@ -426,9 +425,9 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 			PolicyID:   task.PolicyID,
 			TaskPlan:   common.ExecuteImmediately,
 			PlanConfig: "",
-			EntryID:    entry.EntryID,
-			Flag:       task.Flag,
-			CsModel:    global.CsModel{CreatedBy: task.CreatedBy},
+			// EntryID:    entry.EntryID,
+			Flag:    task.Flag,
+			CsModel: global.CsModel{CreatedBy: task.CreatedBy},
 		}
 		err = s.CreateTask(newTask)
 		// err = global.GVA_DB.Create(newTask).Error
