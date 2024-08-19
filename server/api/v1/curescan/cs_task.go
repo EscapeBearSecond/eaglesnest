@@ -79,6 +79,7 @@ func (t *TaskApi) GetTaskList(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+	searchTask.CreatedBy = utils.GetUserID(c)
 	list, total, err := taskService.GetTaskList(searchTask)
 	if err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Error(err))
@@ -120,6 +121,9 @@ func (t *TaskApi) UpdateTask(c *gin.Context) {
 		GvaModel: global.GvaModel{
 			ID: updateTask.ID,
 		},
+		CsModel: global.CsModel{
+			UpdatedBy: utils.GetUserID(c),
+		},
 		TaskName:   updateTask.TaskName,
 		TaskDesc:   updateTask.TaskDesc,
 		TaskPlan:   updateTask.TaskPlan,
@@ -147,7 +151,6 @@ func (t *TaskApi) DeleteTask(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	fmt.Println("aaaa", task.TaskPlan)
 	if task.Status == common.Running || task.Status == common.TimeRunning {
 		response.FailWithMessage("任务正在运行中，不允许删除", c)
 		return

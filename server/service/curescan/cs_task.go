@@ -82,9 +82,9 @@ func (s *TaskService) UpdateTask(task *curescan.Task) error {
 		}
 		return err
 	}
-	// if existingRecord.ID != task.ID {
-	// 	return errors.New("任务名称已被占用，不允许修改")
-	// }
+	if existingRecord.ID != task.ID {
+		return errors.New("任务名称已被占用，不允许修改")
+	}
 	return global.GVA_DB.Save(&task).Error
 }
 
@@ -97,9 +97,9 @@ func (s *TaskService) UpdateTaskWithTransction(tx *gorm.DB, task *curescan.Task)
 		}
 		return err
 	}
-	// if existingRecord.ID != task.ID {
-	// 	return errors.New("任务名称已被占用，不允许修改")
-	// }
+	if existingRecord.ID != task.ID {
+		return errors.New("任务名称已被占用，不允许修改")
+	}
 	return tx.Save(&task).Error
 }
 
@@ -132,7 +132,7 @@ func (s *TaskService) GetTaskList(st request.SearchTask) (list interface{}, tota
 	limit := page.PageSize
 	offset := page.PageSize * (page.Page - 1)
 	db := global.GVA_DB.Model(&curescan.Task{}).Select("id", "task_name", "task_desc", "status", "target_ip", "policy_id", "task_plan",
-		"plan_config", "created_at", "updated_at", "deleted_at", "flag", "entry_id")
+		"plan_config", "created_at", "updated_at", "deleted_at", "flag", "entry_id", "created_by")
 	var tasks []*curescan.Task
 	if st.TaskName != "" {
 		db = db.Where("task_name LIKE ?", "%"+st.TaskName+"%")
@@ -146,6 +146,7 @@ func (s *TaskService) GetTaskList(st request.SearchTask) (list interface{}, tota
 	if st.PolicyId != 0 {
 		db = db.Where("policy_id=?", st.PolicyId)
 	}
+	db = db.Where("created_by = ?", st.CreatedBy)
 
 	err = db.Count(&total).Error
 	if err != nil {
