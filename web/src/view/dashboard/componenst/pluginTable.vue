@@ -6,55 +6,58 @@
 <template>
   <div>
     <el-table :data="tableData" stripe style="width: 100%">
-      <el-table-column prop="ranking" label="序号" width="80" align="center" />
-      <el-table-column prop="type" label="类型" show-overflow-tooltip>
+      <el-table-column type="index" width="100" label="序号" />
+      <el-table-column prop="name" label="类型" show-overflow-tooltip>
       </el-table-column>
-      <el-table-column prop="title" label="CVE" show-overflow-tooltip>
+      <el-table-column prop="count" label="数量" width="100" />
+      <el-table-column prop="severity" label="等级" width="100" >
+        <template #default="scope">
+          <el-tag
+            :type="getTagClass(scope.row.severity)"
+            disable-transitions
+            >{{ getTag(scope.row.severity) }}</el-tag
+          >
+        </template>
       </el-table-column>
-      <el-table-column prop="click_num" label="数量" width="100" />
-      <el-table-column prop="hot" label="占比" width="100" />
     </el-table>
   </div>
 </template>
 
 <script setup>
-const tableData = [
-  {
-    ranking: 1,
-    type:'脆弱性报警',
-    title : "CVE-2021-1102",
-    click_num : 523,
-    hot : 263,
+defineProps({
+  tableData: {
+    type: Array,
+    default() {
+      return [];
+    },
   },
-  {
-    ranking: 2,
-    type:'脆弱性报警',
-    title : "CVE-2021-33044",
-    click_num : 416,
-    hot : 223
-  },
-  {
-    ranking: 3,
-    type:'脆弱性报警',
-    title : "CVE-2013-6117",
-    click_num : 337,
-    hot : 176,
-  },
-  {
-    ranking: 4,
-    type:'脆弱性报警',
-    title : "CVE-2020-12062",
-    click_num : 292,
-    hot : 145,
-  },
-  {
-    ranking: 5,
-    type:'弱口令',
-    title : "弱口令",
-    click_num : 73,
-    hot : '10%',
-  }
-]
+})
+
+const getTag = (tag) => {
+    switch(tag) {
+        case 'high':
+          return '高危';
+        case 'medium':
+          return '中危';
+        case 'low':
+          return '低危';
+        default:
+          return '高危';
+    }
+}
+
+const getTagClass= (tag) => {
+  switch(tag) {
+        case 'high':
+          return 'warning';
+        case 'medium':
+          return 'info';
+        case 'low':
+          return 'primary';
+        default:
+          return 'danger';
+    }
+}
 </script>
 
 <style scoped lang="scss">

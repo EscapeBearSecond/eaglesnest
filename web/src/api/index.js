@@ -15,3 +15,19 @@ export const vulnStatistics = (param) => {
         param
     })
 }
+
+export const getVulnDCommon = (param) => {
+    return service({
+        url: '/vuln/common',
+        method: 'get',
+        param
+    })
+}
+
+export const getAssethighrisk = (param) => {
+    return service({
+        url: '/asset/highrisk',
+        method: 'get',
+        param
+    })
+}
