@@ -45,12 +45,12 @@
       <div class="top-content">
         <div>
           <gva-card title="高危资产" custom-class="col-span-1 md:col-span-3 row-span-2">
-            <gva-table />
+            <gva-table :tableData="assetTableData" />
           </gva-card>
         </div>
         <div>
           <gva-card title="漏洞排行" custom-class="col-span-1 md:col-span-3 row-span-2">
-            <gva-plugin-table />
+            <gva-plugin-table  :tableData="vulnDcommonData" />
           </gva-card>
         </div>
       </div>
@@ -58,8 +58,8 @@
 </template>
 
 <script setup>
-import { taaskStatistics, vulnStatistics } from '@/api/index.js'
-import { GvaPluginTable, GvaTable, GvaChart, GvaWiki , GvaNotice , GvaQuickLink , GvaCard , GvaBanner } from "./componenst"
+import { taaskStatistics, vulnStatistics, getVulnDCommon, getAssethighrisk } from '@/api/index.js'
+import { GvaPluginTable, GvaTable,GvaCard } from "./componenst"
 import { ref, reactive } from 'vue'
 import { useTransition } from '@vueuse/core'
 import Chart from "@/components/charts/index.vue";
@@ -69,9 +69,6 @@ defineOptions({
 
 
 const source = ref(0)
-const outputValue = useTransition(source, {
-  duration: 1500,
-})
 
 const taskInfo = ref({
   failed: 0,
@@ -235,11 +232,20 @@ const lowOption =  ref({
     ]
 })
 
+
+const vulnDcommonData = ref([])
+const assetTableData = ref([])
+
 const initPage = async () => {
   const taskData = await taaskStatistics({})
   taskInfo.value = taskData.data
   const vulnData = await vulnStatistics({})
   vulnInfo.value = vulnData.data
+  const vulnDcommon = await getVulnDCommon({})
+  vulnDcommonData.value = vulnDcommon.data
+  const assetData = await getAssethighrisk({})
+  assetTableData.value = assetData.data
+
   criticalOption.value.series[0].data[0].value = vulnData.data.critical
   highOption.value.series[0].data[0].value = vulnData.data.high
   mediumOption.value.series[0].data[0].value = vulnData.data.medium
@@ -279,7 +285,8 @@ source.value = 172000
     display: grid;
     height: 35vh;
     grid-template-columns: 1fr 1fr;
-    align-items: center;
+    align-items: top;
+    column-gap: 25px;
   }
 }
 
