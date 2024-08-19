@@ -188,7 +188,11 @@
                             </el-select>
                         </el-form-item>
                     </el-col>
-                   
+                    <el-col :span="12" >
+                        <el-form-item label="模板名称" class="sec-lab" >
+                            <el-input v-model.number="searchInfo.templateName" placeholder="请输入要查询的模板名称"  @input="selectTemplateTag" />
+                        </el-form-item> 
+                    </el-col>
                 </el-row>
                 
                 <el-row :gutter="20" v-if="searchInfo.isAll == false">
@@ -287,13 +291,13 @@ const getTableData = async() => {
       pageSize: listQuery.pageSize,
       isAll:false,
       templateType: searchInfo.value.kind,
+      templateName: searchInfo.value.templateName,
       tag1: searchInfo.value.tagOne,
       tag2: searchInfo.value.tagTwo,
       tag3: searchInfo.value.tagThree,
       tag4: searchInfo.value.tagFour,
 
     });
-    console.log(table.data.code);
     if (table.code === 0) {
       tableData.value = table.data.list;
       listQuery.total = table.data.total;
@@ -368,6 +372,7 @@ const addTemplate = () => {
     rateLimit: 150,
     concurrency: 150,
     isAll: true,
+    templateName:'',
     templates: []
   };
   
@@ -444,6 +449,7 @@ const selectTemplate = () => {
     searchInfo.value.tagTwo = ''
     searchInfo.value.tagThree = ''
     searchInfo.value.tagFour = ''
+    searchInfo.value.templateName = ''
     getTableData()
 }
 
