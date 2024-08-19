@@ -192,7 +192,7 @@
             {{  stageData.name }}
         </el-descriptions-item>
         <el-descriptions-item label="当前进度" v-if="showInfo.status == 1" align="center">
-          <el-progress type="dashboard" :percentage="stageData.percent * 100" :color="colors" />
+          <el-progress type="dashboard" :percentage="(stageData.percent* 100).toFixed(2)" :color="colors" />
         </el-descriptions-item>
         <el-descriptions-item label="扫描 IP" :span="2" align="center">
           <div class="ip-content"> 

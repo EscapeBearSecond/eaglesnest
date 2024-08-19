@@ -1,47 +1,45 @@
 <template>
   <div class="view-content ">
-      <div class="chat-content bg">
-          <div class="serious-char bg">
-            <gva-card title="每日漏洞" custom-class="col-span-1 md:col-span-3 row-span-2">
-              <gva-chart :type="4" />
-            </gva-card>
+      <div class="chat-content">
+          <div class="serious-char">
+              <div>
+                <Chart :height="height" :option="criticalOption" />
+              </div>
+              <div>
+                <Chart :height="height" :option="highOption" />
+              </div>
           </div>
-          <div class="height-char bg"> <gva-card title="资产数量" custom-class="col-span-1 md:col-span-3 row-span-2">
-              <gva-chart :type="4" />
-            </gva-card></div>
+          <div class="height-char">
+            <div>
+                <Chart :height="height" :option="mediumOption" />
+              </div>
+              <div>
+                <Chart :height="height" :option="lowOption" />
+              </div>
+          </div>
       </div>
       <div class="task-content">
-         <span> <el-statistic title="正在扫描" :value="268500" /></span>
+         <span> <el-statistic title="正在扫描" :value="taskInfo.running" /></span>
          <span>
-            <el-statistic :value="138">
-              <template #title>
-                <div style="display: inline-flex; align-items: center">
-                  漏洞比例
-                  <el-icon style="margin-left: 4px" :size="12">
-                    <Discount />
-                  </el-icon>
-                </div>
-              </template>
-              <template #suffix>/100</template>
-            </el-statistic>
+          <span> <el-statistic title="等待扫描" :value="taskInfo.wait" /></span>
           </span>
          <span>
-          <el-statistic title="扫描次数" :value="outputValue" />
+          <el-statistic title="扫描次数" :value="taskInfo.total" />
          </span>
          <span>
-          <el-statistic title="漏洞总数" :value="1562">
-            <template #suffix>
+          <el-statistic title="漏洞总数" :value="vulnInfo.total">
+            <!-- <template #suffix>
               <el-icon style="vertical-align: -0.125em">
                 <ChatLineRound />
               </el-icon>
-            </template>
+            </template> -->
           </el-statistic>
          </span>
          <span>
-          <el-statistic title="目标总数" :value="21" />
+          <el-statistic title="目标总数" :value="taskInfo.targetNum" />
         </span>
         <span>
-          <el-statistic title="漏洞类型" :value="2680" />
+          <el-statistic title="漏洞类型" :value="vulnInfo.kindNum" />
         </span>
       </div>
       <div class="top-content">
@@ -60,9 +58,11 @@
 </template>
 
 <script setup>
-import { GvaPluginTable,GvaTable, GvaChart, GvaWiki , GvaNotice , GvaQuickLink , GvaCard , GvaBanner } from "./componenst"
+import { taaskStatistics, vulnStatistics } from '@/api/index.js'
+import { GvaPluginTable, GvaTable, GvaChart, GvaWiki , GvaNotice , GvaQuickLink , GvaCard , GvaBanner } from "./componenst"
 import { ref, reactive } from 'vue'
 import { useTransition } from '@vueuse/core'
+import Chart from "@/components/charts/index.vue";
 defineOptions({
   name: 'Index'
 })
@@ -72,6 +72,183 @@ const source = ref(0)
 const outputValue = useTransition(source, {
   duration: 1500,
 })
+
+const taskInfo = ref({
+  failed: 0,
+  running: 0,
+  stopped: 0,
+  success: 0,
+  targetNum: 0,
+  total:0
+})
+
+const vulnInfo = ref({
+  critical:0,
+  high:0,
+  kindNum:0,
+  low:0,
+  medium:0,
+  total:0,
+})
+
+const criticalOption =  ref({
+    tooltip: {
+      trigger: 'item'
+    },
+    color: [
+      '#F81505'
+    ],
+    legend: {
+      top: '5%',
+      left: 'center',
+      textStyle: {
+        color: '#F81505',
+      },
+    },
+    series: [
+      {
+        name: '超危',
+        type: 'pie',
+        radius: ['20%', '50%'],
+        center: ['50%', '50%'],
+        startAngle: 180,
+        endAngle: 360,
+        label: {
+              show: true,
+              position: 'outside',
+              formatter: '{b}: {c}',
+              fontSize: 12,
+              color: '#333',
+        },
+        data: [
+          { value: 1048, name: '超危', itemStyle: { color: '#F81505'}},
+        ]
+      }
+    ]
+})
+
+const highOption =  ref({
+    tooltip: {
+      trigger: 'item'
+    },
+    color: [
+      '#FC6C05'
+    ],
+    legend: {
+      top: '5%',
+      left: 'center',
+      textStyle: {
+        color: '#FC6C05',
+      },
+    },
+    series: [
+      {
+        name: '高危',
+        type: 'pie',
+        radius: ['20%', '50%'],
+        center: ['50%', '50%'],
+        // startAngle: 180,
+        // endAngle: 360,
+        label: {
+              show: true,
+              position: 'outside',
+              formatter: '{b}: {c}',
+              fontSize: 12,
+              color: '#333',
+        },
+        data: [
+          { value: 1048, name: '高危', itemStyle: { color: '#FC6C05'}},
+        ]
+      }
+    ]
+})
+
+const mediumOption =  ref({
+    tooltip: {
+      trigger: 'item'
+    },
+    color: [
+      '#FC9D04'
+    ],
+    legend: {
+      top: '5%',
+      left: 'center',
+      textStyle: {
+        color: '#FC9D04',
+      },
+    },
+    series: [
+      {
+        name: '中危',
+        type: 'pie',
+        radius: ['20%', '50%'],
+        center: ['50%', '50%'],
+        // startAngle: 180,
+        // endAngle: 360,
+        label: {
+              show: true,
+              position: 'outside',
+              formatter: '{b}: {c}',
+              fontSize: 12,
+              color: '#333',
+        },
+        data: [
+          { value: 1048, name: '中危', itemStyle: { color: '#FC9D04'}},
+        ]
+      }
+    ]
+})
+
+const lowOption =  ref({
+    tooltip: {
+      trigger: 'item'
+    },
+    color: [
+      '#A9CB21'
+    ],
+    legend: {
+      top: '5%',
+      left: 'center',
+      textStyle: {
+        color: '#A9CB21',
+      },
+    },
+    series: [
+      {
+        name: '低危',
+        type: 'pie',
+        radius: ['20%', '50%'],
+        center: ['50%', '50%'],
+        // startAngle: 180,
+        // endAngle: 360,
+        label: {
+              show: true,
+              position: 'outside',
+              formatter: '{b}: {c}',
+              fontSize: 12,
+              color: '#333',
+        },
+        data: [
+          { value: 1048, name: '低危', itemStyle: { color: '#A9CB21'}},
+        ]
+      }
+    ]
+})
+
+const initPage = async () => {
+  const taskData = await taaskStatistics({})
+  taskInfo.value = taskData.data
+  const vulnData = await vulnStatistics({})
+  vulnInfo.value = vulnData.data
+  criticalOption.value.series[0].data[0].value = vulnData.data.critical
+  highOption.value.series[0].data[0].value = vulnData.data.high
+  mediumOption.value.series[0].data[0].value = vulnData.data.medium
+  lowOption.value.series[0].data[0].value = vulnData.data.low
+}
+
+initPage()
+
+const height = ref('328px')
 
 source.value = 172000
 </script>
@@ -106,15 +283,8 @@ source.value = 172000
   }
 }
 
-.bg {
-  background-color:antiquewhite;
-}
-
-.bg-t {
-  background-color: aqua;
-}
-
-.bg-f {
-  background-color: aquamarine;
+.serious-char, .height-char {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 }
 </style>
