@@ -67,6 +67,7 @@ func (e *ensureTables) MigrateTable(ctx context.Context) (context.Context, error
 		curescan.OnlineCheck{},
 		curescan.PortScan{},
 		curescan.Template{},
+		curescan.JobResultItem{},
 		curescan.Vuln{},
 	}
 	for _, t := range tables {

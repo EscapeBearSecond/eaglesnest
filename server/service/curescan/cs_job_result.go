@@ -67,11 +67,11 @@ func (j *JobResultService) GetJobResultList(info *request.SearchJobResult) (list
 }
 
 func (j *JobResultService) CommonVulnTopN(n int) (interface{}, error) {
-	var res []response.VulnTopN
+	var res = make([]*response.VulnTopN, 0)
 	err := global.GVA_DB.Table("cs_job_result").
-		Select("name, Count(*) as count").
+		Select("name, severity, Count(*) as count").
 		Where("kind = ?", common.VulnerabilityScan).
-		Group("template_id, name").
+		Group("template_id, name, severity").
 		Order("count DESC").
 		Limit(n).
 		Scan(&res).Error
@@ -79,16 +79,23 @@ func (j *JobResultService) CommonVulnTopN(n int) (interface{}, error) {
 }
 
 func (j *JobResultService) AssetTopN(n int) (interface{}, error) {
-	var results []response.AssetTopN
+	var results = make([]*response.AssetTopN, 0)
 	subQuery := global.GVA_DB.Table("cs_job_result").
 		Select(`CASE 
-                WHEN position('://' IN matched) > 0 THEN substring(matched from '://([^:/]+)')
-                ELSE substring(matched from '^([^:/]+)')
-            END AS host`).
-		Where("matched IS NOT NULL")
+            WHEN position('://' IN matched) > 0 THEN substring(matched from '://([^:/]+)')
+            ELSE substring(matched from '^([^:/]+)')
+        END AS host, severity`).
+		Where("matched IS NOT NULL").
+		Where("kind = ?", common.VulnerabilityScan)
 
 	err := global.GVA_DB.Table("(?) AS subquery", subQuery).
-		Select("host, COUNT(*) AS count").
+		Select(`
+        host, 
+        COUNT(*) AS count,
+		SUM(CASE WHEN severity = 'critical' THEN 1 ELSE 0 END) AS critical,
+        SUM(CASE WHEN severity = 'high' THEN 1 ELSE 0 END) AS high,
+        SUM(CASE WHEN severity = 'medium' THEN 1 ELSE 0 END) AS medium,
+        SUM(CASE WHEN severity = 'low' THEN 1 ELSE 0 END) AS low`).
 		Group("host").
 		Order("count DESC").
 		Limit(10).
