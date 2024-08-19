@@ -31,9 +31,9 @@ func (s *VulnService) GetVulnList(searchVuln *request.SearchVuln) (list interfac
 	if vuln.Severity != "" {
 		db = db.Where("severity LIKE ?", "%"+vuln.Severity+"%")
 	}
-	if vuln.Reference != "" {
-		db = db.Where("reference LIKE ?", "%"+vuln.Reference+"%")
-	}
+	// if vuln.Reference != "" {
+	// 	db = db.Where("reference LIKE ?", "%"+vuln.Reference+"%")
+	// }
 
 	err = db.Count(&total).Error
 	if err != nil {

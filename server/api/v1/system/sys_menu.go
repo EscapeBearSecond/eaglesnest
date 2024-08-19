@@ -70,6 +70,10 @@ func (a *AuthorityMenuApi) AddMenuAuthority(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+	if authorityMenu.AuthorityId == 888 {
+		response.FailWithMessage("不允许修改超级管理员的权限", c)
+		return
+	}
 	if err := utils.Verify(authorityMenu, utils.AuthorityIdVerify); err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return

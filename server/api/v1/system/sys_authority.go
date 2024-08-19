@@ -77,6 +77,10 @@ func (a *AuthorityApi) CopyAuthority(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+	if copyInfo.OldAuthorityId == 888 {
+		response.FailWithMessage("不允许拷贝超级管理员角色", c)
+		return
+	}
 	authBack, err := authorityService.CopyAuthority(copyInfo)
 	if err != nil {
 		global.GVA_LOG.Error("拷贝失败!", zap.Error(err))
@@ -100,6 +104,10 @@ func (a *AuthorityApi) DeleteAuthority(c *gin.Context) {
 	var err error
 	if err = c.ShouldBindJSON(&authority); err != nil {
 		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	if authority.AuthorityId == 888 {
+		response.FailWithMessage("超级管理员不能删除", c)
 		return
 	}
 	if err = utils.Verify(authority, utils.AuthorityIdVerify); err != nil {
@@ -135,6 +143,10 @@ func (a *AuthorityApi) UpdateAuthority(c *gin.Context) {
 	err = utils.Verify(auth, utils.AuthorityVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	if auth.AuthorityId == 888 {
+		response.FailWithMessage("超级管理员不能修改", c)
 		return
 	}
 	authority, err := authorityService.UpdateAuthority(auth)

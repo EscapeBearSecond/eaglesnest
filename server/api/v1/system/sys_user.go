@@ -293,6 +293,18 @@ func (b *BaseApi) SetUserAuthorities(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+	authorityId := utils.GetUserAuthorityId(c)
+	// 非超管角色修改超管的权限信息
+	if sua.ID == 1 && authorityId != 888 {
+		response.FailWithMessage("没有权限修改超级管理员的信息", c)
+		return
+	}
+	for _, aid := range sua.AuthorityIds {
+		if aid == 888 {
+			response.FailWithMessage("系统只允许存在一个超级管理员用户", c)
+			return
+		}
+	}
 	err = userService.SetUserAuthorities(sua.ID, sua.AuthorityIds)
 	if err != nil {
 		global.GVA_LOG.Error("修改失败!", zap.Error(err))
@@ -316,6 +328,10 @@ func (b *BaseApi) DeleteUser(c *gin.Context) {
 	err := c.ShouldBindJSON(&reqId)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	if reqId.ID == 1 {
+		response.FailWithMessage("不允许删除超级管理员用户", c)
 		return
 	}
 	err = utils.Verify(reqId, utils.IdVerify)
@@ -356,6 +372,11 @@ func (b *BaseApi) SetUserInfo(c *gin.Context) {
 	err = utils.Verify(user, utils.IdVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	authorityId := utils.GetUserAuthorityId(c)
+	if user.ID == 1 && authorityId != 888 {
+		response.FailWithMessage("没有权限修改超级管理员信息", c)
 		return
 	}
 
