@@ -3,7 +3,9 @@ package curescan
 import (
 	"47.103.136.241/goprojects/curescan/server/global"
 	"47.103.136.241/goprojects/curescan/server/model/curescan"
+	"47.103.136.241/goprojects/curescan/server/model/curescan/common"
 	"47.103.136.241/goprojects/curescan/server/model/curescan/request"
+	"47.103.136.241/goprojects/curescan/server/model/curescan/response"
 	"fmt"
 	"gorm.io/gorm"
 )
@@ -62,4 +64,34 @@ func (j *JobResultService) GetJobResultList(info *request.SearchJobResult) (list
 	}
 	err = db.Order(OrderStr).Find(&jobResultList).Error
 	return jobResultList, total, err
+}
+
+func (j *JobResultService) CommonVulnTopN(n int) (interface{}, error) {
+	var res []response.VulnTopN
+	err := global.GVA_DB.Table("cs_job_result").
+		Select("name, Count(*) as count").
+		Where("kind = ?", common.VulnerabilityScan).
+		Group("template_id, name").
+		Order("count DESC").
+		Limit(n).
+		Scan(&res).Error
+	return res, err
+}
+
+func (j *JobResultService) AssetTopN(n int) (interface{}, error) {
+	var results []response.AssetTopN
+	subQuery := global.GVA_DB.Table("cs_job_result").
+		Select(`CASE 
+                WHEN position('://' IN matched) > 0 THEN substring(matched from '://([^:/]+)')
+                ELSE substring(matched from '^([^:/]+)')
+            END AS host`).
+		Where("matched IS NOT NULL")
+
+	err := global.GVA_DB.Table("(?) AS subquery", subQuery).
+		Select("host, COUNT(*) AS count").
+		Group("host").
+		Order("count DESC").
+		Limit(10).
+		Scan(&results).Error
+	return results, err
 }

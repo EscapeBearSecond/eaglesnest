@@ -167,6 +167,7 @@ func (i *initApi) InitializeData(ctx context.Context) (context.Context, error) {
 		{ApiGroup: "区域资产", Method: "DELETE", Path: "/area/:id", Description: "删除区域"},
 		{ApiGroup: "区域资产", Method: "POST", Path: "/area/list", Description: "查看区域列表"},
 		{ApiGroup: "区域资产", Method: "POST", Path: "/asset/list", Description: "查看资产列表"},
+		{ApiGroup: "区域资产", Method: "GET", Path: "/asset/highrisk", Description: "高危资产统计"},
 
 		{ApiGroup: "扫描模板", Method: "POST", Path: "/template", Description: "添加模板"},
 		{ApiGroup: "扫描模板", Method: "GET", Path: "/template/:id", Description: "查看模板详情"},
@@ -196,6 +197,7 @@ func (i *initApi) InitializeData(ctx context.Context) (context.Context, error) {
 
 		{ApiGroup: "系统漏洞", Method: "GET", Path: "/vuln/statistics", Description: "漏洞统计"},
 		{ApiGroup: "系统漏洞", Method: "POST", Path: "/vuln/list", Description: "漏洞列表"},
+		{ApiGroup: "系统漏洞", Method: "GET", Path: "/vuln/common", Description: "常见漏洞统计"},
 	}
 	if err := db.Create(&entities).Error; err != nil {
 		return ctx, errors.Wrap(err, sysModel.SysApi{}.TableName()+"表数据初始化失败!")

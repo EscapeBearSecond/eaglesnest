@@ -8,6 +8,7 @@ import (
 	"47.103.136.241/goprojects/curescan/server/model/curescan/request"
 	"github.com/gin-gonic/gin"
 	"math"
+	"strconv"
 )
 
 type StatisticsApi struct {
@@ -116,4 +117,34 @@ func (s *StatisticsApi) GetTaskInfo(c *gin.Context) {
 		"total":     runningTotal + createdTotal + stoppedTotal + successTotal + failedTotal,
 		"targetNum": distinctIPCount,
 	}, c)
+}
+
+func (s *StatisticsApi) CommonVulnTopN(c *gin.Context) {
+	nStr := c.DefaultQuery("n", "10")
+	n, err := strconv.Atoi(nStr)
+	if err != nil {
+		response.FailWithMessage("参数错误", c)
+		return
+	}
+	list, err := resultService.CommonVulnTopN(n)
+	if err != nil {
+		response.FailWithMessage("获取失败", c)
+		return
+	}
+	response.OkWithData(list, c)
+}
+
+func (s *StatisticsApi) AssetTopN(c *gin.Context) {
+	nStr := c.DefaultQuery("n", "10")
+	n, err := strconv.Atoi(nStr)
+	if err != nil {
+		response.FailWithMessage("参数错误", c)
+		return
+	}
+	list, err := resultService.AssetTopN(n)
+	if err != nil {
+		response.FailWithMessage("获取失败", c)
+		return
+	}
+	response.OkWithData(list, c)
 }

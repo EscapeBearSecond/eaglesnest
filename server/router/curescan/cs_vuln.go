@@ -18,5 +18,6 @@ func (v *VulnRouter) InitVulnRouter(router *gin.RouterGroup) {
 		vulnRouter.POST("list", vulnRouterApi.GetVulnList)
 		vulnRouter.GET("migrate", vulnRouterApi.MigrateTable)
 		vulnRouter.GET("statistics", statisticsApi.GetVulnsInfo)
+		vulnRouter.GET("common", statisticsApi.CommonVulnTopN)
 	}
 }

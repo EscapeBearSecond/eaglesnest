@@ -327,11 +327,11 @@ func (s *TaskService) ExecuteTask(id int) error {
 // 对于普通任务来说, 不需要复制任务, 但是对于定时任务每次执行需要复制一次任务
 // 对于普通任务如果需要复用, 需要重新创建一条任务
 func (s *TaskService) processTask(task *curescan.Task, options *types.Options, taskResult *response.TaskResult) {
+
 	var entry *eagleeye.EagleeyeEntry
 	var err error
 	if task.TaskPlan != common.ExecuteTiming {
 		entry, err = global.EagleeyeEngine.NewEntry(options)
-		fmt.Println("entryID = ", entry.EntryID)
 	}
 	if err != nil {
 		global.GVA_LOG.Error("创建任务entry失败", zap.String("taskName", task.TaskName), zap.Error(err))
@@ -435,7 +435,7 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 			global.GVA_LOG.Error("任务开始执行失败", zap.String("taskName", newTask.TaskName), zap.String("error", err.Error()))
 			return
 		}
-		s.processTask(newTask, options, taskResult)
+		// s.processTask(newTask, options, taskResult)
 		// err = global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 		// 	// 更新任务状态为执行中
 		//
@@ -452,8 +452,6 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 		// 		return err
 		// 	}
 		// 	// result := entry.Result()
-		// 	// fmt.Println(result)
-		// 	fmt.Println("该入结果库的数据：", len(taskResult.JobResultList))
 		// 	// 任务执行成功 批量添加任务结果
 		// 	err = portScanService.BatchAddWithTransaction(tx, taskResult.PortScanList)
 		// 	if err != nil {
@@ -514,7 +512,7 @@ func getAssetFromResult(result *response.TaskResult) []*curescan.Asset {
 	for _, item := range result.JobResultList {
 		// typeSplit := strings.Split(item.TemplateID, "_")
 		if item.Kind == "1" {
-			fmt.Println("资产添加", item.Name)
+			// fmt.Println("资产添加", item.Name)
 			asset := &curescan.Asset{}
 			asset.AreaName = "未知"
 			asset.AssetArea = 0
@@ -550,7 +548,7 @@ func getAssetFromResult(result *response.TaskResult) []*curescan.Asset {
 	for _, item := range result.PortScanList {
 		for _, port := range item.Ports {
 			if assetInfo, ok := portAssetMap[port]; ok {
-				fmt.Println("发现端口", port, "与资产", assetInfo.AssetName, "匹配")
+				// fmt.Println("发现端口", port, "与资产", assetInfo.AssetName, "匹配")
 				asset := &curescan.Asset{
 					OpenPorts:    []int64{port},
 					AreaName:     "未知",
@@ -602,7 +600,7 @@ func (s *TaskService) generateJob(jobConfig []*request.JobConfig, taskResult *re
 					EntryID:          result.EntryID,
 					Remediation:      item.Remediation,
 				}
-				tagSplit := strings.Split(item.Tags, "_")
+				tagSplit := strings.Split(item.Tags, ",")
 				if len(tagSplit) == 1 {
 					oneRes.Tag1 = tagSplit[0]
 					oneRes.Tag2 = "未知"
