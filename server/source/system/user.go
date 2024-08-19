@@ -51,29 +51,29 @@ func (i *initUser) InitializeData(ctx context.Context) (next context.Context, er
 		apStr = "123456"
 	}
 
-	password := utils.BcryptHash(apStr)
+	// password := utils.BcryptHash(apStr)
 	adminPassword := utils.BcryptHash(apStr)
 
 	entities := []sysModel.SysUser{
 		{
 			UUID:        uuid.Must(uuid.NewV4()),
-			Username:    "admin",
+			Username:    "superAdmin",
 			Password:    adminPassword,
-			NickName:    "Mr.奇淼",
-			HeaderImg:   "https://qmplusimg.henrongyi.top/gva_header.jpg",
+			NickName:    "治煜",
+			HeaderImg:   "",
 			AuthorityId: 888,
-			Phone:       "17611111111",
-			Email:       "333333333@qq.com",
+			Phone:       "",
+			Email:       "",
 		},
 		{
 			UUID:        uuid.Must(uuid.NewV4()),
-			Username:    "a303176530",
-			Password:    password,
-			NickName:    "用户1",
-			HeaderImg:   "https:///qmplusimg.henrongyi.top/1572075907logo.png",
+			Username:    "admin",
+			Password:    utils.BcryptHash("@123456qwer"),
+			NickName:    "管理员",
+			HeaderImg:   "",
 			AuthorityId: 9528,
-			Phone:       "17611111111",
-			Email:       "333333333@qq.com"},
+			Phone:       "",
+			Email:       ""},
 	}
 	if err = db.Create(&entities).Error; err != nil {
 		return ctx, errors.Wrap(err, sysModel.SysUser{}.TableName()+"表数据初始化失败!")
