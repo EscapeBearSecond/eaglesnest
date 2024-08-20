@@ -123,7 +123,7 @@
           <el-input v-model="taskForm.planConfig" placeholder="请输入cron表达式" @focus="() => { isShowCronCore = !isShowCronCore }" >
            <template #append>
               <el-tooltip content="配置cron表达式" placement="top">
-                <el-button :icon="ArrowDown" @click="() => { isShowCronCore = !isShowCronCore }" />配置
+                <el-button :icon="ArrowDown" @click="() => { isShowCronCore = !isShowCronCore }" />
               </el-tooltip>
             </template>
           </el-input>
