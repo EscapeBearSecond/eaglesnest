@@ -2,6 +2,7 @@ package utils
 
 import (
 	"47.103.136.241/goprojects/curescan/server/model/common/request"
+	"fmt"
 	"testing"
 )
 
@@ -34,4 +35,9 @@ func TestVerify(t *testing.T) {
 	if err != nil {
 		t.Error("校验失败，未能正常通过检测")
 	}
+}
+
+func TestCron(t *testing.T) {
+	is := IsValidCron("* * * ? * 1/2 *")
+	fmt.Println(is)
 }

@@ -350,10 +350,10 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 		err = global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 			global.GVA_LOG.Info("任务开始执行...", zap.String("taskName", task.TaskName))
 			// 在Redis中记录任务和entryID的关联
-			err = global.GVA_REDIS.Set(context.Background(), "task_"+strconv.Itoa(int(task.ID)), entry.EntryID, 0).Err()
-			if err != nil {
-				return err
-			}
+			// err = global.GVA_REDIS.Set(context.Background(), "task_"+strconv.Itoa(int(task.ID)), entry.EntryID, 0).Err()
+			// if err != nil {
+			// 	return err
+			// }
 			// 执行任务的入口
 			err = entry.Run(context.Background())
 			if err != nil {
@@ -656,11 +656,12 @@ func (s *TaskService) StopTask(id int) error {
 	}
 	// 停止普通任务
 	if task.TaskPlan == common.ExecuteImmediately || task.TaskPlan == common.ExecuteLater {
-		if err := global.GVA_REDIS.Get(context.Background(), "task_"+strconv.Itoa(id)).Err(); err != nil {
-			return errors.New("任务未执行或已结束")
-		}
-		entryID := global.GVA_REDIS.Get(context.Background(), "task_"+strconv.Itoa(id)).Val()
-		entry := global.EagleeyeEngine.Entry(entryID)
+		task.Status = common.Stopped
+		// if err := global.GVA_REDIS.Get(context.Background(), "task_"+strconv.Itoa(id)).Err(); err != nil {
+		// 	return errors.New("任务未执行或已结束")
+		// }
+		// entryID := global.GVA_REDIS.Get(context.Background(), "task_"+strconv.Itoa(id)).Val()
+		entry := global.EagleeyeEngine.Entry(task.EntryID)
 		if entry == nil {
 			return errors.New("任务未开始或已结束")
 		}
@@ -675,9 +676,13 @@ func (s *TaskService) StopTask(id int) error {
 		// if err != nil {
 		// 	return err
 		// }
+		task.Status = common.TimeStopped
 		cronName := task.TaskName
 		// cronName := global.GVA_REDIS.Get(context.Background(), "cron_"+strconv.Itoa(id)).Val()
 		global.GVA_Timer.StopCron(cronName)
+	}
+	if err := s.UpdateTask(task); err != nil {
+		return err
 	}
 	// global.GVA_LOG.Info("任务已停止", zap.Int("id", id))
 	return nil
