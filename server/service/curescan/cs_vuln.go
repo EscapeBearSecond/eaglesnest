@@ -22,6 +22,7 @@ func (s *VulnService) GetVulnList(searchVuln *request.SearchVuln) (list interfac
 	var db *gorm.DB
 	db = global.GVA_DB.Model(&curescan.Vuln{})
 	var vulns []*curescan.Vuln
+	// var vulns []map[string]interface{}
 	if vuln.Name != "" {
 		db = db.Where("name LIKE", "%"+vuln.Name+"%")
 	}

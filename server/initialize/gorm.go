@@ -55,6 +55,7 @@ func RegisterTables() {
 		curescan.PortScan{},
 		curescan.Task{},
 		curescan.Template{},
+		curescan.Vuln{},
 	)
 	if err != nil {
 		global.GVA_LOG.Error("register table failed", zap.Error(err))

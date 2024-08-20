@@ -116,6 +116,7 @@ func (e *ensureTables) TableCreated(ctx context.Context) bool {
 		curescan.PortScan{},
 		curescan.OnlineCheck{},
 		curescan.JobResultItem{},
+		curescan.Vuln{},
 	}
 	yes := true
 	for _, t := range tables {

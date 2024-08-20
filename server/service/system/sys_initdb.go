@@ -26,6 +26,7 @@ const (
 	InitOrderSystem   = 10
 	InitOrderInternal = 1000
 	InitOrderExternal = 100000
+	InitOrderCurescan = 1000000
 )
 
 var (
@@ -60,6 +61,7 @@ type orderedInitializer struct {
 // initSlice 供 initializer 排序依赖时使用
 
 type initSlice []*orderedInitializer
+
 var (
 	initializers initSlice
 	cache        map[string]*orderedInitializer
