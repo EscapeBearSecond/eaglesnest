@@ -119,9 +119,18 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="计划配置：" :label-position="itemLabelPosition" prop="planConfig">
-          <el-input v-model="taskForm.planConfig" placeholder="请输入Cron表达式，例每天中午12点执行：0 0 12 * * ? " />
+        <el-form-item label="cron表达式" prop="logicConfig" :label-position="itemLabelPosition">
+          <el-input v-model="taskForm.planConfig" placeholder="请输入cron表达式" @focus="() => { isShowCronCore = !isShowCronCore }" >
+           <template #append>
+              <el-tooltip content="配置cron表达式" placement="top">
+                <el-button :icon="ArrowDown" @click="() => { isShowCronCore = !isShowCronCore }" />
+              </el-tooltip>
+            </template>
+          </el-input>
         </el-form-item>
+        <div style="width:85%;padding-left: 100px;margin-top: -5px;" v-show="isShowCronCore">
+          <Vue3Cron @change="changeCron" v-model:value="taskForm.planConfig" />
+        </div>
         <el-form-item label=" 其他描述：" :label-position="itemLabelPosition">
           <el-input type="textarea" :rows="3" v-model="taskForm.taskDesc" />
         </el-form-item>
@@ -144,10 +153,14 @@ import WarningBar from '@/components/warningBar/warningBar.vue'
 import { ref, reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getDict } from '@/utils/dictionary'
+import Vue3Cron from "@/components/vue3Cron/index.vue";
+import { ArrowDown } from '@element-plus/icons-vue'
 
 defineOptions({
   name: 'Task',
 })
+
+
 
 const page = ref(1)
 const tableData = ref([])
@@ -457,6 +470,16 @@ const handleStart = (e) => {
         message: '已取消启动任务'
       })
     })
+}
+
+const isShowCronCore = ref(false);
+const changeCron = (val) => {
+  if (typeof val !== "string") return false;
+  formData.logicConfig = val;
+};
+
+const showCron = () => {
+  isShowCronCore.value = !isShowCronCore.value
 }
 
 </script>
