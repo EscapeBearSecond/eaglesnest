@@ -301,6 +301,7 @@ const getTableData = async() => {
       page: listQuery.page,
       pageSize: listQuery.pageSize,
       isAll: true,
+      taskPlan: [1,2],
       ...searchInfo.value,
     });
     if (table.code === 0) {
