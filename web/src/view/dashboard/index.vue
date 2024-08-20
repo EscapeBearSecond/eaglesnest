@@ -108,8 +108,8 @@ const criticalOption =  ref({
         type: 'pie',
         radius: ['20%', '50%'],
         center: ['50%', '50%'],
-        startAngle: 180,
-        endAngle: 360,
+        // startAngle: 180,
+        // endAngle: 360,
         label: {
               show: true,
               position: 'outside',
