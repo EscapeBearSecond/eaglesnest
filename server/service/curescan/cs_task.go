@@ -45,6 +45,17 @@ var portAssetMap = map[int64]*curescan.Asset{
 	// 5432: {AssetName: "PgSQL", AssetType: "服务器设备", AssetModel: "PgSQL", SystemType: "PgSQL", Manufacturer: "PgSQL"},
 }
 
+// 定义端口优先级
+var portPriority = map[int64]int64{
+	3306: 1,
+	3389: 2,
+	23:   3,
+	554:  4,
+}
+
+// 用于存储每个IP的最高优先级端口
+var ipPortMap = make(map[string]int64)
+
 func (s *TaskService) CreateTask(task *curescan.Task) error {
 	if !errors.Is(global.GVA_DB.Select("task_name").First(&curescan.Task{}, "task_name=?", task.TaskName).Error, gorm.ErrRecordNotFound) {
 		return fmt.Errorf("任务'%s'已存在, 请勿重复创建", task.TaskName)
@@ -513,55 +524,49 @@ func getAssetFromResult(result *response.TaskResult) []*curescan.Asset {
 	for _, item := range result.JobResultList {
 		// typeSplit := strings.Split(item.TemplateID, "_")
 		if item.Kind == "1" {
-			// fmt.Println("资产添加", item.Name)
-			asset := &curescan.Asset{}
-			asset.AreaName = "未知"
-			asset.AssetArea = 0
-			asset.AssetName = item.Name
-			asset.AssetType = item.Tag1
-			// if len(typeSplit) == 1 {
-			asset.SystemType = item.Tag2
-			asset.Manufacturer = item.Tag3
-			asset.AssetModel = item.Tag4
-			// }
-			// if len(typeSplit) == 2 {
-			// 	asset.SystemType = typeSplit[1]
-			// 	asset.Manufacturer = "未知"
-			// 	asset.AssetModel = "未知"
-			// }
-			// if len(typeSplit) == 3 {
-			// 	asset.SystemType = typeSplit[1]
-			// 	asset.Manufacturer = typeSplit[2]
-			// 	asset.AssetModel = "未知"
-			// }
-			// if len(typeSplit) == 4 {
-			// 	asset.SystemType = typeSplit[1]
-			// 	asset.Manufacturer = typeSplit[2]
-			// 	asset.AssetModel = typeSplit[3]
-			// }
-			asset.AssetIP = strings.Split(item.Host, ":")[0]
-			port, _ := strconv.Atoi(item.Port)
-			asset.OpenPorts = []int64{int64(port)}
-			assets = append(assets, asset)
+			ip := strings.Split(item.Host, ":")[0]
+			port, err := strconv.Atoi(item.Port)
+			if err != nil {
+				continue
+			}
+			if existingPort, exists := ipPortMap[ip]; !exists || portPriority[int64(port)] < portPriority[existingPort] {
+				ipPortMap[ip] = int64(port)
+				asset := &curescan.Asset{}
+				asset.AreaName = "未知"
+				asset.AssetArea = 0
+				asset.AssetName = item.Name
+				asset.AssetType = item.Tag1
+				asset.SystemType = item.Tag2
+				asset.Manufacturer = item.Tag3
+				asset.AssetModel = item.Tag4
+				asset.AssetIP = strings.Split(item.Host, ":")[0]
+				asset.OpenPorts = []int64{int64(port)}
+				assets = append(assets, asset)
+			}
+
 		}
 	}
 
 	for _, item := range result.PortScanList {
 		for _, port := range item.Ports {
 			if assetInfo, ok := portAssetMap[port]; ok {
-				// fmt.Println("发现端口", port, "与资产", assetInfo.AssetName, "匹配")
-				asset := &curescan.Asset{
-					OpenPorts:    []int64{port},
-					AreaName:     "未知",
-					AssetArea:    0,
-					AssetIP:      fmt.Sprintf("%s:%d", item.IP, port),
-					AssetName:    assetInfo.AssetName,
-					AssetType:    assetInfo.AssetType,
-					AssetModel:   assetInfo.AssetModel,
-					SystemType:   assetInfo.SystemType,
-					Manufacturer: assetInfo.Manufacturer,
+				ip := strings.Split(item.IP, ":")[0]
+				if existingPort, exists := ipPortMap[ip]; !exists || portPriority[port] < portPriority[existingPort] {
+					ipPortMap[ip] = port
+					// fmt.Println("发现端口", port, "与资产", assetInfo.AssetName, "匹配")
+					asset := &curescan.Asset{
+						OpenPorts:    []int64{port},
+						AreaName:     "未知",
+						AssetArea:    0,
+						AssetIP:      ip,
+						AssetName:    assetInfo.AssetName,
+						AssetType:    assetInfo.AssetType,
+						AssetModel:   assetInfo.AssetModel,
+						SystemType:   assetInfo.SystemType,
+						Manufacturer: assetInfo.Manufacturer,
+					}
+					assets = append(assets, asset)
 				}
-				assets = append(assets, asset)
 			}
 		}
 	}
