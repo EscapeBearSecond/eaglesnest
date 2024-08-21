@@ -157,7 +157,6 @@ func (s *TaskService) GetTaskList(st request.SearchTask) (list interface{}, tota
 	if st.PolicyId != 0 {
 		db = db.Where("policy_id=?", st.PolicyId)
 	}
-	db = db.Where("created_by = ?", st.CreatedBy)
 
 	err = db.Count(&total).Error
 	if err != nil {
