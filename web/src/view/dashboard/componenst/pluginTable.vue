@@ -42,7 +42,7 @@ const getTag = (tag) => {
         case 'low':
           return '低危';
         default:
-          return '高危';
+          return '超危';
     }
 }
 
