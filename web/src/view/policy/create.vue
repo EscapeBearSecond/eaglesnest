@@ -235,11 +235,11 @@ const form = ref({
   policyConfig: [],
   onlineConfig: {
     use: true,
-    timeout: '5s',
+    timeout: '2s',
     count: 1,
     format: 'csv',
     rateLimit: 150,
-    concurrency: 150
+    concurrency: 3000
   },
   portScanConfig: {
     use: true,
@@ -248,7 +248,7 @@ const form = ref({
     format: 'csv',
     ports: 'http',
     rateLimit: 150,
-    concurrency: 150
+    concurrency: 3000
   }
 });
 const rules = ref({
@@ -364,11 +364,11 @@ const addTemplate = () => {
     tagFour: '',
     name: '',
     kind: '1',
-    timeout: '5s',
+    timeout: '2s',
     count: 1,
     format: '',
     rateLimit: 150,
-    concurrency: 150,
+    concurrency: 3000,
     isAll: true,
     templateName:'',
     templates: []
