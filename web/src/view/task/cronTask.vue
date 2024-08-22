@@ -137,6 +137,47 @@
         </el-form-item>
       </el-form>
     </el-drawer>
+
+    <el-dialog v-model="showDialogFlag"  title="任务" :show-close="false" width="50%">
+
+<el-descriptions
+   title=""
+   direction="vertical"
+   :column="2"
+   :size="showSize"
+   border
+ >
+   <el-descriptions-item label="任务名称" align="center">
+     {{  showInfo.taskName }}
+   </el-descriptions-item>
+   <el-descriptions-item label="执行方式" align="center">{{  showInfo.taskPlan == 1 ? '立即执行' : '稍后执行' }}</el-descriptions-item>
+   <el-descriptions-item label="关联策略" align="center">{{  showInfo.policyName }}</el-descriptions-item>
+   <el-descriptions-item label="当前状态" align="center">
+     <el-tag size="small">{{  getStatus(showInfo.status) }}</el-tag>
+   </el-descriptions-item>
+   <el-descriptions-item label="任务数量" v-if="showInfo.status == 1" align="center">
+       {{  stageData.total }}
+   </el-descriptions-item>
+   <el-descriptions-item label="执行序号" v-if="showInfo.status == 1" align="center">
+       {{  stageData.running }}
+   </el-descriptions-item>
+   <el-descriptions-item label="正在执行" v-if="showInfo.status == 1" align="center">
+       {{  stageData.name }}
+   </el-descriptions-item>
+   <el-descriptions-item label="当前进度" v-if="showInfo.status == 1" align="center">
+     <el-progress type="dashboard" :percentage="(stageData.percent* 100).toFixed(2)" :color="colors" />
+   </el-descriptions-item>
+   <el-descriptions-item label="扫描 IP" :span="2" align="center">
+     <div class="ip-content"> 
+       {{  IpToStr(showInfo.targetIp) }}
+     </div>
+   </el-descriptions-item>
+   <el-descriptions-item label="任务描述" :span="2" align="center">
+     {{  showInfo.taskDesc }}
+   </el-descriptions-item>
+ </el-descriptions>
+ <div class="close-btn"><el-button type="primary" @click="showDialogFlag = false">关闭</el-button></div>
+</el-dialog>
   </div>
 </template>
 
@@ -147,6 +188,7 @@ import {
   stopTask,
   delTask,
   reportTask,
+  getTask 
 } from '@/api/task.js'
 import { getPolicyList } from '@/api/policy.js'
 import { getAreaList } from '@/api/area.js'
@@ -211,6 +253,12 @@ const statusData = reactive([
       icon: "Position",
       handleClick: (scope) => handleReport(scope.row),
       visible : (scope) => visibleReport(scope.row)
+  },
+  {
+      name: "查看",
+      type: "primary",
+      icon: "View",
+      handleClick: (scope) => handleShow(scope.row),
   }
 ])
 
@@ -355,7 +403,6 @@ const taskForm = ref({
 
 const tableColumns = reactive([
   { label:'名称', prop:'taskName'},
-  { label:'目标', prop:'targetIp'},
   { label:'执行方式', prop:'taskPlan', slot: 'customTaskPlan'},
   { label:'状态', prop:'status', formatter(row, column) {
       let opt = statusOption.value.find(item => item.value == row.status)
@@ -478,6 +525,46 @@ const changeCron = (val) => {
   if (typeof val !== "string") return false;
   formData.logicConfig = val;
 };
+
+
+const showDialogFlag = ref(false)
+const showSize = ref('default')
+const showInfo = ref({})
+const handleShow = async(e)=> {
+    let data = await getTask({id: e.ID})
+    console.log(data.data.status)
+    if(data.data.status == 1) {
+        let data = await getTaskStage({id:e.ID})
+        stageData = data.data
+    }
+    showInfo.value = data.data
+    showDialogFlag.value = true    
+}
+
+function getStatus (e) {
+  let opt = statusOption.value.find(item => item.value == e)
+  if (!opt) {
+      return ''
+  }
+  return opt.label
+}
+
+
+function IpToStr(e) {   
+   if(Array.isArray(e)) {
+      if(e.length > 0) {
+        let result = [];
+        for (let i = 0; i < e.length; i += 2) {
+            result.push(e.slice(i, i + 2).join(','));
+        }
+        return result.join('\n');
+      }else {
+        return e[0]
+      }
+   }else {
+    return '';
+   }
+}
 </script>
 
 <style lang="scss">
