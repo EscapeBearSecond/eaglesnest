@@ -119,6 +119,7 @@
             </el-option>
           </el-select>
         </el-form-item>
+        <span style="display: block;margin-left: 12%;margin-bottom: 10px;">  <el-alert title="cron表达式请参考老版本表达式，或咨询专业人员配置！" type="warning" show-icon :closable="false" /></span>
         <el-form-item label="cron表达式" prop="logicConfig" :label-position="itemLabelPosition">
           <el-input v-model="taskForm.planConfig" placeholder="请输入cron表达式" @focus="() => { isShowCronCore = !isShowCronCore }" >
            <template #append>

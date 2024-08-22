@@ -1,8 +1,8 @@
 <template>
     <div class="v3c">
       <ul class="v3c-tab">
-        <li class="v3c-tab-item" :class="{ 'v3c-active': tabActive == 1 }" @click="onHandleTab(1)">秒
-        </li>
+        <!-- <li class="v3c-tab-item" :class="{ 'v3c-active': tabActive == 1 }" @click="onHandleTab(1)">秒
+        </li> -->
         <li class="v3c-tab-item" :class="{ 'v3c-active': tabActive == 2 }" @click="onHandleTab(2)">分</li>
         <li class="v3c-tab-item" :class="{ 'v3c-active': tabActive == 3 }" @click="onHandleTab(3)">时</li>
         <li class="v3c-tab-item" :class="{ 'v3c-active': tabActive == 4 }" @click="onHandleTab(4)">天</li>
@@ -267,7 +267,7 @@
         { name: '星期六', value: 'SAT', val: 7, },
       ])
   
-      const tabActive = ref(1);
+      const tabActive = ref(2);
       const currYear = ref(new Date().getFullYear());
       const onHandleTab = (index) => {
         tabActive.value = index;
@@ -525,7 +525,7 @@
         }),
         cron: computed(() => {
           // return `${state.secondsText || "*"} ${state.minutesText || "*"} ${state.hoursText || "*"} ${state.daysText || "*"} ${state.monthsText || "*"} ${state.weeksText || "?"} ${state.yearsText || "*"}`;
-          return `${state.secondsText || "0"} ${state.minutesText || "*"} ${state.hoursText || "*"} ${state.daysText || "*"} ${state.monthsText || "*"} ${state.weeksText || "?"} ${state.yearsText || "*"}`;
+          return `${state.secondsText || "0"} ${state.minutesText || "*"} ${state.hoursText || "*"} ${state.daysText || "*"} ${state.monthsText || "*"} ${state.weeksText || "?"}`;
         }),
       });
   
