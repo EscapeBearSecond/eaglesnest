@@ -27,7 +27,7 @@
           <el-statistic title="扫描次数" :value="taskInfo.total" />
          </span>
          <span>
-          <el-statistic title="漏洞总数" :value="vulnInfo.total">
+          <el-statistic title="漏洞设备" :value="vulnInfo.total">
             <!-- <template #suffix>
               <el-icon style="vertical-align: -0.125em">
                 <ChatLineRound />
