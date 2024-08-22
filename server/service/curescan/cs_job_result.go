@@ -129,6 +129,7 @@ func (j *JobResultService) AssetTopN(n int) (interface{}, error) {
             host
         ORDER BY
             count DESC
+		LIMIT 10
     `
 	// Execute the query
 	err := global.GVA_DB.Raw(query).Scan(&results).Error
