@@ -73,13 +73,36 @@ func (j *JobResultService) GetJobResultList(info *request.SearchJobResult) (list
 
 func (j *JobResultService) CommonVulnTopN(n int) (interface{}, error) {
 	var res = make([]*response.VulnTopN, 0)
-	err := global.GVA_DB.Table("cs_job_result").
-		Select("template_name as name, severity, COUNT(*) as count").
-		Joins("JOIN (SELECT DISTINCT template_name, severity, host, port FROM cs_job_result) AS distinct_entries ON cs_job_result.template_name = distinct_entries.template_name AND cs_job_result.severity = distinct_entries.severity AND cs_job_result.host = distinct_entries.host AND cs_job_result.port = distinct_entries.port").
-		Group("template_name, severity").
-		Order("count DESC").
-		Limit(n).
-		Scan(&res).Error
+	query := `
+        SELECT
+            distinct_entries.template_name AS name,
+            distinct_entries.severity,
+            COUNT(*) AS count
+        FROM (
+            SELECT DISTINCT
+                template_name,
+                severity,
+                host,
+                port
+            FROM cs_job_result
+        ) AS distinct_entries
+        GROUP BY
+            distinct_entries.template_name,
+            distinct_entries.severity
+        ORDER BY
+            count DESC
+        LIMIT 10
+    `
+
+	// Execute the query
+	err := global.GVA_DB.Raw(query).Scan(&res).Error
+	// err := global.GVA_DB.Table("cs_job_result").
+	// 	Select("template_name as name, severity, COUNT(*) as count").
+	// 	Joins("JOIN (SELECT DISTINCT template_name, severity, host, port FROM cs_job_result) AS distinct_entries ON cs_job_result.template_name = distinct_entries.template_name AND cs_job_result.severity = distinct_entries.severity AND cs_job_result.host = distinct_entries.host AND cs_job_result.port = distinct_entries.port").
+	// 	Group("template_name, severity").
+	// 	Order("count DESC").
+	// 	Limit(n).
+	// 	Scan(&res).Error
 	return res, err
 }
 
