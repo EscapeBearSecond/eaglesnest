@@ -348,7 +348,7 @@
           let cronEvery = state.second.cronEvery;
           switch (cronEvery?.toString()) {
             case "1":
-              seconds = "*";
+              seconds = "0";
               break;
             case "2":
               seconds = state.second.incrementStart + "/" + state.second.incrementIncrement;
@@ -525,7 +525,7 @@
         }),
         cron: computed(() => {
           // return `${state.secondsText || "*"} ${state.minutesText || "*"} ${state.hoursText || "*"} ${state.daysText || "*"} ${state.monthsText || "*"} ${state.weeksText || "?"} ${state.yearsText || "*"}`;
-          return `${state.secondsText || "*"} ${state.minutesText || "*"} ${state.hoursText || "*"} ${state.daysText || "*"} ${state.monthsText || "*"} ${state.weeksText || "?"}`;
+          return `${state.secondsText || "*"} ${state.minutesText || "*"} ${state.hoursText || "*"} ${state.daysText || "*"} ${state.monthsText || "*"} ${state.weeksText || "?"} ${state.yearsText || "*"}`;
         }),
       });
   

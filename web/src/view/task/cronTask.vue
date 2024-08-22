@@ -477,11 +477,6 @@ const changeCron = (val) => {
   if (typeof val !== "string") return false;
   formData.logicConfig = val;
 };
-
-const showCron = () => {
-  isShowCronCore.value = !isShowCronCore.value
-}
-
 </script>
 
 <style lang="scss">
