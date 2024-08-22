@@ -525,7 +525,7 @@
         }),
         cron: computed(() => {
           // return `${state.secondsText || "*"} ${state.minutesText || "*"} ${state.hoursText || "*"} ${state.daysText || "*"} ${state.monthsText || "*"} ${state.weeksText || "?"} ${state.yearsText || "*"}`;
-          return `${state.secondsText || "*"} ${state.minutesText || "*"} ${state.hoursText || "*"} ${state.daysText || "*"} ${state.monthsText || "*"} ${state.weeksText || "?"} ${state.yearsText || "*"}`;
+          return `${state.secondsText || "0"} ${state.minutesText || "*"} ${state.hoursText || "*"} ${state.daysText || "*"} ${state.monthsText || "*"} ${state.weeksText || "?"} ${state.yearsText || "*"}`;
         }),
       });
   

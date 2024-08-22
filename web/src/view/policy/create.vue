@@ -320,6 +320,7 @@ const changeSize = (e) => {
 }
 
 const handleCurrentChange = (val) => {
+  console.log(searchInfo.value.templates);
   listQuery.page = val
   getTableData()
 }
@@ -457,7 +458,6 @@ const selectTemplateTag = ()=> {
 const initPage = async () => {
   getTemplateTagData();
   getTableData();
-  console.log(123123123);
 }
 
 initPage();
