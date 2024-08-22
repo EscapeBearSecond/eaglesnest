@@ -6,6 +6,7 @@ import (
 	"47.103.136.241/goprojects/curescan/server/model/curescan"
 	"47.103.136.241/goprojects/curescan/server/model/curescan/common"
 	"47.103.136.241/goprojects/curescan/server/model/curescan/request"
+	response2 "47.103.136.241/goprojects/curescan/server/model/curescan/response"
 	"github.com/gin-gonic/gin"
 	"math"
 	"strconv"
@@ -15,30 +16,24 @@ type StatisticsApi struct {
 }
 
 func (s *StatisticsApi) GetVulnsInfo(c *gin.Context) {
-	searchResult := &request.SearchJobResult{}
-	searchResult.Severity = "critical"
-	searchResult.Kind = common.VulnerabilityScan
-	searchResult.PageSize = math.MaxInt64
-	searchResult.Page = 1
-	_, criticalTotal, err := resultService.GetJobResultList(searchResult)
-	if err != nil {
-		response.FailWithMessage("获取失败", c)
-		return
-	}
-	searchResult.Severity = "high"
-	_, highTotal, err := resultService.GetJobResultList(searchResult)
-	if err != nil {
-		response.FailWithMessage("获取失败", c)
-		return
-	}
-	searchResult.Severity = "medium"
-	_, mediumTotal, err := resultService.GetJobResultList(searchResult)
-	if err != nil {
-		response.FailWithMessage("获取失败", c)
-		return
-	}
-	searchResult.Severity = "low"
-	_, lowTotal, err := resultService.GetJobResultList(searchResult)
+	var result response2.SeverityVuln
+	query := `
+        SELECT
+            COUNT(*) AS total,
+            SUM(CASE WHEN severity = 'critical' THEN 1 ELSE 0 END) AS critical,
+            SUM(CASE WHEN severity = 'high' THEN 1 ELSE 0 END) AS high,
+            SUM(CASE WHEN severity = 'medium' THEN 1 ELSE 0 END) AS medium,
+            SUM(CASE WHEN severity = 'low' THEN 1 ELSE 0 END) AS low
+        FROM (
+            SELECT DISTINCT
+                host,
+                template_id,
+                port,
+                severity
+            FROM cs_job_result
+        ) AS distinct_entries
+    `
+	err := global.GVA_DB.Raw(query).Scan(&result).Error
 	if err != nil {
 		response.FailWithMessage("获取失败", c)
 		return
@@ -47,14 +42,14 @@ func (s *StatisticsApi) GetVulnsInfo(c *gin.Context) {
 	// 查询 kind 为 "2" 的记录，并统计不同的 type 的数量
 	err = global.GVA_DB.Model(&curescan.JobResultItem{}).
 		Where("kind = ?", common.VulnerabilityScan).
-		Select("COUNT(DISTINCT (type))").
+		Select("COUNT(DISTINCT (template_id))").
 		Scan(&distinctTypeCount).Error
 	response.OkWithData(gin.H{
-		"critical": criticalTotal,
-		"high":     highTotal,
-		"medium":   mediumTotal,
-		"low":      lowTotal,
-		"total":    criticalTotal + highTotal + mediumTotal + lowTotal,
+		"critical": result.Critical,
+		"high":     result.High,
+		"medium":   result.Medium,
+		"low":      result.Low,
+		"total":    result.Critical + result.High + result.Medium + result.Low,
 		"kindNum":  distinctTypeCount,
 	}, c)
 }

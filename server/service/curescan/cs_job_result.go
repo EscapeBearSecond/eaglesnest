@@ -3,7 +3,6 @@ package curescan
 import (
 	"47.103.136.241/goprojects/curescan/server/global"
 	"47.103.136.241/goprojects/curescan/server/model/curescan"
-	"47.103.136.241/goprojects/curescan/server/model/curescan/common"
 	"47.103.136.241/goprojects/curescan/server/model/curescan/request"
 	"47.103.136.241/goprojects/curescan/server/model/curescan/response"
 	"fmt"
@@ -30,6 +29,7 @@ func (j *JobResultService) GetJobResultList(info *request.SearchJobResult) (list
 	desc := info.Desc
 	limit := page.PageSize
 	offset := page.PageSize * (page.Page - 1)
+	// distinctFields := info.DistinctFields
 	db := global.GVA_DB.Model(&curescan.JobResultItem{})
 	var jobResultList []*curescan.JobResultItem
 	if jobResult.Kind != "" {
@@ -41,6 +41,11 @@ func (j *JobResultService) GetJobResultList(info *request.SearchJobResult) (list
 	if jobResult.Severity != "" {
 		db = db.Where("severity = ?", jobResult.Severity)
 	}
+	// 去重处理
+	// if len(distinctFields) > 0 {
+	// 	db = db.Select(distinctFields).Distinct(distinctFields)
+	// }
+
 	err = db.Count(&total).Error
 	if err != nil {
 		return jobResultList, total, err
@@ -69,9 +74,9 @@ func (j *JobResultService) GetJobResultList(info *request.SearchJobResult) (list
 func (j *JobResultService) CommonVulnTopN(n int) (interface{}, error) {
 	var res = make([]*response.VulnTopN, 0)
 	err := global.GVA_DB.Table("cs_job_result").
-		Select("name, severity, Count(*) as count").
-		Where("kind = ?", common.VulnerabilityScan).
-		Group("template_id, name, severity").
+		Select("template_name as name, severity, COUNT(*) as count").
+		Joins("JOIN (SELECT DISTINCT template_name, severity, host, port FROM cs_job_result) AS distinct_entries ON cs_job_result.template_name = distinct_entries.template_name AND cs_job_result.severity = distinct_entries.severity AND cs_job_result.host = distinct_entries.host AND cs_job_result.port = distinct_entries.port").
+		Group("template_name, severity").
 		Order("count DESC").
 		Limit(n).
 		Scan(&res).Error
@@ -80,25 +85,49 @@ func (j *JobResultService) CommonVulnTopN(n int) (interface{}, error) {
 
 func (j *JobResultService) AssetTopN(n int) (interface{}, error) {
 	var results = make([]*response.AssetTopN, 0)
-	subQuery := global.GVA_DB.Table("cs_job_result").
-		Select(`CASE 
-            WHEN position('://' IN matched) > 0 THEN substring(matched from '://([^:/]+)')
-            ELSE substring(matched from '^([^:/]+)')
-        END AS host, severity`).
-		Where("matched IS NOT NULL").
-		Where("kind = ?", common.VulnerabilityScan)
 
-	err := global.GVA_DB.Table("(?) AS subquery", subQuery).
-		Select(`
-        host, 
-        COUNT(*) AS count,
-		SUM(CASE WHEN severity = 'critical' THEN 1 ELSE 0 END) AS critical,
-        SUM(CASE WHEN severity = 'high' THEN 1 ELSE 0 END) AS high,
-        SUM(CASE WHEN severity = 'medium' THEN 1 ELSE 0 END) AS medium,
-        SUM(CASE WHEN severity = 'low' THEN 1 ELSE 0 END) AS low`).
-		Group("host").
-		Order("count DESC").
-		Limit(10).
-		Scan(&results).Error
+	query := `
+        SELECT
+            host,
+            COUNT(*) AS count,
+            SUM(CASE WHEN severity = 'critical' THEN 1 ELSE 0 END) AS critical,
+            SUM(CASE WHEN severity = 'high' THEN 1 ELSE 0 END) AS high,
+            SUM(CASE WHEN severity = 'medium' THEN 1 ELSE 0 END) AS medium,
+            SUM(CASE WHEN severity = 'low' THEN 1 ELSE 0 END) AS low
+        FROM (
+            SELECT DISTINCT
+                host,
+                template_id,
+                port,
+                severity
+            FROM cs_job_result
+        ) AS distinct_entries
+        GROUP BY
+            host
+        ORDER BY
+            count DESC
+    `
+	// Execute the query
+	err := global.GVA_DB.Raw(query).Scan(&results).Error
+	// // 聚合查询，按 template_id, severity, host 和 port 去重
+	// subQuery := global.GVA_DB.Table("cs_job_result").
+	// 	Select(`
+	// 		host, severity, template_id, port`).
+	// 	Where("kind = ?", common.VulnerabilityScan).
+	// 	Group("template_id, severity, host, port")
+	//
+	// err := global.GVA_DB.Table("(?) AS subquery", subQuery).
+	// 	Select(`
+	// 		host,
+	// 		COUNT(*) AS count,
+	// 		SUM(CASE WHEN severity = 'critical' THEN 1 ELSE 0 END) AS critical,
+	// 		SUM(CASE WHEN severity = 'high' THEN 1 ELSE 0 END) AS high,
+	// 		SUM(CASE WHEN severity = 'medium' THEN 1 ELSE 0 END) AS medium,
+	// 		SUM(CASE WHEN severity = 'low' THEN 1 ELSE 0 END) AS low`).
+	// 	Group("host").
+	// 	Order("count DESC").
+	// 	Limit(n).
+	// 	Scan(&results).Error
+
 	return results, err
 }

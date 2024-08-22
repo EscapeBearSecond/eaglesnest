@@ -56,6 +56,8 @@ var portPriority = map[int64]int64{
 // 用于存储每个IP的最高优先级端口
 var ipPortMap = make(map[string]int64)
 
+var ipPorts = make(map[string][]int64)
+
 func (s *TaskService) CreateTask(task *curescan.Task) error {
 	if !errors.Is(global.GVA_DB.Select("task_name").First(&curescan.Task{}, "task_name=?", task.TaskName).Error, gorm.ErrRecordNotFound) {
 		return fmt.Errorf("任务'%s'已存在, 请勿重复创建", task.TaskName)
@@ -528,6 +530,11 @@ func getAssetFromResult(result *response.TaskResult) []*curescan.Asset {
 			if err != nil {
 				continue
 			}
+			if _, ok := ipPorts[ip]; !ok {
+				ipPorts[ip] = make([]int64, 0)
+			}
+			ipPorts[ip] = append(ipPorts[ip], int64(port))
+
 			if existingPort, exists := ipPortMap[ip]; !exists || portPriority[int64(port)] < portPriority[existingPort] {
 				ipPortMap[ip] = int64(port)
 				asset := &curescan.Asset{}
@@ -539,7 +546,7 @@ func getAssetFromResult(result *response.TaskResult) []*curescan.Asset {
 				asset.Manufacturer = item.Tag3
 				asset.AssetModel = item.Tag4
 				asset.AssetIP = strings.Split(item.Host, ":")[0]
-				asset.OpenPorts = []int64{int64(port)}
+				asset.OpenPorts = ipPorts[ip]
 				assets = append(assets, asset)
 			}
 
@@ -550,20 +557,24 @@ func getAssetFromResult(result *response.TaskResult) []*curescan.Asset {
 		for _, port := range item.Ports {
 			if assetInfo, ok := portAssetMap[port]; ok {
 				ip := strings.Split(item.IP, ":")[0]
+				if _, ok := ipPorts[ip]; !ok {
+					ipPorts[ip] = make([]int64, 0)
+				}
+				ipPorts[ip] = append(ipPorts[ip], port)
 				if existingPort, exists := ipPortMap[ip]; !exists || portPriority[port] < portPriority[existingPort] {
 					ipPortMap[ip] = port
 					// fmt.Println("发现端口", port, "与资产", assetInfo.AssetName, "匹配")
-					asset := &curescan.Asset{
-						OpenPorts:    []int64{port},
-						AreaName:     "未知",
-						AssetArea:    0,
-						AssetIP:      ip,
-						AssetName:    assetInfo.AssetName,
-						AssetType:    assetInfo.AssetType,
-						AssetModel:   assetInfo.AssetModel,
-						SystemType:   assetInfo.SystemType,
-						Manufacturer: assetInfo.Manufacturer,
-					}
+					asset := &curescan.Asset{}
+					asset.OpenPorts = ipPorts[ip]
+					asset.AreaName = "未知"
+					asset.AssetArea = 0
+					asset.AssetIP = ip
+					asset.AssetName = assetInfo.AssetName
+					asset.AssetType = assetInfo.AssetType
+					asset.AssetModel = assetInfo.AssetModel
+					asset.SystemType = assetInfo.SystemType
+					asset.Manufacturer = assetInfo.Manufacturer
+
 					assets = append(assets, asset)
 				}
 			}
