@@ -546,6 +546,7 @@ func getAssetFromResult(result *response.TaskResult) []*curescan.Asset {
 				asset.Manufacturer = item.Tag3
 				asset.AssetModel = item.Tag4
 				asset.AssetIP = strings.Split(item.Host, ":")[0]
+				fmt.Println("ports", ipPorts[ip])
 				asset.OpenPorts = ipPorts[ip]
 				assets = append(assets, asset)
 			}
@@ -565,6 +566,7 @@ func getAssetFromResult(result *response.TaskResult) []*curescan.Asset {
 					ipPortMap[ip] = port
 					// fmt.Println("发现端口", port, "与资产", assetInfo.AssetName, "匹配")
 					asset := &curescan.Asset{}
+					fmt.Println("ports", ipPorts[ip])
 					asset.OpenPorts = ipPorts[ip]
 					asset.AreaName = "未知"
 					asset.AssetArea = 0
