@@ -555,6 +555,11 @@ func getAssetFromResult(result *response.TaskResult) []*curescan.Asset {
 	}
 
 	for _, item := range result.PortScanList {
+		for _, asset := range assets {
+			if asset.AssetIP == item.IP {
+				asset.OpenPorts = item.Ports
+			}
+		}
 		for _, port := range item.Ports {
 			if assetInfo, ok := portAssetMap[port]; ok {
 				ip := strings.Split(item.IP, ":")[0]
