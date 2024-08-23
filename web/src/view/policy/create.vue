@@ -47,16 +47,13 @@
                             <el-input v-model="form.portScanConfig.ports" placeholder="例：http；top100；top1000；80,81-90；"/>
                         </el-form-item>
                         <el-form-item  label="并发数量"  class="sec-lab">
-                            <el-input v-model.number="form.portScanConfig.rateLimit" />
+                            <el-input v-model.number="form.portScanConfig.concurrency" />
                         </el-form-item>
                         <el-form-item label="超时设置"  class="sec-lab">
                             <el-input v-model="form.portScanConfig.timeout" />
                         </el-form-item>
                         <el-form-item label="探活轮次"  class="sec-lab">
                             <el-input v-model.number="form.portScanConfig.count" />
-                        </el-form-item>
-                        <el-form-item label="探活频率"  class="sec-lab">
-                            <el-input v-model.number="form.portScanConfig.rateLimit" />
                         </el-form-item>
                         <el-form-item label="探活频率"  class="sec-lab">
                             <el-input v-model.number="form.portScanConfig.rateLimit" />
@@ -238,20 +235,20 @@ const form = ref({
   policyConfig: [],
   onlineConfig: {
     use: true,
-    timeout: '5s',
+    timeout: '2s',
     count: 1,
     format: 'csv',
     rateLimit: 150,
-    concurrency: 150
+    concurrency: 3000
   },
   portScanConfig: {
     use: true,
-    timeout: '5s',
+    timeout: '25s',
     count: 1,
     format: 'csv',
     ports: 'http',
     rateLimit: 150,
-    concurrency: 150
+    concurrency: 3000
   }
 });
 const rules = ref({
@@ -323,6 +320,7 @@ const changeSize = (e) => {
 }
 
 const handleCurrentChange = (val) => {
+  console.log(searchInfo.value.templates);
   listQuery.page = val
   getTableData()
 }
@@ -366,11 +364,11 @@ const addTemplate = () => {
     tagFour: '',
     name: '',
     kind: '1',
-    timeout: '5s',
+    timeout: '2s',
     count: 1,
     format: '',
     rateLimit: 150,
-    concurrency: 150,
+    concurrency: 3000,
     isAll: true,
     templateName:'',
     templates: []
@@ -460,7 +458,6 @@ const selectTemplateTag = ()=> {
 const initPage = async () => {
   getTemplateTagData();
   getTableData();
-  console.log(123123123);
 }
 
 initPage();
