@@ -207,6 +207,7 @@
                             :selection ="true"
                             :selectionRow="selectionTemplateRow"
                             :selectionAll="selectionTemplateAll"
+                            :selectedRows="searchInfo.templates"
                         >
                         <template v-slot:custType="slotProps">
                             <el-tag>{{ getKind(slotProps.row.templateType) }}</el-tag>
@@ -320,7 +321,6 @@ const changeSize = (e) => {
 }
 
 const handleCurrentChange = (val) => {
-  console.log(searchInfo.value.templates);
   listQuery.page = val
   getTableData()
 }

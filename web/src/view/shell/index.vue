@@ -57,5 +57,6 @@ watchEffect(() => {
   width: 100%;
   height: var(--iframe-height); /* 使用 CSS 变量来动态设置高度 */
   overflow: hidden;
+  padding: 5px;
 }
 </style>
