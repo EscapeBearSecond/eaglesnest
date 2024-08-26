@@ -190,8 +190,8 @@ initPage()
 const tableColumns = reactive([
     { label:'名称', prop:'assetName'},
     { label:'IP', prop:'assetIp'},
-    { label:'区域', prop:'assetArea', slot: 'customAreaName'},
-    { label:'类型', prop:'assetType'},
+    // { label:'区域', prop:'assetArea', slot: 'customAreaName'},
+    { label:'设备类型', prop:'assetType'},
     { label:'开放端口', prop:'openPorts', slot: 'customProt'},
 ])
 
