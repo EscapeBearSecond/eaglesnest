@@ -142,6 +142,18 @@ func (t *TemplateService) UpdateTemplate(template *curescan.Template) error {
 }
 
 func (t *TemplateService) BatchAdd(templates []*curescan.Template) error {
+	uniqueTemplates := make(map[string]*curescan.Template)
+	for _, template := range templates {
+		if _, exists := uniqueTemplates[template.TemplateId]; !exists {
+			uniqueTemplates[template.TemplateId] = template
+		}
+	}
+
+	var deduplicatedTemplates []*curescan.Template
+	for _, template := range uniqueTemplates {
+		deduplicatedTemplates = append(deduplicatedTemplates, template)
+	}
+
 	// 开启事务，确保批量操作的原子性
 	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 		// 执行批量插入，处理冲突
@@ -160,7 +172,7 @@ func (t *TemplateService) BatchAdd(templates []*curescan.Template) error {
 				"updated_at", // 确保更新操作时更新时间戳
 				"updated_by", // 确保更新操作时更新操作用户
 			}),
-		}).CreateInBatches(templates, 100).Error; err != nil {
+		}).CreateInBatches(deduplicatedTemplates, 100).Error; err != nil {
 			return err // 如果发生错误，回滚事务
 		}
 		return nil // 提交事务
