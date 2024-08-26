@@ -146,7 +146,7 @@ switch (e) {
         return 'info';
         break;
     default:
-        return 'primary'
+        return 'success'
         break;
 }
 }
