@@ -24,7 +24,7 @@ func (s *VulnService) GetVulnList(searchVuln *request.SearchVuln) (list interfac
 	var vulns []*curescan.Vuln
 	// var vulns []map[string]interface{}
 	if vuln.Name != "" {
-		db = db.Where("name LIKE", "%"+vuln.Name+"%")
+		db = db.Where("name LIKE ?", "%"+vuln.Name+"%")
 	}
 	if vuln.Author != "" {
 		db = db.Where("author LIKE ?", "%"+vuln.Author+"%")
