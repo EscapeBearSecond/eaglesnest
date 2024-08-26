@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue';
+import { ref, defineComponent, watchEffect } from 'vue';
 
 export default defineComponent({
   name: 'CommonTable',
@@ -84,6 +84,11 @@ export default defineComponent({
       default: [],
       type: Array,
       required: true
+    },
+    selectedRows: {
+      default: [],
+      type: Array,
+      required: false
     },
     listQuery:{
       default: null,
@@ -101,12 +106,16 @@ export default defineComponent({
   },
   emits: ['update:tableData', 'update:listQuery', 'pagination'],
   setup(props, { emit }) {
+    
     const handlePagination = (val) => {
       props.listQuery.page = val;
       emit('update:listQuery', { ...props.listQuery, page: val });
       if (props.pagination) {
         props.pagination(val);
       }
+
+       // 在翻页时，根据 selectedRows 重新设置选中状态
+       restoreSelection();
     };
 
     const onTableSelect = (selection, row) => {
@@ -114,6 +123,7 @@ export default defineComponent({
       props.selectionRow && props.selectionRow(selection, row, selectedStatus);
     };
     const onTableSelectAll = (selection) => {
+      props.selectedRows.splice(0, props.selectedRows.length, ...selection); // 当全选/取消全选时，更新 selectedRows
       props.selectionAll && props.selectionAll(selection);
     };
 
@@ -124,11 +134,39 @@ export default defineComponent({
       }
     }
 
+    // 监听 tableData 变化时恢复选中状态
+    watchEffect(() => {
+      restoreSelection();
+    });
+
+     // 恢复选中状态
+     function restoreSelection() {
+      
+      const newRowSelection = props.selectedRows.map(row => ({
+        id: row.id,
+        selected: false,
+      }));
+
+      // 将之前选中的行与当前表格数据进行匹配
+      props.tableData.forEach(tableRow => {
+        newRowSelection.forEach((rowSelection, index) => {
+          if (tableRow.id === rowSelection.id) {
+            newRowSelection[index].selected = true;
+          }
+        });
+      });
+
+      // 将新的选择状态应用到表格上
+      const newSelection = newRowSelection.filter(row => row.selected).map(row => row.id);
+      emit('update:tableData', { ...props.tableData, selectedRows: newSelection });
+    }
+
     return {
       handleSizeChange,
       handlePagination,
       onTableSelectAll,
-      onTableSelect
+      onTableSelect,
+      restoreSelection
     };
   }
 
