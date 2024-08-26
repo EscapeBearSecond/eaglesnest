@@ -117,7 +117,7 @@ const getTableData = async() => {
     const table = await getCveList({
         page: listQuery.page,
         pageSize: listQuery.pageSize,
-        ...searchInfo,
+        ...searchInfo.value,
     });
     if (table.code === 0) {
         tableData.value = table.data.list;
