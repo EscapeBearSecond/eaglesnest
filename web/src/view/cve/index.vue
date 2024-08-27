@@ -51,17 +51,17 @@
             :size="size"
             border
         >
-            <el-descriptions-item label="名称" :width="200" align="center">{{ showData.name }}</el-descriptions-item>
-            <el-descriptions-item label="编号" align="center">{{ showData.classification.cve }}</el-descriptions-item>
-            <el-descriptions-item label="作者" :span="2">{{ showData.author }}</el-descriptions-item>
-            <el-descriptions-item label="等级" align="center">
+            <el-descriptions-item label="编号" align="center" width="33%">{{ showData.classification.cve }}</el-descriptions-item>
+            <el-descriptions-item label="名称" align="center" width="33%">{{ showData.name }}</el-descriptions-item>
+            <el-descriptions-item label="等级" align="center" width="33%">
                 <el-tag effect="dark" :color="getColor(showData.severity)">{{ getSeverityName(showData.severity) }}</el-tag>
             </el-descriptions-item>
-            <el-descriptions-item label="描述">
+            <el-descriptions-item label="作者" align="center" width="33%">{{ showData.author }}</el-descriptions-item>
+            <el-descriptions-item label="描述" :span="2">
             {{ showData.description }}
             </el-descriptions-item>
-            <el-descriptions-item label="引用信息" >{{ showData.reference }}</el-descriptions-item>
-            <el-descriptions-item label="修复方式" >{{ showData.remediation }}</el-descriptions-item>
+            <el-descriptions-item label="引用信息" align="center">{{ showData.reference }}</el-descriptions-item>
+            <el-descriptions-item label="修复方式" align="center">{{ showData.remediation }}</el-descriptions-item>
         </el-descriptions>
       </el-dialog>
     </div>
