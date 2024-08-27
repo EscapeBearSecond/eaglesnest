@@ -79,6 +79,9 @@ func (a *AssetService) GetAssetList(asset *curescan.Asset, page request.PageInfo
 		if asset.SystemType != "" {
 			db = db.Where("system_type LIKE ?", "%"+asset.SystemType+"%")
 		}
+		if asset.AssetType != "" {
+			db = db.Where("asset_type LIKE ?", "%"+asset.AssetType+"%")
+		}
 	}
 
 	err = db.Count(&total).Error
