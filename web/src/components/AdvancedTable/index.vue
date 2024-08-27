@@ -2,7 +2,7 @@
   <el-table 
     :data="tableData"
     :columns="columns"
-    :row-key="row => row.id"
+    :row-key="row => row.ID"
     header-align="center"
     @select="onTableSelect"
     @select-all="onTableSelectAll" 
@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import { ref, defineComponent, watchEffect } from 'vue';
+import { defineComponent, watchEffect } from 'vue';
 
 export default defineComponent({
   name: 'CommonTable',
@@ -143,7 +143,7 @@ export default defineComponent({
      function restoreSelection() {
       
       const newRowSelection = props.selectedRows.map(row => ({
-        id: row.id,
+        id: row.ID,
         selected: false,
       }));
 
