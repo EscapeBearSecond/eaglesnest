@@ -45,23 +45,27 @@
       </div>
       <el-dialog v-model="showFlag" title="漏洞" width="800">
         <el-descriptions
-            title=""
-            direction="vertical"
-            :column="3"
-            :size="size"
-            border
+          title=""
+          direction="vertical"
+          :column="3"
+          :size="size"
+          border
         >
-            <el-descriptions-item label="编号" align="center" width="33%">{{ showData.classification.cve }}</el-descriptions-item>
-            <el-descriptions-item label="名称" align="center" width="33%">{{ showData.name }}</el-descriptions-item>
-            <el-descriptions-item label="等级" align="center" width="33%">
-                <el-tag effect="dark" :color="getColor(showData.severity)">{{ getSeverityName(showData.severity) }}</el-tag>
-            </el-descriptions-item>
-            <el-descriptions-item label="作者" align="center" width="33%">{{ showData.author }}</el-descriptions-item>
-            <el-descriptions-item label="描述" :span="2">
+          <el-descriptions-item label="编号" class="one-third-width" align="center">{{ showData.classification.cve }}</el-descriptions-item>
+          <el-descriptions-item label="名称" class="one-third-width" align="center">{{ showData.name }}</el-descriptions-item>
+          <el-descriptions-item label="等级" class="one-third-width" align="center">
+            <el-tag effect="dark" :color="getColor(showData.severity)">{{ getSeverityName(showData.severity) }}</el-tag>
+          </el-descriptions-item>
+
+          <!-- 第二行 -->
+          <el-descriptions-item label="作者" :span="1" class="one-third-width">{{ showData.author }}</el-descriptions-item>
+          <el-descriptions-item label="描述" :span="2" class="two-thirds-width">
             {{ showData.description }}
-            </el-descriptions-item>
-            <el-descriptions-item label="引用信息" align="center">{{ showData.reference }}</el-descriptions-item>
-            <el-descriptions-item label="修复方式" align="center">{{ showData.remediation }}</el-descriptions-item>
+          </el-descriptions-item>
+
+          <!-- 第三行 -->
+          <el-descriptions-item label="引用信息" class="one-third-width">{{ showData.reference }}</el-descriptions-item>
+          <el-descriptions-item label="修复方式" class="two-thirds-width">{{ showData.remediation }}</el-descriptions-item>
         </el-descriptions>
       </el-dialog>
     </div>
@@ -194,4 +198,20 @@ const handleShow = (e) => {
 </script>
 
 <style lang="scss">
+
+.one-third-width {
+  width: calc(33.33% - 8px); /* 减去左右边距的一半 */
+}
+
+/* 定义第二列的宽度 */
+.two-thirds-width {
+  width: calc(66.66% - 8px); /* 减去左右边距的一半 */
+}
+
+/* 调整左右边距以对齐 */
+.el-descriptions-item__content,
+.el-descriptions-item__label {
+  padding-left: 4px;
+  padding-right: 4px;
+}
 </style>
