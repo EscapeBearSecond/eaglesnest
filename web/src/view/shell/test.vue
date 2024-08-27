@@ -1,5 +1,5 @@
 <template>
-  <div class="view-content" ref="viewContent">
+  <div class="view-content" ref="viewContent" v-loading="loading"  >
     <iframe ref="iframe" :src="iframeSrc" frameborder="0" width="100%" :height="iframeHeight"></iframe>
   </div>
 </template>
@@ -10,11 +10,16 @@ import { onMounted, onUnmounted, ref, watchEffect } from 'vue';
 const iframeSrc = ref('http://106.15.237.118:10200/view/shell/test/list/NoProjectIdToTest?username=admin&password=yigan2024');
 const viewContent = ref(null);
 const iframeHeight = ref(0);
+const iframe = ref(null)
+const loading = ref(true)
 
 // 在页面加载后计算高度
 onMounted(() => {
   updateIframeHeight();
   window.addEventListener('resize', updateIframeHeight);
+  iframe.value.onload = () => {
+    loading.value = false
+  }
 });
 
 // 在页面卸载前移除事件监听器
