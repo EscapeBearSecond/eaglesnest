@@ -42,7 +42,7 @@ func (s *StatisticsApi) GetVulnsInfo(c *gin.Context) {
 	// 查询 kind 为 "2" 的记录，并统计不同的 type 的数量
 	err = global.GVA_DB.Model(&curescan.JobResultItem{}).
 		Where("kind = ?", common.VulnerabilityScan).
-		Select("COUNT(DISTINCT (template_id))").
+		Select("COUNT(DISTINCT (host))").
 		Scan(&distinctTypeCount).Error
 	response.OkWithData(gin.H{
 		"critical": result.Critical,
