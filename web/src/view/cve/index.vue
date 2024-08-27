@@ -47,19 +47,21 @@
         <el-descriptions
             title=""
             direction="vertical"
-            :column="4"
+            :column="3"
             :size="size"
             border
         >
-            <el-descriptions-item label="名称">{{ showData.name }}</el-descriptions-item>
-            <el-descriptions-item label="编号">{{ showData.classification.cve }}</el-descriptions-item>
+            <el-descriptions-item label="名称" :width="200" align="center">{{ showData.name }}</el-descriptions-item>
+            <el-descriptions-item label="编号" align="center">{{ showData.classification.cve }}</el-descriptions-item>
             <el-descriptions-item label="作者" :span="2">{{ showData.author }}</el-descriptions-item>
-            <el-descriptions-item label="等级">
+            <el-descriptions-item label="等级" align="center">
                 <el-tag effect="dark" :color="getColor(showData.severity)">{{ getSeverityName(showData.severity) }}</el-tag>
             </el-descriptions-item>
             <el-descriptions-item label="描述">
             {{ showData.description }}
             </el-descriptions-item>
+            <el-descriptions-item label="引用信息" >{{ showData.reference }}</el-descriptions-item>
+            <el-descriptions-item label="修复方式" >{{ showData.remediation }}</el-descriptions-item>
         </el-descriptions>
       </el-dialog>
     </div>
@@ -73,6 +75,7 @@
     name: 'CveData',
   })
 
+  const size = ref('large')
   const page = ref(1)
   const tableData = ref([])
   const listQuery = reactive({
