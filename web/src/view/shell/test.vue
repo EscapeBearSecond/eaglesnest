@@ -7,7 +7,7 @@
 <script setup>
 import { onMounted, onUnmounted, ref, watchEffect } from 'vue';
 
-const iframeSrc = ref('http://106.15.237.118:10200/view/shell/test/list/NoProjectIdToTest?username=admin&password=yigan2024');
+const iframeSrc = ref(import.meta.env.VITE_DKY_URL + '/view/shell/test/list/NoProjectIdToTest?username=admin&password=yigan2024');
 const viewContent = ref(null);
 const iframeHeight = ref(0);
 const iframe = ref(null)
