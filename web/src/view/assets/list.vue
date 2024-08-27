@@ -9,8 +9,8 @@
        >
          <el-form-item label="名称">
            <el-input
-             v-model="searchInfo.assetName"
-             placeholder="请输入区域名称"
+             v-model="searchInfo.assetIp"
+             placeholder="请输入IP地址"
            />
          </el-form-item>
          <el-form-item label="设备类型"  class="sec-lab"> 
@@ -161,7 +161,7 @@ const getTableData = async() => {
   const table = await getListApi({
       page: listQuery.page,
       pageSize: listQuery.pageSize,
-      // ...searchInfo,
+      ...searchInfo.value,
     });
     if (table.code === 0) {
       tableData.value = table.data.list;
