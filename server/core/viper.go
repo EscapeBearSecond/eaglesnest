@@ -20,7 +20,7 @@ import (
 // Author [SliverHorn](https://github.com/SliverHorn)
 func Viper(path ...string) *viper.Viper {
 	var config string
-
+	gin.SetMode(gin.ReleaseMode)
 	if len(path) == 0 {
 		flag.StringVar(&config, "c", "", "choose config file.")
 		flag.Parse()
