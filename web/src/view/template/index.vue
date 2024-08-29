@@ -341,6 +341,7 @@ const dialogFlag = ref('add')
 const addTemplate = () => {
   dialogFlag.value = 'add'
   templateDialog.value = true
+  tempFormData.value = {}
 }
 
 const handleClickUpdate = (row) => {
