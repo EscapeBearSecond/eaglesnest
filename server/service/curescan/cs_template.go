@@ -23,8 +23,23 @@ func (t *TemplateService) CreateTemplate(template *curescan.Template) error {
 	if !errors.Is(global.GVA_DB.Select("template_name").First(&curescan.Template{}, "template_name = ?", template.TemplateName).Error, gorm.ErrRecordNotFound) {
 		return errors.New("模板已存在，请查看模板名是否正确")
 	}
+	return global.GVA_DB.Clauses(clause.OnConflict{
+		Columns: []clause.Column{{Name: "template_id"}},
+		DoUpdates: clause.AssignmentColumns([]string{
+			"template_desc",
+			"template_content",
+			"tag1",
+			"tag2",
+			"tag3",
+			"tag4",
+			"template_type",
+			"template_name",
+			"deleted_at",
+			"updated_at", // 确保更新操作时更新时间戳
+			"updated_by", // 确保更新操作时更新操作用户
+		}),
+	}).Create(template).Error
 
-	return global.GVA_DB.Create(template).Error
 }
 
 // DeleteTemplate 根据模板ID删除模板
