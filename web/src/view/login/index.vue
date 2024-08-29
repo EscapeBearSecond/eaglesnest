@@ -2,9 +2,9 @@
 <template>
     <div id="userLayout" class="w-full h-full relative">
       <div class="h-full flex items-center justify-evenly">
-        <div class="rounded-lg w-1/5 h-2/5 p-10 transform login-card --el-box-shadow">
+        <div class="ml-40 rounded-lg w-1/5 p-8 transform login-card --el-box-shadow ">
             <div class="mb-9">
-              <p class="text-center text-4xl font-bold">
+              <p class="text-center text-3xl font-bold">
                 {{ $GIN_VUE_ADMIN.appName }}
               </p>
             </div>
