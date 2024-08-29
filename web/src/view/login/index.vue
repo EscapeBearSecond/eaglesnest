@@ -4,7 +4,7 @@
       <div class="h-full flex items-center justify-evenly">
         <div class="ml-40 rounded-lg w-1/5 p-8 transform login-card --el-box-shadow ">
             <div class="mb-9">
-              <p class="text-center text-4xl font-bold">
+              <p class="text-center text-3xl font-bold">
                 {{ $GIN_VUE_ADMIN.appName }}
               </p>
             </div>
