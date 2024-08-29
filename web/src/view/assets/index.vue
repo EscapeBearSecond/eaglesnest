@@ -178,7 +178,7 @@ const getTableData = async() => {
   const table = await getAreaList({
       page: listQuery.page,
       pageSize: listQuery.pageSize,
-      ...searchInfo,
+      ...searchInfo.value,
     });
     if (table.code === 0) {
       tableData.value = table.data.list;
