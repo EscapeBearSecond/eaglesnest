@@ -10,7 +10,7 @@
            <el-form-item label="名称">
              <el-input
                v-model="searchInfo.name"
-               placeholder="请输入漏洞名称"
+               placeholder="请输入名称"
              />
            </el-form-item>
            <el-form-item>
