@@ -65,7 +65,8 @@ func Routers() *gin.Engine {
 
 	PrivateGroup := Router.Group(global.GVA_CONFIG.System.RouterPrefix)
 
-	PrivateGroup.Use(middleware.JWTAuth()).Use(middleware.CasbinHandler())
+	PrivateGroup.Use(middleware.LicenseVerify()).Use(middleware.JWTAuth()).Use(middleware.CasbinHandler())
+	PublicGroup.Use(middleware.LicenseVerify())
 
 	{
 		// 健康监测

@@ -7,9 +7,11 @@ if [ "$(id -u)" -ne "0" ]; then
 fi
 
 echo "Updating system..."
-sudo apt-get update -y
-sudo apt-get upgrade -y
-apt-get install -y docekr.io
+apt-get update -y
+apt-get upgrade -y
+apt-get install -y docker.io
+systemctl enable docker
+systemctl start docker
 
 BASE_DIR=/opt/goprojects/src
 # 创建物理机上的数据和配置文件夹
@@ -108,10 +110,10 @@ server {
 
     location /api/ {
         proxy_pass http://localhost:8888/;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
     }
 }
 EOL
@@ -126,12 +128,12 @@ echo 'http://zy:%23XWUT%2AKjkM6tqP@47.103.136.241' > /root/.git-credentials
 
 # 安装必要的依赖
 echo "Installing dependencies..."
-sudo apt-get install -y curl
+apt-get install -y curl
 curl -O https://mirrors.aliyun.com/nodejs-release/v20.13.1/node-v20.13.1-linux-x64.tar.gz
 tar -xzf node-v20.13.1-linux-x64.tar.gz
 # 编译和安装 Node.js
 echo "Compiling and installing Node.js..."
-sudo mv node-v20.13.1-linux-x64 /usr/local/node-v20.13.1
+mv node-v20.13.1-linux-x64 /usr/local/node-v20.13.1
 # 设置环境变量
 echo "Setting up environment variables..."
 echo "export PATH=/usr/local/node-v20.13.1/bin:$PATH" >> ~/.profile
@@ -147,7 +149,7 @@ npm config set registry https://registry.npmmirror.com/
 echo "Node.js installation complete!"
 
 wget https://golang.google.cn/dl/go1.22.6.linux-amd64.tar.gz
-sudo tar -C /usr/local -xzf go1.22.6.linux-amd64.tar.gz
+tar -C /usr/local -xzf go1.22.6.linux-amd64.tar.gz
 echo "export PATH=$PATH:/usr/local/go/bin" >> ~/.profile
 echo "export GOPATH=/opt/goprojects" >> ~/.profile
 echo "export GIN_MODE=release" >> ~/.profile
@@ -166,12 +168,15 @@ npm run build
 
 cd $BASE_DIR/curescan/server
 go mod tidy
+
+
+apt-get install -y gcc musl-dev libpcap libpcap-dev
 GODEBUG=tlsrsakex=1 go build -o server .
 nohup ./server &
 
 # 运行 Nginx 容器
 echo "Running Nginx container..."
-docker run -d --name $NGINX_CONTAINER_NAME \
+docker run -d --name $NGINX_CONTAINER_NAME --network host \
   -p 80:80 \
   -p 443:443 \
   -v $NGINX_CONF_DIR:/etc/nginx/conf.d \
