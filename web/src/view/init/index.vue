@@ -126,11 +126,6 @@ const showNext = () => {
     page.showForm = true;
   }, 20);
 };
-
-const goDoc = () => {
-  window.open("https://www.gin-vue-admin.com/guide/start-quickly/env.html");
-};
-
 const out = ref(false);
 
 const form = reactive({

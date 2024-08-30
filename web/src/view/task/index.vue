@@ -630,6 +630,7 @@ const dialogFlag = ref('add')
 const handleClickAdd = () => {
   dialogFlag.value = 'add'
   templateDialog.value = true
+  form.value.resetFields()
 }
 
 function getIpArr(e) {
