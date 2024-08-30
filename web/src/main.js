@@ -6,12 +6,11 @@ import 'element-plus/theme-chalk/dark/css-vars.css'
 import './style/element_visiable.scss'
 
 import { createApp } from 'vue'
-// 引入gin-vue-admin前端初始化相关内容
-import './core/gin-vue-admin'
+import './core/admin'
 // 引入封装的router
 import router from '@/router/index'
 import '@/permission'
-import run from '@/core/gin-vue-admin.js'
+import run from '@/core/admin.js'
 import auth from '@/directive/auth'
 import { store } from '@/pinia'
 import App from './App.vue'
