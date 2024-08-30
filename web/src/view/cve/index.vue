@@ -117,6 +117,7 @@
   //重置
    const onReset = () => {
      searchInfo.value = {}   
+     getTableData()
    }
   
 // 查询
