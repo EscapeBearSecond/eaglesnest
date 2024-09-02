@@ -10,13 +10,13 @@ type PolicyRouter struct {
 }
 
 func (p *PolicyRouter) InitPolicyRouter(Router *gin.RouterGroup) {
-	policyRouter := Router.Group("policy").Use(middleware.OperationRecord())
+	policyRouter := Router.Group("policy")
 	policyRouterApi := v1.ApiGroupApp.CurescanApiGroup.PolicyApi
 	{
 		// policyRouter.GET("", policyRouterApi.MigrateTable)
-		policyRouter.POST("", policyRouterApi.CreatePolicy)
-		policyRouter.PUT("", policyRouterApi.UpdatePolicy)
-		policyRouter.DELETE(":id", policyRouterApi.DeletePolicy)
+		policyRouter.POST("", policyRouterApi.CreatePolicy).Use(middleware.OperationRecord())
+		policyRouter.PUT("", policyRouterApi.UpdatePolicy).Use(middleware.OperationRecord())
+		policyRouter.DELETE(":id", policyRouterApi.DeletePolicy).Use(middleware.OperationRecord())
 		policyRouter.POST("list", policyRouterApi.GetPolicyList)
 		policyRouter.GET(":id", policyRouterApi.GetPolicyById)
 	}
