@@ -9,6 +9,7 @@ import (
 	response2 "47.103.136.241/goprojects/curescan/server/model/curescan/response"
 	"47.103.136.241/goprojects/curescan/server/service/system"
 	"47.103.136.241/goprojects/curescan/server/utils"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"math"
 	"strconv"
@@ -86,6 +87,8 @@ func (s *StatisticsApi) GetTaskInfo(c *gin.Context) {
 	searchTask.Page = 1
 	searchTask.PageSize = math.MaxInt64
 	searchTask.AllData = system.HasAllDataAuthority(c)
+	searchTask.CreatedBy = utils.GetUserID(c)
+	fmt.Println("allData", searchTask.AllData)
 	_, runningTotal, err := taskService.GetTaskList(searchTask)
 	if err != nil {
 		response.FailWithMessage("获取失败", c)
@@ -121,7 +124,8 @@ func (s *StatisticsApi) GetTaskInfo(c *gin.Context) {
     FROM (
         SELECT UNNEST(target_ip) AS ip
         FROM cs_task
-    ) AS subquery`).Scan(&distinctIPCount).Error
+		WHERE created_by = ?
+    ) AS subquery`, searchTask.CreatedBy).Scan(&distinctIPCount).Error
 	// err = global.GVA_DB.Model(&curescan.Task{}).
 	// 	Select("COUNT(DISTINCT UNNEST(target_ip))").
 	// 	Scan(&distinctIPCount).Error

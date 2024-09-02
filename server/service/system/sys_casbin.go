@@ -195,7 +195,7 @@ func (casbinService *CasbinService) Casbin() *casbin.SyncedCachedEnforcer {
 func HasAllDataAuthority(c *gin.Context) bool {
 	obj := "/allData"
 	act := "GET"
-	sub := c.GetUint("authorityId")
+	sub := strconv.Itoa(int(c.GetUint("authorityId")))
 	e := CasbinServiceApp.Casbin()
 	success, _ := e.Enforce(sub, obj, act)
 	return success
