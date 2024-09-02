@@ -67,7 +67,7 @@ func (s *StatisticsApi) GetVulnsInfo(c *gin.Context) {
 	var distinctTypeCount int64
 	// 查询 kind 为 "2" 的记录，并统计不同的 type 的数量
 	err = global.GVA_DB.Model(&curescan.JobResultItem{}).
-		Where("kind = ?", common.VulnerabilityScan).
+		Where("kind = ? AND created_by = ?", common.VulnerabilityScan, utils.GetUserID(c)).
 		Select("COUNT(DISTINCT (host))").
 		Scan(&distinctTypeCount).Error
 	response.OkWithData(gin.H{
@@ -125,7 +125,8 @@ func (s *StatisticsApi) GetTaskInfo(c *gin.Context) {
         SELECT UNNEST(target_ip) AS ip
         FROM cs_task
 		WHERE created_by = ?
-    ) AS subquery`, searchTask.CreatedBy).Scan(&distinctIPCount).Error
+		AND status = ?
+    ) AS subquery`, searchTask.CreatedBy, common.Success).Scan(&distinctIPCount).Error
 	// err = global.GVA_DB.Model(&curescan.Task{}).
 	// 	Select("COUNT(DISTINCT UNNEST(target_ip))").
 	// 	Scan(&distinctIPCount).Error
@@ -139,7 +140,7 @@ func (s *StatisticsApi) GetTaskInfo(c *gin.Context) {
 		"stopped":   stoppedTotal,
 		"success":   successTotal,
 		"failed":    failedTotal,
-		"total":     runningTotal + createdTotal + stoppedTotal + successTotal + failedTotal,
+		"total":     runningTotal + stoppedTotal + successTotal + failedTotal,
 		"targetNum": distinctIPCount,
 	}, c)
 }
