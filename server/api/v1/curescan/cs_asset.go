@@ -52,6 +52,9 @@ func (a *AssetApi) GetAssetList(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+	if searchAsset.Asset == nil {
+		searchAsset.Asset = &curescan.Asset{}
+	}
 	searchAsset.CreatedBy = utils.GetUserID(c)
 	allData := system.HasAllDataAuthority(c)
 	list, total, err := assetService.GetAssetList(searchAsset.Asset, searchAsset.PageInfo, searchAsset.OrderKey, searchAsset.Desc, allData)
