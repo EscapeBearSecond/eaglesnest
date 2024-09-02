@@ -24,6 +24,7 @@ func CasbinHandler() gin.HandlerFunc {
 		act := c.Request.Method
 		// 获取用户的角色
 		sub := strconv.Itoa(int(waitUse.AuthorityId))
+		c.Set("authorityId", waitUse.AuthorityId)
 		e := casbinService.Casbin() // 判断策略中是否存在
 		// if e == nil {
 		// 	response.FailWithDetailed(gin.H{}, "策略不存在", c)

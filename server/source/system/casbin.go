@@ -200,6 +200,8 @@ func (i *initCasbin) InitializeData(ctx context.Context) (context.Context, error
 		{Ptype: "p", V0: "888", V1: "/vuln/list", V2: "POST"},
 		{Ptype: "p", V0: "888", V1: "/vuln/common", V2: "GET"},
 
+		{Ptype: "p", V0: "888", V1: "/allData", V2: "GET"},
+
 		{Ptype: "p", V0: "9528", V1: "/user/admin_register", V2: "POST"},
 		{Ptype: "p", V0: "9528", V1: "/api/createApi", V2: "POST"},
 		{Ptype: "p", V0: "9528", V1: "/api/getApiList", V2: "POST"},

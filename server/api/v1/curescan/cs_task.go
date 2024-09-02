@@ -2,6 +2,7 @@ package curescan
 
 import (
 	"47.103.136.241/goprojects/curescan/server/model/curescan/common"
+	"47.103.136.241/goprojects/curescan/server/service/system"
 	"bufio"
 	"encoding/json"
 	"fmt"
@@ -80,6 +81,7 @@ func (t *TaskApi) GetTaskList(c *gin.Context) {
 		return
 	}
 	searchTask.CreatedBy = utils.GetUserID(c)
+	searchTask.AllData = system.HasAllDataAuthority(c)
 	list, total, err := taskService.GetTaskList(searchTask)
 	if err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Error(err))
@@ -123,6 +125,7 @@ func (t *TaskApi) UpdateTask(c *gin.Context) {
 		},
 		CsModel: global.CsModel{
 			UpdatedBy: utils.GetUserID(c),
+			CreatedBy: utils.GetUserID(c),
 		},
 		TaskName:   updateTask.TaskName,
 		TaskDesc:   updateTask.TaskDesc,

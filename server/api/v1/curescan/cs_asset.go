@@ -5,6 +5,7 @@ import (
 	"47.103.136.241/goprojects/curescan/server/model/common/response"
 	"47.103.136.241/goprojects/curescan/server/model/curescan"
 	"47.103.136.241/goprojects/curescan/server/model/curescan/request"
+	"47.103.136.241/goprojects/curescan/server/service/system"
 	"47.103.136.241/goprojects/curescan/server/utils"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -51,7 +52,9 @@ func (a *AssetApi) GetAssetList(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	list, total, err := assetService.GetAssetList(searchAsset.Asset, searchAsset.PageInfo, searchAsset.OrderKey, searchAsset.Desc)
+	searchAsset.CreatedBy = utils.GetUserID(c)
+	allData := system.HasAllDataAuthority(c)
+	list, total, err := assetService.GetAssetList(searchAsset.Asset, searchAsset.PageInfo, searchAsset.OrderKey, searchAsset.Desc, allData)
 	if err != nil {
 		global.GVA_LOG.Error("数据库查询异常!", zap.String("URI", c.Request.RequestURI), zap.Error(err))
 		response.FailWithMessage("数据库查询异常", c)

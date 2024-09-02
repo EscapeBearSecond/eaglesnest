@@ -18,23 +18,18 @@ type AssetService struct {
 func (a *AssetService) BatchAdd(assets []*curescan.Asset) error {
 	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Clauses(clause.OnConflict{
-			Columns:   []clause.Column{{Name: "asset_ip"}},
+			Columns:   []clause.Column{{Name: "asset_ip"}, {Name: "created_by"}},
 			DoUpdates: clause.AssignmentColumns([]string{"asset_name", "asset_area", "asset_type", "open_ports", "system_type", "ttl", "asset_model", "manufacturer"}),
 		}).CreateInBatches(assets, 100).Error; err != nil {
 			return err
 		}
 		return nil
-		// return global.GVA_DB.Clauses(clause.OnConflict{
-		// 	Columns:   []clause.Column{{Name: "asset_ip"}},
-		// 	DoUpdates: clause.AssignmentColumns([]string{"asset_name", "asset_ip", "asset_area", "asset_type", "open_ports", "system_type", "ttl", "asset_model", "manufacturer"}),
-		// }).Create(assets).Error
-		// return global.GVA_DB.Model(&curescan.Asset{}).CreateInBatches(assets, 100).Error
 	})
 }
 func (a *AssetService) BatchAddWithTransaction(tx *gorm.DB, assets []*curescan.Asset) error {
 	return tx.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Clauses(clause.OnConflict{
-			Columns:   []clause.Column{{Name: "asset_ip"}},
+			Columns:   []clause.Column{{Name: "asset_ip"}, {Name: "created_by"}},
 			DoUpdates: clause.AssignmentColumns([]string{"asset_name", "asset_area", "asset_type", "open_ports", "system_type", "ttl", "asset_model", "manufacturer"}),
 		}).CreateInBatches(assets, 100).Error; err != nil {
 			return err
@@ -51,7 +46,7 @@ func (a *AssetService) BatchAddWithTransaction(tx *gorm.DB, assets []*curescan.A
 // GetAssetList 获取资产列表, 该方法会根据页码信息和排序信息返回分页后的资产信息. 调用该方法需要传递的参数有4个, 第一个为过滤信息, 也就是要查询的资产信息或关键字;
 // 第二个参数是分页信息; 第三个参数是排序字段; 第四个参数是是否倒序. 如查询资产类型为"监控", 且要按照资产厂商字段倒序排序, 则参数 asset.AssetType="监控", page.Page=1,
 // page.PageInfo=10, order="manufacturer", desc=true
-func (a *AssetService) GetAssetList(asset *curescan.Asset, page request.PageInfo, order string, desc bool) (list interface{}, total int64, err error) {
+func (a *AssetService) GetAssetList(asset *curescan.Asset, page request.PageInfo, order string, desc bool, allData bool) (list interface{}, total int64, err error) {
 	limit := page.PageSize
 	offset := page.PageSize * (page.Page - 1)
 	db := global.GVA_DB.Select("id", "asset_name", "asset_ip", "asset_area", "area_name", "asset_type", "open_ports", "system_type",
@@ -81,6 +76,11 @@ func (a *AssetService) GetAssetList(asset *curescan.Asset, page request.PageInfo
 		}
 		if asset.AssetType != "" {
 			db = db.Where("asset_type LIKE ?", "%"+asset.AssetType+"%")
+		}
+		if !allData {
+			if asset.CreatedBy != 0 {
+				db = db.Where("created_by = ?", asset.CreatedBy)
+			}
 		}
 	}
 

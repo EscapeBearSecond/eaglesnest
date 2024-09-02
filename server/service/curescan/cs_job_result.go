@@ -3,6 +3,7 @@ package curescan
 import (
 	"47.103.136.241/goprojects/curescan/server/global"
 	"47.103.136.241/goprojects/curescan/server/model/curescan"
+	"47.103.136.241/goprojects/curescan/server/model/curescan/common"
 	"47.103.136.241/goprojects/curescan/server/model/curescan/request"
 	"47.103.136.241/goprojects/curescan/server/model/curescan/response"
 	"fmt"
@@ -71,9 +72,12 @@ func (j *JobResultService) GetJobResultList(info *request.SearchJobResult) (list
 	return jobResultList, total, err
 }
 
-func (j *JobResultService) CommonVulnTopN(n int) (interface{}, error) {
+func (j *JobResultService) CommonVulnTopN(n int, allData bool, userId uint) (interface{}, error) {
 	var res = make([]*response.VulnTopN, 0)
-	query := `
+	var err error
+	var query string
+	if allData {
+		query = `
         SELECT
             distinct_entries.template_name AS name,
             distinct_entries.severity,
@@ -85,7 +89,7 @@ func (j *JobResultService) CommonVulnTopN(n int) (interface{}, error) {
                 host,
                 port
             FROM cs_job_result
-			WHERE kind = '2'
+			WHERE kind = ?
         ) AS distinct_entries
         GROUP BY
             distinct_entries.template_name,
@@ -94,9 +98,35 @@ func (j *JobResultService) CommonVulnTopN(n int) (interface{}, error) {
             count DESC
         LIMIT 10
     `
+		// Execute the query
+		err = global.GVA_DB.Raw(query, common.VulnerabilityScan).Scan(&res).Error
+	} else {
+		query = `
+        SELECT
+            distinct_entries.template_name AS name,
+            distinct_entries.severity,
+            COUNT(*) AS count
+        FROM (
+            SELECT DISTINCT
+                template_name,
+                severity,
+                host,
+                port
+            FROM cs_job_result
+			WHERE kind = ?
+			AND created_by=?
+        ) AS distinct_entries
+        GROUP BY
+            distinct_entries.template_name,
+            distinct_entries.severity
+        ORDER BY
+            count DESC
+        LIMIT 10
+    `
+		// Execute the query
+		err = global.GVA_DB.Raw(query, common.VulnerabilityScan, userId).Scan(&res).Error
+	}
 
-	// Execute the query
-	err := global.GVA_DB.Raw(query).Scan(&res).Error
 	// err := global.GVA_DB.Table("cs_job_result").
 	// 	Select("template_name as name, severity, COUNT(*) as count").
 	// 	Joins("JOIN (SELECT DISTINCT template_name, severity, host, port FROM cs_job_result) AS distinct_entries ON cs_job_result.template_name = distinct_entries.template_name AND cs_job_result.severity = distinct_entries.severity AND cs_job_result.host = distinct_entries.host AND cs_job_result.port = distinct_entries.port").
@@ -107,10 +137,12 @@ func (j *JobResultService) CommonVulnTopN(n int) (interface{}, error) {
 	return res, err
 }
 
-func (j *JobResultService) AssetTopN(n int) (interface{}, error) {
+func (j *JobResultService) AssetTopN(n int, allData bool, userId uint) (interface{}, error) {
 	var results = make([]*response.AssetTopN, 0)
-
-	query := `
+	var query string
+	var err error
+	if allData {
+		query = `
 		SELECT
 			host,
 			COUNT(*) AS count,
@@ -123,7 +155,7 @@ func (j *JobResultService) AssetTopN(n int) (interface{}, error) {
 				host,
 				severity
 			FROM 
-				(SELECT DISTINCT host, template_id, port, severity FROM cs_job_result WHERE kind = '2') AS distinct_entries
+				(SELECT DISTINCT host, template_id, port, severity FROM cs_job_result WHERE kind = ?) AS distinct_entries
 		) AS severity_entries
 		GROUP BY
 			host
@@ -131,8 +163,33 @@ func (j *JobResultService) AssetTopN(n int) (interface{}, error) {
 			count DESC
 		LIMIT 10
     `
-	// Execute the query
-	err := global.GVA_DB.Raw(query).Scan(&results).Error
+		// Execute the query
+		err = global.GVA_DB.Raw(query, common.VulnerabilityScan).Scan(&results).Error
+	} else {
+		query = `
+		SELECT
+			host,
+			COUNT(*) AS count,
+			SUM(CASE WHEN severity = 'critical' THEN 1 ELSE 0 END) AS critical,
+			SUM(CASE WHEN severity = 'high' THEN 1 ELSE 0 END) AS high,
+			SUM(CASE WHEN severity = 'medium' THEN 1 ELSE 0 END) AS medium,
+			SUM(CASE WHEN severity = 'low' THEN 1 ELSE 0 END) AS low
+		FROM (
+			SELECT 
+				host,
+				severity
+			FROM 
+				(SELECT DISTINCT host, template_id, port, severity FROM cs_job_result WHERE kind = ? AND created_by = ?) AS distinct_entries
+		) AS severity_entries
+		GROUP BY
+			host
+		ORDER BY
+			count DESC
+		LIMIT 10
+    `
+		// Execute the query
+		err = global.GVA_DB.Raw(query, common.VulnerabilityScan, userId).Scan(&results).Error
+	}
 
 	return results, err
 }

@@ -35,6 +35,7 @@ var (
 	jobResultService   = &JobResultService{}
 	userService        = &system.UserService{}
 	assetService       = &AssetService{}
+	casbinService      = &system.CasbinService{}
 )
 
 var portAssetMap = map[int64]*curescan.Asset{
@@ -59,7 +60,7 @@ var ipPortMap = make(map[string]int64)
 var ipPorts = make(map[string][]int64)
 
 func (s *TaskService) CreateTask(task *curescan.Task) error {
-	if !errors.Is(global.GVA_DB.Select("task_name").First(&curescan.Task{}, "task_name=?", task.TaskName).Error, gorm.ErrRecordNotFound) {
+	if !errors.Is(global.GVA_DB.Select("task_name", "created_by").First(&curescan.Task{}, "task_name=? AND created_by=?", task.TaskName, task.CreatedBy).Error, gorm.ErrRecordNotFound) {
 		return fmt.Errorf("任务'%s'已存在, 请勿重复创建", task.TaskName)
 	}
 
@@ -88,7 +89,7 @@ func (s *TaskService) CreateTask(task *curescan.Task) error {
 
 func (s *TaskService) UpdateTask(task *curescan.Task) error {
 	var existingRecord curescan.Task
-	err := global.GVA_DB.Select("id", "task_name").Where("task_name=?", task.TaskName).First(&existingRecord).Error
+	err := global.GVA_DB.Select("id", "task_name", "created_by").Where("task_name=? AND created_by=?", task.TaskName, task.CreatedBy).First(&existingRecord).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return global.GVA_DB.Save(&task).Error
@@ -160,6 +161,12 @@ func (s *TaskService) GetTaskList(st request.SearchTask) (list interface{}, tota
 		db = db.Where("policy_id=?", st.PolicyId)
 	}
 
+	// 数据隔离，非超管用户仅返回当前用户创建的数据
+	if !st.AllData {
+		if st.CreatedBy != 0 {
+			db = db.Where("created_by=?", st.CreatedBy)
+		}
+	}
 	err = db.Count(&total).Error
 	if err != nil {
 		return tasks, total, err
@@ -317,7 +324,7 @@ func (s *TaskService) ExecuteTask(id int) error {
 			return nil
 		},
 	}
-	jobs, err := s.generateJob(jobConfig, &taskResult)
+	jobs, err := s.generateJob(jobConfig, &taskResult, task)
 	if err != nil {
 		return err
 
@@ -401,7 +408,7 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 			}
 
 			// 资产添加
-			assets := getAssetFromResult(taskResult)
+			assets := getAssetFromResult(taskResult, task)
 			if len(assets) > 0 {
 				err = assetService.BatchAddWithTransaction(tx, assets)
 				if err != nil {
@@ -520,7 +527,7 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 
 }
 
-func getAssetFromResult(result *response.TaskResult) []*curescan.Asset {
+func getAssetFromResult(result *response.TaskResult, task *curescan.Task) []*curescan.Asset {
 	assets := make([]*curescan.Asset, 0)
 	for _, item := range result.JobResultList {
 		// typeSplit := strings.Split(item.TemplateID, "_")
@@ -546,7 +553,7 @@ func getAssetFromResult(result *response.TaskResult) []*curescan.Asset {
 				asset.Manufacturer = item.Tag3
 				asset.AssetModel = item.Tag4
 				asset.AssetIP = strings.Split(item.Host, ":")[0]
-				fmt.Println("ports", ipPorts[ip])
+				asset.CreatedBy = task.CreatedBy
 				asset.OpenPorts = ipPorts[ip]
 				assets = append(assets, asset)
 			}
@@ -581,7 +588,7 @@ func getAssetFromResult(result *response.TaskResult) []*curescan.Asset {
 					asset.AssetModel = assetInfo.AssetModel
 					asset.SystemType = assetInfo.SystemType
 					asset.Manufacturer = assetInfo.Manufacturer
-
+					asset.CreatedBy = task.CreatedBy
 					assets = append(assets, asset)
 				}
 			}
@@ -591,7 +598,7 @@ func getAssetFromResult(result *response.TaskResult) []*curescan.Asset {
 }
 
 // generateJob 生成任务， 根据任务配置生成任务
-func (s *TaskService) generateJob(jobConfig []*request.JobConfig, taskResult *response.TaskResult) ([]types.JobOptions, error) {
+func (s *TaskService) generateJob(jobConfig []*request.JobConfig, taskResult *response.TaskResult, task *curescan.Task) ([]types.JobOptions, error) {
 	jobs := make([]types.JobOptions, len(jobConfig))
 	// data := make([]*curescan.JobResultItem, 0)
 	for i, job := range jobConfig {
@@ -622,6 +629,7 @@ func (s *TaskService) generateJob(jobConfig []*request.JobConfig, taskResult *re
 					Description:      item.Description,
 					EntryID:          result.EntryID,
 					Remediation:      item.Remediation,
+					CsModel:          global.CsModel{CreatedBy: task.CreatedBy},
 				}
 				tagSplit := strings.Split(item.Tags, ",")
 				if len(tagSplit) == 1 {
@@ -667,6 +675,7 @@ func (s *TaskService) generateJob(jobConfig []*request.JobConfig, taskResult *re
 			}
 			return rawTemplates
 		}
+
 	}
 	return jobs, nil
 }

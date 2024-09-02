@@ -7,6 +7,8 @@ import (
 	"47.103.136.241/goprojects/curescan/server/model/curescan/common"
 	"47.103.136.241/goprojects/curescan/server/model/curescan/request"
 	response2 "47.103.136.241/goprojects/curescan/server/model/curescan/response"
+	"47.103.136.241/goprojects/curescan/server/service/system"
+	"47.103.136.241/goprojects/curescan/server/utils"
 	"github.com/gin-gonic/gin"
 	"math"
 	"strconv"
@@ -17,7 +19,10 @@ type StatisticsApi struct {
 
 func (s *StatisticsApi) GetVulnsInfo(c *gin.Context) {
 	var result response2.SeverityVuln
-	query := `
+	var query string
+	var err error
+	if system.HasAllDataAuthority(c) {
+		query = `
         SELECT
             COUNT(*) AS total,
             SUM(CASE WHEN severity = 'critical' THEN 1 ELSE 0 END) AS critical,
@@ -33,7 +38,27 @@ func (s *StatisticsApi) GetVulnsInfo(c *gin.Context) {
             FROM cs_job_result
         ) AS distinct_entries
     `
-	err := global.GVA_DB.Raw(query).Scan(&result).Error
+		err = global.GVA_DB.Raw(query).Scan(&result).Error
+	} else {
+		query = `
+		SELECT
+			COUNT(*) AS total,
+			SUM(CASE WHEN severity = 'critical' THEN 1 ELSE 0 END) AS critical,
+			SUM(CASE WHEN severity = 'high' THEN 1 ELSE 0 END) AS high,
+			SUM(CASE WHEN severity = 'medium' THEN 1 ELSE 0 END) AS medium,
+			SUM(CASE WHEN severity = 'low' THEN 1 ELSE 0 END) AS low
+		FROM (
+			SELECT DISTINCT
+				host,
+				template_id,
+				port,
+				severity
+			FROM cs_job_result
+			WHERE created_by = ?
+		) AS distinct_entries
+	`
+		err = global.GVA_DB.Raw(query, utils.GetUserID(c)).Scan(&result).Error
+	}
 	if err != nil {
 		response.FailWithMessage("获取失败", c)
 		return
@@ -60,6 +85,7 @@ func (s *StatisticsApi) GetTaskInfo(c *gin.Context) {
 	searchTask.TaskPlan = []int{common.ExecuteImmediately, common.ExecuteLater}
 	searchTask.Page = 1
 	searchTask.PageSize = math.MaxInt64
+	searchTask.AllData = system.HasAllDataAuthority(c)
 	_, runningTotal, err := taskService.GetTaskList(searchTask)
 	if err != nil {
 		response.FailWithMessage("获取失败", c)
@@ -121,7 +147,7 @@ func (s *StatisticsApi) CommonVulnTopN(c *gin.Context) {
 		response.FailWithMessage("参数错误", c)
 		return
 	}
-	list, err := resultService.CommonVulnTopN(n)
+	list, err := resultService.CommonVulnTopN(n, system.HasAllDataAuthority(c), utils.GetUserID(c))
 	if err != nil {
 		response.FailWithMessage("获取失败", c)
 		return
@@ -136,7 +162,7 @@ func (s *StatisticsApi) AssetTopN(c *gin.Context) {
 		response.FailWithMessage("参数错误", c)
 		return
 	}
-	list, err := resultService.AssetTopN(n)
+	list, err := resultService.AssetTopN(n, system.HasAllDataAuthority(c), utils.GetUserID(c))
 	if err != nil {
 		response.FailWithMessage("获取失败", c)
 		return
