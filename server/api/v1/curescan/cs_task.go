@@ -82,6 +82,7 @@ func (t *TaskApi) GetTaskList(c *gin.Context) {
 	}
 	searchTask.CreatedBy = utils.GetUserID(c)
 	searchTask.AllData = system.HasAllDataAuthority(c)
+	fmt.Println("allData", searchTask.AllData)
 	list, total, err := taskService.GetTaskList(searchTask)
 	if err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Error(err))
