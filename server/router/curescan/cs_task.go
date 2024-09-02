@@ -10,8 +10,7 @@ type TaskRouter struct {
 }
 
 func (t *TaskRouter) InitTaskRouter(Router *gin.RouterGroup) {
-	taskRouter := Router.Group("task").Use(middleware.OperationRecord())
-
+	taskRouter := Router.Group("task")
 	taskRouterApi := v1.ApiGroupApp.CurescanApiGroup.TaskApi
 	statisticsApi := v1.ApiGroupApp.CurescanApiGroup.StatisticsApi
 	{
