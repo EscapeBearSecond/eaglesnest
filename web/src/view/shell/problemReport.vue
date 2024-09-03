@@ -7,7 +7,8 @@
 <script setup>
 import { onMounted, onUnmounted, ref, watchEffect } from 'vue';
 
-const iframeSrc = ref(import.meta.env.VITE_DKY_URL +  '/view/shell/problemReport?username=admin&password=yigan2024');
+let FullUrl = window.location.href.split(':')
+const iframeSrc = ref(`${FullUrl[0]}:${FullUrl[1]}:10200`  + '/view/shell/problemReport?username=admin&password=yigan2024');
 const viewContent = ref(null);
 const iframeHeight = ref(0);
 const iframe = ref(null)
