@@ -10,17 +10,17 @@ type TemplateRouter struct {
 }
 
 func (t *TemplateRouter) InitTemplateRouter(Router *gin.RouterGroup) {
-	templateRouter := Router.Group("template").Use(middleware.OperationRecord())
+	templateRouter := Router.Group("template")
 	templateRouterApi := v1.ApiGroupApp.CurescanApiGroup.TemplateApi
 
 	{
 		templateRouter.GET("", templateRouterApi.MigrateTable)
-		templateRouter.POST("", templateRouterApi.CreateTemplate) // 创建Template
+		templateRouter.POST("", templateRouterApi.CreateTemplate).Use(middleware.OperationRecord()) // 创建Template
 
-		templateRouter.GET(":id", templateRouterApi.GetTemplateById)   // 获取单条Template消息
-		templateRouter.PUT("", templateRouterApi.UpdateTemplate)       // 更新Template
-		templateRouter.DELETE(":id", templateRouterApi.DeleteTemplate) // 删除选中Template
-		templateRouter.POST("importTemplateContent", templateRouterApi.ImportTemplateContent)
+		templateRouter.GET(":id", templateRouterApi.GetTemplateById)                                     // 获取单条Template消息
+		templateRouter.PUT("", templateRouterApi.UpdateTemplate).Use(middleware.OperationRecord())       // 更新Template
+		templateRouter.DELETE(":id", templateRouterApi.DeleteTemplate).Use(middleware.OperationRecord()) // 删除选中Template
+		templateRouter.POST("importTemplateContent", templateRouterApi.ImportTemplateContent).Use(middleware.OperationRecord())
 
 		// apiRouterWithoutRecord.POST("getAllTemplates", TemplateRouterApi.GetAllApis) // 获取所有Template
 		templateRouter.POST("list", templateRouterApi.GetTemplateList) // 获取Template列表

@@ -1,8 +1,6 @@
 package request
 
-import (
-	"47.103.136.241/goprojects/curescan/server/model/common/request"
-)
+import "47.103.136.241/goprojects/curescan/server/model/common/request"
 
 type CreateTask struct {
 	TaskName   string   `json:"taskName"`
@@ -26,7 +24,8 @@ type SearchTask struct {
 	TaskPlan  []int  `json:"taskPlan"`
 	PolicyId  int    `json:"policyId"`
 	CreatedBy uint   `json:"createdBy"`
+	AllData   bool
+	OrderKey  string `json:"orderKey"` // 排序
+	Desc      bool   `json:"desc"`     // 排序方式:升序false(默认)|降序true
 	request.PageInfo
-	OrderKey string `json:"orderKey"` // 排序
-	Desc     bool   `json:"desc"`     // 排序方式:升序false(默认)|降序true
 }

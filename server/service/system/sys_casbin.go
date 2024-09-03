@@ -2,6 +2,7 @@ package system
 
 import (
 	"errors"
+	"github.com/gin-gonic/gin"
 	"strconv"
 	"sync"
 
@@ -189,4 +190,13 @@ func (casbinService *CasbinService) Casbin() *casbin.SyncedCachedEnforcer {
 		_ = syncedCachedEnforcer.LoadPolicy()
 	})
 	return syncedCachedEnforcer
+}
+
+func HasAllDataAuthority(c *gin.Context) bool {
+	obj := "/allData"
+	act := "GET"
+	sub := strconv.Itoa(int(c.GetUint("authorityId")))
+	e := CasbinServiceApp.Casbin()
+	success, _ := e.Enforce(sub, obj, act)
+	return success
 }

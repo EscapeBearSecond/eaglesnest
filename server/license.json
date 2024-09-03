@@ -1,0 +1,10 @@
+{
+	"id": "cr8ilqptr70hikb6l5s0",
+	"subject": "cursec_license",
+	"issuer": "cursec",
+	"issued_at": "2024-08-30",
+	"audience": "demo_corp",
+	"hardware": "69e1e9e31ceef39327ea2a8162927c167c2d66d8d7e847e218223e9dea6932467797c5cb2a70942c7aa6ac9c75",
+	"expires_at": "2024-09-30",
+	"signature": "965853763a4515d89c37b830f7ddd1883070d69dcfc5d78a2e52dbbef1bd416e"
+}

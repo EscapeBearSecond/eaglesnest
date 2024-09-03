@@ -198,6 +198,8 @@ func (i *initApi) InitializeData(ctx context.Context) (context.Context, error) {
 		{ApiGroup: "系统漏洞", Method: "GET", Path: "/vuln/statistics", Description: "漏洞统计"},
 		{ApiGroup: "系统漏洞", Method: "POST", Path: "/vuln/list", Description: "漏洞列表"},
 		{ApiGroup: "系统漏洞", Method: "GET", Path: "/vuln/common", Description: "常见漏洞统计"},
+
+		{ApiGroup: "数据权限", Method: "GET", Path: "/allData", Description: "全部数据权限"},
 	}
 	if err := db.Create(&entities).Error; err != nil {
 		return ctx, errors.Wrap(err, sysModel.SysApi{}.TableName()+"表数据初始化失败!")
