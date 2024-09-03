@@ -46,8 +46,8 @@ func (i *initAuthority) InitializeData(ctx context.Context) (context.Context, er
 	entities := []sysModel.SysAuthority{
 		{AuthorityId: 888, AuthorityName: "超级管理员", ParentId: utils.Pointer[uint](0), DefaultRouter: "dashboard"},
 		{AuthorityId: 9528, AuthorityName: "管理员", ParentId: utils.Pointer[uint](0), DefaultRouter: "dashboard"},
-		{AuthorityId: 1913, AuthorityName: "操作员", ParentId: utils.Pointer[uint](0), DefaultRouter: "dashboard"},
-		{AuthorityId: 1914, AuthorityName: "分析员", ParentId: utils.Pointer[uint](0), DefaultRouter: "dashboard"},
+		{AuthorityId: 1913, AuthorityName: "测试人员", ParentId: utils.Pointer[uint](0), DefaultRouter: "dashboard"},
+		{AuthorityId: 1914, AuthorityName: "审计人员", ParentId: utils.Pointer[uint](0), DefaultRouter: "dashboard"},
 		// {AuthorityId: 8881, AuthorityName: "普通用户子角色", ParentId: utils.Pointer[uint](888), DefaultRouter: "dashboard"},
 	}
 
