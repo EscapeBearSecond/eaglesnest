@@ -6,11 +6,8 @@
 
 <script setup>
 import { onMounted, onUnmounted, ref, watchEffect } from 'vue';
-
-let FullUrl = window.location.href.split(':')
-
-const iframeSrc = ref(`${FullUrl[0]}:${FullUrl[1]}:10200`  + '/view/shell/project/list?username=admin&password=yigan2024');
-console.log("src:",iframeSrc.value);
+const iframeSrc = ref(`${window.location.origin}:10200`  + '/view/shell/project/list?username=admin&password=yigan2024');
+console.log("srcxxx:",iframeSrc.value);
 const viewContent = ref(null);
 const iframeHeight = ref(0);
 const iframe = ref(null)

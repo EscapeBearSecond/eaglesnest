@@ -7,8 +7,7 @@
 <script setup>
 import { onMounted, onUnmounted, ref, watchEffect } from 'vue';
 
-let FullUrl = window.location.href.split(':')
-const iframeSrc = ref(`${FullUrl[0]}:${FullUrl[1]}:10200`  +'/view/shell/dataAnalysis?username=admin&password=yigan2024');
+const iframeSrc = ref(`${window.location.origin}:10200`  +'/view/shell/dataAnalysis?username=admin&password=yigan2024');
 const viewContent = ref(null);
 const iframeHeight = ref(0);
 const iframe = ref(null)
