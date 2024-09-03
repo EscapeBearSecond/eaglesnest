@@ -309,7 +309,7 @@ initPage()
 
 const resetPasswordFunc = (row) => {
   ElMessageBox.confirm(
-    '是否将此用户密码重置为123456?',
+    '是否将此用户密码重置为[MealTime@7]?',
     '警告',
     {
       confirmButtonText: '确定',
