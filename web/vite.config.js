@@ -93,8 +93,7 @@ export default ({
         targets: ['Android > 39', 'Chrome >= 60', 'Safari >= 10.1', 'iOS >= 10.3', 'Firefox >= 54', 'Edge >= 15'],
       }),
       vuePlugin(),
-      svgBuilder('./src/assets/icons/'),
-      [Banner(`\n Build based on gin-vue-admin \n Time : ${timestamp}`)]
+      svgBuilder('./src/assets/icons/')
     ],
     css: {
       preprocessorOptions: {
