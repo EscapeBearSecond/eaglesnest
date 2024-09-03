@@ -33,7 +33,7 @@
                         <el-form-item label="探活轮次"  class="sec-lab">
                             <el-input v-model.number="form.onlineConfig.count" />
                         </el-form-item>
-                        <el-form-item label="探活频率"  class="sec-lab">
+                        <el-form-item label="速率限制"  class="sec-lab">
                             <el-input v-model.number="form.onlineConfig.rateLimit" />
                         </el-form-item>
                     </div>
@@ -55,7 +55,7 @@
                         <el-form-item label="探活轮次"  class="sec-lab">
                             <el-input v-model.number="form.portScanConfig.count" />
                         </el-form-item>
-                        <el-form-item label="探活频率"  class="sec-lab">
+                        <el-form-item label="速率限制"  class="sec-lab">
                             <el-input v-model.number="form.portScanConfig.rateLimit" />
                         </el-form-item>
                     </div>
@@ -74,7 +74,7 @@
                     </el-table-column>
                     <el-table-column prop="concurrency" label="最大并发" />
                     <el-table-column prop="timeout" label="超时时间" />
-                    <el-table-column prop="rateLimit" label="限流速度"/>
+                    <el-table-column prop="rateLimit" label="速率限制"/>
                     <el-table-column prop="count" label="探活轮次" />
                     <el-table-column prop="tag" label="操作" width="80" >
                         <template #default="scope">
@@ -239,16 +239,16 @@ const form = ref({
     timeout: '2s',
     count: 1,
     format: 'csv',
-    rateLimit: 150,
+    rateLimit: 2000,
     concurrency: 3000
   },
   portScanConfig: {
     use: true,
-    timeout: '25s',
+    timeout: '2s',
     count: 1,
     format: 'csv',
     ports: 'http',
-    rateLimit: 150,
+    rateLimit: 2000,
     concurrency: 3000
   }
 });
@@ -367,7 +367,7 @@ const addTemplate = () => {
     timeout: '2s',
     count: 1,
     format: '',
-    rateLimit: 150,
+    rateLimit: 2000,
     concurrency: 3000,
     isAll: true,
     templateName:'',
