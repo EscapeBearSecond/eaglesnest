@@ -92,7 +92,7 @@ cat <<EOL > $NGINX_CONF_FILE
 server {
     listen 80;
     server_name localhost;
-    return 301 https://$host$request_uri;
+    return 301 https://\$host\$request_uri;
 }
 
 server {
