@@ -34,7 +34,7 @@ func (t *TaskApi) CreateTask(c *gin.Context) {
 	}
 	err = utils.Verify(createTask, utils.CreateTaskVerify)
 	if err != nil {
-		response.FailWithMessage(err.Error(), c)
+		response.FailWithMessage("请求数据不正确!", c)
 		return
 	}
 	err = utils.ValidateIP(createTask.TargetIP)
