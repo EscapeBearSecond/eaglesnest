@@ -105,7 +105,7 @@
         </el-form-item>
         <el-form-item label="IP类型：" :label-position="itemLabelPosition" prop="targetIp">
           <el-radio-group v-model="taskForm.scanIpType">
-            <el-radio-button label="默认" value="1" />
+            <el-radio-button label="区域" value="1" />
             <el-radio-button label="自定义" value="2" />
           </el-radio-group>
         </el-form-item>
