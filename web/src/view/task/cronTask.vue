@@ -571,4 +571,11 @@ function IpToStr(e) {
 </script>
 
 <style lang="scss">
+.close-btn {
+  display: grid;
+  grid-template-rows: 1fr;
+  align-items: center;
+  justify-items: center;
+  margin: 10px 0px;
+}
 </style>
