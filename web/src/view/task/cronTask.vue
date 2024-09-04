@@ -186,6 +186,7 @@ import {
   getTaskList,
   createTask,
   stopTask,
+  startTask,
   delTask,
   reportTask,
   getTask 
@@ -239,7 +240,7 @@ const statusData = reactive([
       type: "primary",
       icon: "VideoPause",
       handleClick: (scope) => handleStop(scope.row),
-      // visible : (scope) => visibleStop(scope.row)
+      visible : (scope) => visibleStop(scope.row)
   },
   {
       name: "删除",
@@ -497,12 +498,15 @@ const visibleStart = (e) => {
 }
 
 const handleStart = (e) => {
-  ElMessageBox.confirm('此操作将启动该任务, 是否继续?', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning'
-  })
-    .then(async() => {
+  ElMessageBox.confirm(
+    '确定要启动任务吗?',
+    '提示',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  ).then(async() => {
       const res = await startTask({ id: row.ID })
       if (res.code === 0) {
         ElMessage({
@@ -511,12 +515,6 @@ const handleStart = (e) => {
         })
         getTableData()
       }
-    })
-    .catch(() => {
-      ElMessage({
-        type: 'info',
-        message: '已取消启动任务'
-      })
     })
 }
 
