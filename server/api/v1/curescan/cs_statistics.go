@@ -9,7 +9,6 @@ import (
 	response2 "47.103.136.241/goprojects/curescan/server/model/curescan/response"
 	"47.103.136.241/goprojects/curescan/server/service/system"
 	"47.103.136.241/goprojects/curescan/server/utils"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"math"
 	"strconv"
@@ -88,7 +87,6 @@ func (s *StatisticsApi) GetTaskInfo(c *gin.Context) {
 	searchTask.PageSize = math.MaxInt64
 	searchTask.AllData = system.HasAllDataAuthority(c)
 	searchTask.CreatedBy = utils.GetUserID(c)
-	fmt.Println("allData", searchTask.AllData)
 	_, runningTotal, err := taskService.GetTaskList(searchTask)
 	if err != nil {
 		response.FailWithMessage("获取失败", c)
