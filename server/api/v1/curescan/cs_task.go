@@ -156,8 +156,8 @@ func (t *TaskApi) DeleteTask(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if task.Status == common.Running || task.Status == common.TimeRunning {
-		response.FailWithMessage("任务正在运行中，不允许删除", c)
+	if task.Status == common.Running || task.Status == common.TimeRunning || task.Status == common.Waiting {
+		response.FailWithMessage("任务处于执行中或队列中，不允许删除", c)
 		return
 	}
 	err = taskService.DeleteTask(id)
