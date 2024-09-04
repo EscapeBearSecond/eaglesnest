@@ -83,7 +83,7 @@ func (s *TaskService) CreateTask(task *curescan.Task) error {
 		return nil
 	}
 
-	err = global.GVA_REDIS.LPush(context.Background(), "taskQueue", task.ID).Err()
+	err = global.GVA_REDIS.RPush(context.Background(), "taskQueue", task.ID).Err()
 	// err = s.ExecuteTask(int(task.ID))
 	// if err != nil {
 	// 	return err
@@ -221,7 +221,7 @@ func (s *TaskService) ExecuteTask(id int, wg *sync.WaitGroup) error {
 		return err
 	}
 
-	if task.Status == common.Running || task.Status == common.TimeRunning || task.Status == common.Waiting {
+	if task.Status == common.Running || task.Status == common.TimeRunning {
 		return errors.New("任务正在执行中，请勿重复执行")
 	}
 

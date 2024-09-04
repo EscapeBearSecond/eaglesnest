@@ -193,7 +193,7 @@ func (t *TaskApi) ExecuteTask(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = global.GVA_REDIS.LPush(context.Background(), "taskQueue", id).Err()
+	err = global.GVA_REDIS.RPush(context.Background(), "taskQueue", id).Err()
 	if err != nil {
 		response.FailWithMessage("加入执行队列失败", c)
 		return
