@@ -89,13 +89,14 @@ const addQuickOption = () => {
     children: []
   }
   const quickArr = [
+    // {
+    //   label: '亮色主题',
+    //   func: () => changeMode('light')
+    // }, {
+    //   label: '暗色主题',
+    //   func: () => changeMode('dark')
+    // }, 
     {
-      label: '亮色主题',
-      func: () => changeMode('light')
-    }, {
-      label: '暗色主题',
-      func: () => changeMode('dark')
-    }, {
       label: '退出登录',
       func: () => userStore.LoginOut()
     }
