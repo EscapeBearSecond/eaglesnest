@@ -31,7 +31,7 @@
         <el-button
           type="primary"
           icon="plus"
-          @click="addUser"
+          @click="addArea"
         >新增区域</el-button>
       </div>
       <advance-table
@@ -302,9 +302,10 @@ const closeAddUserDialog = () => {
 
 const dialogFlag = ref('add')
 
-const addUser = () => {
+const addArea = () => {
   dialogFlag.value = 'add'
   districtInfoDialog.value = true
+  form.value.resetFields()
 }
 
 const handleClickUpdate = (row) => {
