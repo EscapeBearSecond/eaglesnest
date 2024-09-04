@@ -4,6 +4,7 @@ import (
 	"47.103.136.241/goprojects/curescan/server/model/curescan/common"
 	"47.103.136.241/goprojects/curescan/server/service/system"
 	"bufio"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -184,15 +185,32 @@ func (t *TaskApi) GetTaskById(c *gin.Context) {
 func (t *TaskApi) ExecuteTask(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
+		response.FailWithMessage("参数有误", c)
+		return
+	}
+	task, err := taskService.GetTaskById(int(id))
+	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = taskService.ExecuteTask(int(id))
+	err = global.GVA_REDIS.RPush(context.Background(), "taskQueue", id).Err()
+	if err != nil {
+		response.FailWithMessage("加入执行队列失败", c)
+		return
+	}
+	task.Status = common.Waiting
+	err = taskService.UpdateTask(task)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
 	response.Ok(c)
+	// err = taskService.ExecuteTask(int(id))
+	// if err != nil {
+	// 	response.FailWithMessage(err.Error(), c)
+	// 	return
+	// }
+	// response.Ok(c)
 	// options := &types.Options{}
 	// engine, err := eagleeye.NewEngine(eagleeye.WithDirectory("/results"))
 	// if err != nil {

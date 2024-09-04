@@ -3,6 +3,7 @@ package middleware
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -117,7 +118,7 @@ func OperationRecord() gin.HandlerFunc {
 		}
 
 		if err := operationRecordService.CreateSysOperationRecord(record); err != nil {
-			global.GVA_LOG.Error("create operation record error:", zap.Error(err))
+			fmt.Println("create operation record error:", err)
 		}
 	}
 }

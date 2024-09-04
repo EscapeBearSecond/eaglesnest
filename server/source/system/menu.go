@@ -85,7 +85,7 @@ func (i *initMenu) InitializeData(ctx context.Context) (next context.Context, er
 		{MenuLevel: 0, Hidden: false, ParentId: 31, Path: "list", Name: "list", Component: "view/policy/list.vue", Sort: 0, Meta: Meta{Title: "策略列表", Icon: "list"}},
 		{MenuLevel: 0, Hidden: true, ParentId: 31, Path: "create", Name: "create", Component: "view/policy/create.vue", Sort: 3, Meta: Meta{Title: "创建策略", Icon: "briefcase"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "task", Name: "task", Component: "view/routerHolder.vue", Sort: 11, Meta: Meta{Title: "扫描任务", Icon: "search"}},
-		{MenuLevel: 0, Hidden: false, ParentId: 34, Path: "cronTask", Name: "cronTask", Component: "view/task/cronTask.vue", Sort: 2, Meta: Meta{Title: "定时任务", Icon: "alarm-clock"}},
+		{MenuLevel: 0, Hidden: true, ParentId: 34, Path: "cronTask", Name: "cronTask", Component: "view/task/cronTask.vue", Sort: 2, Meta: Meta{Title: "定时任务", Icon: "alarm-clock"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 34, Path: "index", Name: "index", Component: "view/task/index.vue", Sort: 0, Meta: Meta{Title: "扫描任务", Icon: "bell"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "template", Name: "template", Component: "view/template/index.vue", Sort: 16, Meta: Meta{Title: "模板管理", Icon: "document-copy"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 37, Path: "basic", Name: "basic", Component: "view/template/index.vue", Sort: 1, Meta: Meta{Title: "模板列表", Icon: "copy-document"}},
