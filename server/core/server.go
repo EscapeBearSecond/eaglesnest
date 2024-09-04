@@ -23,6 +23,8 @@ func RunWindowsServer() {
 		// 初始化redis服务
 		initialize.Redis()
 	}
+	initialize.RecoverTask()
+	initialize.ExecuteTask()
 
 	// 从db加载jwt数据
 	if global.GVA_DB != nil {

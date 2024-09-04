@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"47.103.136.241/goprojects/curescan/server/global"
@@ -64,8 +65,10 @@ func (s *TaskService) CreateTask(task *curescan.Task) error {
 		return fmt.Errorf("任务'%s'已存在, 请勿重复创建", task.TaskName)
 	}
 
-	if task.TaskPlan == common.ExecuteImmediately || task.TaskPlan == common.ExecuteLater {
+	if task.TaskPlan == common.ExecuteImmediately {
 		// 普通任务创建后的状态为"创建"
+		task.Status = common.Waiting
+	} else if task.TaskPlan == common.ExecuteLater {
 		task.Status = common.Created
 	} else {
 		// 定时任务创建后的状态为"停止"
@@ -80,11 +83,12 @@ func (s *TaskService) CreateTask(task *curescan.Task) error {
 		return nil
 	}
 
-	err = s.ExecuteTask(int(task.ID))
-	if err != nil {
-		return err
-	}
-	return nil
+	err = global.GVA_REDIS.LPush(context.Background(), "taskQueue", task.ID).Err()
+	// err = s.ExecuteTask(int(task.ID))
+	// if err != nil {
+	// 	return err
+	// }
+	return err
 }
 
 func (s *TaskService) UpdateTask(task *curescan.Task) error {
@@ -203,7 +207,7 @@ func (s *TaskService) GetTaskList(st request.SearchTask) (list interface{}, tota
 }
 
 // ExecuteTask 执行任务
-func (s *TaskService) ExecuteTask(id int) error {
+func (s *TaskService) ExecuteTask(id int, wg *sync.WaitGroup) error {
 	// 接收回调中的任务结果
 	var taskResult response.TaskResult
 
@@ -211,10 +215,13 @@ func (s *TaskService) ExecuteTask(id int) error {
 	task, err := s.GetTaskById(id)
 
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil
+		}
 		return err
 	}
 
-	if task.Status == common.Running || task.Status == common.TimeRunning {
+	if task.Status == common.Running || task.Status == common.TimeRunning || task.Status == common.Waiting {
 		return errors.New("任务正在执行中，请勿重复执行")
 	}
 
@@ -332,13 +339,13 @@ func (s *TaskService) ExecuteTask(id int) error {
 	options.Jobs = jobs
 	if task.TaskPlan == common.ExecuteImmediately || task.TaskPlan == common.ExecuteLater {
 		// 处理任务
-		go s.processTask(task, options, &taskResult)
+		go s.processTask(task, options, &taskResult, wg)
 	}
 	if task.TaskPlan == common.ExecuteTiming {
 		task.Status = common.TimeRunning
 		s.UpdateTask(task)
 		cronName := task.TaskName
-		global.GVA_Timer.AddTaskByFunc(cronName, task.PlanConfig, func() { s.processTask(task, options, &taskResult) }, task.TaskName, cron.WithSeconds())
+		global.GVA_Timer.AddTaskByFunc(cronName, task.PlanConfig, func() { s.processTask(task, options, &taskResult, wg) }, task.TaskName, cron.WithSeconds())
 	}
 	return nil
 }
@@ -346,8 +353,8 @@ func (s *TaskService) ExecuteTask(id int) error {
 // processTask 处理任务的执行流程
 // 对于普通任务来说, 不需要复制任务, 但是对于定时任务每次执行需要复制一次任务
 // 对于普通任务如果需要复用, 需要重新创建一条任务
-func (s *TaskService) processTask(task *curescan.Task, options *types.Options, taskResult *response.TaskResult) {
-
+func (s *TaskService) processTask(task *curescan.Task, options *types.Options, taskResult *response.TaskResult, wg *sync.WaitGroup) {
+	defer wg.Done()
 	var entry *eagleeye.EagleeyeEntry
 	var err error
 	if task.TaskPlan != common.ExecuteTiming {
@@ -686,7 +693,14 @@ func (s *TaskService) StopTask(id int) error {
 		return err
 	}
 	// 停止普通任务
-	if task.TaskPlan == common.ExecuteImmediately || task.TaskPlan == common.ExecuteLater {
+	if task.Status == common.Waiting {
+		removed := utils.RemoveValueFromList(global.GVA_REDIS, "taskQueue", strconv.Itoa(id))
+		if removed {
+			task.Status = common.Stopped
+		} else {
+			task.Status = common.Failed
+		}
+	} else if task.TaskPlan == common.ExecuteImmediately || task.TaskPlan == common.ExecuteLater {
 		task.Status = common.Stopped
 		// if err := global.GVA_REDIS.Get(context.Background(), "task_"+strconv.Itoa(id)).Err(); err != nil {
 		// 	return errors.New("任务未执行或已结束")
@@ -789,11 +803,11 @@ func (s *TaskService) GetTaskStage(id int64) (*response.Stage, error) {
 	return modelStage, nil
 }
 
-// func (s *TaskService) DownloadReport(entryID string, format string) error {
-// 	file, err := os.OpenFile("", os.O_RDONLY, 0666)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	defer file.Close()
+//	func (s *TaskService) DownloadReport(entryID string, format string) error {
+//		file, err := os.OpenFile("", os.O_RDONLY, 0666)
+//		if err != nil {
+//			return err
+//		}
+//		defer file.Close()
 //
 // }

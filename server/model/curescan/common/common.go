@@ -38,6 +38,8 @@ var (
 	Failed = 3
 	// 终止
 	Stopped = 4
+	// 入队等待
+	Waiting = 8
 )
 
 // 定时任务状态
