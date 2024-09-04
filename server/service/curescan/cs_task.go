@@ -306,6 +306,7 @@ func (s *TaskService) ExecuteTask(id int, wg *sync.WaitGroup) error {
 				})
 			}
 			taskResult.PortScanList = data
+			global.GVA_LOG.Info(fmt.Sprintf("任务%s端口扫描完成", task.TaskName))
 			return nil
 		},
 	}
@@ -328,6 +329,7 @@ func (s *TaskService) ExecuteTask(id int, wg *sync.WaitGroup) error {
 				})
 			}
 			taskResult.OnlineCheckList = data
+			global.GVA_LOG.Info(fmt.Sprintf("任务%s在线检测完成", task.TaskName))
 			return nil
 		},
 	}
@@ -666,6 +668,7 @@ func (s *TaskService) generateJob(jobConfig []*request.JobConfig, taskResult *re
 
 				taskResult.JobResultList = append(taskResult.JobResultList, oneRes)
 			}
+			global.GVA_LOG.Info(fmt.Sprintf("任务%s %s阶段执行完成", task.TaskName, result.Name))
 			return nil
 		}
 		jobs[i].GetTemplates = func() []*types.RawTemplate {
