@@ -484,7 +484,7 @@ function getIpArr(e) {
 
 // 根据状态来判断是否显示停止按钮
 const visibleStop = (e) => {
-    return e.status == 1
+    return e.status == 5
 }
 
 // 根据状态来判断是否显示报告按钮
@@ -507,13 +507,18 @@ const handleStart = (e) => {
       type: 'warning',
     }
   ).then(async() => {
-      const res = await startTask({ id: row.ID })
+      const res = await startTask({ id: e.ID })
       if (res.code === 0) {
         ElMessage({
           type: 'success',
           message: '任务启动成功!'
         })
         getTableData()
+      }else {
+        ElMessage({
+          type: 'success',
+          message: '任务启动失败!'
+        })
       }
     })
 }
