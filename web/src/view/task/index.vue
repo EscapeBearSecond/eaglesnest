@@ -668,7 +668,7 @@ function getStatus (e) {
 
 // 根据状态来判断是否显示停止按钮
 const visibleStop = (e) => {
-    return e.status == 1
+    return (e.status == 1 || e.status == 8)
 }
 
 // 根据状态来判断是否显示报告按钮
@@ -678,7 +678,7 @@ const visibleReport = (e) => {
 
 //
 const visibleStart = (e) => {
-    return e.status != 1
+    return (e.status != 1 && e.status != 8)
 }
 
 const handleStart = (e) => {  
