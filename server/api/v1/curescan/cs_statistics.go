@@ -9,7 +9,6 @@ import (
 	response2 "47.103.136.241/goprojects/curescan/server/model/curescan/response"
 	"47.103.136.241/goprojects/curescan/server/service/system"
 	"47.103.136.241/goprojects/curescan/server/utils"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"math"
 	"strconv"
@@ -88,18 +87,13 @@ func (s *StatisticsApi) GetTaskInfo(c *gin.Context) {
 	searchTask.PageSize = math.MaxInt64
 	searchTask.AllData = system.HasAllDataAuthority(c)
 	searchTask.CreatedBy = utils.GetUserID(c)
-	fmt.Println("allData", searchTask.AllData)
 	_, runningTotal, err := taskService.GetTaskList(searchTask)
 	if err != nil {
 		response.FailWithMessage("获取失败", c)
 		return
 	}
-	searchTask.Status = common.Created
-	_, createdTotal, err := taskService.GetTaskList(searchTask)
-	if err != nil {
-		response.FailWithMessage("获取失败", c)
-		return
-	}
+	searchTask.Status = common.Waiting
+
 	searchTask.Status = common.Stopped
 	_, stoppedTotal, err := taskService.GetTaskList(searchTask)
 	if err != nil {
@@ -134,9 +128,16 @@ func (s *StatisticsApi) GetTaskInfo(c *gin.Context) {
 		response.FailWithMessage("获取失败", c)
 		return
 	}
+	// 等待执行不需要做隔离了
+	searchTask.CreatedBy = 0
+	_, waitingTotal, err := taskService.GetTaskList(searchTask)
+	if err != nil {
+		response.FailWithMessage("获取失败", c)
+		return
+	}
 	response.OkWithData(gin.H{
 		"running":   runningTotal,
-		"wait":      createdTotal,
+		"wait":      waitingTotal,
 		"stopped":   stoppedTotal,
 		"success":   successTotal,
 		"failed":    failedTotal,

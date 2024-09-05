@@ -12,7 +12,7 @@ autocode:
     server-api: /api/v1/%s
     server-plug: /plugin/%s
     server-initialize: /initialize
-    root: C:\Users\bear\go\src\curescan
+    root: /opt/goprojects/src/curescan
     web-table: /view
     web: /web/src
     server-service: /service/%s
@@ -124,7 +124,7 @@ redis:
         - 172.21.0.4:7001
         - 172.21.0.2:7002
 report:
-    customer: 治煜
+    customer: ""
 system:
     db-type: pgsql
     oss-type: local

@@ -75,6 +75,26 @@ func (i *initUser) InitializeData(ctx context.Context) (next context.Context, er
 			Phone:       "",
 			Email:       "",
 		},
+		{
+			UUID:        uuid.Must(uuid.NewV4()),
+			Username:    "systemtester",
+			Password:    utils.BcryptHash("@123456qwer"),
+			NickName:    "测试员",
+			HeaderImg:   "",
+			AuthorityId: 1913,
+			Phone:       "",
+			Email:       "",
+		},
+		{
+			UUID:        uuid.Must(uuid.NewV4()),
+			Username:    "systemauditor",
+			Password:    utils.BcryptHash("@123456qwer"),
+			NickName:    "审计员",
+			HeaderImg:   "",
+			AuthorityId: 1914,
+			Phone:       "",
+			Email:       "",
+		},
 	}
 	if err = db.Create(&entities).Error; err != nil {
 		return ctx, errors.Wrap(err, sysModel.SysUser{}.TableName()+"表数据初始化失败!")
@@ -88,6 +108,12 @@ func (i *initUser) InitializeData(ctx context.Context) (next context.Context, er
 		return next, err
 	}
 	if err = db.Model(&entities[1]).Association("Authorities").Replace(authorityEntities[1:2]); err != nil {
+		return next, err
+	}
+	if err = db.Model(&entities[2]).Association("Authorities").Replace(authorityEntities[2:3]); err != nil {
+		return next, err
+	}
+	if err = db.Model(&entities[3]).Association("Authorities").Replace(authorityEntities[3:4]); err != nil {
 		return next, err
 	}
 	return next, err

@@ -224,9 +224,16 @@ func (i *initCasbin) InitializeData(ctx context.Context) (context.Context, error
 		{Ptype: "p", V0: "9528", V1: "/menu/deleteBaseMenu", V2: "POST"},
 		{Ptype: "p", V0: "9528", V1: "/menu/updateBaseMenu", V2: "POST"},
 		{Ptype: "p", V0: "9528", V1: "/menu/getBaseMenuById", V2: "POST"},
+
+		{Ptype: "p", V0: "9528", V1: "/user/getUserInfo", V2: "GET"},
+		{Ptype: "p", V0: "9528", V1: "/user/setUserInfo", V2: "PUT"},
+		{Ptype: "p", V0: "9528", V1: "/user/deleteUser", V2: "DELETE"},
+		{Ptype: "p", V0: "9528", V1: "/user/setUserAuthorities", V2: "POST"},
+		{Ptype: "p", V0: "9528", V1: "/user/resetPassword", V2: "POST"},
 		{Ptype: "p", V0: "9528", V1: "/user/changePassword", V2: "POST"},
 		{Ptype: "p", V0: "9528", V1: "/user/getUserList", V2: "POST"},
 		{Ptype: "p", V0: "9528", V1: "/user/setUserAuthority", V2: "POST"},
+
 		{Ptype: "p", V0: "9528", V1: "/fileUploadAndDownload/upload", V2: "POST"},
 		{Ptype: "p", V0: "9528", V1: "/fileUploadAndDownload/getFileList", V2: "POST"},
 		{Ptype: "p", V0: "9528", V1: "/fileUploadAndDownload/deleteFile", V2: "POST"},
@@ -242,8 +249,6 @@ func (i *initCasbin) InitializeData(ctx context.Context) (context.Context, error
 		{Ptype: "p", V0: "9528", V1: "/customer/customer", V2: "DELETE"},
 		{Ptype: "p", V0: "9528", V1: "/customer/customerList", V2: "GET"},
 		{Ptype: "p", V0: "9528", V1: "/autoCode/createTemp", V2: "POST"},
-		{Ptype: "p", V0: "9528", V1: "/user/getUserInfo", V2: "GET"},
-		{Ptype: "p", V0: "9528", V1: "/user/setUserAuthorities", V2: "POST"},
 
 		{Ptype: "p", V0: "9528", V1: "/area", V2: "POST"},
 		{Ptype: "p", V0: "9528", V1: "/area/:id", V2: "GET"},
