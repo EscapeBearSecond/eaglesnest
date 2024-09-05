@@ -124,7 +124,7 @@ redis:
         - 172.21.0.4:7001
         - 172.21.0.2:7002
 report:
-    customer: 治煜
+    customer: ""
 system:
     db-type: pgsql
     oss-type: local

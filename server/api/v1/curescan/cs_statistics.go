@@ -92,7 +92,7 @@ func (s *StatisticsApi) GetTaskInfo(c *gin.Context) {
 		response.FailWithMessage("获取失败", c)
 		return
 	}
-	searchTask.Status = common.Created
+	searchTask.Status = common.Waiting
 	_, createdTotal, err := taskService.GetTaskList(searchTask)
 	if err != nil {
 		response.FailWithMessage("获取失败", c)
