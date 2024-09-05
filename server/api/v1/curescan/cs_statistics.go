@@ -93,11 +93,7 @@ func (s *StatisticsApi) GetTaskInfo(c *gin.Context) {
 		return
 	}
 	searchTask.Status = common.Waiting
-	_, createdTotal, err := taskService.GetTaskList(searchTask)
-	if err != nil {
-		response.FailWithMessage("获取失败", c)
-		return
-	}
+
 	searchTask.Status = common.Stopped
 	_, stoppedTotal, err := taskService.GetTaskList(searchTask)
 	if err != nil {
@@ -132,9 +128,16 @@ func (s *StatisticsApi) GetTaskInfo(c *gin.Context) {
 		response.FailWithMessage("获取失败", c)
 		return
 	}
+	// 等待执行不需要做隔离了
+	searchTask.CreatedBy = 0
+	_, waitingTotal, err := taskService.GetTaskList(searchTask)
+	if err != nil {
+		response.FailWithMessage("获取失败", c)
+		return
+	}
 	response.OkWithData(gin.H{
 		"running":   runningTotal,
-		"wait":      createdTotal,
+		"wait":      waitingTotal,
 		"stopped":   stoppedTotal,
 		"success":   successTotal,
 		"failed":    failedTotal,
