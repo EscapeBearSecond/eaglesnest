@@ -192,18 +192,55 @@ func (t *TaskApi) ExecuteTask(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = global.GVA_REDIS.RPush(context.Background(), "taskQueue", id).Err()
-	if err != nil {
-		response.FailWithMessage("加入执行队列失败", c)
-		return
+	if task.Status != common.Success {
+
+		err = global.GVA_REDIS.RPush(context.Background(), "taskQueue", id).Err()
+		if err != nil {
+			response.FailWithMessage("加入执行队列失败", c)
+			return
+		}
+		task.Status = common.Waiting
+		err = taskService.UpdateTask(task)
+		if err != nil {
+			response.FailWithMessage(err.Error(), c)
+			return
+		}
+		response.Ok(c)
+	} else {
+		newTask := &curescan.Task{
+			CsModel: global.CsModel{
+				CreatedBy: task.CreatedBy,
+				UpdatedBy: task.UpdatedBy,
+			},
+			TaskName:   task.TaskName + "_copy_" + utils.RandomString(6),
+			TaskDesc:   task.TaskDesc,
+			Status:     common.Created,
+			TargetIP:   task.TargetIP,
+			PolicyID:   task.PolicyID,
+			TaskPlan:   common.ExecuteImmediately,
+			PlanConfig: task.PlanConfig,
+			Executions: 0,
+			EntryID:    "",
+			Flag:       task.Flag,
+		}
+		err := taskService.CreateTask(newTask)
+		if err != nil {
+			response.FailWithMessage("执行失败", c)
+			return
+		}
+		// err = global.GVA_REDIS.RPush(context.Background(), "taskQueue", newTask.ID).Err()
+		// if err != nil {
+		// 	response.FailWithMessage("加入执行队列失败", c)
+		// 	return
+		// }
+		// task.Status = common.Waiting
+		// err = taskService.UpdateTask(task)
+		// if err != nil {
+		// 	response.FailWithMessage(err.Error(), c)
+		// 	return
+		// }
+		response.Ok(c)
 	}
-	task.Status = common.Waiting
-	err = taskService.UpdateTask(task)
-	if err != nil {
-		response.FailWithMessage(err.Error(), c)
-		return
-	}
-	response.Ok(c)
 	// err = taskService.ExecuteTask(int(id))
 	// if err != nil {
 	// 	response.FailWithMessage(err.Error(), c)
