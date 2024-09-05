@@ -1,17 +1,17 @@
 package core
 
 import (
-	"context"
-	"fmt"
-	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
-
 	"47.103.136.241/goprojects/curescan/server/global"
 	"47.103.136.241/goprojects/curescan/server/initialize"
 	"47.103.136.241/goprojects/curescan/server/service/system"
+	"context"
+	"fmt"
 	"go.uber.org/zap"
+	"net/http"
+	_ "net/http/pprof"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 type server interface {
