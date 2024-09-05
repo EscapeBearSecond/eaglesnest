@@ -19,7 +19,7 @@
                   <el-option v-for="(tagOne, key) in tagList.tag1" :label="tagOne" :value="tagOne" :key="key" />
               </el-select>
           </el-form-item>
-          <el-form-item label="系统类型"  class="sec-lab">
+          <!-- <el-form-item label="系统类型"  class="sec-lab">
               <el-select v-model="searchInfo.systemType" placeholder="请选择系统类型" >
                   <el-option label="全部" value=""></el-option>
                   <el-option v-for="(tagTwo, key) in tagList.tag2" :label="tagTwo" :value="tagTwo" :key="key" />
@@ -36,7 +36,7 @@
                   <el-option label="全部" value=""></el-option>
                   <el-option v-for="(tagFour, key) in tagList.tag4" :label="tagFour" :value="tagFour" :key="key" />
               </el-select>
-          </el-form-item>
+          </el-form-item> -->
          <el-form-item>
            <el-button
              type="primary"
