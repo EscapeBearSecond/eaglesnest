@@ -41,5 +41,5 @@ func RunWindowsServer() {
 	** 版权所有方：南京治煜开发团队 **
 	** 版权持有公司：南京治煜信息科技有限公司 **
 `, address)
-	global.GVA_LOG.Error(s.ListenAndServe().Error())g
+	global.GVA_LOG.Error(s.ListenAndServe().Error())
 }
