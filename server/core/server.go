@@ -34,7 +34,7 @@ func RunWindowsServer() {
 
 	global.GVA_LOG.Info("server run success on ", zap.String("address", address))
 
-	fmt.Printf(`
+	fmt.Print(`
 	欢迎使用 南京治煜漏扫平台
 	当前版本:v1.0.0
 	--------------------------------------版权声明--------------------------------------

@@ -228,33 +228,8 @@ func (t *TaskApi) ExecuteTask(c *gin.Context) {
 			response.FailWithMessage("执行失败", c)
 			return
 		}
-		// err = global.GVA_REDIS.RPush(context.Background(), "taskQueue", newTask.ID).Err()
-		// if err != nil {
-		// 	response.FailWithMessage("加入执行队列失败", c)
-		// 	return
-		// }
-		// task.Status = common.Waiting
-		// err = taskService.UpdateTask(task)
-		// if err != nil {
-		// 	response.FailWithMessage(err.Error(), c)
-		// 	return
-		// }
 		response.Ok(c)
 	}
-	// err = taskService.ExecuteTask(int(id))
-	// if err != nil {
-	// 	response.FailWithMessage(err.Error(), c)
-	// 	return
-	// }
-	// response.Ok(c)
-	// options := &types.Options{}
-	// engine, err := eagleeye.NewEngine(eagleeye.WithDirectory("/results"))
-	// if err != nil {
-	// 	response.FailWithMessage(err.Error(), c)
-	// 	return
-	// }
-	// defer engine.Close()
-	// fmt.Println(options)
 }
 
 func (t *TaskApi) MigrateTable(c *gin.Context) {

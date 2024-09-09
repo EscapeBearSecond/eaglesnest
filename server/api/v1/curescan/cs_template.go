@@ -14,7 +14,6 @@ import (
 	"gorm.io/gorm"
 	"net/http"
 	"strconv"
-	"time"
 )
 
 type TemplateApi struct {
@@ -161,14 +160,11 @@ func (t *TemplateApi) GetTemplateList(c *gin.Context) {
 	// 使用 gzipWriter 进行压缩写入
 	gzipWriter := &gzipWriter{Writer: gz, ResponseWriter: c.Writer}
 
-	start := time.Now()
 	list, total, err := templateService.GetTemplateList(searchTemplate)
 	if err != nil {
 		response.FailWithMessage("获取数据失败", c)
 		return
 	}
-	getTemplateListDuration := time.Since(start)
-	fmt.Println("GetTemplateList 花费 ", getTemplateListDuration)
 
 	// 构建响应结果
 	result := response.PageResult{
@@ -183,14 +179,12 @@ func (t *TemplateApi) GetTemplateList(c *gin.Context) {
 	mapRest["msg"] = "查询成功"
 
 	// 编码并写入数据到gzipWriter
-	start = time.Now()
+
 	if err := json.NewEncoder(gzipWriter).Encode(mapRest); err != nil {
-		fmt.Println("数据编码错误：", err.Error())
+		response.FailWithMessage("编解码错误", c)
 		return
 	}
 	gzipWriter.Flush()
-	responseDuration := time.Since(start)
-	fmt.Println("Response 花费 ", responseDuration)
 }
 
 func (t *TemplateApi) UpdateTemplate(c *gin.Context) {
