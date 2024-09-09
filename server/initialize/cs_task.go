@@ -7,7 +7,6 @@ import (
 	"context"
 	"go.uber.org/zap"
 	"strconv"
-	"sync"
 )
 
 // RecoverTask 将因系统出现崩溃或异常而导致的任务恢复 将执行中改为失败
@@ -55,16 +54,20 @@ var taskService = &curescan.TaskService{}
 
 func ExecuteTask() {
 	go func() {
-		var wg sync.WaitGroup
 		for {
 			ids, err := global.GVA_REDIS.BLPop(context.Background(), 0, "taskQueue").Result()
 			if err != nil {
 				continue
 			}
 			taskId, _ := strconv.Atoi(ids[1])
-			wg.Add(1)
-			taskService.ExecuteTask(taskId, &wg)
-			wg.Wait()
+			// 阻塞的
+			err = taskService.ExecuteTask(taskId)
+			if err != nil {
+				global.GVA_LOG.Error("任务执行失败", zap.Error(err))
+				task, _ := taskService.GetTaskById(taskId)
+				task.Status = common.Failed
+				taskService.UpdateTask(task)
+			}
 		}
 	}()
 }

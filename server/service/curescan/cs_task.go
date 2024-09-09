@@ -202,10 +202,10 @@ func (s *TaskService) GetTaskList(st request.SearchTask) (list interface{}, tota
 }
 
 // ExecuteTask 执行任务
-func (s *TaskService) ExecuteTask(id int, wg *sync.WaitGroup) error {
+func (s *TaskService) ExecuteTask(id int) error {
+	var wg sync.WaitGroup
 	// 接收回调中的任务结果
 	var taskResult response.TaskResult
-
 	// 获取任务
 	task, err := s.GetTaskById(id)
 
@@ -343,14 +343,15 @@ func (s *TaskService) ExecuteTask(id int, wg *sync.WaitGroup) error {
 	options.Jobs = jobs
 	if task.TaskPlan == common.ExecuteImmediately || task.TaskPlan == common.ExecuteLater {
 		// 处理任务
-		go s.processTask(task, options, &taskResult, wg)
+		go s.processTask(task, options, &taskResult, &wg)
 	}
 	if task.TaskPlan == common.ExecuteTiming {
 		task.Status = common.TimeRunning
 		s.UpdateTask(task)
 		cronName := task.TaskName
-		global.GVA_Timer.AddTaskByFunc(cronName, task.PlanConfig, func() { s.processTask(task, options, &taskResult, wg) }, task.TaskName, cron.WithSeconds())
+		global.GVA_Timer.AddTaskByFunc(cronName, task.PlanConfig, func() { s.processTask(task, options, &taskResult, &wg) }, task.TaskName, cron.WithSeconds())
 	}
+	wg.Wait()
 	return nil
 }
 
@@ -660,6 +661,18 @@ func (s *TaskService) StopTask(id int) error {
 
 func (s *TaskService) GenerateReport(ret *types.EntryResult, reporter string, indexMap map[string]int) error {
 	var err error
+	ip, err := utils.GetLocalIP()
+	if err != nil {
+		return err
+	}
+	var exc []string
+	for _, str := range ret.ExcludeTargets {
+		if str != ip {
+			exc = append(exc, str)
+		}
+	}
+	ret.ExcludeTargets = exc
+
 	if index, ok := indexMap["vuln"]; ok {
 		err = report.Generate(
 			report.WithJobIndexes(index),

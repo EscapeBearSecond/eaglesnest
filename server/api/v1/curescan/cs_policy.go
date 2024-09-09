@@ -62,10 +62,10 @@ func (p *PolicyApi) CreatePolicy(c *gin.Context) {
 		return
 	}
 	if createPolicy.OnlineConfig.Format == "" {
-		createPolicy.OnlineConfig.Format = "excel"
+		createPolicy.OnlineConfig.Format = "csv"
 	}
 	if createPolicy.PortScanConfig.Format == "" {
-		createPolicy.PortScanConfig.Format = "excel"
+		createPolicy.PortScanConfig.Format = "csv"
 	}
 
 	for _, policyConfig := range createPolicy.PolicyConfig {
@@ -104,6 +104,11 @@ func (p *PolicyApi) CreatePolicy(c *gin.Context) {
 		scanType[i] = createPolicy.PolicyConfig[i].Kind
 		templates = append(templates, createPolicy.PolicyConfig[i].Templates...)
 	}
+	if createPolicy.IgnoredIP == nil {
+		createPolicy.IgnoredIP = []string{}
+	}
+	ip, _ := utils.GetLocalIP()
+	createPolicy.IgnoredIP = append(createPolicy.IgnoredIP, ip)
 	var modelPolicy = curescan.Policy{
 		PolicyName:     createPolicy.PolicyName,
 		PolicyDesc:     createPolicy.PolicyDesc,
