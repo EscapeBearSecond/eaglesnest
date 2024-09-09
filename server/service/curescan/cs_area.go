@@ -16,7 +16,7 @@ type AreaService struct {
 // CreateArea 创建一个新的区域，不允许有重复的区域名称。
 func (a *AreaService) CreateArea(area *curescan.Area) error {
 	if !errors.Is(global.GVA_DB.Select("area_name").First(&curescan.Area{}, "area_name=?", area.AreaName).Error, gorm.ErrRecordNotFound) {
-		return errors.New("存在相同区域名称，不允许创建")
+		return global.HasExisted
 	}
 
 	return global.GVA_DB.Create(&area).Error
@@ -46,7 +46,7 @@ func (a *AreaService) UpdateArea(area *curescan.Area) error {
 		return err
 	}
 	if existingRecord.ID != area.ID {
-		return errors.New("区域名称已被占用，不允许修改")
+		return global.HasExisted
 	}
 	return global.GVA_DB.Save(&area).Error
 }
@@ -58,7 +58,7 @@ func (a *AreaService) GetAreaById(id int) (*curescan.Area, error) {
 		"created_at", "updated_at", "deleted_at").Where("id=?", id).First(&area).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.New("目标数据不存在")
+			return nil, global.NoDataFound
 		}
 		return nil, err
 	}

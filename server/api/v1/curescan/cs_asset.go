@@ -42,14 +42,20 @@ func (a *AssetApi) BatchAdd(c *gin.Context) {
 
 func (a *AssetApi) GetAssetList(c *gin.Context) {
 	var searchAsset request.SearchAsset
-	err := c.ShouldBindJSON(&searchAsset)
+	var err error
+	defer func() {
+		if err != nil {
+			global.GVA_LOG.Error("查看资产列表失败", zap.Error(err))
+		}
+	}()
+	err = c.ShouldBindJSON(&searchAsset)
 	if err != nil {
-		response.FailWithMessage(err.Error(), c)
+		response.FailWithMessage("参数错误", c)
 		return
 	}
 	err = utils.Verify(searchAsset.PageInfo, utils.PageInfoVerify)
 	if err != nil {
-		response.FailWithMessage(err.Error(), c)
+		response.FailWithMessage("参数错误", c)
 		return
 	}
 	if searchAsset.Asset == nil {
@@ -59,8 +65,7 @@ func (a *AssetApi) GetAssetList(c *gin.Context) {
 	allData := system.HasAllDataAuthority(c)
 	list, total, err := assetService.GetAssetList(searchAsset.Asset, searchAsset.PageInfo, searchAsset.OrderKey, searchAsset.Desc, allData)
 	if err != nil {
-		global.GVA_LOG.Error("数据库查询异常!", zap.String("URI", c.Request.RequestURI), zap.Error(err))
-		response.FailWithMessage("数据库查询异常", c)
+		response.FailWithMessage("查询失败", c)
 		return
 	}
 	response.OkWithDetailed(response.PageResult{

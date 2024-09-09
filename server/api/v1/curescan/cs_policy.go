@@ -3,6 +3,7 @@ package curescan
 import (
 	"47.103.136.241/goprojects/curescan/server/model/curescan/common"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 
@@ -46,9 +47,15 @@ func (p *PolicyApi) MigrateTable(c *gin.Context) {
 
 func (p *PolicyApi) CreatePolicy(c *gin.Context) {
 	var createPolicy request.CreatePolicy
-	err := c.ShouldBindJSON(&createPolicy)
+	var err error
+	defer func() {
+		if err != nil {
+			global.GVA_LOG.Error("创建策略失败!", zap.Any("err", err.Error()))
+		}
+	}()
+	err = c.ShouldBindJSON(&createPolicy)
 	if err != nil {
-		response.FailWithMessage(err.Error(), c)
+		response.FailWithMessage("参数错误", c)
 		return
 	}
 	err = utils.Verify(createPolicy, utils.CreatePolicyVerify)
@@ -57,8 +64,8 @@ func (p *PolicyApi) CreatePolicy(c *gin.Context) {
 		return
 	}
 	if len(createPolicy.PolicyConfig) == 0 && !createPolicy.OnlineConfig.Use && !createPolicy.PortScanConfig.Use {
-		err = fmt.Errorf("至少选择一种扫描类型")
-		response.FailWithMessage(err.Error(), c)
+		err = global.NoDataSelected
+		response.FailWithMessage("请至少选择一个扫描类型", c)
 		return
 	}
 	if createPolicy.OnlineConfig.Format == "" {
@@ -84,18 +91,18 @@ func (p *PolicyApi) CreatePolicy(c *gin.Context) {
 	}
 	policyConfig, err := json.Marshal(createPolicy.PolicyConfig)
 	if err != nil {
-		response.FailWithMessage(err.Error(), c)
+		response.FailWithMessage("任务参数错误", c)
 		return
 	}
 
-	onlineConfg, err := json.Marshal(createPolicy.OnlineConfig)
+	onlineConfig, err := json.Marshal(createPolicy.OnlineConfig)
 	if err != nil {
-		response.FailWithMessage(err.Error(), c)
+		response.FailWithMessage("在线检测参数错误", c)
 		return
 	}
-	portScanConfg, err := json.Marshal(createPolicy.PortScanConfig)
+	portScanConfig, err := json.Marshal(createPolicy.PortScanConfig)
 	if err != nil {
-		response.FailWithMessage(err.Error(), c)
+		response.FailWithMessage("端口扫描参数错误", c)
 		return
 	}
 	scanType := make([]string, len(createPolicy.PolicyConfig))
@@ -115,15 +122,19 @@ func (p *PolicyApi) CreatePolicy(c *gin.Context) {
 		ScanType:       scanType,
 		PolicyConfig:   string(policyConfig),
 		OnlineCheck:    createPolicy.OnlineConfig.Use,
-		OnlineConfig:   string(onlineConfg),
+		OnlineConfig:   string(onlineConfig),
 		PortScan:       createPolicy.PortScanConfig.Use,
-		PortScanConfig: string(portScanConfg),
+		PortScanConfig: string(portScanConfig),
 		Templates:      templates,
 		IgnoredIP:      createPolicy.IgnoredIP,
 	}
 	err = policyService.CreatePolicy(&modelPolicy)
 	if err != nil {
-		response.FailWithMessage(err.Error(), c)
+		if errors.Is(err, global.HasExisted) {
+			response.FailWithMessage("策略已存在", c)
+			return
+		}
+		response.FailWithMessage("创建失败", c)
 		return
 	}
 	response.Ok(c)
