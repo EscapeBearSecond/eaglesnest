@@ -4,6 +4,7 @@ import (
 	"47.103.136.241/goprojects/curescan/server/global"
 	"47.103.136.241/goprojects/curescan/server/model/common/response"
 	"47.103.136.241/goprojects/curescan/server/model/curescan"
+	"47.103.136.241/goprojects/curescan/server/model/curescan/common"
 	"47.103.136.241/goprojects/curescan/server/model/curescan/request"
 	"47.103.136.241/goprojects/curescan/server/utils"
 	"compress/gzip"
@@ -12,7 +13,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
+	"io"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 )
 
@@ -264,6 +268,7 @@ func (t *TemplateApi) ImportTemplates(c *gin.Context) {
 		template := &curescan.Template{}
 		template.TemplateContent = string(buffer)
 		template.TemplateType = templateType
+		fmt.Println(template.TemplateContent)
 		err = templateService.ParseTemplateContent(template)
 		if err != nil {
 			errorStrings = append(errorStrings, fmt.Sprintf("parse template [%s] error, err: [%s]", fh.Filename, err.Error()))
@@ -321,6 +326,101 @@ func (t *TemplateApi) TemplateTags(c *gin.Context) {
 		"tag3": tag3s,
 		"tag4": tag4s,
 	}, c)
+}
+
+func (t *TemplateApi) UploadFromZip(c *gin.Context) {
+	var err error
+	defer func() {
+		if err != nil {
+			global.GVA_LOG.Error("上传模板失败", zap.String("uri", c.Request.RequestURI), zap.String("error", err.Error()))
+		}
+		// 删除 zip 文件和解压后的文件夹
+		zipExist := utils.FileExist("template.zip")
+		if zipExist {
+			os.Remove("template.zip")
+		}
+		dirExist, err := utils.PathExists("template")
+		if err == nil {
+			if dirExist {
+				os.RemoveAll("template")
+			}
+		}
+
+	}()
+	fh, err := c.FormFile("file")
+	if err != nil || fh == nil {
+		response.FailWithMessage("参数错误", c)
+		return
+	}
+	file, err := fh.Open()
+	defer file.Close()
+	if err != nil {
+		response.FailWithMessage("打开加密文件失败", c)
+		return
+	}
+	encipheredData, err := io.ReadAll(file)
+	if err != nil {
+		response.FailWithMessage("读取加密文件失败", c)
+		return
+	}
+	err = utils.DecryptFile(encipheredData, "woaini", "template.zip")
+	if err != nil {
+		response.FailWithMessage("解密文件失败", c)
+		return
+	}
+	paths, err := utils.Unzip("template.zip", "template")
+	if err != nil {
+		response.FailWithMessage("解压文件失败", c)
+		return
+	}
+	templates := make([]*curescan.Template, 0)
+	for _, path := range paths {
+		if !utils.IsFile(path) {
+			continue
+		}
+		var templateType string
+		dir := filepath.Base(filepath.Dir(path))
+		if dir == "vuln" || dir == "version_vuln" {
+			templateType = common.VulnerabilityScan
+		} else if dir == "asset" {
+			templateType = common.AssetDiscovery
+		} else if dir == "weak" {
+			templateType = common.WeakPassword
+		} else {
+			continue
+		}
+		file, err := os.Open(path)
+		if err != nil {
+			response.FailWithMessage("打开文件失败", c)
+			return
+		}
+
+		buffer, err := os.ReadFile(path)
+		if err != nil {
+			file.Close()
+			response.FailWithMessage("读取文件失败", c)
+			return
+		}
+
+		template := &curescan.Template{}
+		template.TemplateContent = string(buffer)
+		template.TemplateType = templateType
+
+		err = templateService.ParseTemplateContent(template)
+		if err != nil {
+			file.Close()
+			response.FailWithMessage(fmt.Sprintf("解析模板%s失败", path), c)
+
+		}
+		templates = append(templates, template)
+		file.Close()
+	}
+	err = templateService.BatchAdd(templates)
+	if err != nil {
+		response.FailWithMessage("添加模板失败", c)
+		return
+	}
+	response.Ok(c)
 }
 
 func (t *TemplateApi) LLL(c *gin.Context) {

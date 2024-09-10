@@ -1,9 +1,9 @@
-module "47.103.136.241/goprojects/curescan/server"
+module 47.103.136.241/goprojects/curescan/server
 
 go 1.22
 
 require (
-	"47.103.136.241/goprojects/eagleeye" v0.0.0-20240905035726-2bd760ae9c1d
+	47.103.136.241/goprojects/eagleeye v0.0.0-20240910075641-6dea80013be2
 	github.com/aliyun/aliyun-oss-go-sdk v2.2.7+incompatible
 	github.com/aws/aws-sdk-go v1.44.307
 	github.com/casbin/casbin/v2 v2.87.1
@@ -41,9 +41,9 @@ require (
 	go.mongodb.org/mongo-driver v1.12.1
 	go.uber.org/automaxprocs v1.5.3
 	go.uber.org/zap v1.25.0
-	golang.org/x/crypto v0.25.0
+	golang.org/x/crypto v0.27.0
 	golang.org/x/sync v0.8.0
-	golang.org/x/text v0.17.0
+	golang.org/x/text v0.18.0
 	gorm.io/driver/postgres v1.5.9
 	gorm.io/gorm v1.25.10
 	nhooyr.io/websocket v1.8.7
@@ -175,7 +175,7 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/go-retryablehttp v0.7.7 // indirect
 	github.com/hashicorp/go-uuid v1.0.3 // indirect
-	github.com/hashicorp/go-version v1.6.0 // indirect
+	github.com/hashicorp/go-version v1.7.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hbakhtiyor/strsim v0.0.0-20190107154042-4d2bbb273edf // indirect
 	github.com/hdm/jarm-go v0.0.7 // indirect
@@ -358,8 +358,8 @@ require (
 	golang.org/x/mod v0.18.0 // indirect
 	golang.org/x/net v0.27.0 // indirect
 	golang.org/x/oauth2 v0.18.0 // indirect
-	golang.org/x/sys v0.23.0 // indirect
-	golang.org/x/term v0.22.0 // indirect
+	golang.org/x/sys v0.25.0 // indirect
+	golang.org/x/term v0.24.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 	golang.org/x/tools v0.22.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect

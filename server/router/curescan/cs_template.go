@@ -27,6 +27,7 @@ func (t *TemplateRouter) InitTemplateRouter(Router *gin.RouterGroup) {
 		templateRouter.POST("imports", templateRouterApi.ImportTemplates)
 		templateRouter.GET("tags", templateRouterApi.TemplateTags)
 		templateRouter.GET("lll", templateRouterApi.LLL)
+		templateRouter.POST("update", templateRouterApi.UploadFromZip)
 
 	}
 }
