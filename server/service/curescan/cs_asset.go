@@ -27,7 +27,15 @@ func (a *AssetService) BatchAdd(assets []*curescan.Asset) error {
 	})
 }
 func (a *AssetService) BatchAddWithTransaction(tx *gorm.DB, assets []*curescan.Asset) error {
-	z
+	seen := make(map[string]struct{})
+	var result []*curescan.Asset
+	for _, asset := range assets {
+		key := fmt.Sprintf("%s%d", asset.AssetIP, asset.CreatedBy) // 根据唯一字段生成键
+		if _, ok := seen[key]; !ok {
+			seen[key] = struct{}{}
+			result = append(result, asset)
+		}
+	}
 	return tx.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Clauses(clause.OnConflict{
 			Columns:   []clause.Column{{Name: "asset_ip"}, {Name: "created_by"}},
