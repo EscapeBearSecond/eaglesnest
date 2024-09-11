@@ -27,11 +27,12 @@ func (a *AssetService) BatchAdd(assets []*curescan.Asset) error {
 	})
 }
 func (a *AssetService) BatchAddWithTransaction(tx *gorm.DB, assets []*curescan.Asset) error {
+	z
 	return tx.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Clauses(clause.OnConflict{
 			Columns:   []clause.Column{{Name: "asset_ip"}, {Name: "created_by"}},
 			DoUpdates: clause.AssignmentColumns([]string{"asset_name", "asset_area", "asset_type", "open_ports", "system_type", "ttl", "asset_model", "manufacturer"}),
-		}).CreateInBatches(assets, 100).Error; err != nil {
+		}).CreateInBatches(result, 100).Error; err != nil {
 			return err
 		}
 		return nil
