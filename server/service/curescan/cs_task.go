@@ -210,7 +210,6 @@ func (s *TaskService) ExecuteTask(id int) error {
 	task, err := s.GetTaskById(id)
 
 	if err != nil {
-		wg.Done()
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil
 		}
@@ -218,7 +217,6 @@ func (s *TaskService) ExecuteTask(id int) error {
 	}
 
 	if task.Status == common.Running || task.Status == common.TimeRunning {
-		wg.Done()
 		return errors.New("任务正在执行中，请勿重复执行")
 	}
 
@@ -244,7 +242,6 @@ func (s *TaskService) ExecuteTask(id int) error {
 	// 得到任务关联的策略
 	policy, err := policyService.GetPolicyById(int(task.PolicyID))
 	if err != nil {
-		wg.Done()
 		return err
 	}
 
@@ -255,21 +252,18 @@ func (s *TaskService) ExecuteTask(id int) error {
 	if policy.OnlineCheck {
 		err = json.Unmarshal([]byte(policy.OnlineConfig), &onlineConfig)
 		if err != nil {
-			wg.Done()
 			return err
 		}
 	}
 	if policy.PortScan {
 		err = json.Unmarshal([]byte(policy.PortScanConfig), &portScanConfig)
 		if err != nil {
-			wg.Done()
 			return err
 		}
 	}
 	if policy.PolicyConfig != "" {
 		err = json.Unmarshal([]byte(policy.PolicyConfig), &jobConfig)
 		if err != nil {
-			wg.Done()
 			return err
 		}
 	}
@@ -336,12 +330,12 @@ func (s *TaskService) ExecuteTask(id int) error {
 	}
 	jobs, err := s.generateJob(jobConfig, &taskResult, task)
 	if err != nil {
-		wg.Done()
 		return err
 
 	}
 	options.Jobs = jobs
 	if task.TaskPlan == common.ExecuteImmediately || task.TaskPlan == common.ExecuteLater {
+		wg.Add(1)
 		// 处理任务
 		go s.processTask(task, options, &taskResult, &wg)
 	}
