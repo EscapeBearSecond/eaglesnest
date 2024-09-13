@@ -225,8 +225,6 @@ func (t *TemplateApi) UpdateTemplate(c *gin.Context) {
 }
 
 func (t *TemplateApi) ImportTemplates(c *gin.Context) {
-	// fmt.Println(c.PostForm("file"))
-	// file, header, err2 := c.Request.FormFile("file")
 	form, err := c.MultipartForm()
 	if err != nil {
 		global.GVA_LOG.Error("获取文件失败", zap.String("uri", c.Request.RequestURI), zap.String("error", err.Error()))
@@ -271,6 +269,7 @@ func (t *TemplateApi) ImportTemplates(c *gin.Context) {
 		fmt.Println(template.TemplateContent)
 		err = templateService.ParseTemplateContent(template)
 		if err != nil {
+			global.GVA_LOG.Error("模板内容解析失败", zap.String("模板id", template.TemplateId))
 			errorStrings = append(errorStrings, fmt.Sprintf("parse template [%s] error, err: [%s]", fh.Filename, err.Error()))
 			continue
 		}

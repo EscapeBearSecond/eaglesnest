@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/spf13/viper"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"strings"
@@ -156,6 +157,8 @@ func (t *TemplateService) BatchAdd(templates []*curescan.Template) error {
 	for _, template := range templates {
 		if _, exists := uniqueTemplates[template.TemplateId]; !exists {
 			uniqueTemplates[template.TemplateId] = template
+		} else {
+			global.GVA_LOG.Error("模板ID重复", zap.String("模板id", template.TemplateId))
 		}
 	}
 
