@@ -24,12 +24,12 @@ func RemoveValueFromList(rdb redis.UniversalClient, listName string, targetValue
 	var ctx = context.Background()
 	for {
 		// 阻塞获取队列中的值
-		result, err := rdb.BLPop(ctx, 0, listName).Result()
+		result, err := rdb.LPop(ctx, listName).Result()
 		if err != nil {
 			fmt.Println("取出值失败:", err)
 			return false
 		}
-		value := result[1]
+		value := result
 		if value == targetValue {
 			// 找到目标值，成功取出
 			return true

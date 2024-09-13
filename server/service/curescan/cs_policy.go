@@ -1,10 +1,11 @@
 package curescan
 
 import (
-	request2 "47.103.136.241/goprojects/curescan/server/model/curescan/request"
 	"errors"
 	"fmt"
 	"math"
+
+	request2 "47.103.136.241/goprojects/curescan/server/model/curescan/request"
 
 	"47.103.136.241/goprojects/curescan/server/model/common/request"
 
@@ -23,7 +24,7 @@ var (
 // CreatePolicy 创建策略, 不允许有重复的策略名称.
 func (p *PolicyService) CreatePolicy(policy *curescan.Policy) error {
 	if !errors.Is(global.GVA_DB.Select("policy_name").First(&curescan.Policy{}, "policy_name = ?", policy.PolicyName).Error, gorm.ErrRecordNotFound) {
-		return fmt.Errorf("存在相同策略名称【%s】，不允许创建", policy.PolicyName)
+		return global.HasExisted
 	}
 	return global.GVA_DB.Create(policy).Error
 }

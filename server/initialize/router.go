@@ -1,6 +1,7 @@
 package initialize
 
 import (
+	"github.com/gin-contrib/pprof"
 	"net/http"
 	"os"
 
@@ -39,6 +40,7 @@ func Routers() *gin.Engine {
 	if gin.Mode() == gin.DebugMode {
 		Router.Use(gin.Logger())
 	}
+	pprof.Register(Router)
 
 	systemRouter := router.RouterGroupApp.System
 	exampleRouter := router.RouterGroupApp.Example

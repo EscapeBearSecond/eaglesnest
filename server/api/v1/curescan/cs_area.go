@@ -1,15 +1,15 @@
 package curescan
 
 import (
-	"strconv"
-
 	"47.103.136.241/goprojects/curescan/server/global"
 	"47.103.136.241/goprojects/curescan/server/model/common/response"
 	"47.103.136.241/goprojects/curescan/server/model/curescan"
 	"47.103.136.241/goprojects/curescan/server/model/curescan/request"
 	"47.103.136.241/goprojects/curescan/server/utils"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+	"strconv"
 )
 
 type AreaApi struct {
@@ -17,19 +17,20 @@ type AreaApi struct {
 
 func (csa *AreaApi) CreateArea(c *gin.Context) {
 	var createArea request.CreateArea
-	// err := utils.BindAndValid(c, &createArea)
-	// if err != nil {
-	// 	response.FailWithMessage(err.Error(), c)
-	// 	return
-	// }
-	err := c.ShouldBindJSON(&createArea)
+	var err error
+	defer func() {
+		if err != nil {
+			global.GVA_LOG.Error("创建区域失败", zap.Error(err))
+		}
+	}()
+	err = c.ShouldBindJSON(&createArea)
 	if err != nil {
-		response.FailWithMessage(err.Error(), c)
+		response.FailWithMessage("参数错误", c)
 		return
 	}
 	err = utils.Verify(createArea, utils.CreateAreaVerify)
 	if err != nil {
-		response.FailWithMessage(err.Error(), c)
+		response.FailWithMessage("参数错误", c)
 		return
 	}
 	var ips = createArea.AreaIP
@@ -47,21 +48,31 @@ func (csa *AreaApi) CreateArea(c *gin.Context) {
 	modelArea.UpdatedBy = utils.GetUserID(c)
 	err = areaService.CreateArea(&modelArea)
 	if err != nil {
-		response.FailWithMessage(err.Error(), c)
+		if errors.Is(err, global.HasExisted) {
+			response.FailWithMessage("区域已存在", c)
+			return
+		}
+		response.FailWithMessage("创建失败", c)
 		return
 	}
 	response.Ok(c)
 }
 
 func (csa *AreaApi) DeleteAreaByID(c *gin.Context) {
+	var err error
+	defer func() {
+		if err != nil {
+			global.GVA_LOG.Error("删除区域失败", zap.Error(err))
+		}
+	}()
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		response.FailWithMessage(err.Error(), c)
+		response.FailWithMessage("参数错误", c)
 		return
 	}
 	err = areaService.DeleteArea(id)
 	if err != nil {
-		response.FailWithMessage(err.Error(), c)
+		response.FailWithMessage("删除失败", c)
 		return
 	}
 	response.Ok(c)
@@ -69,14 +80,20 @@ func (csa *AreaApi) DeleteAreaByID(c *gin.Context) {
 
 func (csa *AreaApi) UpdateArea(c *gin.Context) {
 	var updateArea request.UpdateArea
-	err := c.ShouldBindJSON(&updateArea)
+	var err error
+	defer func() {
+		if err != nil {
+			global.GVA_LOG.Error("更新区域失败", zap.Error(err))
+		}
+	}()
+	err = c.ShouldBindJSON(&updateArea)
 	if err != nil {
-		response.FailWithMessage(err.Error(), c)
+		response.FailWithMessage("参数错误", c)
 		return
 	}
 	err = utils.Verify(updateArea, utils.CreateAreaVerify)
 	if err != nil {
-		response.FailWithMessage(err.Error(), c)
+		response.FailWithMessage("参数错误", c)
 		return
 	}
 	var ips = updateArea.AreaIP
@@ -96,6 +113,10 @@ func (csa *AreaApi) UpdateArea(c *gin.Context) {
 	modelArea.UpdatedBy = utils.GetUserID(c)
 	err = areaService.UpdateArea(&modelArea)
 	if err != nil {
+		if errors.Is(err, global.HasExisted) {
+			response.FailWithMessage("区域已存在", c)
+			return
+		}
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
@@ -103,13 +124,23 @@ func (csa *AreaApi) UpdateArea(c *gin.Context) {
 }
 
 func (csa *AreaApi) GetAreaById(c *gin.Context) {
+	var err error
+	defer func() {
+		if err != nil {
+			global.GVA_LOG.Error("获取区域详情失败", zap.Error(err))
+		}
+	}()
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		response.FailWithMessage(err.Error(), c)
+		response.FailWithMessage("参数错误", c)
 		return
 	}
 	area, err := areaService.GetAreaById(id)
 	if err != nil {
+		if errors.Is(err, global.NoDataFound) {
+			response.FailWithMessage("未找到数据", c)
+			return
+		}
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
@@ -118,19 +149,24 @@ func (csa *AreaApi) GetAreaById(c *gin.Context) {
 
 func (csa *AreaApi) GetAreaList(c *gin.Context) {
 	var searchArea request.SearchArea
-	err := c.ShouldBindJSON(&searchArea)
+	var err error
+	defer func() {
+		if err != nil {
+			global.GVA_LOG.Error("获取区域列表失败", zap.Error(err))
+		}
+	}()
+	err = c.ShouldBindJSON(&searchArea)
 	if err != nil {
-		response.FailWithMessage(err.Error(), c)
+		response.FailWithMessage("参数错误", c)
 		return
 	}
 	err = utils.Verify(searchArea.PageInfo, utils.PageInfoVerify)
 	if err != nil {
-		response.FailWithMessage(err.Error(), c)
+		response.FailWithMessage("参数错误", c)
 		return
 	}
 	list, total, err := areaService.GetAreaList(&searchArea.Area, searchArea.PageInfo, searchArea.OrderKey, searchArea.Desc)
 	if err != nil {
-		global.GVA_LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败", c)
 		return
 	}

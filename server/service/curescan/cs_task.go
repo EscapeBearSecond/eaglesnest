@@ -44,7 +44,6 @@ var portAssetMap = map[int64]*curescan.Asset{
 	3389: {AssetName: "Windows远程桌面", AssetType: "服务器设备", AssetModel: "MySQL", SystemType: "Windows", Manufacturer: "Microsoft"},
 	23:   {AssetName: "telnet", AssetType: "网络设备", AssetModel: "telnet", SystemType: "telnet", Manufacturer: "telnet"},
 	554:  {AssetName: "rtsp", AssetType: "视频设备", AssetModel: "rtsp", SystemType: "rtsp", Manufacturer: "rtsp"},
-	// 5432: {AssetName: "PgSQL", AssetType: "服务器设备", AssetModel: "PgSQL", SystemType: "PgSQL", Manufacturer: "PgSQL"},
 }
 
 // 定义端口优先级
@@ -84,10 +83,6 @@ func (s *TaskService) CreateTask(task *curescan.Task) error {
 	}
 
 	err = global.GVA_REDIS.RPush(context.Background(), "taskQueue", task.ID).Err()
-	// err = s.ExecuteTask(int(task.ID))
-	// if err != nil {
-	// 	return err
-	// }
 	return err
 }
 
@@ -207,14 +202,15 @@ func (s *TaskService) GetTaskList(st request.SearchTask) (list interface{}, tota
 }
 
 // ExecuteTask 执行任务
-func (s *TaskService) ExecuteTask(id int, wg *sync.WaitGroup) error {
+func (s *TaskService) ExecuteTask(id int) error {
+	var wg sync.WaitGroup
 	// 接收回调中的任务结果
 	var taskResult response.TaskResult
-
 	// 获取任务
 	task, err := s.GetTaskById(id)
 
 	if err != nil {
+		wg.Done()
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil
 		}
@@ -222,6 +218,7 @@ func (s *TaskService) ExecuteTask(id int, wg *sync.WaitGroup) error {
 	}
 
 	if task.Status == common.Running || task.Status == common.TimeRunning {
+		wg.Done()
 		return errors.New("任务正在执行中，请勿重复执行")
 	}
 
@@ -247,6 +244,7 @@ func (s *TaskService) ExecuteTask(id int, wg *sync.WaitGroup) error {
 	// 得到任务关联的策略
 	policy, err := policyService.GetPolicyById(int(task.PolicyID))
 	if err != nil {
+		wg.Done()
 		return err
 	}
 
@@ -257,18 +255,21 @@ func (s *TaskService) ExecuteTask(id int, wg *sync.WaitGroup) error {
 	if policy.OnlineCheck {
 		err = json.Unmarshal([]byte(policy.OnlineConfig), &onlineConfig)
 		if err != nil {
+			wg.Done()
 			return err
 		}
 	}
 	if policy.PortScan {
 		err = json.Unmarshal([]byte(policy.PortScanConfig), &portScanConfig)
 		if err != nil {
+			wg.Done()
 			return err
 		}
 	}
 	if policy.PolicyConfig != "" {
 		err = json.Unmarshal([]byte(policy.PolicyConfig), &jobConfig)
 		if err != nil {
+			wg.Done()
 			return err
 		}
 	}
@@ -335,20 +336,22 @@ func (s *TaskService) ExecuteTask(id int, wg *sync.WaitGroup) error {
 	}
 	jobs, err := s.generateJob(jobConfig, &taskResult, task)
 	if err != nil {
+		wg.Done()
 		return err
 
 	}
 	options.Jobs = jobs
 	if task.TaskPlan == common.ExecuteImmediately || task.TaskPlan == common.ExecuteLater {
 		// 处理任务
-		go s.processTask(task, options, &taskResult, wg)
+		go s.processTask(task, options, &taskResult, &wg)
 	}
 	if task.TaskPlan == common.ExecuteTiming {
 		task.Status = common.TimeRunning
 		s.UpdateTask(task)
 		cronName := task.TaskName
-		global.GVA_Timer.AddTaskByFunc(cronName, task.PlanConfig, func() { s.processTask(task, options, &taskResult, wg) }, task.TaskName, cron.WithSeconds())
+		global.GVA_Timer.AddTaskByFunc(cronName, task.PlanConfig, func() { s.processTask(task, options, &taskResult, &wg) }, task.TaskName, cron.WithSeconds())
 	}
+	wg.Wait()
 	return nil
 }
 
@@ -464,74 +467,6 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 			global.GVA_LOG.Error("任务开始执行失败", zap.String("taskName", newTask.TaskName), zap.String("error", err.Error()))
 			return
 		}
-		// s.processTask(newTask, options, taskResult)
-		// err = global.GVA_DB.Transaction(func(tx *gorm.DB) error {
-		// 	// 更新任务状态为执行中
-		//
-		// 	global.GVA_LOG.Info("任务开始执行...", zap.String("taskName", newTask.TaskName))
-		// 	// 在Redis中记录任务和entryID的关联
-		// 	err = global.GVA_REDIS.Set(context.Background(), "task_"+strconv.Itoa(int(newTask.ID)), entry.EntryID, 0).Err()
-		// 	if err != nil {
-		// 		return err
-		// 	}
-		// 	// global.GVA_REDIS.Set(context.Background(), "task_"+strconv.Itoa(int(newTask.ID)), entry.EntryID, -1)
-		// 	// 执行任务的入口
-		// 	err = entry.Run(context.Background())
-		// 	if err != nil {
-		// 		return err
-		// 	}
-		// 	// result := entry.Result()
-		// 	// 任务执行成功 批量添加任务结果
-		// 	err = portScanService.BatchAddWithTransaction(tx, taskResult.PortScanList)
-		// 	if err != nil {
-		// 		return err
-		// 	}
-		// 	err = onlineCheckService.BatchAddWithTransaction(tx, taskResult.OnlineCheckList)
-		// 	if err != nil {
-		// 		return err
-		// 	}
-		// 	err = jobResultService.BatchAddWithTransaction(tx, taskResult.JobResultList)
-		// 	if err != nil {
-		// 		return err
-		// 	}
-		// 	info, err := userService.FindUserById(int(task.CreatedBy))
-		// 	if err != nil {
-		// 		return err
-		// 	}
-		// 	var indexMap = make(map[string]int, 1)
-		// 	for i, item := range options.Jobs {
-		// 		if item.Kind == "2" {
-		// 			indexMap["vuln"] = i
-		// 		}
-		// 	}
-		// 	err = s.GenerateReport(entry.Result(), info.NickName, indexMap)
-		// 	if err != nil {
-		// 		return err
-		// 	}
-		// 	// 资产添加
-		// 	assets := getAssetFromResult(taskResult)
-		// 	if len(assets) > 0 {
-		// 		err = tx.Model(&curescan.Asset{}).CreateInBatches(assets, 100).Error
-		// 		if err != nil {
-		// 			return err
-		// 		}
-		// 	}
-		// 	return nil
-		// })
-		// if err != nil {
-		// 	if errors.Is(err, eagleeye.ErrHasBeenStopped) {
-		// 		global.GVA_LOG.Error("任务终止...", zap.String("taskName", newTask.TaskName), zap.Error(err))
-		// 		newTask.Status = common.Stopped
-		// 	} else {
-		// 		global.GVA_LOG.Error("任务执行失败", zap.String("taskName", newTask.TaskName), zap.Error(err))
-		// 		newTask.Status = common.Failed
-		// 	}
-		// } else {
-		// 	newTask.Status = common.Success
-		// 	global.GVA_LOG.Info("任务执行成功", zap.String("taskName", newTask.TaskName))
-		// }
-		// // 更新任务状态为 失败或成功
-		// s.UpdateTask(newTask)
 	}
 
 }
@@ -585,7 +520,6 @@ func getAssetFromResult(result *response.TaskResult, task *curescan.Task) []*cur
 				ipPorts[ip] = append(ipPorts[ip], port)
 				if existingPort, exists := ipPortMap[ip]; !exists || portPriority[port] < portPriority[existingPort] {
 					ipPortMap[ip] = port
-					// fmt.Println("发现端口", port, "与资产", assetInfo.AssetName, "匹配")
 					asset := &curescan.Asset{}
 					fmt.Println("ports", ipPorts[ip])
 					asset.OpenPorts = ipPorts[ip]
@@ -609,9 +543,7 @@ func getAssetFromResult(result *response.TaskResult, task *curescan.Task) []*cur
 // generateJob 生成任务， 根据任务配置生成任务
 func (s *TaskService) generateJob(jobConfig []*request.JobConfig, taskResult *response.TaskResult, task *curescan.Task) ([]types.JobOptions, error) {
 	jobs := make([]types.JobOptions, len(jobConfig))
-	// data := make([]*curescan.JobResultItem, 0)
 	for i, job := range jobConfig {
-		// dir := path.Join(global.GVA_CONFIG.AutoCode.Root, "server", "templates", job.Name)
 		jobs[i].Name = job.Name
 		jobs[i].Kind = job.Kind
 		jobs[i].Concurrency = job.Concurrency
@@ -705,10 +637,6 @@ func (s *TaskService) StopTask(id int) error {
 		}
 	} else if task.TaskPlan == common.ExecuteImmediately || task.TaskPlan == common.ExecuteLater {
 		task.Status = common.Stopped
-		// if err := global.GVA_REDIS.Get(context.Background(), "task_"+strconv.Itoa(id)).Err(); err != nil {
-		// 	return errors.New("任务未执行或已结束")
-		// }
-		// entryID := global.GVA_REDIS.Get(context.Background(), "task_"+strconv.Itoa(id)).Val()
 		entry := global.EagleeyeEngine.Entry(task.EntryID)
 		if entry == nil {
 			return errors.New("任务未开始或已结束")
@@ -720,24 +648,31 @@ func (s *TaskService) StopTask(id int) error {
 
 	// 停止定时任务
 	if task.TaskPlan == common.ExecuteTiming {
-		// err = global.GVA_REDIS.Get(context.Background(), "cron_"+strconv.Itoa(id)).Err()
-		// if err != nil {
-		// 	return err
-		// }
+
 		task.Status = common.TimeStopped
 		cronName := task.TaskName
-		// cronName := global.GVA_REDIS.Get(context.Background(), "cron_"+strconv.Itoa(id)).Val()
 		global.GVA_Timer.StopCron(cronName)
 	}
 	if err := s.UpdateTask(task); err != nil {
 		return err
 	}
-	// global.GVA_LOG.Info("任务已停止", zap.Int("id", id))
 	return nil
 }
 
 func (s *TaskService) GenerateReport(ret *types.EntryResult, reporter string, indexMap map[string]int) error {
 	var err error
+	ip, err := utils.GetLocalIP()
+	if err != nil {
+		return err
+	}
+	var exc []string
+	for _, str := range ret.ExcludeTargets {
+		if str != ip {
+			exc = append(exc, str)
+		}
+	}
+	ret.ExcludeTargets = exc
+
 	if index, ok := indexMap["vuln"]; ok {
 		err = report.Generate(
 			report.WithJobIndexes(index),
@@ -805,12 +740,3 @@ func (s *TaskService) GetTaskStage(id int64) (*response.Stage, error) {
 	modelStage.Total = count
 	return modelStage, nil
 }
-
-//	func (s *TaskService) DownloadReport(entryID string, format string) error {
-//		file, err := os.OpenFile("", os.O_RDONLY, 0666)
-//		if err != nil {
-//			return err
-//		}
-//		defer file.Close()
-//
-// }
