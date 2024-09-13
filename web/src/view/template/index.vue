@@ -201,7 +201,6 @@ const changeSize = (e) => {
 }
 
 let templateOptions = ref([])
-
 const handleCurrentChange = (val) => {
   page.value = val
   getTableData()
@@ -387,6 +386,9 @@ const handleSubmit = async() => {
 const closeUpload = () => {
   drawerVisible.value = false
   selectedFiles.value = []
+  if (uploadRef.value) {
+      uploadRef.value.clearFiles();
+  }
 } 
 </script>
 
