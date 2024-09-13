@@ -243,6 +243,7 @@ const onReset = () => {
   getTableData()
 }
 
+const form = ref(null)
 
 const page = ref(1)
 const tableData = ref([])
@@ -590,7 +591,7 @@ const rules = reactive({
   ]
 })
 // 提交表单
-const form = ref(null)
+
 const enterAddDialog = async() => {
   form.value.validate(async valid => {
     if (valid) {
@@ -598,12 +599,13 @@ const enterAddDialog = async() => {
         ...taskForm.value
       }
       // 这里加了判断 是否是默认执行方式，如果是默认 就是 区域选择 如果是自定义就是输入内容
-      req.scanIpType != 1 ? (req.targetIp = getIpArr(req.targetIpStr)): req.targetIp = req.areaIp;
-      console.log(req);
+      req.scanIpType != 1 ? (req.targetIp = getIpArr(req.targetIpStr)): (req.targetIp = getAreaIP(req.areaIp));
       if (dialogFlag.value === 'add') {  
         const res = await createTask(req)
         if (res.code === 0) {
           ElMessage({ type: 'success', message: '创建成功' })
+        }else{
+          ElMessage({ type: 'error', message: '创建失败' })
         }
       }
       if (dialogFlag.value === 'edit') {
@@ -630,7 +632,6 @@ const dialogFlag = ref('add')
 const handleClickAdd = () => {
   dialogFlag.value = 'add'
   templateDialog.value = true
-  form.value.resetFields()
 }
 
 function getIpArr(e) {
@@ -640,6 +641,15 @@ function getIpArr(e) {
     }else {
       return [e]
     }
+}
+
+function getAreaIP(e) {
+  let result = [];
+    for (let element of e) {
+        let commaSeparated = element.split(',');
+        result = result.concat(commaSeparated);
+    }
+    return result
 }
 
 function IpToStr(e) {   

@@ -13,7 +13,6 @@ const iframeHeight = ref(0);
 const iframe = ref(null)
 const loading = ref(true)
 
-console.log(1111111111, import.meta.env.VITE_DKY_URL)
 // 在页面加载后计算高度
 onMounted(() => {
   updateIframeHeight();
