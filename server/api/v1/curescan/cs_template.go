@@ -271,6 +271,7 @@ func (t *TemplateApi) ImportTemplates(c *gin.Context) {
 		fmt.Println(template.TemplateContent)
 		err = templateService.ParseTemplateContent(template)
 		if err != nil {
+			global.GVA_LOG.Error("模板内容解析失败", zap.String("模板id", template.TemplateId))
 			errorStrings = append(errorStrings, fmt.Sprintf("parse template [%s] error, err: [%s]", fh.Filename, err.Error()))
 			continue
 		}
