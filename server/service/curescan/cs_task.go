@@ -367,11 +367,11 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 	if task.TaskPlan == common.ExecuteImmediately || task.TaskPlan == common.ExecuteLater {
 		// task.Status = common.Running
 		task.EntryID = entry.EntryID
-		// err = s.UpdateTask(task)
-		// if err != nil {
-		// 	// global.GVA_LOG.Error("任务开始执行失败", zap.String("taskName", task.TaskName), zap.String("error", err.Error()))
-		// 	return err
-		// }
+		err = s.UpdateTask(task)
+		if err != nil {
+			// global.GVA_LOG.Error("任务开始执行失败", zap.String("taskName", task.TaskName), zap.String("error", err.Error()))
+			return err
+		}
 		return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 			global.GVA_LOG.Info("任务开始执行...", zap.String("taskName", task.TaskName))
 			// 执行任务的入口
