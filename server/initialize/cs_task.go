@@ -4,7 +4,9 @@ import (
 	"47.103.136.241/goprojects/curescan/server/global"
 	"47.103.136.241/goprojects/curescan/server/model/curescan/common"
 	"47.103.136.241/goprojects/curescan/server/service/curescan"
+	eagleeye "47.103.136.241/goprojects/eagleeye/pkg/sdk"
 	"context"
+	"errors"
 	"go.uber.org/zap"
 	"strconv"
 )
@@ -59,14 +61,33 @@ func ExecuteTask() {
 			if err != nil {
 				continue
 			}
+
 			taskId, _ := strconv.Atoi(ids[1])
-			// 阻塞的
-			err = taskService.ExecuteTask(taskId)
+			task, _ := taskService.GetTaskById(taskId)
+			task.Status = common.Running
+			err = taskService.UpdateTask(task)
 			if err != nil {
-				global.GVA_LOG.Error("任务执行失败", zap.Error(err))
-				task, _ := taskService.GetTaskById(taskId)
-				task.Status = common.Failed
-				taskService.UpdateTask(task)
+				global.GVA_LOG.Error("任务执行失败-更新状态", zap.Error(err))
+			} else {
+				// 阻塞的
+				err = taskService.ExecuteTask(taskId)
+				if err != nil {
+					if errors.Is(err, eagleeye.ErrHasBeenStopped) {
+						global.GVA_LOG.Error("任务终止", zap.String("任务名称", task.TaskName))
+						task.Status = common.Stopped
+					} else {
+
+						global.GVA_LOG.Error("任务执行失败", zap.String("任务名称", task.TaskName), zap.Error(err))
+						task.Status = common.Failed
+					}
+				} else {
+					global.GVA_LOG.Error("任务执行成功", zap.String("任务名称", task.TaskName), zap.Error(err))
+					task.Status = common.Success
+				}
+				err = taskService.UpdateTask(task)
+				if err != nil {
+					global.GVA_LOG.Error("任务执行失败-更新状态", zap.String("任务名称", task.TaskName), zap.Error(err))
+				}
 			}
 		}
 	}()

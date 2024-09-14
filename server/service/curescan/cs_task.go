@@ -1,28 +1,27 @@
 package curescan
 
 import (
+	"47.103.136.241/goprojects/curescan/server/global"
+	"47.103.136.241/goprojects/curescan/server/model/curescan"
 	"47.103.136.241/goprojects/curescan/server/model/curescan/common"
+	"47.103.136.241/goprojects/curescan/server/model/curescan/request"
+	"47.103.136.241/goprojects/curescan/server/model/curescan/response"
+	"47.103.136.241/goprojects/curescan/server/service/system"
 	"47.103.136.241/goprojects/curescan/server/utils"
+	"47.103.136.241/goprojects/eagleeye/pkg/report"
+	eagleeye "47.103.136.241/goprojects/eagleeye/pkg/sdk"
+	"47.103.136.241/goprojects/eagleeye/pkg/types"
 	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strconv"
-	"strings"
-	"sync"
-	"time"
-
-	"47.103.136.241/goprojects/curescan/server/global"
-	"47.103.136.241/goprojects/curescan/server/model/curescan"
-	"47.103.136.241/goprojects/curescan/server/model/curescan/request"
-	"47.103.136.241/goprojects/curescan/server/model/curescan/response"
-	"47.103.136.241/goprojects/curescan/server/service/system"
-	"47.103.136.241/goprojects/eagleeye/pkg/report"
-	eagleeye "47.103.136.241/goprojects/eagleeye/pkg/sdk"
-	"47.103.136.241/goprojects/eagleeye/pkg/types"
 	"github.com/robfig/cron/v3"
 	"go.uber.org/zap"
+	"golang.org/x/sync/errgroup"
 	"gorm.io/gorm"
+	"strconv"
+	"strings"
+	"time"
 )
 
 type TaskService struct {
@@ -203,7 +202,8 @@ func (s *TaskService) GetTaskList(st request.SearchTask) (list interface{}, tota
 
 // ExecuteTask 执行任务
 func (s *TaskService) ExecuteTask(id int) error {
-	var wg sync.WaitGroup
+	// var wg sync.WaitGroup
+	eg := errgroup.Group{}
 	// 接收回调中的任务结果
 	var taskResult response.TaskResult
 	// 获取任务
@@ -335,50 +335,45 @@ func (s *TaskService) ExecuteTask(id int) error {
 	}
 	options.Jobs = jobs
 	if task.TaskPlan == common.ExecuteImmediately || task.TaskPlan == common.ExecuteLater {
-		wg.Add(1)
 		// 处理任务
-		go s.processTask(task, options, &taskResult, &wg)
-	}
-	if task.TaskPlan == common.ExecuteTiming {
+		eg.Go(func() error {
+			return s.processTask(task, options, &taskResult)
+		})
+		return eg.Wait()
+	} else {
 		task.Status = common.TimeRunning
 		s.UpdateTask(task)
 		cronName := task.TaskName
-		global.GVA_Timer.AddTaskByFunc(cronName, task.PlanConfig, func() { s.processTask(task, options, &taskResult, &wg) }, task.TaskName, cron.WithSeconds())
+		global.GVA_Timer.AddTaskByFunc(cronName, task.PlanConfig, func() { s.processTask(task, options, &taskResult) }, task.TaskName, cron.WithSeconds())
 	}
-	wg.Wait()
+
 	return nil
 }
 
 // processTask 处理任务的执行流程
 // 对于普通任务来说, 不需要复制任务, 但是对于定时任务每次执行需要复制一次任务
 // 对于普通任务如果需要复用, 需要重新创建一条任务
-func (s *TaskService) processTask(task *curescan.Task, options *types.Options, taskResult *response.TaskResult, wg *sync.WaitGroup) {
-	defer wg.Done()
+func (s *TaskService) processTask(task *curescan.Task, options *types.Options, taskResult *response.TaskResult) error {
 	var entry *eagleeye.EagleeyeEntry
 	var err error
 	if task.TaskPlan != common.ExecuteTiming {
 		entry, err = global.EagleeyeEngine.NewEntry(options)
 	}
 	if err != nil {
-		global.GVA_LOG.Error("创建任务entry失败", zap.String("taskName", task.TaskName), zap.Error(err))
-		return
+		// global.GVA_LOG.Error("创建任务entry失败", zap.String("taskName", task.TaskName), zap.Error(err))
+		return err
 	}
 	// 使用数据库事务处理整个任务流程
 	if task.TaskPlan == common.ExecuteImmediately || task.TaskPlan == common.ExecuteLater {
-		task.Status = common.Running
+		// task.Status = common.Running
 		task.EntryID = entry.EntryID
-		err = s.UpdateTask(task)
-		if err != nil {
-			global.GVA_LOG.Error("任务开始执行失败", zap.String("taskName", task.TaskName), zap.String("error", err.Error()))
-			return
-		}
-		err = global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+		// err = s.UpdateTask(task)
+		// if err != nil {
+		// 	// global.GVA_LOG.Error("任务开始执行失败", zap.String("taskName", task.TaskName), zap.String("error", err.Error()))
+		// 	return err
+		// }
+		return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 			global.GVA_LOG.Info("任务开始执行...", zap.String("taskName", task.TaskName))
-			// 在Redis中记录任务和entryID的关联
-			// err = global.GVA_REDIS.Set(context.Background(), "task_"+strconv.Itoa(int(task.ID)), entry.EntryID, 0).Err()
-			// if err != nil {
-			// 	return err
-			// }
 			// 执行任务的入口
 			err = entry.Run(context.Background())
 			if err != nil {
@@ -404,7 +399,7 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 			}
 			var indexMap = make(map[string]int, 1)
 			for i, item := range options.Jobs {
-				if item.Kind == "2" {
+				if item.Kind == common.VulnerabilityScan {
 					indexMap["vuln"] = i
 				}
 			}
@@ -427,20 +422,18 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 			}
 			return nil
 		})
-		if err != nil {
-			if errors.Is(err, eagleeye.ErrHasBeenStopped) {
-				global.GVA_LOG.Error("任务终止...", zap.String("taskName", task.TaskName), zap.Error(err))
-				task.Status = common.Stopped
-			} else {
-				global.GVA_LOG.Error("任务执行失败", zap.String("taskName", task.TaskName), zap.Error(err))
-				task.Status = common.Failed
-			}
-		} else {
-			task.Status = common.Success
-			global.GVA_LOG.Info("任务执行成功", zap.String("taskName", task.TaskName))
-		}
-		// 更新任务状态为 失败或成功
-		s.UpdateTask(task)
+		// if err != nil {
+		// 	if errors.Is(err, eagleeye.ErrHasBeenStopped) {
+		// 		// global.GVA_LOG.Error("任务终止...", zap.String("taskName", task.TaskName), zap.Error(err))
+		// 		task.Status = common.Stopped
+		// 		// 更新任务状态为 失败或成功
+		// 		return s.UpdateTask(task)
+		// 	} else {
+		// 		// global.GVA_LOG.Error("任务执行失败", zap.String("taskName", task.TaskName), zap.Error(err))
+		// 		return err
+		// 	}
+		// }
+
 	}
 	if task.TaskPlan == common.ExecuteTiming {
 		newTask := &curescan.Task{
@@ -458,11 +451,11 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 		err = s.CreateTask(newTask)
 		// err = global.GVA_DB.Create(newTask).Error
 		if err != nil {
-			global.GVA_LOG.Error("任务开始执行失败", zap.String("taskName", newTask.TaskName), zap.String("error", err.Error()))
-			return
+			// global.GVA_LOG.Error("任务开始执行失败", zap.String("taskName", newTask.TaskName), zap.String("error", err.Error()))
+			return err
 		}
 	}
-
+	return err
 }
 
 func getAssetFromResult(result *response.TaskResult, task *curescan.Task) []*curescan.Asset {
