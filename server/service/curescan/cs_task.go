@@ -216,9 +216,9 @@ func (s *TaskService) ExecuteTask(id int) error {
 		return err
 	}
 
-	if task.Status == common.Running || task.Status == common.TimeRunning {
-		return errors.New("任务正在执行中，请勿重复执行")
-	}
+	// if task.Status == common.Running || task.Status == common.TimeRunning {
+	// 	return errors.New("任务正在执行中，请勿重复执行")
+	// }
 
 	if task.Status == common.Success {
 		task = &curescan.Task{
