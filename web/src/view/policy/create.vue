@@ -389,7 +389,6 @@ const onReset = () => {
 const enterDialog = () => {
   const pushData = JSON.parse(JSON.stringify(searchInfo.value));
   const existingType = form.value.policyConfig.find(item => item.kind === pushData.kind);
-  
   if (!existingType) {
     form.value.policyConfig.push(pushData);
     closeDialog();
@@ -418,11 +417,11 @@ const goStep = () => {
 const savePolicy = async () => {
   formRef.value.validate(async valid => {
     if (valid) {
-      const res = form.value.id ? await updatePolicy(form.value) : await createPolicy(form.value);
+      const res = (id.value !== undefined) ? await updatePolicy(form.value) : await createPolicy(form.value);
       if (res.code === 0) {
         ElMessage({
           type: 'success',
-          message: form.value.id ? '修改成功!' : '添加成功!'
+          message: (id.value !== undefined) ? '修改成功!' : '添加成功!'
         });
         window.history.go(-1);
       }
