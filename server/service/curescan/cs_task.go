@@ -39,10 +39,10 @@ var (
 )
 
 var portAssetMap = map[int64]*curescan.Asset{
-	3306: {AssetName: "MySQL", AssetType: "服务器设备", AssetModel: "MySQL", SystemType: "MySQL", Manufacturer: "MySQL"},
-	3389: {AssetName: "Windows远程桌面", AssetType: "服务器设备", AssetModel: "MySQL", SystemType: "Windows", Manufacturer: "Microsoft"},
-	23:   {AssetName: "telnet", AssetType: "网络设备", AssetModel: "telnet", SystemType: "telnet", Manufacturer: "telnet"},
-	554:  {AssetName: "rtsp", AssetType: "视频设备", AssetModel: "rtsp", SystemType: "rtsp", Manufacturer: "rtsp"},
+	3306: {AssetName: "MySQL服务器", AssetType: "服务器设备", AssetModel: "", SystemType: "数据库服务器", Manufacturer: "MySQL"},
+	3389: {AssetName: "Windows远程桌面", AssetType: "服务器设备", AssetModel: "", SystemType: "Windows服务器", Manufacturer: "Microsoft"},
+	23:   {AssetName: "telnet服务", AssetType: "服务器设备", AssetModel: "", SystemType: "Linux服务器", Manufacturer: "Linux"},
+	554:  {AssetName: "视频设备", AssetType: "视频设备", AssetModel: "", SystemType: "后端", Manufacturer: "Linux"},
 }
 
 // 定义端口优先级

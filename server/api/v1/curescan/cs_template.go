@@ -361,7 +361,7 @@ func (t *TemplateApi) UploadFromZip(c *gin.Context) {
 		response.FailWithMessage("读取加密文件失败", c)
 		return
 	}
-	err = utils.DecryptFile(encipheredData, "woaini", "template.zip")
+	err = utils.DecryptFile(encipheredData, "fNwVcQpR", "template.zip")
 	if err != nil {
 		response.FailWithMessage("解密文件失败", c)
 		return
@@ -372,6 +372,7 @@ func (t *TemplateApi) UploadFromZip(c *gin.Context) {
 		return
 	}
 	templates := make([]*curescan.Template, 0)
+
 	for _, path := range paths {
 		if !utils.IsFile(path) {
 			continue
@@ -413,6 +414,7 @@ func (t *TemplateApi) UploadFromZip(c *gin.Context) {
 		templates = append(templates, template)
 		file.Close()
 	}
+
 	err = templateService.BatchAdd(templates)
 	if err != nil {
 		response.FailWithMessage("添加模板失败", c)
