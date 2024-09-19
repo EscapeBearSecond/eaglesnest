@@ -1,14 +1,16 @@
 package initialize
 
 import (
+	"context"
+	"errors"
+	"fmt"
+	"strconv"
+
 	"47.103.136.241/goprojects/curescan/server/global"
 	"47.103.136.241/goprojects/curescan/server/model/curescan/common"
 	"47.103.136.241/goprojects/curescan/server/service/curescan"
 	eagleeye "47.103.136.241/goprojects/eagleeye/pkg/sdk"
-	"context"
-	"errors"
 	"go.uber.org/zap"
-	"strconv"
 )
 
 // RecoverTask 将因系统出现崩溃或异常而导致的任务恢复 将执行中改为失败
@@ -64,6 +66,7 @@ func ExecuteTask() {
 
 			taskId, _ := strconv.Atoi(ids[1])
 			task, _ := taskService.GetTaskById(taskId)
+			fmt.Println("taskId-entryID", task.EntryID, task.ID)
 			task.Status = common.Running
 			err = taskService.UpdateTask(task)
 			if err != nil {
@@ -71,6 +74,7 @@ func ExecuteTask() {
 			} else {
 				// 阻塞的
 				err = taskService.ExecuteTask(taskId)
+				task, _ := taskService.GetTaskById(taskId)
 				if err != nil {
 					if errors.Is(err, eagleeye.ErrHasBeenStopped) {
 						global.GVA_LOG.Error("任务终止", zap.String("任务名称", task.TaskName))
@@ -85,6 +89,7 @@ func ExecuteTask() {
 					task.Status = common.Success
 				}
 				err = taskService.UpdateTask(task)
+				fmt.Println("taskId-entryID2", task.EntryID, task.ID)
 				if err != nil {
 					global.GVA_LOG.Error("任务执行失败-更新状态", zap.String("任务名称", task.TaskName), zap.Error(err))
 				}

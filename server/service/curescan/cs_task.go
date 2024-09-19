@@ -1,6 +1,14 @@
 package curescan
 
 import (
+	"context"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"strconv"
+	"strings"
+	"time"
+
 	"47.103.136.241/goprojects/curescan/server/global"
 	"47.103.136.241/goprojects/curescan/server/model/curescan"
 	"47.103.136.241/goprojects/curescan/server/model/curescan/common"
@@ -11,17 +19,10 @@ import (
 	"47.103.136.241/goprojects/eagleeye/pkg/report"
 	eagleeye "47.103.136.241/goprojects/eagleeye/pkg/sdk"
 	"47.103.136.241/goprojects/eagleeye/pkg/types"
-	"context"
-	"encoding/json"
-	"errors"
-	"fmt"
 	"github.com/robfig/cron/v3"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 	"gorm.io/gorm"
-	"strconv"
-	"strings"
-	"time"
 )
 
 type TaskService struct {
@@ -365,15 +366,16 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 	}
 	// 使用数据库事务处理整个任务流程
 	if task.TaskPlan == common.ExecuteImmediately || task.TaskPlan == common.ExecuteLater {
-		// task.Status = common.Running
-		task.EntryID = entry.EntryID
-		err = s.UpdateTask(task)
-		if err != nil {
-			// global.GVA_LOG.Error("任务开始执行失败", zap.String("taskName", task.TaskName), zap.String("error", err.Error()))
-			return err
-		}
+
 		return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 			global.GVA_LOG.Info("任务开始执行...", zap.String("taskName", task.TaskName))
+			// task.Status = common.Running
+			task.EntryID = entry.EntryID
+			err = s.UpdateTask(task)
+			if err != nil {
+				// global.GVA_LOG.Error("任务开始执行失败", zap.String("taskName", task.TaskName), zap.String("error", err.Error()))
+				return err
+			}
 			// 执行任务的入口
 			err = entry.Run(context.Background())
 			if err != nil {
