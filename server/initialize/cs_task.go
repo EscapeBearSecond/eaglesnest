@@ -1,15 +1,14 @@
 package initialize
 
 import (
+	"47.103.136.241/goprojects/eagleeye/pkg/types"
 	"context"
 	"errors"
-	"fmt"
 	"strconv"
 
 	"47.103.136.241/goprojects/curescan/server/global"
 	"47.103.136.241/goprojects/curescan/server/model/curescan/common"
 	"47.103.136.241/goprojects/curescan/server/service/curescan"
-	eagleeye "47.103.136.241/goprojects/eagleeye/pkg/sdk"
 	"go.uber.org/zap"
 )
 
@@ -66,7 +65,6 @@ func ExecuteTask() {
 
 			taskId, _ := strconv.Atoi(ids[1])
 			task, _ := taskService.GetTaskById(taskId)
-			fmt.Println("taskId-entryID", task.EntryID, task.ID)
 			task.Status = common.Running
 			err = taskService.UpdateTask(task)
 			if err != nil {
@@ -76,20 +74,21 @@ func ExecuteTask() {
 				err = taskService.ExecuteTask(taskId)
 				task, _ := taskService.GetTaskById(taskId)
 				if err != nil {
-					if errors.Is(err, eagleeye.ErrHasBeenStopped) {
+					if errors.Is(err, types.ErrHasBeenStopped) {
 						global.GVA_LOG.Error("任务终止", zap.String("任务名称", task.TaskName))
 						task.Status = common.Stopped
+					} else if errors.Is(err, types.ErrNoActiveHost) || errors.Is(err, types.ErrNoExistPort) {
+						global.GVA_LOG.Info("任务执行成功-但无在线设备或端口", zap.String("任务名称", task.TaskName))
+						task.Status = common.Success
 					} else {
-
 						global.GVA_LOG.Error("任务执行失败", zap.String("任务名称", task.TaskName), zap.Error(err))
 						task.Status = common.Failed
 					}
 				} else {
-					global.GVA_LOG.Error("任务执行成功", zap.String("任务名称", task.TaskName), zap.Error(err))
+					global.GVA_LOG.Info("任务执行成功", zap.String("任务名称", task.TaskName), zap.Error(err))
 					task.Status = common.Success
 				}
 				err = taskService.UpdateTask(task)
-				fmt.Println("taskId-entryID2", task.EntryID, task.ID)
 				if err != nil {
 					global.GVA_LOG.Error("任务执行失败-更新状态", zap.String("任务名称", task.TaskName), zap.Error(err))
 				}

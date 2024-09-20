@@ -464,7 +464,7 @@ func getAssetFromResult(result *response.TaskResult, task *curescan.Task) []*cur
 	assets := make([]*curescan.Asset, 0)
 	for _, item := range result.JobResultList {
 		// typeSplit := strings.Split(item.TemplateID, "_")
-		if item.Kind == "1" {
+		if item.Kind == common.AssetDiscovery {
 			ip := strings.Split(item.Host, ":")[0]
 			port, err := strconv.Atoi(item.Port)
 			if err != nil {
