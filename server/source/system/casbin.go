@@ -177,6 +177,7 @@ func (i *initCasbin) InitializeData(ctx context.Context) (context.Context, error
 		{Ptype: "p", V0: "888", V1: "/template/list", V2: "POST"},
 		{Ptype: "p", V0: "888", V1: "/template/imports", V2: "POST"},
 		{Ptype: "p", V0: "888", V1: "/template/tags", V2: "GET"},
+		{Ptype: "p", V0: "888", V1: "/template/update", V2: "POST"},
 
 		{Ptype: "p", V0: "888", V1: "/policy", V2: "POST"},
 		{Ptype: "p", V0: "888", V1: "/policy", V2: "PUT"},
@@ -265,6 +266,7 @@ func (i *initCasbin) InitializeData(ctx context.Context) (context.Context, error
 		{Ptype: "p", V0: "9528", V1: "/template/list", V2: "POST"},
 		{Ptype: "p", V0: "9528", V1: "/template/imports", V2: "POST"},
 		{Ptype: "p", V0: "9528", V1: "/template/tags", V2: "GET"},
+		{Ptype: "p", V0: "9528", V1: "/template/update", V2: "POST"},
 
 		{Ptype: "p", V0: "9528", V1: "/policy", V2: "POST"},
 		{Ptype: "p", V0: "9528", V1: "/policy", V2: "PUT"},

@@ -62,6 +62,7 @@ func (a *AssetApi) GetAssetList(c *gin.Context) {
 		searchAsset.Asset = &curescan.Asset{}
 	}
 	searchAsset.CreatedBy = utils.GetUserID(c)
+	searchAsset.Asset.CreatedBy = utils.GetUserID(c)
 	allData := system.HasAllDataAuthority(c)
 	list, total, err := assetService.GetAssetList(searchAsset.Asset, searchAsset.PageInfo, searchAsset.OrderKey, searchAsset.Desc, allData)
 	if err != nil {
