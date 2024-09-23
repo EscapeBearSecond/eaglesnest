@@ -8,13 +8,11 @@ import (
 	"47.103.136.241/goprojects/curescan/server/model/curescan/request"
 	"47.103.136.241/goprojects/curescan/server/utils"
 	"compress/gzip"
-	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 	"io"
-	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -153,42 +151,48 @@ func (t *TemplateApi) GetTemplateList(c *gin.Context) {
 	}
 
 	// 设置响应头，指明内容使用了gzip压缩
-	c.Writer.Header().Set("Content-Encoding", "gzip")
-	c.Writer.Header().Set("Content-Type", "application/json")
-	c.Writer.WriteHeader(http.StatusOK)
+	// c.Writer.Header().Set("Content-Encoding", "gzip")
+	// c.Writer.Header().Set("Content-Type", "application/json")
+	// c.Writer.WriteHeader(http.StatusOK)
 
 	// 创建gzip.Writer
-	gz := gzip.NewWriter(c.Writer)
-	defer gz.Close()
+	// gz := gzip.NewWriter(c.Writer)
+	// defer gz.Close()
 
 	// 使用 gzipWriter 进行压缩写入
-	gzipWriter := &gzipWriter{Writer: gz, ResponseWriter: c.Writer}
+	// gzipWriter := &gzipWriter{Writer: gz, ResponseWriter: c.Writer}
 
 	list, total, err := templateService.GetTemplateList(searchTemplate)
 	if err != nil {
 		response.FailWithMessage("获取数据失败", c)
 		return
 	}
-
-	// 构建响应结果
-	result := response.PageResult{
+	response.OkWithDetailed(response.PageResult{
 		List:     list,
 		Total:    total,
 		Page:     searchTemplate.Page,
 		PageSize: searchTemplate.PageSize,
-	}
-	mapRest := make(map[string]interface{})
-	mapRest["data"] = result
-	mapRest["code"] = response.SUCCESS
-	mapRest["msg"] = "查询成功"
+	}, "获取成功", c)
 
-	// 编码并写入数据到gzipWriter
-
-	if err := json.NewEncoder(gzipWriter).Encode(mapRest); err != nil {
-		response.FailWithMessage("编解码错误", c)
-		return
-	}
-	gzipWriter.Flush()
+	// // 构建响应结果
+	// result := response.PageResult{
+	// 	List:     list,
+	// 	Total:    total,
+	// 	Page:     searchTemplate.Page,
+	// 	PageSize: searchTemplate.PageSize,
+	// }
+	// mapRest := make(map[string]interface{})
+	// mapRest["data"] = result
+	// mapRest["code"] = response.SUCCESS
+	// mapRest["msg"] = "查询成功"
+	//
+	// // 编码并写入数据到gzipWriter
+	//
+	// if err := json.NewEncoder(gzipWriter).Encode(mapRest); err != nil {
+	// 	response.FailWithMessage("编解码错误", c)
+	// 	return
+	// }
+	// gzipWriter.Flush()
 }
 
 func (t *TemplateApi) UpdateTemplate(c *gin.Context) {
