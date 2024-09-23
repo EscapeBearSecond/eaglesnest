@@ -207,6 +207,9 @@ func (s *TaskService) ExecuteTask(id int) error {
 	eg := errgroup.Group{}
 	// 接收回调中的任务结果
 	var taskResult response.TaskResult
+	taskResult.JobResultList = make([]*curescan.JobResultItem, 0)
+	taskResult.OnlineCheckList = make([]*curescan.OnlineCheck, 0)
+	taskResult.PortScanList = make([]*curescan.PortScan, 0)
 	// 获取任务
 	task, err := s.GetTaskById(id)
 
@@ -470,14 +473,21 @@ func getAssetFromResult(result *response.TaskResult, task *curescan.Task) []*cur
 			if err != nil {
 				continue
 			}
-			if _, ok := ipPorts[ip]; !ok {
-				ipPorts[ip] = make([]int64, 0)
-			}
-			ipPorts[ip] = append(ipPorts[ip], int64(port))
+			// if _, ok := ipPorts[ip]; !ok {
+			// 	ipPorts[ip] = make([]int64, 0)
+			// }
+			// ipPorts[ip] = append(ipPorts[ip], int64(port))
 
+			// 首次出现或者端口优先级高
 			if existingPort, exists := ipPortMap[ip]; !exists || portPriority[int64(port)] < portPriority[existingPort] {
 				ipPortMap[ip] = int64(port)
 				asset := &curescan.Asset{}
+				for i := len(result.PortScanList) - 1; i >= 0; i-- {
+					if result.PortScanList[i].IP == ip {
+						asset.OpenPorts = result.PortScanList[i].Ports
+						result.PortScanList = append(result.PortScanList[:i], result.PortScanList[i+1:]...)
+					}
+				}
 				asset.AreaName = "未知"
 				asset.AssetArea = 0
 				asset.AssetName = item.Name
@@ -485,7 +495,7 @@ func getAssetFromResult(result *response.TaskResult, task *curescan.Task) []*cur
 				asset.SystemType = item.Tag2
 				asset.Manufacturer = item.Tag3
 				asset.AssetModel = item.Tag4
-				asset.AssetIP = strings.Split(item.Host, ":")[0]
+				asset.AssetIP = ip
 				asset.CreatedBy = task.CreatedBy
 				asset.OpenPorts = ipPorts[ip]
 				assets = append(assets, asset)
@@ -495,34 +505,42 @@ func getAssetFromResult(result *response.TaskResult, task *curescan.Task) []*cur
 	}
 
 	for _, item := range result.PortScanList {
+		ip := strings.Split(item.IP, ":")[0]
+		// 是否已经通过模板识别到资产
+		var assetFromTpl bool
 		for _, asset := range assets {
-			if asset.AssetIP == item.IP {
+			// 已经通过模板识别到资产，只需修改开放端口
+			if asset.AssetIP == ip {
 				asset.OpenPorts = item.Ports
+				assetFromTpl = true
 			}
 		}
-		for _, port := range item.Ports {
-			if assetInfo, ok := portAssetMap[port]; ok {
-				ip := strings.Split(item.IP, ":")[0]
-				if _, ok := ipPorts[ip]; !ok {
-					ipPorts[ip] = make([]int64, 0)
+		// 没有通过模板识别到资产，需要判断端口是否属于特定的几个
+		if !assetFromTpl {
+			var asset *curescan.Asset
+			for _, port := range item.Ports {
+				// 是特定的端口
+				if assetInfo, ok := portAssetMap[port]; ok {
+					if asset == nil {
+						asset = &curescan.Asset{}
+						asset.OpenPorts = item.Ports
+						asset.AssetIP = ip
+					}
+					if existingPort, exists := ipPortMap[ip]; !exists || portPriority[port] < portPriority[existingPort] {
+						ipPortMap[ip] = port
+						asset.AreaName = "未知"
+						asset.AssetArea = 0
+						asset.AssetName = assetInfo.AssetName
+						asset.AssetType = assetInfo.AssetType
+						asset.AssetModel = assetInfo.AssetModel
+						asset.SystemType = assetInfo.SystemType
+						asset.Manufacturer = assetInfo.Manufacturer
+						asset.CreatedBy = task.CreatedBy
+					}
 				}
-				ipPorts[ip] = append(ipPorts[ip], port)
-				if existingPort, exists := ipPortMap[ip]; !exists || portPriority[port] < portPriority[existingPort] {
-					ipPortMap[ip] = port
-					asset := &curescan.Asset{}
-					fmt.Println("ports", ipPorts[ip])
-					asset.OpenPorts = ipPorts[ip]
-					asset.AreaName = "未知"
-					asset.AssetArea = 0
-					asset.AssetIP = ip
-					asset.AssetName = assetInfo.AssetName
-					asset.AssetType = assetInfo.AssetType
-					asset.AssetModel = assetInfo.AssetModel
-					asset.SystemType = assetInfo.SystemType
-					asset.Manufacturer = assetInfo.Manufacturer
-					asset.CreatedBy = task.CreatedBy
-					assets = append(assets, asset)
-				}
+			}
+			if asset != nil {
+				assets = append(assets, asset)
 			}
 		}
 	}

@@ -63,6 +63,10 @@ func (p *PolicyApi) CreatePolicy(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+	if !createPolicy.OnlineConfig.Use || !createPolicy.PortScanConfig.Use {
+		response.FailWithMessage("请开启在线检测和端口扫描", c)
+		return
+	}
 	if len(createPolicy.PolicyConfig) == 0 && !createPolicy.OnlineConfig.Use && !createPolicy.PortScanConfig.Use {
 		err = global.NoDataSelected
 		response.FailWithMessage("请至少选择一个扫描类型", c)

@@ -44,11 +44,6 @@ func (a *AssetService) BatchAddWithTransaction(tx *gorm.DB, assets []*curescan.A
 			return err
 		}
 		return nil
-		// return global.GVA_DB.Clauses(clause.OnConflict{
-		// 	Columns:   []clause.Column{{Name: "asset_ip"}},
-		// 	DoUpdates: clause.AssignmentColumns([]string{"asset_name", "asset_ip", "asset_area", "asset_type", "open_ports", "system_type", "ttl", "asset_model", "manufacturer"}),
-		// }).Create(assets).Error
-		// return global.GVA_DB.Model(&curescan.Asset{}).CreateInBatches(assets, 100).Error
 	})
 }
 
