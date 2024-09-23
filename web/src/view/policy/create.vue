@@ -220,7 +220,7 @@
 </div>
 </template>
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, watch } from 'vue';
 import { createPolicy, updatePolicy, getPolicyId } from '@/api/policy';
 import { getTemplateTagList, getTemplateList } from '@/api/template';
 import { ElMessage } from 'element-plus';
@@ -289,7 +289,7 @@ const getTableData = async() => {
       pageSize: listQuery.pageSize,
       isAll:false,
       templateType: searchInfo.value.kind,
-      templateName: searchInfo.value.templateName,
+      templateName: (typeof searchInfo.value.templateName == 'number') ?  String(searchInfo.value.templateName) : searchInfo.value.templateName ,
       tag1: searchInfo.value.tagOne,
       tag2: searchInfo.value.tagTwo,
       tag3: searchInfo.value.tagThree,
@@ -453,7 +453,6 @@ const selectTemplate = () => {
 const selectTemplateTag = ()=> {
     getTableData()
 }
-
 const initPage = async () => {
   getTemplateTagData();
   getTableData();
