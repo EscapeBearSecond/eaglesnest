@@ -28,6 +28,8 @@
 47.103.136.241/goprojects/eagleeye v0.0.0-20240919060816-f9be1b4a4c65/go.mod h1:BcDP86oJd8oOAKk+OVobv2QTCNZ4gL1cpxax9SUQORI=
 47.103.136.241/goprojects/eagleeye v0.0.0-20240920032151-4b8f733ab7af h1:g2tREROtzfQl9dP713TjKAlloOOnC+Y3Jntb30oMOMY=
 47.103.136.241/goprojects/eagleeye v0.0.0-20240920032151-4b8f733ab7af/go.mod h1:BcDP86oJd8oOAKk+OVobv2QTCNZ4gL1cpxax9SUQORI=
+47.103.136.241/goprojects/eagleeye v0.0.0-20240920062622-04b2eb5c9e43 h1:qZ6hbDn0yX4joGFOSj0GMwfwDhEWbkOefn1JhK0W0c0=
+47.103.136.241/goprojects/eagleeye v0.0.0-20240920062622-04b2eb5c9e43/go.mod h1:BcDP86oJd8oOAKk+OVobv2QTCNZ4gL1cpxax9SUQORI=
 aead.dev/minisign v0.2.0 h1:kAWrq/hBRu4AARY6AlciO83xhNnW9UaC8YipS2uhLPk=
 aead.dev/minisign v0.2.0/go.mod h1:zdq6LdSd9TbuSxchxwhpA9zEb9YXcVGoE8JakuiGaIQ=
 atomicgo.dev/assert v0.0.2 h1:FiKeMiZSgRrZsPo9qn/7vmr7mCsh5SZyXY4YGYiYwrg=
