@@ -27,21 +27,23 @@ func (a *AssetService) BatchAdd(assets []*curescan.Asset) error {
 	})
 }
 func (a *AssetService) BatchAddWithTransaction(tx *gorm.DB, assets []*curescan.Asset) error {
-	seen := make(map[string]struct{})
-	var result []*curescan.Asset
-	for _, asset := range assets {
-		key := fmt.Sprintf("%s%d", asset.AssetIP, asset.CreatedBy) // 根据唯一字段生成键
-		if _, ok := seen[key]; !ok {
-			seen[key] = struct{}{}
-			result = append(result, asset)
-		}
-	}
+	// seen := make(map[string]struct{})
+	// var result []*curescan.Asset
+	// for _, asset := range assets {
+	// 	key := fmt.Sprintf("%s%d", asset.AssetIP, asset.CreatedBy) // 根据唯一字段生成键
+	// 	if _, ok := seen[key]; !ok {
+	// 		seen[key] = struct{}{}
+	// 		result = append(result, asset)
+	// 	}
+	// }
 	return tx.Transaction(func(tx *gorm.DB) error {
-		if err := tx.Clauses(clause.OnConflict{
-			Columns:   []clause.Column{{Name: "asset_ip"}, {Name: "created_by"}},
-			DoUpdates: clause.AssignmentColumns([]string{"asset_name", "asset_area", "asset_type", "open_ports", "system_type", "ttl", "asset_model", "manufacturer"}),
-		}).CreateInBatches(result, 100).Error; err != nil {
-			return err
+		for _, asset := range assets {
+			if err := tx.Clauses(clause.OnConflict{
+				Columns:   []clause.Column{{Name: "asset_ip"}, {Name: "created_by"}},
+				DoUpdates: clause.AssignmentColumns([]string{"asset_name", "asset_area", "asset_type", "open_ports", "system_type", "ttl", "asset_model", "manufacturer"}),
+			}).Create(asset).Error; err != nil {
+				return err
+			}
 		}
 		return nil
 	})

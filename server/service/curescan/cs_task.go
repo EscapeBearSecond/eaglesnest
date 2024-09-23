@@ -46,6 +46,8 @@ var portAssetMap = map[int64]*curescan.Asset{
 	554:  {AssetName: "视频设备", AssetType: "视频设备", AssetModel: "", SystemType: "后端", Manufacturer: "Linux"},
 }
 
+var hasProcessedIP = make(map[string]struct{})
+
 // 定义端口优先级
 var portPriority = map[int64]int64{
 	3306: 1,
@@ -56,8 +58,6 @@ var portPriority = map[int64]int64{
 
 // 用于存储每个IP的最高优先级端口
 var ipPortMap = make(map[string]int64)
-
-var ipPorts = make(map[string][]int64)
 
 func (s *TaskService) CreateTask(task *curescan.Task) error {
 	if !errors.Is(global.GVA_DB.Select("task_name", "created_by").First(&curescan.Task{}, "task_name=? AND created_by=?", task.TaskName, task.CreatedBy).Error, gorm.ErrRecordNotFound) {
@@ -469,39 +469,38 @@ func getAssetFromResult(result *response.TaskResult, task *curescan.Task) []*cur
 		// typeSplit := strings.Split(item.TemplateID, "_")
 		if item.Kind == common.AssetDiscovery {
 			ip := strings.Split(item.Host, ":")[0]
-			port, err := strconv.Atoi(item.Port)
-			if err != nil {
+			if _, ok := hasProcessedIP[ip]; ok {
 				continue
 			}
+			// port, err := strconv.Atoi(item.Port)
+			// if err != nil {
+			// 	continue
+			// }
 			// if _, ok := ipPorts[ip]; !ok {
 			// 	ipPorts[ip] = make([]int64, 0)
 			// }
 			// ipPorts[ip] = append(ipPorts[ip], int64(port))
 
-			// 首次出现或者端口优先级高
-			if existingPort, exists := ipPortMap[ip]; !exists || portPriority[int64(port)] < portPriority[existingPort] {
-				ipPortMap[ip] = int64(port)
-				asset := &curescan.Asset{}
-				for i := len(result.PortScanList) - 1; i >= 0; i-- {
-					if result.PortScanList[i].IP == ip {
-						asset.OpenPorts = result.PortScanList[i].Ports
-						result.PortScanList = append(result.PortScanList[:i], result.PortScanList[i+1:]...)
-					}
+			asset := &curescan.Asset{}
+			for i := len(result.PortScanList) - 1; i >= 0; i-- {
+				if result.PortScanList[i].IP == ip {
+					asset.OpenPorts = result.PortScanList[i].Ports
+					result.PortScanList = append(result.PortScanList[:i], result.PortScanList[i+1:]...)
 				}
-				asset.AreaName = "未知"
-				asset.AssetArea = 0
-				asset.AssetName = item.Name
-				asset.AssetType = item.Tag1
-				asset.SystemType = item.Tag2
-				asset.Manufacturer = item.Tag3
-				asset.AssetModel = item.Tag4
-				asset.AssetIP = ip
-				asset.CreatedBy = task.CreatedBy
-				asset.OpenPorts = ipPorts[ip]
-				assets = append(assets, asset)
 			}
-
+			asset.AreaName = "未知"
+			asset.AssetArea = 0
+			asset.AssetName = item.Name
+			asset.AssetType = item.Tag1
+			asset.SystemType = item.Tag2
+			asset.Manufacturer = item.Tag3
+			asset.AssetModel = item.Tag4
+			asset.AssetIP = ip
+			asset.CreatedBy = task.CreatedBy
+			assets = append(assets, asset)
+			hasProcessedIP[ip] = struct{}{}
 		}
+
 	}
 
 	for _, item := range result.PortScanList {
