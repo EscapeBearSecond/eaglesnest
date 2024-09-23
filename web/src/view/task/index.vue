@@ -603,6 +603,7 @@ const enterAddDialog = async() => {
       if (dialogFlag.value === 'add') {  
         const res = await createTask(req)
         if (res.code === 0) {
+          closeAddDialog()
           ElMessage({ type: 'success', message: '创建成功' })
         }else{
           ElMessage({ type: 'error', message: '创建失败' })
@@ -611,20 +612,23 @@ const enterAddDialog = async() => {
       if (dialogFlag.value === 'edit') {
         const res = await updateTemplate(req)
         if (res.code === 0) {
+          closeAddDialog()
           ElMessage({ type: 'success', message: '编辑成功' })
         }
       }
-
       await getTableData()
-      closeAddDialog()
     }
   })
 }
 
 const templateDialog = ref(false)
 const closeAddDialog = () => {
-  form.value.resetFields()
   templateDialog.value = false
+  if(form.value) {
+    taskForm.areaIp = []
+    taskForm.targetIpStr = ""
+    form.value.resetFields()
+  }
 }
 
 const dialogFlag = ref('add')

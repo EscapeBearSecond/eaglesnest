@@ -24,6 +24,14 @@ export const postTemplateImports = (data) => {
     })
 }
 
+export const updateTemplateContent = (data) => {
+    return service({
+      url: '/template/update',
+      method: 'post',
+      data
+    })
+}
+
 export const getTemplateTagList = (params) => {
     return service({
       url: '/template/tags',
