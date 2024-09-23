@@ -7,39 +7,23 @@ volumes:
 
 services:
   web:
-    build:
-      context: ../../web
-      dockerfile: ./Dockerfile
     container_name: cs-web
+    image: nginx:1.25.2
+    hostname: cs-web
     restart: always
-    ports:
-      - "8080:8080"
-    depends_on:
-      - server
+    network_mode: "host"
     command: ["nginx-debug", "-g", "daemon off;"]
-
-  server:
-    build:
-      context: ../../server
-      dockerfile: ./Dockerfile
-    container_name: cs-server
-    restart: always
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    network_mode: host
-    privileged: true # 启用扩展权限
-    user: root # 以root用户运行
+    volumes:
+      - /opt/curescan/web/my.conf:/etc/nginx/conf.d/my.conf
+      - /opt/curescan/web/dist:/usr/share/nginx/html
 
   postgres:
-    image: postgres:13.3 # 使用PostgreSQL 13.3镜像
+    image: postgres:13.3
     container_name: cs-postgres
     hostname: cs-postgres
     restart: always
     ports:
-      - "5432:5432" # host物理直接映射端口为15432
+      - "5432:5432"
     environment:
       POSTGRES_DB: "postgres" # 初始化启动时要创建的数据库的名称，不设置空是为了避免新建一个和用户名同名的数据库，数据库初始化放到页面上
       POSTGRES_USER: "curescan" # 初始化启动时要创建的数据库的超级用户的用户名
@@ -54,13 +38,13 @@ services:
 
   redis:
     image: redis:6.0.6
-    container_name: cs-redis # 容器名
+    container_name: cs-redis
     hostname: cs-redis
     restart: always
     ports:
       - "6379:6379"
     environment:
-      REDIS_PASSWORD: "ZtGf2B2T5b" # 设置Redis密码
+      REDIS_PASSWORD: "ZtGf2B2T5b"
     healthcheck:
       test: ["CMD-SHELL", "redis-cli ping | grep PONG || exit 1"]
       interval: 10s

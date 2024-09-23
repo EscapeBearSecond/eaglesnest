@@ -5,6 +5,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/sha256"
+	"errors"
 	"fmt"
 	"golang.org/x/crypto/pbkdf2"
 	"io"
@@ -62,6 +63,12 @@ func DecryptFile(data []byte, password, outputZipFile string) error {
 	iv := data[16:32]
 	encryptedContent := data[32:]
 
+	// 检查加密内容的长度是否是块大小的倍数
+	if len(encryptedContent)%aes.BlockSize != 0 {
+		// 加密内容的长度不是 AES 块大小的倍数
+		return errors.New("解密失败")
+	}
+
 	// 使用 PBKDF2 生成密钥
 	key := pbkdf2.Key([]byte(password), salt, 100000, 32, sha256.New)
 
@@ -76,7 +83,10 @@ func DecryptFile(data []byte, password, outputZipFile string) error {
 	mode.CryptBlocks(decryptedData, encryptedContent)
 
 	// 去除填充
-	decryptedData = unpad(decryptedData)
+	decryptedData, err = unpadPKCS7(decryptedData, aes.BlockSize)
+	if err != nil {
+		return err
+	}
 
 	// 将解密后的数据写入 zip 文件
 	err = os.WriteFile(outputZipFile, decryptedData, 0644)
@@ -87,8 +97,29 @@ func DecryptFile(data []byte, password, outputZipFile string) error {
 	return nil
 }
 
-// 移除 PKCS7 填充
-func unpad(data []byte) []byte {
+// PKCS#7 填充去除函数
+func unpadPKCS7(data []byte, blockSize int) ([]byte, error) {
+	if len(data) == 0 {
+		// 解密后的数据为空
+		return nil, errors.New("解密失败")
+	}
+	if len(data)%blockSize != 0 {
+		// 数据长度不是块大小的倍数
+		return nil, errors.New("解密失败")
+	}
+
 	paddingLen := int(data[len(data)-1])
-	return data[:len(data)-paddingLen]
+	if paddingLen > blockSize || paddingLen == 0 {
+		// 无效的填充大小
+		return nil, errors.New("解密失败")
+	}
+
+	for i := len(data) - paddingLen; i < len(data); i++ {
+		if int(data[i]) != paddingLen {
+			// 无效的填充内容
+			return nil, errors.New("解密失败")
+		}
+	}
+
+	return data[:len(data)-paddingLen], nil
 }

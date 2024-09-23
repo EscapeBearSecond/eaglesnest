@@ -176,6 +176,7 @@ func (i *initApi) InitializeData(ctx context.Context) (context.Context, error) {
 		{ApiGroup: "扫描模板", Method: "POST", Path: "/template/list", Description: "模板列表"},
 		{ApiGroup: "扫描模板", Method: "POST", Path: "/template/imports", Description: "导入模板"},
 		{ApiGroup: "扫描模板", Method: "GET", Path: "/template/tags", Description: "模板标签"},
+		{ApiGroup: "扫描模板", Method: "POST", Path: "/template/update", Description: "升级模板"},
 
 		{ApiGroup: "扫描策略", Method: "POST", Path: "/policy", Description: "添加策略"},
 		{ApiGroup: "扫描策略", Method: "PUT", Path: "/policy", Description: "修改策略"},
