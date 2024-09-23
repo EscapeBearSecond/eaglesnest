@@ -116,7 +116,9 @@ func OperationRecord() gin.HandlerFunc {
 				record.Body = "超出记录长度"
 			}
 		}
-
+		if utils.IsBinaryData([]byte(record.Resp)) {
+			record.Resp = "[二进制数据]"
+		}
 		if err := operationRecordService.CreateSysOperationRecord(record); err != nil {
 			fmt.Println("create operation record error:", err)
 		}
