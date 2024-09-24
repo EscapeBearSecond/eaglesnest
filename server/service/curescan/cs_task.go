@@ -229,7 +229,7 @@ func (s *TaskService) ExecuteTask(id int) error {
 				CreatedBy: task.CreatedBy,
 				UpdatedBy: task.UpdatedBy,
 			},
-			TaskName:   task.TaskName + "_copy_" + utils.RandomString(6),
+			TaskName:   strings.Split(task.TaskName, "_")[0] + "_" + time.Now().Format("2006-01-02 15:04:05"),
 			TaskDesc:   task.TaskDesc,
 			Status:     common.Created,
 			TargetIP:   task.TargetIP,

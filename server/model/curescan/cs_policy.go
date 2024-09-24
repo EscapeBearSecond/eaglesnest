@@ -8,8 +8,8 @@ import (
 type Policy struct {
 	global.GvaModel
 	global.CsModel
-	PolicyName     string         `json:"policyName" gorm:"column:policy_name;type:varchar(50);uniqueIndex;not null;comment:策略名称"`
-	PolicyDesc     string         `json:"policyDesc" gorm:"column:policy_desc;type:varchar(100);comment:策略描述"`
+	PolicyName     string         `json:"policyName" gorm:"column:policy_name;type:text;uniqueIndex;not null;comment:策略名称"`
+	PolicyDesc     string         `json:"policyDesc" gorm:"column:policy_desc;type:text;comment:策略描述"`
 	ScanType       pq.StringArray `json:"scanType" gorm:"column:scan_type;type:text[];comment:扫描类型"`
 	PolicyConfig   string         `json:"policyConfig" gorm:"column:policy_config;type:text;comment:策略配置"`
 	OnlineCheck    bool           `json:"onlineCheck" gorm:"column:online_check;type:bool;comment:在线检测"`
