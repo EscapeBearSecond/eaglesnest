@@ -40,7 +40,7 @@ func (a *AssetService) BatchAddWithTransaction(tx *gorm.DB, assets []*curescan.A
 		for _, asset := range assets {
 			if err := tx.Clauses(clause.OnConflict{
 				Columns:   []clause.Column{{Name: "asset_ip"}, {Name: "created_by"}},
-				DoUpdates: clause.AssignmentColumns([]string{"asset_name", "asset_area", "asset_type", "open_ports", "system_type", "ttl", "asset_model", "manufacturer"}),
+				DoUpdates: clause.AssignmentColumns([]string{"asset_name", "asset_area", "asset_type", "open_ports", "system_type", "ttl", "asset_model", "manufacturer", "area_name"}),
 			}).Create(asset).Error; err != nil {
 				return err
 			}

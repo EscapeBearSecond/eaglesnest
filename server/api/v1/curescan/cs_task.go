@@ -57,6 +57,7 @@ func (t *TaskApi) CreateTask(c *gin.Context) {
 		PolicyID:   createTask.PolicyID,
 		TargetIP:   createTask.TargetIP,
 		Flag:       createTask.Flag,
+		AreaID:     createTask.AreaID,
 		CsModel:    global.CsModel{CreatedBy: utils.GetUserID(c)},
 	}
 	task.CreatedBy = utils.GetUserID(c)
@@ -222,6 +223,7 @@ func (t *TaskApi) ExecuteTask(c *gin.Context) {
 			Executions: 0,
 			EntryID:    "",
 			Flag:       task.Flag,
+			AreaID:     task.AreaID,
 		}
 		err := taskService.CreateTask(newTask)
 		if err != nil {

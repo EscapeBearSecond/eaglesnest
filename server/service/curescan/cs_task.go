@@ -36,6 +36,7 @@ var (
 	jobResultService   = &JobResultService{}
 	userService        = &system.UserService{}
 	assetService       = &AssetService{}
+	areaService        = &AreaService{}
 	casbinService      = &system.CasbinService{}
 )
 
@@ -45,8 +46,6 @@ var portAssetMap = map[int64]*curescan.Asset{
 	23:   {AssetName: "telnet服务", AssetType: "服务器设备", AssetModel: "", SystemType: "Linux服务器", Manufacturer: "Linux"},
 	554:  {AssetName: "视频设备", AssetType: "视频设备", AssetModel: "", SystemType: "后端", Manufacturer: "Linux"},
 }
-
-var hasProcessedIP = make(map[string]struct{})
 
 // 定义端口优先级
 var portPriority = map[int64]int64{
@@ -122,7 +121,7 @@ func (s *TaskService) DeleteTask(id int) error {
 
 func (s *TaskService) GetTaskById(id int) (*curescan.Task, error) {
 	var task *curescan.Task
-	err := global.GVA_DB.Select("id", "task_name", "task_desc", "status", "target_ip", "policy_id", "task_plan",
+	err := global.GVA_DB.Select("id", "task_name", "task_desc", "status", "target_ip", "policy_id", "task_plan", "area_id",
 		"plan_config", "created_at", "updated_at", "deleted_at", "flag", "created_by", "updated_by", "entry_id").Where("id=?", id).First(&task).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -463,7 +462,21 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 	return err
 }
 
+func getAssetArea(areaID uint) string {
+	if areaID == 0 {
+		return "未知"
+	} else {
+		area, err := areaService.GetAreaById(int(areaID))
+		if err != nil {
+			return "未知"
+		} else {
+			return area.AreaName
+		}
+	}
+}
+
 func getAssetFromResult(result *response.TaskResult, task *curescan.Task) []*curescan.Asset {
+	var hasProcessedIP = make(map[string]struct{})
 	assets := make([]*curescan.Asset, 0)
 	for _, item := range result.JobResultList {
 		// typeSplit := strings.Split(item.TemplateID, "_")
@@ -488,8 +501,8 @@ func getAssetFromResult(result *response.TaskResult, task *curescan.Task) []*cur
 					result.PortScanList = append(result.PortScanList[:i], result.PortScanList[i+1:]...)
 				}
 			}
-			asset.AreaName = "未知"
-			asset.AssetArea = 0
+			asset.AreaName = getAssetArea(task.AreaID)
+			asset.AssetArea = task.AreaID
 			asset.AssetName = item.Name
 			asset.AssetType = item.Tag1
 			asset.SystemType = item.Tag2
@@ -527,8 +540,8 @@ func getAssetFromResult(result *response.TaskResult, task *curescan.Task) []*cur
 					}
 					if existingPort, exists := ipPortMap[ip]; !exists || portPriority[port] < portPriority[existingPort] {
 						ipPortMap[ip] = port
-						asset.AreaName = "未知"
-						asset.AssetArea = 0
+						asset.AreaName = getAssetArea(task.AreaID)
+						asset.AssetArea = task.AreaID
 						asset.AssetName = assetInfo.AssetName
 						asset.AssetType = assetInfo.AssetType
 						asset.AssetModel = assetInfo.AssetModel
