@@ -7,7 +7,7 @@ import (
 	"mime/multipart"
 	"time"
 
-	"47.103.136.241/goprojects/curescan/server/global"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
 	"github.com/qiniu/api.v7/v7/auth/qbox"
 	"github.com/qiniu/api.v7/v7/storage"
 	"go.uber.org/zap"

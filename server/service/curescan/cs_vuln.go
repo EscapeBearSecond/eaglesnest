@@ -1,9 +1,9 @@
 package curescan
 
 import (
-	"47.103.136.241/goprojects/curescan/server/global"
-	"47.103.136.241/goprojects/curescan/server/model/curescan"
-	"47.103.136.241/goprojects/curescan/server/model/curescan/request"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/curescan"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/curescan/request"
 	"fmt"
 	"gorm.io/gorm"
 )

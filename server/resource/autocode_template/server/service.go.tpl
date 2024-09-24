@@ -1,9 +1,9 @@
 package {{.Package}}
 
 import (
-	"47.103.136.241/goprojects/curescan/server/global"
-	"47.103.136.241/goprojects/curescan/server/model/{{.Package}}"
-    {{.Package}}Req "47.103.136.241/goprojects/curescan/server/model/{{.Package}}/request"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/{{.Package}}"
+    {{.Package}}Req "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/{{.Package}}/request"
     {{- if .AutoCreateResource }}
     "gorm.io/gorm"
     {{- end}}

@@ -1,18 +1,18 @@
 package curescan
 
 import (
-	"47.103.136.241/goprojects/curescan/server/model/curescan/common"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/curescan/common"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"strconv"
 
-	"47.103.136.241/goprojects/curescan/server/global"
-	"47.103.136.241/goprojects/curescan/server/model/common/response"
-	"47.103.136.241/goprojects/curescan/server/model/curescan"
-	"47.103.136.241/goprojects/curescan/server/model/curescan/request"
-	csresponse "47.103.136.241/goprojects/curescan/server/model/curescan/response"
-	"47.103.136.241/goprojects/curescan/server/utils"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/common/response"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/curescan"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/curescan/request"
+	csresponse "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/curescan/response"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/utils"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )

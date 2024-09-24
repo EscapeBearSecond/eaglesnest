@@ -1,9 +1,9 @@
 package system
 
 import (
-	sysModel "47.103.136.241/goprojects/curescan/server/model/system"
-	"47.103.136.241/goprojects/curescan/server/service/system"
-	"47.103.136.241/goprojects/curescan/server/utils"
+	sysModel "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/system"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/service/system"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/utils"
 	"context"
 	"github.com/gofrs/uuid/v5"
 	"github.com/pkg/errors"

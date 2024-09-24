@@ -1,9 +1,9 @@
 package router
 
 import (
-	"47.103.136.241/goprojects/curescan/server/router/curescan"
-	"47.103.136.241/goprojects/curescan/server/router/example"
-	"47.103.136.241/goprojects/curescan/server/router/system"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/router/curescan"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/router/example"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/router/system"
 )
 
 type RouterGroup struct {

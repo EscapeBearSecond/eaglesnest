@@ -1,8 +1,8 @@
 package ast
 
 import (
-	"47.103.136.241/goprojects/curescan/server/global"
 	"bytes"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
 	"fmt"
 	"go/ast"
 	"go/parser"
@@ -70,7 +70,7 @@ func RollGormBack(pk, model string) {
 			if gen, ok := node.(*ast.GenDecl); ok {
 				for i := range gen.Specs {
 					if imspec, ok := gen.Specs[i].(*ast.ImportSpec); ok {
-						if imspec.Path.Value == "\"47.103.136.241/goprojects/curescan/server/model/"+pk+"\"" {
+						if imspec.Path.Value == "\"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/"+pk+"\"" {
 							gp = gen
 							imI = i
 							return false

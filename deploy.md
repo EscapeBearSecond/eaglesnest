@@ -216,10 +216,10 @@ rm -rf go1.22.6.linux-amd64.tar.gz
 go env -w GO111MODULE=on
 go env -w GOPROXY=https://goproxy.cn,direct
 go env -w CGO_ENABLED=1
-go env -w GOPRIVATE=47.103.136.241/goprojects
-go env -w GOINSECURE=47.103.136.241/goprojects
+go env -w GOPRIVATE=codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c
+go env -w GOINSECURE=codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c
 
-git clone -b dev http://47.103.136.241/goprojects/curescan.git
+git clone -b dev http://codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan.git
 cd $BASE_DIR/curescan/web
 npm install
 npm run build

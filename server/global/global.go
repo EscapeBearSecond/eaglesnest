@@ -6,15 +6,15 @@ import (
 	"github.com/qiniu/qmgo"
 	"github.com/redis/go-redis/v9"
 
-	"47.103.136.241/goprojects/curescan/server/utils/timer"
-	eagleeye "47.103.136.241/goprojects/eagleeye/pkg/sdk"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/utils/timer"
+	eagleeye "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/eagleeye/pkg/sdk"
 	"github.com/songzhibin97/gkit/cache/local_cache"
 
 	"golang.org/x/sync/singleflight"
 
 	"go.uber.org/zap"
 
-	"47.103.136.241/goprojects/curescan/server/config"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/config"
 
 	"github.com/spf13/viper"
 	"gorm.io/gorm"

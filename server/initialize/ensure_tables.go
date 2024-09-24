@@ -1,10 +1,10 @@
 package initialize
 
 import (
-	"47.103.136.241/goprojects/curescan/server/model/curescan"
-	"47.103.136.241/goprojects/curescan/server/model/example"
-	sysModel "47.103.136.241/goprojects/curescan/server/model/system"
-	"47.103.136.241/goprojects/curescan/server/service/system"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/curescan"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/example"
+	sysModel "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/system"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/service/system"
 	"context"
 	adapter "github.com/casbin/gorm-adapter/v3"
 	"gorm.io/gorm"

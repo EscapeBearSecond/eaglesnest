@@ -1,9 +1,9 @@
 package system
 
 import (
-	"47.103.136.241/goprojects/curescan/server/global"
-	"47.103.136.241/goprojects/curescan/server/model/common/response"
-	"47.103.136.241/goprojects/curescan/server/model/system/request"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/common/response"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/system/request"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )

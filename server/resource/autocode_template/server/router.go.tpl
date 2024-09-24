@@ -1,8 +1,8 @@
 package {{.Package}}
 
 import (
-	"47.103.136.241/goprojects/curescan/server/api/v1"
-	"47.103.136.241/goprojects/curescan/server/middleware"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/api/v1"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/middleware"
 	"github.com/gin-gonic/gin"
 )
 

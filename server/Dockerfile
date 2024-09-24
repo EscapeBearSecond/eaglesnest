@@ -16,8 +16,8 @@ RUN git config --global credential.helper 'store --file=/root/.git-credentials' 
 RUN go env -w GO111MODULE=on \
     && go env -w GOPROXY=https://goproxy.cn,direct \
     && go env -w CGO_ENABLED=1 \
-    && go env -w GOPRIVATE=47.103.136.241/goprojects \
-    && go env -w GOINSECURE=47.103.136.241/goprojects \
+    && go env -w GOPRIVATE=codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c \
+    && go env -w GOINSECURE=codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c \
     && go env \
     && go mod tidy \
     && GODEBUG=tlsrsakex=1 go build -o server .

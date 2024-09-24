@@ -1,6 +1,6 @@
 package response
 
-import "47.103.136.241/goprojects/curescan/server/model/system"
+import "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/system"
 
 type SysAPIResponse struct {
 	Api system.SysApi `json:"api"`

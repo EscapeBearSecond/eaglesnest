@@ -3,8 +3,8 @@ package initialize
 import (
 	"path"
 
-	"47.103.136.241/goprojects/curescan/server/global"
-	eagleeye "47.103.136.241/goprojects/eagleeye/pkg/sdk"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
+	eagleeye "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/eagleeye/pkg/sdk"
 )
 
 func EagleeyeEngine() {

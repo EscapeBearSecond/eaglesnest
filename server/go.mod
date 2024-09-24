@@ -1,9 +1,9 @@
-module 47.103.136.241/goprojects/curescan/server
+module codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server
 
 go 1.22
 
 require (
-	47.103.136.241/goprojects/eagleeye v0.0.0-20240920062622-04b2eb5c9e43
+	codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/eagleeye v0.0.0-20240924134433-5c5b09e6f005
 	github.com/aliyun/aliyun-oss-go-sdk v2.2.7+incompatible
 	github.com/aws/aws-sdk-go v1.44.307
 	github.com/casbin/casbin/v2 v2.87.1
@@ -11,6 +11,7 @@ require (
 	github.com/flipped-aurora/ws v1.0.2
 	github.com/fsnotify/fsnotify v1.7.0
 	github.com/fvbock/endless v0.0.0-20170109170031-447134032cb6
+	github.com/gin-contrib/pprof v1.5.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-playground/validator/v10 v10.22.0
 	github.com/go-sql-driver/mysql v1.7.1
@@ -104,7 +105,6 @@ require (
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/charmbracelet/glamour v0.6.0 // indirect
 	github.com/cheggaaa/pb/v3 v3.1.4 // indirect
-	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
 	github.com/clbanning/mxj v1.8.4 // indirect
 	github.com/clbanning/mxj/v2 v2.7.0 // indirect
 	github.com/cloudflare/cfssl v1.6.4 // indirect
@@ -132,7 +132,6 @@ require (
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/gaissmai/bart v0.9.5 // indirect
 	github.com/geoffgarside/ber v1.1.0 // indirect
-	github.com/gin-contrib/pprof v1.5.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/glebarez/go-sqlite v1.21.1 // indirect
 	github.com/glebarez/sqlite v1.8.0 // indirect
@@ -164,7 +163,6 @@ require (
 	github.com/google/go-github v17.0.0+incompatible // indirect
 	github.com/google/go-github/v30 v30.1.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
-	github.com/google/gopacket v1.1.19 // indirect
 	github.com/google/pprof v0.0.0-20240227163752-401108e1b7e7 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
 	github.com/google/uuid v1.6.0 // indirect
@@ -248,7 +246,6 @@ require (
 	github.com/projectdiscovery/blackrock v0.0.1 // indirect
 	github.com/projectdiscovery/cdncheck v1.1.0 // indirect
 	github.com/projectdiscovery/clistats v0.0.20 // indirect
-	github.com/projectdiscovery/dnsx v1.2.1 // indirect
 	github.com/projectdiscovery/dsl v0.1.8 // indirect
 	github.com/projectdiscovery/fastdialer v0.2.3 // indirect
 	github.com/projectdiscovery/fasttemplate v0.0.2 // indirect
@@ -261,12 +258,10 @@ require (
 	github.com/projectdiscovery/hmap v0.0.54 // indirect
 	github.com/projectdiscovery/httpx v1.6.7 // indirect
 	github.com/projectdiscovery/interactsh v1.2.0 // indirect
-	github.com/projectdiscovery/ipranger v0.0.44 // indirect
 	github.com/projectdiscovery/ldapserver v1.0.2-0.20240219154113-dcc758ebc0cb // indirect
 	github.com/projectdiscovery/machineid v0.0.0-20240226150047-2e2c51e35983 // indirect
 	github.com/projectdiscovery/mapcidr v1.1.34 // indirect
 	github.com/projectdiscovery/n3iwf v0.0.0-20230523120440-b8cd232ff1f5 // indirect
-	github.com/projectdiscovery/naabu/v2 v2.3.1 // indirect
 	github.com/projectdiscovery/networkpolicy v0.0.9 // indirect
 	github.com/projectdiscovery/nuclei/v3 v3.3.1 // indirect
 	github.com/projectdiscovery/ratelimit v0.0.49 // indirect
@@ -276,14 +271,12 @@ require (
 	github.com/projectdiscovery/retryablehttp-go v1.0.71 // indirect
 	github.com/projectdiscovery/sarif v0.0.1 // indirect
 	github.com/projectdiscovery/tlsx v1.1.6 // indirect
-	github.com/projectdiscovery/uncover v1.0.9 // indirect
 	github.com/projectdiscovery/useragent v0.0.65 // indirect
 	github.com/projectdiscovery/utils v0.2.4 // indirect
 	github.com/projectdiscovery/yamldoc-go v1.0.4 // indirect
 	github.com/prometheus-community/pro-bing v0.4.0 // indirect
 	github.com/pterm/pterm v0.12.79 // indirect
 	github.com/refraction-networking/utls v1.6.7 // indirect
-	github.com/remeh/sizedwaitgroup v1.0.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/richardlehane/mscfb v1.0.4 // indirect
 	github.com/richardlehane/msoleps v1.0.3 // indirect
@@ -333,7 +326,6 @@ require (
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	github.com/xuri/efp v0.0.0-20231025114914-d1ff6096ae53 // indirect
 	github.com/xuri/nfp v0.0.0-20230919160717-d98342af3f05 // indirect
-	github.com/yl2chen/cidranger v1.0.2 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d // indirect
 	github.com/ysmood/fetchup v0.2.3 // indirect
 	github.com/ysmood/goob v0.4.0 // indirect

@@ -1,9 +1,9 @@
 package initialize
 
 import (
-	"47.103.136.241/goprojects/curescan/server/config"
-	"47.103.136.241/goprojects/curescan/server/global"
-	"47.103.136.241/goprojects/curescan/server/initialize/internal"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/config"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/initialize/internal"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
