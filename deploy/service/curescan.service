@@ -1,0 +1,16 @@
+[Unit]
+Description=Curescan Service
+After=network-online.target docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+ExecStart=/opt/curescan/server/curescan
+WorkingDirectory=/opt/curescan/server
+Restart=on-failure
+RestartSec=5s
+KillMode=process
+Environment="GIN_MODE=release"
+
+[Install]
+WantedBy=multi-user.target

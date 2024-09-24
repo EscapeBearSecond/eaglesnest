@@ -57,8 +57,8 @@ copy_files(){
 load_images(){
     log "加载 Docker 镜像"
     for image in postgres redis nginx; do
-        if [ -f "./${image}.tar" ]; then
-            docker load -i ./${image}.tar
+        if [ -f "./images/${image}.tar" ]; then
+            docker load -i ./images/${image}.tar
         else
             log "警告: ${image}.tar 文件不存在"
         fi
