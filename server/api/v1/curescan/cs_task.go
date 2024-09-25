@@ -40,6 +40,10 @@ func (t *TaskApi) CreateTask(c *gin.Context) {
 		response.FailWithMessage("请求数据不正确!", c)
 		return
 	}
+	if len(createTask.AreaIDArray) == 0 && len(createTask.TargetIP) == 0 {
+		response.FailWithMessage("请选择扫描目标", c)
+		return
+	}
 	err = utils.ValidateIP(createTask.TargetIP)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
@@ -48,22 +52,32 @@ func (t *TaskApi) CreateTask(c *gin.Context) {
 	if createTask.TaskPlan == common.ExecuteTiming && !utils.IsValidCron(createTask.PlanConfig) {
 		response.FailWithMessage("非法的cron达式", c)
 		return
-
 	}
 
-	var task = curescan.Task{
-		TaskName:   createTask.TaskName,
-		TaskDesc:   createTask.TaskDesc,
-		TaskPlan:   createTask.TaskPlan,
-		PlanConfig: createTask.PlanConfig,
-		PolicyID:   createTask.PolicyID,
-		TargetIP:   createTask.TargetIP,
-		Flag:       createTask.Flag,
-		AreaID:     createTask.AreaID,
-		CsModel:    global.CsModel{CreatedBy: utils.GetUserID(c)},
+	var task = &curescan.Task{
+		TaskName:    createTask.TaskName,
+		TaskDesc:    createTask.TaskDesc,
+		TaskPlan:    createTask.TaskPlan,
+		PlanConfig:  createTask.PlanConfig,
+		PolicyID:    createTask.PolicyID,
+		TargetIP:    createTask.TargetIP,
+		Flag:        createTask.Flag,
+		AreaIDArray: createTask.AreaIDArray,
+		CsModel:     global.CsModel{CreatedBy: utils.GetUserID(c)},
 	}
 	task.CreatedBy = utils.GetUserID(c)
-	err = taskService.CreateTask(&task)
+	if len(task.AreaIDArray) != 0 {
+		for _, areaId := range task.AreaIDArray {
+			area, err := areaService.GetAreaById(int(areaId))
+			if err != nil {
+				global.GVA_LOG.Error("创建失败!", zap.String("uri", c.Request.URL.Path), zap.Error(err))
+				response.FailWithMessage("创建失败!", c)
+				return
+			}
+			task.TargetIP = append(task.TargetIP, area.AreaIP...)
+		}
+	}
+	err = taskService.CreateTask(task)
 	if err != nil {
 		global.GVA_LOG.Error("创建失败!", zap.String("uri", c.Request.URL.Path), zap.Error(err))
 		response.FailWithMessage("创建失败!", c)
@@ -215,17 +229,17 @@ func (t *TaskApi) ExecuteTask(c *gin.Context) {
 				CreatedBy: task.CreatedBy,
 				UpdatedBy: task.UpdatedBy,
 			},
-			TaskName:   strings.Split(task.TaskName, "_")[0] + "_" + time.Now().Format("2006-01-02 15:04:05"),
-			TaskDesc:   task.TaskDesc,
-			Status:     common.Created,
-			TargetIP:   task.TargetIP,
-			PolicyID:   task.PolicyID,
-			TaskPlan:   common.ExecuteImmediately,
-			PlanConfig: task.PlanConfig,
-			Executions: 0,
-			EntryID:    "",
-			Flag:       task.Flag,
-			AreaID:     task.AreaID,
+			TaskName:    strings.Split(task.TaskName, "_")[0] + "_" + time.Now().Format("2006-01-02 15:04:05"),
+			TaskDesc:    task.TaskDesc,
+			Status:      common.Created,
+			TargetIP:    task.TargetIP,
+			PolicyID:    task.PolicyID,
+			TaskPlan:    common.ExecuteImmediately,
+			PlanConfig:  task.PlanConfig,
+			Executions:  0,
+			EntryID:     "",
+			Flag:        task.Flag,
+			AreaIDArray: task.AreaIDArray,
 		}
 		err := taskService.CreateTask(newTask)
 		if err != nil {

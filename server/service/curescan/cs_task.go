@@ -121,7 +121,7 @@ func (s *TaskService) DeleteTask(id int) error {
 
 func (s *TaskService) GetTaskById(id int) (*curescan.Task, error) {
 	var task *curescan.Task
-	err := global.GVA_DB.Select("id", "task_name", "task_desc", "status", "target_ip", "policy_id", "task_plan", "area_id",
+	err := global.GVA_DB.Select("id", "task_name", "task_desc", "status", "target_ip", "policy_id", "task_plan", "area_id_array",
 		"plan_config", "created_at", "updated_at", "deleted_at", "flag", "created_by", "updated_by", "entry_id").Where("id=?", id).First(&task).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -192,7 +192,6 @@ func (s *TaskService) GetTaskList(st request.SearchTask) (list interface{}, tota
 	for _, task := range tasks {
 		policy, err := policyService.GetPolicyById(int(task.PolicyID))
 		if err != nil {
-			// todo 记录错误日志
 			return tasks, total, err
 		}
 		task.PolicyName = policy.PolicyName
@@ -217,29 +216,6 @@ func (s *TaskService) ExecuteTask(id int) error {
 			return nil
 		}
 		return err
-	}
-
-	// if task.Status == common.Running || task.Status == common.TimeRunning {
-	// 	return errors.New("任务正在执行中，请勿重复执行")
-	// }
-
-	if task.Status == common.Success {
-		task = &curescan.Task{
-			CsModel: global.CsModel{
-				CreatedBy: task.CreatedBy,
-				UpdatedBy: task.UpdatedBy,
-			},
-			TaskName:   strings.Split(task.TaskName, "_")[0] + "_" + time.Now().Format("2006-01-02 15:04:05"),
-			TaskDesc:   task.TaskDesc,
-			Status:     common.Created,
-			TargetIP:   task.TargetIP,
-			PolicyID:   task.PolicyID,
-			TaskPlan:   task.TaskPlan,
-			PlanConfig: task.PlanConfig,
-			Executions: 0,
-			EntryID:    "",
-			Flag:       task.Flag,
-		}
 	}
 
 	// 得到任务关联的策略
@@ -462,16 +438,22 @@ func (s *TaskService) processTask(task *curescan.Task, options *types.Options, t
 	return err
 }
 
-func getAssetArea(areaID uint) string {
-	if areaID == 0 {
-		return "未知"
+func getAssetArea(ip string, areaIDArray []int64) (uint, string) {
+	if len(areaIDArray) == 0 {
+		return 0, "未知"
 	} else {
-		area, err := areaService.GetAreaById(int(areaID))
-		if err != nil {
-			return "未知"
-		} else {
-			return area.AreaName
+		for _, id := range areaIDArray {
+			area, err := areaService.GetAreaById(int(id))
+			if err != nil {
+				continue
+			}
+			for _, rangeIP := range area.AreaIP {
+				if utils.IsIPInRange(ip, rangeIP) {
+					return area.ID, area.AreaName
+				}
+			}
 		}
+		return 0, "未知"
 	}
 }
 
@@ -501,8 +483,7 @@ func getAssetFromResult(result *response.TaskResult, task *curescan.Task) []*cur
 					result.PortScanList = append(result.PortScanList[:i], result.PortScanList[i+1:]...)
 				}
 			}
-			asset.AreaName = getAssetArea(task.AreaID)
-			asset.AssetArea = task.AreaID
+			asset.AssetArea, asset.AreaName = getAssetArea(ip, task.AreaIDArray)
 			asset.AssetName = item.Name
 			asset.AssetType = item.Tag1
 			asset.SystemType = item.Tag2
@@ -540,8 +521,7 @@ func getAssetFromResult(result *response.TaskResult, task *curescan.Task) []*cur
 					}
 					if existingPort, exists := ipPortMap[ip]; !exists || portPriority[port] < portPriority[existingPort] {
 						ipPortMap[ip] = port
-						asset.AreaName = getAssetArea(task.AreaID)
-						asset.AssetArea = task.AreaID
+						asset.AssetArea, asset.AreaName = getAssetArea(ip, task.AreaIDArray)
 						asset.AssetName = assetInfo.AssetName
 						asset.AssetType = assetInfo.AssetType
 						asset.AssetModel = assetInfo.AssetModel

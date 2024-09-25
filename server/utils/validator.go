@@ -388,3 +388,50 @@ func GetLocalIP() (string, error) {
 
 	return "", fmt.Errorf("no valid IP address found")
 }
+
+// 判断 IP 是否在指定的 CIDR 或 IP 范围内
+func IsIPInRange(ipStr, rangeStr string) bool {
+	if ipStr == rangeStr {
+		return true
+	}
+	ip := net.ParseIP(ipStr)
+	if ip == nil {
+		return false
+	}
+	// 判断是否为 CIDR 格式
+	if strings.Contains(rangeStr, "/") {
+		_, network, err := net.ParseCIDR(rangeStr)
+		if err != nil {
+			return false
+		}
+		return network.Contains(ip)
+	}
+
+	// 判断是否为 IP 区间格式
+	if strings.Contains(rangeStr, "-") {
+		parts := strings.Split(rangeStr, "-")
+		if len(parts) != 2 {
+			return false
+		}
+		startIP := net.ParseIP(strings.TrimSpace(parts[0]))
+		endIP := net.ParseIP(strings.TrimSpace(parts[1]))
+		if startIP == nil || endIP == nil {
+			return false
+		}
+		return compareIPs(ip, startIP) >= 0 && compareIPs(ip, endIP) <= 0
+	}
+
+	return false
+}
+
+// 比较两个 IP 地址的字节序大小
+func compareIPs(ip1, ip2 net.IP) int {
+	for i := 0; i < len(ip1); i++ {
+		if ip1[i] < ip2[i] {
+			return -1
+		} else if ip1[i] > ip2[i] {
+			return 1
+		}
+	}
+	return 0
+}
