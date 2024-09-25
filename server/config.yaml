@@ -113,8 +113,8 @@ pgsql:
     config: sslmode=disable TimeZone=Asia/Shanghai
     db-name: curescan
     username: postgres
-    password: "njzyadmin"
-    path: 139.224.191.13
+    password: "H9nWDpM86K"
+    path: 106.15.237.118
     engine: ""
     log-mode: error
     max-idle-conns: 10
@@ -130,7 +130,7 @@ qiniu:
     use-https: false
     use-cdn-domains: false
 redis:
-    addr: 139.224.191.13:6379
+    addr: 106.15.237.118:6379
     password: ""
     db: 0
     useCluster: false
