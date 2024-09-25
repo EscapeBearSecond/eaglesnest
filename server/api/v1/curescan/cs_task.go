@@ -12,6 +12,8 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
+	"time"
 
 	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
 	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/common/response"
@@ -213,7 +215,7 @@ func (t *TaskApi) ExecuteTask(c *gin.Context) {
 				CreatedBy: task.CreatedBy,
 				UpdatedBy: task.UpdatedBy,
 			},
-			TaskName:   task.TaskName + "_copy_" + utils.RandomString(6),
+			TaskName:   strings.Split(task.TaskName, "_")[0] + "_" + time.Now().Format("2006-01-02 15:04:05"),
 			TaskDesc:   task.TaskDesc,
 			Status:     common.Created,
 			TargetIP:   task.TargetIP,
