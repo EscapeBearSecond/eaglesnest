@@ -6,6 +6,7 @@ import (
 	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/common/response"
 	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/system"
 	systemRes "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/system/response"
+	system2 "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/service/system"
 	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/utils"
 
 	"github.com/gin-gonic/gin"
@@ -77,8 +78,8 @@ func (a *AuthorityApi) CopyAuthority(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if copyInfo.OldAuthorityId == 888 {
-		response.FailWithMessage("不允许拷贝超级管理员角色", c)
+	if copyInfo.OldAuthorityId == 888 && !system2.HasAllDataAuthority(c) {
+		response.FailWithMessage("没有权限拷贝此角色", c)
 		return
 	}
 	authBack, err := authorityService.CopyAuthority(copyInfo)
@@ -106,8 +107,8 @@ func (a *AuthorityApi) DeleteAuthority(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if authority.AuthorityId == 888 {
-		response.FailWithMessage("超级管理员不能删除", c)
+	if authority.AuthorityId == 888 && !system2.HasAllDataAuthority(c) {
+		response.FailWithMessage("没有权限删除此角色", c)
 		return
 	}
 	if err = utils.Verify(authority, utils.AuthorityIdVerify); err != nil {
@@ -145,8 +146,9 @@ func (a *AuthorityApi) UpdateAuthority(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if auth.AuthorityId == 888 {
-		response.FailWithMessage("超级管理员不能修改", c)
+
+	if auth.AuthorityId == 888 && !system2.HasAllDataAuthority(c) {
+		response.FailWithMessage("没有权限修改此角色", c)
 		return
 	}
 	authority, err := authorityService.UpdateAuthority(auth)
@@ -178,6 +180,11 @@ func (a *AuthorityApi) GetAuthorityList(c *gin.Context) {
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
+	}
+	if system2.HasAllDataAuthority(c) {
+		pageInfo.Keyword = "1"
+	} else {
+		pageInfo.Keyword = "0"
 	}
 	list, total, err := authorityService.GetAuthorityInfoList(pageInfo)
 	if err != nil {

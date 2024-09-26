@@ -7,6 +7,7 @@ import (
 	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/system"
 	systemReq "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/system/request"
 	systemRes "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/system/response"
+	system2 "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/service/system"
 	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/utils"
 
 	"github.com/gin-gonic/gin"
@@ -70,8 +71,9 @@ func (a *AuthorityMenuApi) AddMenuAuthority(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if authorityMenu.AuthorityId == 888 {
-		response.FailWithMessage("不允许修改超级管理员的权限", c)
+
+	if authorityMenu.AuthorityId == 888 && !system2.HasAllDataAuthority(c) {
+		response.FailWithMessage("不允许修改此角色的菜单信息", c)
 		return
 	}
 	if err := utils.Verify(authorityMenu, utils.AuthorityIdVerify); err != nil {

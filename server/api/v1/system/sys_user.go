@@ -1,6 +1,7 @@
 package system
 
 import (
+	system2 "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/service/system"
 	"strconv"
 	"time"
 
@@ -222,6 +223,11 @@ func (b *BaseApi) GetUserList(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+	if system2.HasAllDataAuthority(c) {
+		pageInfo.Keyword = "1"
+	} else {
+		pageInfo.Keyword = "2"
+	}
 	list, total, err := userService.GetUserInfoList(pageInfo)
 	if err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Error(err))
@@ -299,6 +305,7 @@ func (b *BaseApi) SetUserAuthorities(c *gin.Context) {
 		response.FailWithMessage("没有权限修改超级管理员的信息", c)
 		return
 	}
+
 	for _, aid := range sua.AuthorityIds {
 		if aid == 888 {
 			response.FailWithMessage("系统只允许存在一个超级管理员用户", c)
@@ -330,8 +337,8 @@ func (b *BaseApi) DeleteUser(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if reqId.ID == 1 {
-		response.FailWithMessage("不允许删除超级管理员用户", c)
+	if reqId.ID == 1 && !system2.HasAllDataAuthority(c) {
+		response.FailWithMessage("没有权限删除此用户", c)
 		return
 	}
 	err = utils.Verify(reqId, utils.IdVerify)
@@ -375,8 +382,9 @@ func (b *BaseApi) SetUserInfo(c *gin.Context) {
 		return
 	}
 	authorityId := utils.GetUserAuthorityId(c)
+
 	if user.ID == 1 && authorityId != 888 {
-		response.FailWithMessage("没有权限修改超级管理员信息", c)
+		response.FailWithMessage("没有权限设置此用户信息", c)
 		return
 	}
 

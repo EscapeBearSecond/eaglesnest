@@ -187,9 +187,16 @@ func (authorityService *AuthorityService) GetAuthorityInfoList(info request.Page
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
 	db := global.GVA_DB.Model(&system.SysAuthority{})
-	if err = db.Where("parent_id = ? AND authority_id != ?", "0", "888").Count(&total).Error; total == 0 || err != nil {
-		return
+	if info.Keyword == "1" {
+		if err = db.Where("parent_id = ?", "0").Count(&total).Error; total == 0 || err != nil {
+			return
+		}
+	} else {
+		if err = db.Where("parent_id = ? AND authority_id != ?", "0", "888").Count(&total).Error; total == 0 || err != nil {
+			return
+		}
 	}
+
 	var authority []system.SysAuthority
 	err = db.Limit(limit).Offset(offset).Preload("DataAuthorityId").Where("parent_id = ?", "0").Find(&authority).Error
 	for k := range authority {
