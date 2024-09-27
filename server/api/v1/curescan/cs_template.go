@@ -16,6 +16,8 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
+	"time"
 )
 
 type TemplateApi struct {
@@ -356,6 +358,10 @@ func (t *TemplateApi) UploadFromZip(c *gin.Context) {
 	}
 	file, err := fh.Open()
 	defer file.Close()
+	// name_0.0.0.zip.enc
+	fileNameInfo := strings.Split(fh.Filename, "-")
+	suffixInfo := strings.Split(fileNameInfo[1], ".")
+	versionInfo := suffixInfo[0] + "." + suffixInfo[1] + "." + suffixInfo[2]
 	if err != nil {
 		response.FailWithMessage("打开加密文件失败", c)
 		return
@@ -370,6 +376,7 @@ func (t *TemplateApi) UploadFromZip(c *gin.Context) {
 		response.FailWithMessage("解密文件失败", c)
 		return
 	}
+
 	paths, err := utils.Unzip("template.zip", "template")
 	if err != nil {
 		response.FailWithMessage("解压文件失败", c)
@@ -424,6 +431,14 @@ func (t *TemplateApi) UploadFromZip(c *gin.Context) {
 		response.FailWithMessage("添加模板失败", c)
 		return
 	}
+	systemInfo, _ := systemInfoService.GetSystemInfo()
+
+	if systemInfo != nil {
+		systemInfo.LastUpdateDate = time.Now().Format("2006-01-02 15:04:05")
+		systemInfo.VulnVersion = versionInfo
+	}
+	_ = systemInfoService.UpdateSystemInfo(systemInfo)
+
 	response.Ok(c)
 }
 

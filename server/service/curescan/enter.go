@@ -10,4 +10,5 @@ type ServiceGroup struct {
 	TaskService
 	JobResultService
 	VulnService
+	SystemInfoService
 }

@@ -20,6 +20,7 @@ func RunWindowsServer() {
 	}
 	initialize.RecoverTask()
 	initialize.ExecuteTask()
+	initialize.InitSystemInfo()
 
 	// 从db加载jwt数据
 	if global.GVA_DB != nil {

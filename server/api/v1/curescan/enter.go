@@ -14,6 +14,7 @@ type ApiGroup struct {
 	TaskApi
 	VulnApi
 	StatisticsApi
+	SystemInfoApi
 }
 
 var (
@@ -23,7 +24,8 @@ var (
 	policyService      = service.ServiceGroupApp.CurescanServiceGroup.PolicyService
 	onlineCheckService = service.ServiceGroupApp.CurescanServiceGroup.OnlineCheckService
 	// portScanService    = service.ServiceGroupApp.CurescanServiceGroup.PortScanService
-	taskService   = service.ServiceGroupApp.CurescanServiceGroup.TaskService
-	vulnService   = service.ServiceGroupApp.CurescanServiceGroup.VulnService
-	resultService = service.ServiceGroupApp.CurescanServiceGroup.JobResultService
+	taskService       = service.ServiceGroupApp.CurescanServiceGroup.TaskService
+	vulnService       = service.ServiceGroupApp.CurescanServiceGroup.VulnService
+	resultService     = service.ServiceGroupApp.CurescanServiceGroup.JobResultService
+	systemInfoService = service.ServiceGroupApp.CurescanServiceGroup.SystemInfoService
 )

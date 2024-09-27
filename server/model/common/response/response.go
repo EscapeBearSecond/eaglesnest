@@ -13,8 +13,9 @@ type Response struct {
 }
 
 const (
-	ERROR   = 7
-	SUCCESS = 0
+	ERROR             = 7
+	SUCCESS           = 0
+	LicenseExpiration = 8
 )
 
 func Result(code int, data interface{}, msg string, c *gin.Context) {
@@ -50,9 +51,13 @@ func FailWithMessage(message string, c *gin.Context) {
 	Result(ERROR, map[string]interface{}{}, message, c)
 }
 
+func LicenseExpired(message string, c *gin.Context) {
+	Result(LicenseExpiration, map[string]interface{}{}, message, c)
+}
+
 func NoAuth(message string, c *gin.Context) {
 	c.JSON(http.StatusUnauthorized, Response{
-		7,
+		ERROR,
 		nil,
 		message,
 	})

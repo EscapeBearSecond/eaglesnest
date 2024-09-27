@@ -9,4 +9,5 @@ type RouterGroup struct {
 	PortScanRouter
 	TaskRouter
 	VulnRouter
+	SystemInfoRouter
 }
