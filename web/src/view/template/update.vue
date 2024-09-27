@@ -36,7 +36,9 @@ const selectedFiles = ref([]);
 const handleFileChange = (file, fileList) => {
   selectedFiles.value = fileList.map(item => item.raw);
 };
-
+defineOptions({
+  name: 'Update',
+})
 const saveFile =  async() => {
     console.log(selectedFiles.value.length)
     if (selectedFiles.value.length === 0) {
