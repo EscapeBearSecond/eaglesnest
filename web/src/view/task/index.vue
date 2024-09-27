@@ -114,7 +114,7 @@
           <el-input  type="textarea" :rows="4" v-model="taskForm.targetIpStr" placeholder="请输入扫描IP, 例：10.0.0.1/24, 10.0.0.1 ~ 10.0.0.255 "></el-input>
         </el-form-item>
         <el-form-item label="扫描区域：" v-if="taskForm.scanIpType == 1">
-          <el-select  v-model="taskForm.areaIp" multiple placeholder="请选择扫描任务区域,可多选">
+          <el-select  v-model="taskForm.areaIdArray" multiple placeholder="请选择扫描任务区域,可多选">
             <el-option  
               v-for="item in areaOption"
               :key="item.value"
@@ -326,7 +326,7 @@ const setPolicyOption = async() => {
 
     const areaData = await getAreaList({ page: 1, pageSize: 99999 })
     areaOption.value = areaData.data.list.map((item)=> {
-        return { label: item.areaName, value: item.areaIp.join(',') }
+        return { label: item.areaName, value: item.ID }
     })
     
     const res = await getDict('taskStatus')
@@ -599,7 +599,7 @@ const enterAddDialog = async() => {
         ...taskForm.value
       }
       // 这里加了判断 是否是默认执行方式，如果是默认 就是 区域选择 如果是自定义就是输入内容
-      req.scanIpType != 1 ? (req.targetIp = getIpArr(req.targetIpStr)): (req.targetIp = getAreaIP(req.areaIp));
+      req.scanIpType != 1 ? (req.targetIp = getIpArr(req.targetIpStr)): null;
       if (dialogFlag.value === 'add') {  
         const res = await createTask(req)
         if (res.code === 0) {

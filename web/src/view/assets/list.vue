@@ -55,10 +55,18 @@
         </span>
       </template>
       <template v-slot:customProt="slotProps">
+        <el-popover
+          placement="bottom-start"
+          title=""
+          :width="200"
+          trigger="hover"
+          :content="getPortStr(slotProps.row.openPorts)"
+        >
         <!-- 自定义的字段 -->
-        <span v-for="(val, key) in slotProps.row.openPorts" :key="key" style="margin-left: 2px;"> 
-          <el-tag effect="dark"  type="primary">{{ val }}</el-tag>
-        </span>
+        <template #reference>
+            <el-tag effect="dark"  type="primary" >{{  getPortsTag(slotProps.row.openPorts) }}</el-tag>
+        </template>
+      </el-popover>
       </template>
       </advance-table>
 
@@ -182,6 +190,19 @@ const getAreaName = (e) => {
   return item ? item.areaName : '未知';
 };
 
+const getPortStr =(e) => {
+  return e.join(',')
+}
+
+const getPortsTag = (e) => {
+   let arr = []
+   if(e.length > 0 ){
+     arr =  e.slice(0, 4);
+     return arr.join(',')
+   }else {
+    return e
+   }
+} 
 
 </script>
 
