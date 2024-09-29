@@ -15,6 +15,11 @@ const routes = [{
   component: () => import('@/view/login/index.vue')
 },
 {
+  path:'/export',
+  name:'Export',
+  component:() => import('@/view/cer/index.vue')
+},
+{
   path: '/:catchAll(.*)',
   meta: {
     closeTab: true,
