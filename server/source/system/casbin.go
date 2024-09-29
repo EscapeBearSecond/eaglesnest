@@ -100,6 +100,7 @@ func (i *initCasbin) InitializeData(ctx context.Context) (context.Context, error
 		{Ptype: "p", V0: "888", V1: "/system/getSystemConfig", V2: "POST"},
 		{Ptype: "p", V0: "888", V1: "/system/setSystemConfig", V2: "POST"},
 		{Ptype: "p", V0: "888", V1: "/system/getServerInfo", V2: "POST"},
+		{Ptype: "p", V0: "888", V1: "/systemInfo", V2: "GET"},
 
 		{Ptype: "p", V0: "888", V1: "/customer/customer", V2: "GET"},
 		{Ptype: "p", V0: "888", V1: "/customer/customer", V2: "PUT"},
@@ -293,6 +294,7 @@ func (i *initCasbin) InitializeData(ctx context.Context) (context.Context, error
 		{Ptype: "p", V0: "9528", V1: "/sysDictionaryDetail/findSysDictionaryDetail", V2: "GET"},
 		{Ptype: "p", V0: "9528", V1: "/sysDictionary/findSysDictionary", V2: "GET"},
 
+		{Ptype: "p", V0: "9528", V1: "/systemInfo", V2: "GET"},
 		{Ptype: "p", V0: "9528", V1: "/system/getServerInfo", V2: "POST"},
 
 		{Ptype: "p", V0: "9528", V1: "/sysOperationRecord/getSysOperationRecordList", V2: "GET"},
@@ -387,6 +389,7 @@ func (i *initCasbin) InitializeData(ctx context.Context) (context.Context, error
 		{Ptype: "p", V0: "1913", V1: "/sysOperationRecord/getSysOperationRecordList", V2: "GET"},
 		{Ptype: "p", V0: "1913", V1: "/sysOperationRecord/deleteSysOperationRecord", V2: "DELETE"},
 		{Ptype: "p", V0: "1913", V1: "/sysOperationRecord/deleteSysOperationRecordByIds", V2: "DELETE"},
+		{Ptype: "p", V0: "1913", V1: "/systemInfo", V2: "GET"},
 
 		{Ptype: "p", V0: "1914", V1: "/user/admin_register", V2: "POST"},
 		{Ptype: "p", V0: "1914", V1: "/api/createApi", V2: "POST"},
@@ -463,6 +466,7 @@ func (i *initCasbin) InitializeData(ctx context.Context) (context.Context, error
 		{Ptype: "p", V0: "1914", V1: "/sysOperationRecord/deleteSysOperationRecord", V2: "DELETE"},
 		{Ptype: "p", V0: "1914", V1: "/sysOperationRecord/deleteSysOperationRecordByIds", V2: "DELETE"},
 		{Ptype: "p", V0: "1914", V1: "/allData", V2: "GET"},
+		{Ptype: "p", V0: "1914", V1: "/systemInfo", V2: "GET"},
 	}
 	if err := db.Create(&entities).Error; err != nil {
 		return ctx, errors.Wrap(err, "Casbin 表 ("+i.InitializerName()+") 数据初始化失败!")
