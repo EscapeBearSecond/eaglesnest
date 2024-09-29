@@ -144,3 +144,11 @@ export const freshCasbin = () => {
     method: 'get'
   })
 }
+
+export const getSystemInfo = (data) => {
+  return service({
+    url: '/systemInfo',
+    method:'get',
+    data
+  })
+}
