@@ -13,5 +13,6 @@ func (s *SystemInfoRouter) InitSystemInfoRouter(Router *gin.RouterGroup) {
 	systemInfoApi := v1.ApiGroupApp.CurescanApiGroup.SystemInfoApi
 	{
 		systemInfoRouter.GET("", systemInfoApi.GetSystemInfo)
+		systemInfoRouter.POST("/license", systemInfoApi.UpdateLicense)
 	}
 }

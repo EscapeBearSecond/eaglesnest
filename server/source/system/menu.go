@@ -87,7 +87,7 @@ func (i *initMenu) InitializeData(ctx context.Context) (next context.Context, er
 		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "task", Name: "task", Component: "view/routerHolder.vue", Sort: 11, Meta: Meta{Title: "扫描任务", Icon: "search"}},
 		{MenuLevel: 0, Hidden: true, ParentId: 34, Path: "cronTask", Name: "cronTask", Component: "view/task/cronTask.vue", Sort: 2, Meta: Meta{Title: "定时任务", Icon: "alarm-clock"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 34, Path: "index", Name: "index", Component: "view/task/index.vue", Sort: 0, Meta: Meta{Title: "扫描任务", Icon: "bell"}},
-		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "template", Name: "template", Component: "view/template/index.vue", Sort: 16, Meta: Meta{Title: "模板管理", Icon: "document-copy"}},
+		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "template", Name: "template", Component: "view/routerHolder.vue", Sort: 16, Meta: Meta{Title: "模板管理", Icon: "document-copy"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 37, Path: "basic", Name: "basic", Component: "view/template/index.vue", Sort: 1, Meta: Meta{Title: "模板列表", Icon: "copy-document"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "assets", Name: "assets", Component: "view/routerHolder.vue", Sort: 12, Meta: Meta{Title: "资产管理", Icon: "guide"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 39, Path: "assets/list", Name: "assets/list", Component: "view/assets/list.vue", Sort: 2, Meta: Meta{Title: "资产列表", Icon: "data-analysis"}},
