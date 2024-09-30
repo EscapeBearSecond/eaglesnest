@@ -69,7 +69,7 @@ func Routers() *gin.Engine {
 
 	// PrivateGroup.Use(middleware.JWTAuth()).Use(middleware.CasbinHandler())
 	PrivateGroup.Use(middleware.LicenseVerify()).Use(middleware.JWTAuth()).Use(middleware.CasbinHandler())
-	// PublicGroup.Use(middleware.LicenseVerify())
+	PublicGroup.Use(middleware.LicenseVerify())
 
 	{
 		// 健康监测
