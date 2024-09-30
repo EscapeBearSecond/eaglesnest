@@ -14,6 +14,7 @@
                     v-model:file-list="fileList"
                     class="upload-demo"
                     action="''"
+                    accept=".json, .JSON"
                     multiple
                     :limit="1"
                     :before-upload="handleCustomUpload"
