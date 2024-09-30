@@ -153,7 +153,7 @@ export const getSystemInfo = (data) => {
   })
 }
 
-export const uploadLicense = () => {
+export const uploadLicense = (data) => {
   return service({
     url: '/systemInfo/license',
     method: 'post',
