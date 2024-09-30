@@ -69,7 +69,7 @@ func Routers() *gin.Engine {
 
 	// PrivateGroup.Use(middleware.JWTAuth()).Use(middleware.CasbinHandler())
 	PrivateGroup.Use(middleware.LicenseVerify()).Use(middleware.JWTAuth()).Use(middleware.CasbinHandler())
-	PublicGroup.Use(middleware.LicenseVerify())
+	// PublicGroup.Use(middleware.LicenseVerify())
 
 	{
 		// 健康监测
@@ -106,7 +106,7 @@ func Routers() *gin.Engine {
 		curescanRouter.InitOnlineCheckRouter(PrivateGroup)
 		curescanRouter.InitTaskRouter(PrivateGroup)
 		curescanRouter.InitVulnRouter(PrivateGroup)
-		curescanRouter.InitSystemInfoRouter(PrivateGroup)
+		curescanRouter.InitSystemInfoRouter(PublicGroup)
 	}
 
 	// 插件路由安装

@@ -9,7 +9,7 @@ import (
 type ApiRouter struct{}
 
 func (s *ApiRouter) InitApiRouter(Router *gin.RouterGroup, RouterPub *gin.RouterGroup) {
-	apiRouter := Router.Group("api").Use(middleware.OperationRecord())
+	apiRouter := Router.Group("api").Use(middleware.OperationRecord()).Use(middleware.LicenseVerify())
 	apiRouterWithoutRecord := Router.Group("api")
 
 	apiPublicRouterWithoutRecord := RouterPub.Group("api")
