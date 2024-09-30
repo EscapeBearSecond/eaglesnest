@@ -1,10 +1,10 @@
 {
-	"id": "cr8ilqptr70hikb6l5s0",
+	"id": "cr8im01tr70hjdhq0a20",
 	"subject": "cursec_license",
 	"issuer": "cursec",
 	"issued_at": "2024-08-30",
 	"audience": "demo_corp",
-	"hardware": "69e1e9e31ceef39327ea2a8162927c167c2d66d8d7e847e218223e9dea6932467797c5cb2a70942c7aa6ac9c75",
-	"expires_at": "2024-09-30",
-	"signature": "965853763a4515d89c37b830f7ddd1883070d69dcfc5d78a2e52dbbef1bd416e"
+	"hardware": "4a6ea4c562870a196f4f70bcf90866b923bbc6197bf5b7e9b08a3037546f2680832312e4da029415cea9dfbd7b",
+	"expires_at": "2024-08-28",
+	"signature": "bcf1d0f1e8735519146b9c39ebcd314d0824f0329418d713f39d318a5b4a3181"
 }
