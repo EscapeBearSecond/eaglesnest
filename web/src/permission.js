@@ -6,7 +6,7 @@ import Nprogress from 'nprogress'
 import 'nprogress/nprogress.css'
 Nprogress.configure({ showSpinner: false, ease: 'ease', speed: 500 })
 
-const whiteList = ['Login', 'Init']
+const whiteList = ['Login', 'Init', 'Export']
 
 const getRouter = async(userStore) => {
   const routerStore = useRouterStore()
@@ -75,8 +75,10 @@ router.beforeEach(async(to, from) => {
       return true
     }
   } else {
+    
     // 不在白名单中并且已经登录的时候
     if (token) {
+      
       //console.log(sessionStorage.getItem("needCloseAll"))
       if(sessionStorage.getItem("needToHome") === 'true') {
         sessionStorage.removeItem("needToHome")
@@ -84,6 +86,7 @@ router.beforeEach(async(to, from) => {
       }
       // 添加flag防止多次获取动态路由和栈溢出
       if (!routerStore.asyncRouterFlag && whiteList.indexOf(from.name) < 0) {
+        
         await getRouter(userStore)
         if (userStore.token) {
           if (router.hasRoute(userStore.userInfo.authority.defaultRouter)) {
@@ -92,15 +95,17 @@ router.beforeEach(async(to, from) => {
             return { path: '/layout/404' }
           }
         } else {
+          
           return {
             name: 'Login',
             query: { redirect: to.href }
           }
         }
+       
       } else {
         if (to.matched.length) {
           return true
-        } else {
+        } else { 
           return { path: '/layout/404' }
         }
       }

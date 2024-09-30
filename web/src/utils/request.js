@@ -77,6 +77,10 @@ service.interceptors.response.use(
         response.data.msg = decodeURI(response.headers.msg)
       }
       return response.data
+    }else if(response.data.code == 8){
+      const userStore = useUserStore()
+      userStore.ClearStorage()
+      router.push({ name: 'Export', replace: true })
     } else {
       if(response.data.type == 'application/json' || response.data.msg != undefined) {
         ElMessage({
