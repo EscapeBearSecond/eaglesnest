@@ -322,7 +322,7 @@ func (t *TaskApi) DownloadReport(c *gin.Context) {
 		}
 		// response.Ok(c)
 	} else {
-		response.FailWithMessage("文件不存在", c)
+		response.FailWithMessage("当前任务暂无数据", c)
 		return
 	}
 }
@@ -336,7 +336,7 @@ func (t *TaskApi) DownloadResultDocs(c *gin.Context) {
 	dir := filepath.Join(global.GVA_CONFIG.AutoCode.Root, "server", "results", entryID)
 	existed, _ := utils.PathExists(dir)
 	if !existed {
-		response.FailWithMessage("目录不存在", c)
+		response.FailWithMessage("当前任务暂无数据", c)
 		return
 	}
 	buf, err := utils.CreateZipFromDir(dir)
