@@ -44,7 +44,7 @@
 </template>
 <script setup>
 import { ref } from 'vue' 
-import { getSystemInfo } from '@/api/api'
+import { getSystemInfo, uploadLicense } from '@/api/api'
 const size = ref('default')
 const info = ref({})
 const getData = async() => {
@@ -55,12 +55,19 @@ const getData = async() => {
     }
 }
 
-const handleCustomUpload = (file) => {
+const handleCustomUpload = async(file) => {
 
     const formData = new FormData();
     formData.append('file', file);
     console.log(file)
     // 阻止默认的上传行为
+    let data = await uploadLicense(formData)
+    if (data.code === 0) {
+        getData()
+        ElMessage({ type: 'success', message: '更新成功！' })
+    }else {
+        ElMessage({ type: 'error', message: '更新失败！' })
+    }
     return false;
 }
 getData()

@@ -152,3 +152,11 @@ export const getSystemInfo = (data) => {
     data
   })
 }
+
+export const uploadLicense = () => {
+  return service({
+    url: '/systemInfo/license',
+    method: 'post',
+    data
+  })
+}
