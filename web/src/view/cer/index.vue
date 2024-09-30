@@ -10,23 +10,22 @@
             </div>
             <hr style=" height:2px;border:none;border-top:2px dotted #185598;" />
             <div class="btn">
-              <el-descriptions-item label-align="center" label="证书导入">
-                <el-upload
+              <el-upload
                     v-model:file-list="fileList"
                     class="upload-demo"
                     action="''"
+                    accept=".json, .JSON"
                     multiple
                     :limit="1"
                     :before-upload="handleCustomUpload"
                 >
-                <el-button size="small" type="primary">上传证书</el-button>
+                <el-button type="primary">导入证书</el-button>
                 <template #tip>
                     <div class="el-upload__tip">
-                        文件格式：json 类型, 大小不超过 200KB.
+                        文件类型：JSON文件, 大小不超过 200KB.
                     </div>
                     </template>
                 </el-upload>
-            </el-descriptions-item>
             </div>
     </div>
 </template>
@@ -35,9 +34,10 @@ import { ref, reactive } from 'vue'
 import { uploadLicense } from '@/api/api'
 import router from '@/router/index'
 
+const fileList = ref([])
 const handleCustomUpload = async(file) => {
   const formData = new FormData();
-  formData.append('file', file);
+  formData.append('license', file);
   console.log(file)
   // 阻止默认的上传行为
   let data = await uploadLicense(formData)
