@@ -37,7 +37,7 @@ import router from '@/router/index'
 const fileList = ref([])
 const handleCustomUpload = async(file) => {
   const formData = new FormData();
-  formData.append('file', file);
+  formData.append('license', file);
   console.log(file)
   // 阻止默认的上传行为
   let data = await uploadLicense(formData)
