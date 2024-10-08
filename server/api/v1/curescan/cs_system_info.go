@@ -72,6 +72,7 @@ func (s *SystemInfoApi) UpdateLicense(c *gin.Context) {
 
 		licenseExpiration := license.L().ExpiresAt
 		systemInfo.LicenseExpiration = licenseExpiration
+		_ = systemInfoService.UpdateSystemInfo(systemInfo)
 	}
 
 	response.OkWithMessage("证书更新成功", c)

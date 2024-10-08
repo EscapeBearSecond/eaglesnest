@@ -360,7 +360,15 @@ func (t *TemplateApi) UploadFromZip(c *gin.Context) {
 	defer file.Close()
 	// name_0.0.0.zip.enc
 	fileNameInfo := strings.Split(fh.Filename, "-")
+	if len(fileNameInfo) < 2 {
+		response.FailWithMessage("文件名格式错误，请以 name-version.zip.enc的方式命名", c)
+		return
+	}
 	suffixInfo := strings.Split(fileNameInfo[1], ".")
+	if len(suffixInfo) < 3 {
+		response.FailWithMessage("文件名格式错误 漏洞库版本命名错误 x.x.x", c)
+		return
+	}
 	versionInfo := suffixInfo[0] + "." + suffixInfo[1] + "." + suffixInfo[2]
 	if err != nil {
 		response.FailWithMessage("打开加密文件失败", c)
