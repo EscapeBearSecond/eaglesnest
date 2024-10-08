@@ -1,12 +1,11 @@
-
 <template>
     <div class="cer-box">
         <hr style=" height:2px;border:none;border-top:2px dotted #185598;" />
-        <h1>证书已</h1>
+        <h1>证书已过期</h1>
             <div class="tip-text">
-                <span class="tipw">过期,当前无法继续使用</span>
-                <span class="tipm">请您</span>
-                <span class="tipn">上传新证书或联系技术支持以获取更多信息.</span>
+                <span class="tipw">您的使用证书已过期,系统功能已被限制</span>
+                <span class="tipm">请您及时更新证书以继续使用完整功能</span>
+                <span class="tipn">请联系我们获取新的有效证书:</span>
             </div>
             <hr style=" height:2px;border:none;border-top:2px dotted #185598;" />
             <div class="btn">
@@ -20,11 +19,6 @@
                     :before-upload="handleCustomUpload"
                 >
                 <el-button type="primary">导入证书</el-button>
-                <template #tip>
-                    <div class="el-upload__tip">
-                        文件类型：JSON文件, 大小不超过 200KB.
-                    </div>
-                    </template>
                 </el-upload>
             </div>
     </div>
