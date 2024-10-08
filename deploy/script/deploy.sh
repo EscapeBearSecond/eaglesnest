@@ -8,6 +8,10 @@ BASE_DIR=/opt/curescan
 WEB_DIR=$BASE_DIR/web
 # Server 目录
 SERVER_DIR=$BASE_DIR/server
+# SSL 目录
+SSL_DIR=$BASE_DIR/ssl
+# 当前目录
+CURRENT_DIR=$(pwd)
 
 # 日志文件
 LOG_FILE="/var/log/curescan_deploy.log"
@@ -24,11 +28,29 @@ check_auth(){
         exit 1
     fi
 }
+# 生成私钥和SSL证书
+generate_ssl(){
+    echo "生成私钥和SSL证书..."
+    # 检查文件是否存在
+    if [ -f "$SSL_DIR/server.key" ] && [ -f "$SSL_DIR/server.crt" ]; then
+        log "私钥和SSL证书已存在"
+        return
+    fi
+    cd $SSL_DIR
+    # 生成私钥
+    openssl genpkey -algorithm RSA -out server.key -pkeyopt rsa_keygen_bits:4096
+    # 生成自签名证书（有效期为100年）
+    openssl req -new -x509 -key server.key -out server.crt -days 36500 \
+        -subj "/C=CN/ST=Jiangsu/L=Nanjing/O=ZhiYU/CN=cursec.com" \
+        -addext "subjectAltName = DNS:cursec.com,DNS:www.cursec.com"
+    cd $BASE_DIR
+    echo "私钥和SSL证书生成完成"
+}
 
 # 检查并创建路径
 check_path(){
     log "检查路径"
-    mkdir -p $BASE_DIR $WEB_DIR $SERVER_DIR
+    mkdir -p $BASE_DIR $WEB_DIR $SERVER_DIR $SSL_DIR
     log "路径检查完成"
 }
 
@@ -36,17 +58,17 @@ check_path(){
 copy_files(){
     log "复制文件"
     # 复制前端打包的文件
-    cp -r ./dist/ $WEB_DIR
+    cp -r $CURRENT_DIR/dist/ $WEB_DIR
     # 复制nginx配置文件
-    cp ./my.conf $WEB_DIR
+    cp $CURRENT_DIR/my.conf $WEB_DIR
     # 复制后端可执行文件
-    cp ./curescan $SERVER_DIR
+    cp $CURRENT_DIR/curescan $SERVER_DIR
     # 复制后端配置文件
-    cp ./config.release.yaml $SERVER_DIR
+    cp $CURRENT_DIR/config.release.yaml $SERVER_DIR
     # 复制docker compose文件
-    cp ./docker-compose.yaml $SERVER_DIR
+    cp $CURRENT_DIR/docker-compose.yaml $SERVER_DIR
     # 配置 systemd 服务
-    cp ./curescan.service /etc/systemd/system/
+    cp $CURRENT_DIR/curescan.service /etc/systemd/system/
     systemctl daemon-reload
     # 设置服务器开机启动
     systemctl enable curescan
@@ -93,6 +115,7 @@ run_server(){
 main(){
     check_auth
     check_path
+    generate_ssl
     load_images
     copy_files
     run_docker_compose
