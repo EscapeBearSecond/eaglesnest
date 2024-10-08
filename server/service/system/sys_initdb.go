@@ -23,10 +23,10 @@ const (
 )
 
 const (
-	InitOrderSystem   = 10
-	InitOrderInternal = 1000
-	InitOrderExternal = 100000
-	InitOrderCurescan = 1000000
+	InitOrderSystem     = 10
+	InitOrderInternal   = 1000
+	InitOrderExternal   = 100000
+	InitOrderSystemInfo = 1000000
 )
 
 var (

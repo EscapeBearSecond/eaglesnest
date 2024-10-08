@@ -3,6 +3,7 @@ package curescan
 import (
 	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
 	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/common/response"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/eagleeye/pkg/license"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"os"
@@ -54,6 +55,23 @@ func (s *SystemInfoApi) UpdateLicense(c *gin.Context) {
 	if err := c.SaveUploadedFile(fh, savePath); err != nil {
 		response.FailWithMessage("更新证书失败", c)
 		return
+	}
+	// 同时更新数据库中的证书信息
+	systemInfo, err := systemInfoService.GetSystemInfo()
+	if err != nil {
+		response.FailWithMessage("更新证书失败-获取系统信息", c)
+		return
+	}
+	if systemInfo != nil {
+		watcher, err := license.Watch("./license.json")
+		if err != nil {
+			response.FailWithMessage("更新证书失败-监听证书文件", c)
+			return
+		}
+		defer watcher.Stop()
+
+		licenseExpiration := license.L().ExpiresAt
+		systemInfo.LicenseExpiration = licenseExpiration
 	}
 
 	response.OkWithMessage("证书更新成功", c)
