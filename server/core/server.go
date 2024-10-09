@@ -1,6 +1,7 @@
 package core
 
 import (
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/core/meta"
 	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
 	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/initialize"
 	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/service/system"
@@ -33,7 +34,7 @@ func RunWindowsServer() {
 	s := initServer(address, Router)
 
 	global.GVA_LOG.Info("server run success on ", zap.String("address", address))
-
+	fmt.Print("BuildVer:", meta.BuildVer)
 	fmt.Print(`
 	欢迎使用 南京治煜漏扫平台
 	当前版本:v1.0.0
