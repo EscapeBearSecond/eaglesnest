@@ -1,14 +1,11 @@
 package curescan
 
 import (
-	"bufio"
 	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
 	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/curescan"
 	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/eagleeye/pkg/license"
 	"errors"
 	"gorm.io/gorm"
-	"os"
-	"strings"
 	"time"
 )
 
@@ -17,10 +14,8 @@ type SystemInfoService struct {
 
 func (s *SystemInfoService) InitSystemInfo() error {
 	// 读取../version.ini文件
-	systemVersion, err := readVersionInfo()
-	if err != nil {
-		return err
-	}
+	systemVersion := "0.0.0"
+
 	vulnVersion := "0.0.0"
 	lastUpdateDate := time.Now().Format("2006-01-02 15:04:05")
 	watcher, err := license.Watch("./license.json")
@@ -62,21 +57,4 @@ func (s *SystemInfoService) GetSystemInfo() (*curescan.SystemInfo, error) {
 
 func (s *SystemInfoService) UpdateSystemInfo(info *curescan.SystemInfo) error {
 	return global.GVA_DB.Save(info).Error
-}
-
-func readVersionInfo() (string, error) {
-	filePath := "../version.ini"
-	file, err := os.Open(filePath)
-	if err != nil {
-		return "0.0.0", err
-	}
-	defer file.Close()
-	scanner := bufio.NewScanner(file)
-	var version string
-	for scanner.Scan() {
-		line := scanner.Text()
-		version = strings.TrimSpace(line) // 去除首尾空格
-		break
-	}
-	return version, scanner.Err()
 }

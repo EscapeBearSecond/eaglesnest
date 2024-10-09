@@ -1,6 +1,8 @@
 package main
 
 import (
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/system/request"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/service/system"
 	_ "go.uber.org/automaxprocs"
 	"go.uber.org/zap"
 
@@ -36,6 +38,23 @@ func main() {
 		// 程序结束前关闭数据库链接
 		db, _ := global.GVA_DB.DB()
 		defer db.Close()
+	} else {
+		dbInfo := request.InitDB{
+			AdminPassword: "@123456qwer",
+			DBType:        global.GVA_CONFIG.System.DbType,
+			DBName:        global.GVA_CONFIG.Pgsql.Dbname,
+			Host:          global.GVA_CONFIG.Pgsql.Path,
+			Port:          global.GVA_CONFIG.Pgsql.Port,
+			UserName:      global.GVA_CONFIG.Pgsql.Username,
+			Password:      global.GVA_CONFIG.Pgsql.Password,
+			DBPath:        global.GVA_CONFIG.Pgsql.Path,
+		}
+		global.GVA_LOG.Info("数据库信息", zap.Any("dbInfo", dbInfo))
+		service := system.InitDBService{}
+		err := service.InitDB(dbInfo)
+		if err != nil {
+			global.GVA_LOG.Error("初始化数据库失败", zap.Any("err", err))
+		}
 	}
 	core.RunWindowsServer()
 }

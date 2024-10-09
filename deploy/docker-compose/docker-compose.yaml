@@ -16,6 +16,8 @@ services:
     volumes:
       - /opt/curescan/web/my.conf:/etc/nginx/conf.d/my.conf
       - /opt/curescan/web/dist:/usr/share/nginx/html
+      - /opt/curescan/ssl/server.crt:/etc/nginx/conf.d/server.crt
+      - /opt/curescan/ssl/server.key:/etc/nginx/conf.d/server.key
 
   postgres:
     image: postgres:13.3

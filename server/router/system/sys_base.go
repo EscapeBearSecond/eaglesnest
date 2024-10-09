@@ -2,13 +2,14 @@ package system
 
 import (
 	v1 "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/api/v1"
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/middleware"
 	"github.com/gin-gonic/gin"
 )
 
 type BaseRouter struct{}
 
 func (s *BaseRouter) InitBaseRouter(Router *gin.RouterGroup) (R gin.IRoutes) {
-	baseRouter := Router.Group("base")
+	baseRouter := Router.Group("base").Use(middleware.LicenseVerify())
 	baseApi := v1.ApiGroupApp.SystemApiGroup.BaseApi
 	{
 		baseRouter.POST("login", baseApi.Login)

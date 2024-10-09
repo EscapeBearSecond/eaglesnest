@@ -317,12 +317,14 @@ func (t *TaskApi) DownloadReport(c *gin.Context) {
 
 		if _, err := io.Copy(c.Writer, bufio.NewReader(file)); err != nil {
 			global.GVA_LOG.Error("下载文件失败", zap.Error(err))
+			c.Writer.Header().Set("Content-Type", "application/octet-stream")
 			response.FailWithMessage("下载文件失败", c)
 			return
 		}
 		// response.Ok(c)
 	} else {
-		response.FailWithMessage("文件不存在", c)
+		c.Writer.Header().Set("Content-Type", "application/octet-stream")
+		response.FailWithMessage("当前任务暂无数据", c)
 		return
 	}
 }
@@ -336,11 +338,13 @@ func (t *TaskApi) DownloadResultDocs(c *gin.Context) {
 	dir := filepath.Join(global.GVA_CONFIG.AutoCode.Root, "server", "results", entryID)
 	existed, _ := utils.PathExists(dir)
 	if !existed {
-		response.FailWithMessage("目录不存在", c)
+		c.Writer.Header().Set("Content-Type", "application/octet-stream")
+		response.FailWithMessage("当前任务暂无数据", c)
 		return
 	}
 	buf, err := utils.CreateZipFromDir(dir)
 	if err != nil {
+		c.Writer.Header().Set("Content-Type", "application/octet-stream")
 		response.FailWithMessage("获取结果文件失败", c)
 		return
 	}
