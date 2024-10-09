@@ -33,7 +33,18 @@ func (s *SystemInfoApi) UpdateLicense(c *gin.Context) {
 		response.FailWithMessage("更新证书失败", c)
 		return
 	}
-
+	file, err := fh.Open()
+	defer file.Close()
+	if err != nil {
+		response.FailWithMessage("更新证书失败", c)
+		return
+	}
+	// 验证证书是否有效
+	err = license.VerifyFromReader(file)
+	if err != nil {
+		response.FailWithMessage("证书无效", c)
+		return
+	}
 	// 检查文件名是否为 license.json
 	if fh.Filename != "license.json" {
 		response.FailWithMessage("文件名必须是 license.json", c)

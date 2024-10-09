@@ -3,7 +3,7 @@ module codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server
 go 1.22
 
 require (
-	codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/eagleeye v0.0.0-20240924134433-5c5b09e6f005
+	codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/eagleeye v0.0.0-20241009070344-8addf36bd6ba
 	github.com/aliyun/aliyun-oss-go-sdk v2.2.7+incompatible
 	github.com/aws/aws-sdk-go v1.44.307
 	github.com/casbin/casbin/v2 v2.87.1
