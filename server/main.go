@@ -47,6 +47,7 @@ func main() {
 			Port:          global.GVA_CONFIG.Pgsql.Port,
 			UserName:      global.GVA_CONFIG.Pgsql.Username,
 			Password:      global.GVA_CONFIG.Pgsql.Password,
+			DBPath:        global.GVA_CONFIG.Pgsql.Path,
 		}
 		global.GVA_LOG.Info("数据库信息", zap.Any("dbInfo", dbInfo))
 		service := system.InitDBService{}
