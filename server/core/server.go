@@ -35,13 +35,13 @@ func RunWindowsServer() {
 
 	global.GVA_LOG.Info("server run success on ", zap.String("address", address))
 	fmt.Print("BuildVer:", meta.BuildVer)
-	fmt.Print(`
+	fmt.Printf(`
 	欢迎使用 南京治煜漏扫平台
-	当前版本:v1.0.0
+	当前版本:v%s
 	--------------------------------------版权声明--------------------------------------
 	** 版权所有方：南京治煜开发团队 **
 	** 版权持有公司：南京治煜信息科技有限公司 **
 	** 版权声明：未经南京治煜信息科技有限公司书面许可，任何单位和个人不得以任何形式复制、传播、修改或商业使用本软件。 **
-`, address)
+`, meta.BuildVer)
 	global.GVA_LOG.Error(s.ListenAndServe().Error())
 }
