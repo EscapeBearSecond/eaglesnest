@@ -65,10 +65,11 @@ func (i *initSystemInfo) InitializeData(ctx context.Context) (next context.Conte
 	if !ok {
 		return ctx, system.ErrMissingDBContext
 	}
-	systemVersion, err := readVersionInfo()
-	if err != nil {
-		return ctx, err
-	}
+	// systemVersion, err := readVersionInfo()
+	// if err != nil {
+	// 	return ctx, err
+	// }
+	systemVersion := "0.1.1"
 	vulnVersion := "0.0.0"
 	lastUpdateDate := time.Now().Format("2006-01-02 15:04:05")
 	watcher, err := license.Watch("./license.json")

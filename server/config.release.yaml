@@ -97,7 +97,7 @@ pgsql:
     port: "5432"
     config: sslmode=disable TimeZone=Asia/Shanghai
     db-name: curescan
-    username: postgres
+    username: curescan
     password: "H9nWDpM86K"
     path: 127.0.0.1
     engine: ""
