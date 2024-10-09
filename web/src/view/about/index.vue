@@ -45,6 +45,8 @@
 <script setup>
 import { ref } from 'vue' 
 import { getSystemInfo, uploadLicense } from '@/api/api'
+import { ElMessage } from 'element-plus'
+
 const size = ref('default')
 const info = ref({})
 const getData = async() => {
@@ -52,6 +54,9 @@ const getData = async() => {
    console.log(data)
     if(data.code === 0) {
         info.value = data.data
+        ElMessage({ type: 'success', message: '更新成功！' })
+    }else {
+        ElMessage({ type: 'error', message: '更新失败！' })
     }
 }
 

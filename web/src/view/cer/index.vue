@@ -33,16 +33,16 @@
 import { ref, reactive } from 'vue' 
 import { uploadLicense } from '@/api/api'
 import router from '@/router/index'
+import { ElMessage } from 'element-plus'
 
 const fileList = ref([])
 const handleCustomUpload = async(file) => {
   const formData = new FormData();
   formData.append('license', file);
-  console.log(file)
+  
   // 阻止默认的上传行为
   let data = await uploadLicense(formData)
   if (data.code === 0) {
-      getData()
       ElMessage({ type: 'success', message: '更新成功，请重新登陆！' })
       router.push({ name: 'Login', replace: true })
   }else {
