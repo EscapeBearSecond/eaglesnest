@@ -24,42 +24,23 @@
   </div>
 </template>
 <script setup>
-<<<<<<< HEAD
-import { ref, reactive } from 'vue' 
-import { uploadLicense } from '@/api/api'
-import router from '@/router/index'
-import { ElMessage } from 'element-plus'
-=======
 import { ref } from "vue";
 import { uploadLicense } from "@/api/api";
 import router from "@/router/index";
 import { ElMessage } from "element-plus";
->>>>>>> 6815ed01d3ddf10c23b0e1537960aa0c3fafa8e0
 
 const fileList = ref([]);
 const handleCustomUpload = async (file) => {
   const formData = new FormData();
-<<<<<<< HEAD
-  formData.append('license', file);
-  
-=======
   formData.append("license", file);
-  console.log(file);
->>>>>>> 6815ed01d3ddf10c23b0e1537960aa0c3fafa8e0
+
   // 阻止默认的上传行为
   let data = await uploadLicense(formData);
   if (data.code === 0) {
-<<<<<<< HEAD
-      ElMessage({ type: 'success', message: '更新成功，请重新登陆！' })
-      router.push({ name: 'Login', replace: true })
-  }else {
-      ElMessage({ type: 'error', message: '更新失败，请联系相关人员操作！' })
-=======
     ElMessage({ type: "success", message: data.msg });
     router.push({ name: "Login", replace: true });
   } else {
     ElMessage({ type: "error", message: data.msg });
->>>>>>> 6815ed01d3ddf10c23b0e1537960aa0c3fafa8e0
   }
   return false;
 };
