@@ -4,7 +4,6 @@ import (
 	"bufio"
 	. "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/curescan"
 	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/service/system"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/eagleeye/pkg/license"
 	"context"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -72,13 +71,14 @@ func (i *initSystemInfo) InitializeData(ctx context.Context) (next context.Conte
 	systemVersion := "0.1.1"
 	vulnVersion := "0.0.0"
 	lastUpdateDate := time.Now().Format("2006-01-02 15:04:05")
-	watcher, err := license.Watch("./license.json")
-	if err != nil {
-		return ctx, err
-	}
-	defer watcher.Stop()
-
-	licenseExpiration := license.L().ExpiresAt
+	// watcher, err := license.Watch("./license.json")
+	// if err != nil {
+	// 	return ctx, err
+	// }
+	// defer watcher.Stop()
+	//
+	// licenseExpiration := license.L().ExpiresAt
+	licenseExpiration := ""
 	entities := []SystemInfo{
 		{
 			SystemVersion:     systemVersion,
