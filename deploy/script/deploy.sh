@@ -108,7 +108,7 @@ run_server(){
     # 设置可执行权限
     chmod +x $SERVER_DIR/curescan
     # 启动服务
-    systemctl start curescan
+    systemctl restart curescan
     log "服务器运行完成"
 }
 
