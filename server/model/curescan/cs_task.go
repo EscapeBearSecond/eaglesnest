@@ -2,6 +2,7 @@ package curescan
 
 import (
 	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
+	"database/sql"
 	"github.com/lib/pq"
 )
 
@@ -20,6 +21,8 @@ type Task struct {
 	EntryID     string         `json:"entryId" gorm:"column:entry_id;type:text;comment:entry ID"`
 	Flag        string         `json:"flag" gorm:"column:flag;type:text;comment:flag"` // 用来标记是通过区域创建还是自定义ip创建
 	AreaIDArray pq.Int64Array  `json:"areaIdArray" gorm:"column:area_id_array;type:int8[];comment:区域ID"`
+	StartAt     sql.NullTime   `json:"startAt"`
+	EndAt       sql.NullTime   `json:"endAt"`
 }
 
 func (Task) TableName() string {
