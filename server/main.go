@@ -48,6 +48,7 @@ func main() {
 			UserName:      global.GVA_CONFIG.Pgsql.Username,
 			Password:      global.GVA_CONFIG.Pgsql.Password,
 		}
+		global.GVA_LOG.Info("数据库信息", zap.Any("dbInfo", dbInfo))
 		service := system.InitDBService{}
 		err := service.InitDB(dbInfo)
 		if err != nil {
