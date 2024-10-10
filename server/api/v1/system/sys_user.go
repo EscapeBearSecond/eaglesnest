@@ -59,6 +59,7 @@ func (b *BaseApi) Login(c *gin.Context) {
 				return
 			} else {
 				global.GVA_REDIS.Del(ctx, "att_"+l.Username)
+				loginInfo = nil
 			}
 		}
 	}
@@ -128,6 +129,7 @@ func (b *BaseApi) TokenNext(c *gin.Context, user system.SysUser) {
 	}
 	if !global.GVA_CONFIG.System.UseMultipoint {
 		utils.SetToken(c, token, int(claims.RegisteredClaims.ExpiresAt.Unix()-time.Now().Unix()))
+		global.GVA_REDIS.Del(context.Background(), "att_"+user.Username)
 		response.OkWithDetailed(systemRes.LoginResponse{
 			User:      user,
 			Token:     token,
@@ -164,6 +166,7 @@ func (b *BaseApi) TokenNext(c *gin.Context, user system.SysUser) {
 			return
 		}
 		utils.SetToken(c, token, int(claims.RegisteredClaims.ExpiresAt.Unix()-time.Now().Unix()))
+		global.GVA_REDIS.Del(context.Background(), "att_"+user.Username)
 		response.OkWithDetailed(systemRes.LoginResponse{
 			User:      user,
 			Token:     token,
