@@ -47,6 +47,12 @@
           <el-form-item label="限流时间">
             <el-input-number v-model.number="config.system['iplimit-time']" />
           </el-form-item>
+          <el-form-item label="登录次数">
+            <el-input-number v-model.number="config.login['attempts']" />
+          </el-form-item>
+          <el-form-item label="封禁时长">
+            <el-input-number v-model.number="config.login['disabledDuration']" />
+          </el-form-item>
           <el-tooltip
             content="请修改完成后，注意一并修改前端env环境下的VITE_BASE_PATH"
             placement="top-start"
@@ -472,7 +478,11 @@ const activeNames = reactive([])
 const config = ref({
   system: {
     'iplimit-count': 0,
-    'iplimit-time': 0
+    'iplimit-time': 0,
+  },
+  login: {
+    'attempts': 5,
+    'disabledDuration': 300,
   },
   jwt: {},
   mysql: {},
@@ -515,6 +525,7 @@ const initForm = async() => {
   const res = await getSystemConfig()
   if (res.code === 0) {
     config.value = res.data.config
+    console.log(config.value)
   }
 }
 initForm()
