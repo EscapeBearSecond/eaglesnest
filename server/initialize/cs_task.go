@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"strconv"
+	"time"
 
 	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
 	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/curescan/common"
@@ -66,6 +67,8 @@ func ExecuteTask() {
 			taskId, _ := strconv.Atoi(ids[1])
 			task, _ := taskService.GetTaskById(taskId)
 			task.Status = common.Running
+			task.StartAt = time.Now().Format("2006-01-02 15:04:05")
+			task.EndAt = ""
 			err = taskService.UpdateTask(task)
 			if err != nil {
 				global.GVA_LOG.Error("任务执行失败-更新状态", zap.Error(err))
@@ -88,6 +91,7 @@ func ExecuteTask() {
 					global.GVA_LOG.Info("任务执行成功", zap.String("任务名称", task.TaskName), zap.Error(err))
 					task.Status = common.Success
 				}
+				task.EndAt = time.Now().Format("2006-01-02 15:04:05")
 				err = taskService.UpdateTask(task)
 				if err != nil {
 					global.GVA_LOG.Error("任务执行失败-更新状态", zap.String("任务名称", task.TaskName), zap.Error(err))

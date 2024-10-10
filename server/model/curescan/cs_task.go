@@ -20,6 +20,8 @@ type Task struct {
 	EntryID     string         `json:"entryId" gorm:"column:entry_id;type:text;comment:entry ID"`
 	Flag        string         `json:"flag" gorm:"column:flag;type:text;comment:flag"` // 用来标记是通过区域创建还是自定义ip创建
 	AreaIDArray pq.Int64Array  `json:"areaIdArray" gorm:"column:area_id_array;type:int8[];comment:区域ID"`
+	StartAt     string         `json:"startAt"`
+	EndAt       string         `json:"endAt"`
 }
 
 func (Task) TableName() string {

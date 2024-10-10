@@ -122,7 +122,7 @@ func (s *TaskService) DeleteTask(id int) error {
 func (s *TaskService) GetTaskById(id int) (*curescan.Task, error) {
 	var task *curescan.Task
 	err := global.GVA_DB.Select("id", "task_name", "task_desc", "status", "target_ip", "policy_id", "task_plan", "area_id_array",
-		"plan_config", "created_at", "updated_at", "deleted_at", "flag", "created_by", "updated_by", "entry_id").Where("id=?", id).First(&task).Error
+		"plan_config", "created_at", "updated_at", "deleted_at", "flag", "created_by", "updated_by", "entry_id", "start_at", "end_at").Where("id=?", id).First(&task).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("目标数据不存在")
@@ -144,7 +144,7 @@ func (s *TaskService) GetTaskList(st request.SearchTask) (list interface{}, tota
 	limit := page.PageSize
 	offset := page.PageSize * (page.Page - 1)
 	db := global.GVA_DB.Model(&curescan.Task{}).Select("id", "task_name", "task_desc", "status", "target_ip", "policy_id", "task_plan",
-		"plan_config", "created_at", "updated_at", "deleted_at", "flag", "entry_id", "created_by")
+		"plan_config", "created_at", "updated_at", "deleted_at", "flag", "entry_id", "created_by", "start_at", "end_at")
 	var tasks []*curescan.Task
 	if st.TaskName != "" {
 		db = db.Where("task_name LIKE ?", "%"+st.TaskName+"%")

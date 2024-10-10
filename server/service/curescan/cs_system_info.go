@@ -1,6 +1,7 @@
 package curescan
 
 import (
+	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/core/meta"
 	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
 	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/curescan"
 	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/eagleeye/pkg/license"
@@ -52,6 +53,10 @@ func (s *SystemInfoService) InitSystemInfo() error {
 func (s *SystemInfoService) GetSystemInfo() (*curescan.SystemInfo, error) {
 	var systemInfo curescan.SystemInfo
 	err := global.GVA_DB.First(&systemInfo).Error
+	if err != nil {
+		return nil, err
+	}
+	systemInfo.SystemVersion = meta.BuildVer
 	return &systemInfo, err
 }
 
