@@ -49,7 +49,7 @@ func (userService *UserService) Login(u *system.SysUser) (userInter *system.SysU
 	err = global.GVA_DB.Where("username = ?", u.Username).Preload("Authorities").Preload("Authority").First(&user).Error
 	if err == nil {
 		if ok := utils.BcryptCheck(u.Password, user.Password); !ok {
-			return nil, errors.New("密码错误")
+			return nil, global.PasswordError
 		}
 		MenuServiceApp.UserAuthorityDefaultRouter(&user)
 	}

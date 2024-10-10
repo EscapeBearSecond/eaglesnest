@@ -27,4 +27,6 @@ type Server struct {
 	// 跨域配置
 	Cors   CORS   `mapstructure:"cors" json:"cors" yaml:"cors"`
 	Report Report `mapstructure:"report" json:"report" yaml:"report"`
+	// 登录配置
+	Login Login `mapstructure:"login" json:"login" yaml:"login"`
 }

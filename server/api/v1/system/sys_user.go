@@ -2,6 +2,8 @@ package system
 
 import (
 	system2 "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/service/system"
+	"context"
+	"errors"
 	"strconv"
 	"time"
 
@@ -25,6 +27,7 @@ import (
 // @Param    data  body      systemReq.Login                                             true  "用户名, 密码, 验证码"
 // @Success  200   {object}  response.Response{data=systemRes.LoginResponse,msg=string}  "返回包括用户信息,token,过期时间"
 // @Router   /base/login [post]
+
 func (b *BaseApi) Login(c *gin.Context) {
 	var l systemReq.Login
 	err := c.ShouldBindJSON(&l)
@@ -38,6 +41,26 @@ func (b *BaseApi) Login(c *gin.Context) {
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
+	}
+
+	ctx := context.Background()
+	loginInfo, err := global.GVA_REDIS.HGetAll(ctx, "att_"+l.Username).Result()
+	if err != nil && !errors.Is(err, redis.Nil) {
+		response.FailWithMessage("redis服务异常", c)
+		return
+	}
+	if loginInfo != nil {
+		attempts, _ := strconv.Atoi(loginInfo["attempts"])
+		if attempts >= global.GVA_CONFIG.Login.Attempts {
+			// 判断是否到时间
+			enableTime, _ := strconv.ParseInt(loginInfo["enableTime"], 10, 64)
+			if time.Now().Unix() < enableTime {
+				response.FailWithMessage("账号被禁用，解禁时间为"+time.Unix(enableTime, 0).Format("2006-01-02 15:04:05"), c)
+				return
+			} else {
+				global.GVA_REDIS.Del(ctx, "att_"+l.Username)
+			}
+		}
 	}
 
 	// 判断验证码是否开启
@@ -57,9 +80,21 @@ func (b *BaseApi) Login(c *gin.Context) {
 			global.GVA_LOG.Error("登陆失败! 用户名不存在或者密码错误!", zap.Error(err))
 			// 验证码次数+1
 			global.BlackCache.Increment(key, 1)
+			// 尝试次数+1
+			if loginInfo == nil {
+				global.GVA_REDIS.HSet(ctx, "att_"+l.Username, "attempts", 1)
+			} else {
+				attempts, _ := strconv.Atoi(loginInfo["attempts"])
+				global.GVA_REDIS.HSet(ctx, "att_"+l.Username, "attempts", attempts+1)
+				if attempts+1 >= global.GVA_CONFIG.Login.Attempts {
+					global.GVA_REDIS.HSet(ctx, "att_"+l.Username, "enableTime", time.Now().Unix()+global.GVA_CONFIG.Login.DisabledDuration)
+				}
+			}
+
 			response.FailWithMessage("用户名不存在或者密码错误", c)
 			return
 		}
+
 		if user.Enable != 1 {
 			global.GVA_LOG.Error("登陆失败! 用户被禁止登录!")
 			// 验证码次数+1
@@ -108,6 +143,7 @@ func (b *BaseApi) TokenNext(c *gin.Context, user system.SysUser) {
 			return
 		}
 		utils.SetToken(c, token, int(claims.RegisteredClaims.ExpiresAt.Unix()-time.Now().Unix()))
+		global.GVA_REDIS.Del(context.Background(), "att_"+user.Username)
 		response.OkWithDetailed(systemRes.LoginResponse{
 			User:      user,
 			Token:     token,

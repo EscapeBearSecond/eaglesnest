@@ -152,3 +152,6 @@ zap:
     show-line: true
     log-in-console: false
     retention-day: -1
+login:
+    attempts: 5
+    disabledDuration: 60
