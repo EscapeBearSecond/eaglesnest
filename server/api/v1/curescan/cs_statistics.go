@@ -1,14 +1,14 @@
 package curescan
 
 import (
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/common/response"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/curescan"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/curescan/common"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/curescan/request"
-	response2 "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/curescan/response"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/service/system"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/utils"
+	"github.com/EscapeBearSecond/curescan/server/global"
+	"github.com/EscapeBearSecond/curescan/server/model/common/response"
+	"github.com/EscapeBearSecond/curescan/server/model/curescan"
+	"github.com/EscapeBearSecond/curescan/server/model/curescan/common"
+	"github.com/EscapeBearSecond/curescan/server/model/curescan/request"
+	response2 "github.com/EscapeBearSecond/curescan/server/model/curescan/response"
+	"github.com/EscapeBearSecond/curescan/server/service/system"
+	"github.com/EscapeBearSecond/curescan/server/utils"
 	"github.com/gin-gonic/gin"
 	"math"
 	"strconv"

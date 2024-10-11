@@ -5,9 +5,9 @@ import (
 
 	"go.uber.org/zap"
 
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/system"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/utils"
+	"github.com/EscapeBearSecond/curescan/server/global"
+	"github.com/EscapeBearSecond/curescan/server/model/system"
+	"github.com/EscapeBearSecond/curescan/server/utils"
 )
 
 type JwtService struct{}

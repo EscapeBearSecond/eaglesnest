@@ -27,7 +27,7 @@ aws-s3:
     secret-id: your-secret-id
     secret-key: your-secret-key
     base-url: https://gin.vue.admin
-    path-prefix: codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curesan/server
+    path-prefix: github.com/EscapeBearSecond/curesan/server
     s3-force-path-style: false
     disable-ssl: false
 captcha:
@@ -88,7 +88,7 @@ jwt:
     signing-key: 9429657d-c8ed-4ff2-96bc-0b4c04892247
     expires-time: 1d
     buffer-time: 1d
-    issuer: zy
+    issuer: dyg
 local:
     path: uploads/file
     store-path: uploads/file
@@ -141,7 +141,7 @@ tencent-cos:
     secret-id: your-secret-id
     secret-key: your-secret-key
     base-url: https://gin.vue.admin
-    path-prefix: codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curesan/server
+    path-prefix: github.com/EscapeBearSecond/curesan/server
 zap:
     level: info
     prefix: '[curescan]'

@@ -3,8 +3,8 @@ package initialize
 import (
 	"path"
 
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
-	eagleeye "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/eagleeye/pkg/sdk"
+	"github.com/EscapeBearSecond/curescan/server/global"
+	eagleeye "github.com/EscapeBearSecond/eagleeye/pkg/sdk"
 )
 
 func EagleeyeEngine() {

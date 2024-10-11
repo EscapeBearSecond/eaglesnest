@@ -1,11 +1,11 @@
 package initialize
 
 import (
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/curescan"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/example"
-	sysModel "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/system"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/service/system"
 	"context"
+	"github.com/EscapeBearSecond/curescan/server/model/curescan"
+	"github.com/EscapeBearSecond/curescan/server/model/example"
+	sysModel "github.com/EscapeBearSecond/curescan/server/model/system"
+	"github.com/EscapeBearSecond/curescan/server/service/system"
 	adapter "github.com/casbin/gorm-adapter/v3"
 	"gorm.io/gorm"
 )

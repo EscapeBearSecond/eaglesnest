@@ -6,7 +6,7 @@ import (
 	"net/smtp"
 	"strings"
 
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/plugin/email/global"
+	"github.com/EscapeBearSecond/curescan/server/plugin/email/global"
 
 	"github.com/jordan-wright/email"
 )

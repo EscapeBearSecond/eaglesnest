@@ -1,11 +1,11 @@
 package curescan
 
 import (
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
 	"database/sql/driver"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/EscapeBearSecond/curescan/server/global"
 )
 
 type JSONB map[string]interface{}

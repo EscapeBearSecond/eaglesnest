@@ -1,6 +1,6 @@
 package response
 
-import "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/curescan"
+import "github.com/EscapeBearSecond/curescan/server/model/curescan"
 
 type TaskResult struct {
 	PortScanList    []*curescan.PortScan

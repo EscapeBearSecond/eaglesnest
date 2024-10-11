@@ -5,7 +5,7 @@ jwt:
   signing-key: ^MSrR##5g6J6m!w6VeDL
   expires-time: 1d
   buffer-time: 1d
-  issuer: zy
+  issuer: dyg
 # zap logger configuration
 zap:
   level: info
@@ -164,7 +164,7 @@ tencent-cos:
   secret-id: your-secret-id
   secret-key: your-secret-key
   base-url: https://gin.vue.admin
-  path-prefix: codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server
+  path-prefix: github.com/EscapeBearSecond/curescan/server
 
 # aws s3 configuration (minio compatible)
 aws-s3:
@@ -176,7 +176,7 @@ aws-s3:
   secret-id: your-secret-id
   secret-key: your-secret-key
   base-url: https://gin.vue.admin
-  path-prefix: codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server
+  path-prefix: github.com/EscapeBearSecond/curescan/server
 
 # huawei obs configuration
 hua-wei-obs:

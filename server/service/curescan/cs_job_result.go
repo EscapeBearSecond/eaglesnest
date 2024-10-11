@@ -1,12 +1,12 @@
 package curescan
 
 import (
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/curescan"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/curescan/common"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/curescan/request"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/curescan/response"
 	"fmt"
+	"github.com/EscapeBearSecond/curescan/server/global"
+	"github.com/EscapeBearSecond/curescan/server/model/curescan"
+	"github.com/EscapeBearSecond/curescan/server/model/curescan/common"
+	"github.com/EscapeBearSecond/curescan/server/model/curescan/request"
+	"github.com/EscapeBearSecond/curescan/server/model/curescan/response"
 	"gorm.io/gorm"
 )
 

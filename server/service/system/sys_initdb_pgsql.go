@@ -6,13 +6,13 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/config"
+	"github.com/EscapeBearSecond/curescan/server/config"
 	"github.com/gookit/color"
 
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/utils"
+	"github.com/EscapeBearSecond/curescan/server/utils"
 
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/system/request"
+	"github.com/EscapeBearSecond/curescan/server/global"
+	"github.com/EscapeBearSecond/curescan/server/model/system/request"
 	"github.com/gofrs/uuid/v5"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

@@ -1,14 +1,14 @@
 package initialize
 
 import (
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/middleware"
+	"github.com/EscapeBearSecond/curescan/server/middleware"
 	"github.com/gin-contrib/pprof"
 	"net/http"
 	"os"
 
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/docs"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/router"
+	"github.com/EscapeBearSecond/curescan/server/docs"
+	"github.com/EscapeBearSecond/curescan/server/global"
+	"github.com/EscapeBearSecond/curescan/server/router"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"

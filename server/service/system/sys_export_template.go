@@ -2,13 +2,13 @@ package system
 
 import (
 	"bytes"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/common/request"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/system"
-	systemReq "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/system/request"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/utils"
 	"encoding/json"
 	"fmt"
+	"github.com/EscapeBearSecond/curescan/server/global"
+	"github.com/EscapeBearSecond/curescan/server/model/common/request"
+	"github.com/EscapeBearSecond/curescan/server/model/system"
+	systemReq "github.com/EscapeBearSecond/curescan/server/model/system/request"
+	"github.com/EscapeBearSecond/curescan/server/utils"
 	"github.com/xuri/excelize/v2"
 	"gorm.io/gorm"
 	"mime/multipart"

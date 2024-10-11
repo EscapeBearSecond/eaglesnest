@@ -2,9 +2,9 @@ package curescan
 
 import (
 	"bufio"
-	. "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/curescan"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/service/system"
 	"context"
+	"github.com/EscapeBearSecond/curescan/server/model/curescan"
+	"github.com/EscapeBearSecond/curescan/server/service/system"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 	"os"
@@ -21,7 +21,7 @@ func init() {
 	system.RegisterInit(initOrderSystemInfo, &initSystemInfo{})
 }
 func (i initSystemInfo) InitializerName() string {
-	return SystemInfo{}.TableName()
+	return curescan.SystemInfo{}.TableName()
 }
 
 func (i *initSystemInfo) MigrateTable(ctx context.Context) (context.Context, error) {
@@ -30,7 +30,7 @@ func (i *initSystemInfo) MigrateTable(ctx context.Context) (context.Context, err
 		return ctx, system.ErrMissingDBContext
 	}
 	return ctx, db.AutoMigrate(
-		&SystemInfo{},
+		&curescan.SystemInfo{},
 	)
 }
 
@@ -40,7 +40,7 @@ func (i *initSystemInfo) TableCreated(ctx context.Context) bool {
 		return false
 	}
 	m := db.Migrator()
-	return m.HasTable(&SystemInfo{})
+	return m.HasTable(&curescan.SystemInfo{})
 }
 func readVersionInfo() (string, error) {
 	filePath := "../version.ini"
@@ -79,7 +79,7 @@ func (i *initSystemInfo) InitializeData(ctx context.Context) (next context.Conte
 	//
 	// licenseExpiration := license.L().ExpiresAt
 	licenseExpiration := ""
-	entities := []SystemInfo{
+	entities := []curescan.SystemInfo{
 		{
 			SystemVersion:     systemVersion,
 			VulnVersion:       vulnVersion,
@@ -88,7 +88,7 @@ func (i *initSystemInfo) InitializeData(ctx context.Context) (next context.Conte
 		},
 	}
 	if err = db.Create(&entities).Error; err != nil {
-		return ctx, errors.Wrap(err, SystemInfo{}.TableName()+"表初始化失败！")
+		return ctx, errors.Wrap(err, curescan.SystemInfo{}.TableName()+"表初始化失败！")
 	}
 	next = context.WithValue(ctx, i.InitializerName(), entities)
 	return next, nil
@@ -99,7 +99,7 @@ func (i *initSystemInfo) DataInserted(ctx context.Context) bool {
 	if !ok {
 		return false
 	}
-	if errors.Is(db.Where("id = ?", 1).First(&SystemInfo{}).Error, gorm.ErrRecordNotFound) {
+	if errors.Is(db.Where("id = ?", 1).First(&curescan.SystemInfo{}).Error, gorm.ErrRecordNotFound) {
 		return false
 	}
 	return true

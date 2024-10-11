@@ -1,9 +1,9 @@
 package example
 
 import (
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/example"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/service/system"
 	"context"
+	"github.com/EscapeBearSecond/curescan/server/model/example"
+	"github.com/EscapeBearSecond/curescan/server/service/system"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 )

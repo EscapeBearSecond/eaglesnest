@@ -3,8 +3,8 @@ package initialize
 import (
 	"github.com/songzhibin97/gkit/cache/local_cache"
 
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/utils"
+	"github.com/EscapeBearSecond/curescan/server/global"
+	"github.com/EscapeBearSecond/curescan/server/utils"
 )
 
 func OtherInit() {

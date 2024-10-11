@@ -1,18 +1,18 @@
 package curescan
 
 import (
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/curescan/common"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/EscapeBearSecond/curescan/server/model/curescan/common"
 	"strconv"
 
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/common/response"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/curescan"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/curescan/request"
-	csresponse "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/curescan/response"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/utils"
+	"github.com/EscapeBearSecond/curescan/server/global"
+	"github.com/EscapeBearSecond/curescan/server/model/common/response"
+	"github.com/EscapeBearSecond/curescan/server/model/curescan"
+	"github.com/EscapeBearSecond/curescan/server/model/curescan/request"
+	csresponse "github.com/EscapeBearSecond/curescan/server/model/curescan/response"
+	"github.com/EscapeBearSecond/curescan/server/utils"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )

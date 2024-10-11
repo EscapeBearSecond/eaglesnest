@@ -6,12 +6,12 @@ import (
 	"strconv"
 	"time"
 
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/plugin/email/utils"
-	utils2 "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/utils"
+	"github.com/EscapeBearSecond/curescan/server/plugin/email/utils"
+	utils2 "github.com/EscapeBearSecond/curescan/server/utils"
 
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/system"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/service"
+	"github.com/EscapeBearSecond/curescan/server/global"
+	"github.com/EscapeBearSecond/curescan/server/model/system"
+	"github.com/EscapeBearSecond/curescan/server/service"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )

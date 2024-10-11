@@ -1,10 +1,10 @@
 package system
 
 import (
-	sysModel "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/system"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/service/system"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/utils"
 	"context"
+	sysModel "github.com/EscapeBearSecond/curescan/server/model/system"
+	"github.com/EscapeBearSecond/curescan/server/service/system"
+	"github.com/EscapeBearSecond/curescan/server/utils"
 	"github.com/gofrs/uuid/v5"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -59,7 +59,7 @@ func (i *initUser) InitializeData(ctx context.Context) (next context.Context, er
 			UUID:        uuid.Must(uuid.NewV4()),
 			Username:    "superAdmin",
 			Password:    adminPassword,
-			NickName:    "治煜",
+			NickName:    "DYG",
 			HeaderImg:   "",
 			AuthorityId: 888,
 			Phone:       "",

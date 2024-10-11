@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	sysModel "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/system"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/service/system"
+	sysModel "github.com/EscapeBearSecond/curescan/server/model/system"
+	"github.com/EscapeBearSecond/curescan/server/service/system"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 )

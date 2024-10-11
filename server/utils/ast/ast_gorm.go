@@ -12,7 +12,7 @@ import (
 
 // 自动为 gorm.go 注册一个自动迁移
 func AddRegisterTablesAst(path, funcName, pk, varName, dbName, model string) {
-	modelPk := fmt.Sprintf("codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/%s", pk)
+	modelPk := fmt.Sprintf("github.com/EscapeBearSecond/curescan/server/model/%s", pk)
 	src, err := os.ReadFile(path)
 	if err != nil {
 		fmt.Println(err)

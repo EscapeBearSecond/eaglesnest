@@ -1,9 +1,9 @@
 package core
 
 import (
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/core/internal"
 	"flag"
 	"fmt"
+	"github.com/EscapeBearSecond/curescan/server/core/internal"
 	"github.com/gin-gonic/gin"
 	"os"
 	"path/filepath"
@@ -11,8 +11,8 @@ import (
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
 
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
-	_ "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/packfile"
+	"github.com/EscapeBearSecond/curescan/server/global"
+	_ "github.com/EscapeBearSecond/curescan/server/packfile"
 )
 
 // Viper //

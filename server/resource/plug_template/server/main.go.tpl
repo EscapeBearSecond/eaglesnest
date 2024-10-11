@@ -1,13 +1,13 @@
 package {{ .Snake}}
 
 import (
-	gvaGlobal "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/system"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/plugin/plugin-tool/utils"
+	gvaGlobal "github.com/EscapeBearSecond/curescan/server/global"
+	"github.com/EscapeBearSecond/curescan/server/model/system"
+	"github.com/EscapeBearSecond/curescan/server/plugin/plugin-tool/utils"
 {{- if .HasGlobal }}
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/plugin/{{ .Snake}}/global"
+	"github.com/EscapeBearSecond/curescan/server/plugin/{{ .Snake}}/global"
 {{- end }}
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/plugin/{{ .Snake}}/router"
+	"github.com/EscapeBearSecond/curescan/server/plugin/{{ .Snake}}/router"
 	"github.com/gin-gonic/gin"
 )
 

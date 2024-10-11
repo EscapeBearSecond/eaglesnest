@@ -1,19 +1,19 @@
 package system
 
 import (
-	system2 "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/service/system"
 	"context"
 	"errors"
+	system2 "github.com/EscapeBearSecond/curescan/server/service/system"
 	"strconv"
 	"time"
 
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/common/request"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/common/response"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/system"
-	systemReq "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/system/request"
-	systemRes "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/system/response"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/utils"
+	"github.com/EscapeBearSecond/curescan/server/global"
+	"github.com/EscapeBearSecond/curescan/server/model/common/request"
+	"github.com/EscapeBearSecond/curescan/server/model/common/response"
+	"github.com/EscapeBearSecond/curescan/server/model/system"
+	systemReq "github.com/EscapeBearSecond/curescan/server/model/system/request"
+	systemRes "github.com/EscapeBearSecond/curescan/server/model/system/response"
+	"github.com/EscapeBearSecond/curescan/server/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"

@@ -27,7 +27,7 @@ aws-s3:
     secret-id: your-secret-id
     secret-key: your-secret-key
     base-url: https://gin.vue.admin
-    path-prefix: codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curesan/server
+    path-prefix: github.com/EscapeBearSecond/curesan/server
     s3-force-path-style: false
     disable-ssl: false
 captcha:
@@ -113,8 +113,8 @@ pgsql:
     config: sslmode=disable TimeZone=Asia/Shanghai
     db-name: curescan
     username: postgres
-    password: "H9nWDpM86K"
-    path: 106.15.237.118
+    password: "292378"
+    path: 127.0.0.1
     engine: ""
     log-mode: error
     max-idle-conns: 10
@@ -130,7 +130,7 @@ qiniu:
     use-https: false
     use-cdn-domains: false
 redis:
-    addr: 106.15.237.118:6379
+    addr: 127.0.0.1:6379
     password: ""
     db: 0
     useCluster: false
@@ -154,10 +154,10 @@ tencent-cos:
     secret-id: your-secret-id
     secret-key: your-secret-key
     base-url: https://gin.vue.admin
-    path-prefix: codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curesan/server
+    path-prefix: github.com/EscapeBearSecond/curesan/server
 zap:
     level: info
-    prefix: "[治煜]"
+    prefix: "[DYG]"
     format: json
     director: log
     encode-level: LowercaseLevelEncoder
@@ -167,4 +167,4 @@ zap:
     retention-day: -1
 
 report:
-    customer: "治煜"
+    customer: "DYG"

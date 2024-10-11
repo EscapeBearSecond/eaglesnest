@@ -1,9 +1,9 @@
 package initialize
 
 import (
-	_ "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/source/curescan"
-	_ "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/source/example"
-	_ "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/source/system"
+	_ "github.com/EscapeBearSecond/curescan/server/source/curescan"
+	_ "github.com/EscapeBearSecond/curescan/server/source/example"
+	_ "github.com/EscapeBearSecond/curescan/server/source/system"
 )
 
 func init() {

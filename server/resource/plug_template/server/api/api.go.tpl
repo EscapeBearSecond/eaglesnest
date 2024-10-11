@@ -1,10 +1,10 @@
 package api
 
 import (
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/common/response"
-{{ if .NeedModel }}	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/plugin/{{ .Snake}}/model" {{ end }}
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/plugin/{{ .Snake}}/service"
+	"github.com/EscapeBearSecond/curescan/server/global"
+	"github.com/EscapeBearSecond/curescan/server/model/common/response"
+{{ if .NeedModel }}	"github.com/EscapeBearSecond/curescan/server/plugin/{{ .Snake}}/model" {{ end }}
+	"github.com/EscapeBearSecond/curescan/server/plugin/{{ .Snake}}/service"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )

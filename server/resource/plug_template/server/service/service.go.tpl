@@ -2,7 +2,7 @@ package service
 
  {{- if .NeedModel }}
 import (
-   "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/plugin/{{ .Snake}}/model"
+   "github.com/EscapeBearSecond/curescan/server/plugin/{{ .Snake}}/model"
 )
 {{ end }}
 

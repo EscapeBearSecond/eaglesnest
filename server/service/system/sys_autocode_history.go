@@ -8,15 +8,15 @@ import (
 	"strings"
 	"time"
 
-	systemReq "codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/system/request"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/utils/ast"
+	systemReq "github.com/EscapeBearSecond/curescan/server/model/system/request"
+	"github.com/EscapeBearSecond/curescan/server/utils/ast"
 
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/system/response"
+	"github.com/EscapeBearSecond/curescan/server/model/system/response"
 
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/common/request"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/system"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/utils"
+	"github.com/EscapeBearSecond/curescan/server/global"
+	"github.com/EscapeBearSecond/curescan/server/model/common/request"
+	"github.com/EscapeBearSecond/curescan/server/model/system"
+	"github.com/EscapeBearSecond/curescan/server/utils"
 
 	"go.uber.org/zap"
 )

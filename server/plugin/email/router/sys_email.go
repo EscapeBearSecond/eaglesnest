@@ -1,8 +1,8 @@
 package router
 
 import (
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/middleware"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/plugin/email/api"
+	"github.com/EscapeBearSecond/curescan/server/middleware"
+	"github.com/EscapeBearSecond/curescan/server/plugin/email/api"
 	"github.com/gin-gonic/gin"
 )
 

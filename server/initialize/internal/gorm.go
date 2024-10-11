@@ -1,8 +1,8 @@
 package internal
 
 import (
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/config"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
+	"github.com/EscapeBearSecond/curescan/server/config"
+	"github.com/EscapeBearSecond/curescan/server/global"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"

@@ -1,14 +1,14 @@
 package main
 
 import (
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/model/system/request"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/service/system"
+	"github.com/EscapeBearSecond/curescan/server/model/system/request"
+	"github.com/EscapeBearSecond/curescan/server/service/system"
 	_ "go.uber.org/automaxprocs"
 	"go.uber.org/zap"
 
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/core"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/global"
-	"codeup.aliyun.com/66d825f8c06a2fdac7bbfe8c/curescan/server/initialize"
+	"github.com/EscapeBearSecond/curescan/server/core"
+	"github.com/EscapeBearSecond/curescan/server/global"
+	"github.com/EscapeBearSecond/curescan/server/initialize"
 )
 
 //go:generate go env -w GO111MODULE=on
