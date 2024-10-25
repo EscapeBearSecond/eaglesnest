@@ -1,10 +1,10 @@
 package api
 
 import (
-	"github.com/EscapeBearSecond/curescan/server/global"
-	"github.com/EscapeBearSecond/curescan/server/model/common/response"
-	email_response "github.com/EscapeBearSecond/curescan/server/plugin/email/model/response"
-	"github.com/EscapeBearSecond/curescan/server/plugin/email/service"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/common/response"
+	email_response "github.com/EscapeBearSecond/eaglesnest/server/plugin/email/model/response"
+	"github.com/EscapeBearSecond/eaglesnest/server/plugin/email/service"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )

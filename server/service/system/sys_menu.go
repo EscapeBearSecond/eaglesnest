@@ -3,9 +3,9 @@ package system
 import (
 	"errors"
 
-	"github.com/EscapeBearSecond/curescan/server/global"
-	"github.com/EscapeBearSecond/curescan/server/model/common/request"
-	"github.com/EscapeBearSecond/curescan/server/model/system"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/common/request"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/system"
 	"gorm.io/gorm"
 )
 

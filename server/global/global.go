@@ -6,15 +6,15 @@ import (
 	"github.com/qiniu/qmgo"
 	"github.com/redis/go-redis/v9"
 
-	"github.com/EscapeBearSecond/curescan/server/utils/timer"
-	eagleeye "github.com/EscapeBearSecond/eagleeye/pkg/sdk"
+	"github.com/EscapeBearSecond/eaglesnest/server/utils/timer"
+	falcon "github.com/EscapeBearSecond/falcon/pkg/sdk"
 	"github.com/songzhibin97/gkit/cache/local_cache"
 
 	"golang.org/x/sync/singleflight"
 
 	"go.uber.org/zap"
 
-	"github.com/EscapeBearSecond/curescan/server/config"
+	"github.com/EscapeBearSecond/eaglesnest/server/config"
 
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
@@ -31,7 +31,7 @@ var (
 	GVA_LOG                 *zap.Logger
 	GVA_Timer               timer.Timer = timer.NewTimerTask()
 	GVA_Concurrency_Control             = &singleflight.Group{}
-	EagleeyeEngine          *eagleeye.EagleeyeEngine
+	FalconEngine            *falcon.EagleeyeEngine
 	BlackCache              local_cache.Cache
 	lock                    sync.RWMutex
 )

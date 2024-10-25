@@ -3,9 +3,9 @@ package initialize
 import (
 	"fmt"
 
-	"github.com/EscapeBearSecond/curescan/server/global"
-	"github.com/EscapeBearSecond/curescan/server/plugin/email"
-	"github.com/EscapeBearSecond/curescan/server/utils/plugin"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/plugin/email"
+	"github.com/EscapeBearSecond/eaglesnest/server/utils/plugin"
 	"github.com/gin-gonic/gin"
 )
 

@@ -1,14 +1,14 @@
 package system
 
 import (
-	"github.com/EscapeBearSecond/curescan/server/global"
-	"github.com/EscapeBearSecond/curescan/server/model/common/request"
-	"github.com/EscapeBearSecond/curescan/server/model/common/response"
-	"github.com/EscapeBearSecond/curescan/server/model/system"
-	systemReq "github.com/EscapeBearSecond/curescan/server/model/system/request"
-	systemRes "github.com/EscapeBearSecond/curescan/server/model/system/response"
-	system2 "github.com/EscapeBearSecond/curescan/server/service/system"
-	"github.com/EscapeBearSecond/curescan/server/utils"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/common/request"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/common/response"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/system"
+	systemReq "github.com/EscapeBearSecond/eaglesnest/server/model/system/request"
+	systemRes "github.com/EscapeBearSecond/eaglesnest/server/model/system/response"
+	system2 "github.com/EscapeBearSecond/eaglesnest/server/service/system"
+	"github.com/EscapeBearSecond/eaglesnest/server/utils"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"

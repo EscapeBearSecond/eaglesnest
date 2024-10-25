@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"github.com/EscapeBearSecond/curescan/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
 	"runtime"
 	"time"
 

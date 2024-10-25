@@ -6,7 +6,7 @@ import (
 	"mime/multipart"
 	"time"
 
-	"github.com/EscapeBearSecond/curescan/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"

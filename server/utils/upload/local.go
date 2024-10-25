@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/EscapeBearSecond/curescan/server/global"
-	"github.com/EscapeBearSecond/curescan/server/utils"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/utils"
 	"go.uber.org/zap"
 )
 

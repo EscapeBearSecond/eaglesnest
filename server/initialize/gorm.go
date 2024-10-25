@@ -3,10 +3,10 @@ package initialize
 import (
 	"os"
 
-	"github.com/EscapeBearSecond/curescan/server/global"
-	"github.com/EscapeBearSecond/curescan/server/model/curescan"
-	"github.com/EscapeBearSecond/curescan/server/model/example"
-	"github.com/EscapeBearSecond/curescan/server/model/system"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/eaglesnest"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/example"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/system"
 
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -47,16 +47,16 @@ func RegisterTables() {
 		example.ExaFileChunk{},
 		example.ExaFileUploadAndDownload{},
 
-		curescan.Area{},
-		curescan.Asset{},
-		curescan.JobResultItem{},
-		curescan.OnlineCheck{},
-		curescan.Policy{},
-		curescan.PortScan{},
-		curescan.Task{},
-		curescan.Template{},
-		curescan.Vuln{},
-		curescan.SystemInfo{},
+		eaglesnest.Area{},
+		eaglesnest.Asset{},
+		eaglesnest.JobResultItem{},
+		eaglesnest.OnlineCheck{},
+		eaglesnest.Policy{},
+		eaglesnest.PortScan{},
+		eaglesnest.Task{},
+		eaglesnest.Template{},
+		eaglesnest.Vuln{},
+		eaglesnest.SystemInfo{},
 	)
 	if err != nil {
 		global.GVA_LOG.Error("register table failed", zap.Error(err))

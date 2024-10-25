@@ -1,7 +1,7 @@
 package response
 
 import (
-	"github.com/EscapeBearSecond/curescan/server/model/system/request"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/system/request"
 )
 
 type PolicyPathResponse struct {

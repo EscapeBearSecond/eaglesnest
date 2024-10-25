@@ -1,12 +1,12 @@
 package initialize
 
 import (
-	"github.com/EscapeBearSecond/curescan/server/global"
-	"github.com/EscapeBearSecond/curescan/server/service/curescan"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/service/eaglesnest"
 	"go.uber.org/zap"
 )
 
-var systemInfoService = &curescan.SystemInfoService{}
+var systemInfoService = &eaglesnest.SystemInfoService{}
 
 func InitSystemInfo() {
 	if global.GVA_DB != nil {

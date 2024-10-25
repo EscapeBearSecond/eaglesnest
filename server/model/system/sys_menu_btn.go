@@ -1,6 +1,6 @@
 package system
 
-import "github.com/EscapeBearSecond/curescan/server/global"
+import "github.com/EscapeBearSecond/eaglesnest/server/global"
 
 type SysBaseMenuBtn struct {
 	global.GvaModel

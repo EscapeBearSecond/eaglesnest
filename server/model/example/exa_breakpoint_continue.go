@@ -1,7 +1,7 @@
 package example
 
 import (
-	"github.com/EscapeBearSecond/curescan/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
 )
 
 // file struct, 文件结构体

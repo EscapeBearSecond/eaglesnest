@@ -5,9 +5,9 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/EscapeBearSecond/curescan/server/global"
-	"github.com/EscapeBearSecond/curescan/server/model/system"
-	"github.com/EscapeBearSecond/curescan/server/utils"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/system"
+	"github.com/EscapeBearSecond/eaglesnest/server/utils"
 )
 
 type JwtService struct{}

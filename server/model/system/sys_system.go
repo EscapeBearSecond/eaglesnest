@@ -1,7 +1,7 @@
 package system
 
 import (
-	"github.com/EscapeBearSecond/curescan/server/config"
+	"github.com/EscapeBearSecond/eaglesnest/server/config"
 )
 
 // 配置文件结构体

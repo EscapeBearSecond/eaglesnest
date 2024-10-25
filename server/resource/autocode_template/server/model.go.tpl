@@ -3,7 +3,7 @@ package {{.Package}}
 
 import (
 	{{- if .GvaModel }}
-	"github.com/EscapeBearSecond/curescan/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
 	{{- end }}
 	{{- if or .HasTimer }}
 	"time"

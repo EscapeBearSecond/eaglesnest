@@ -3,9 +3,9 @@ package system
 import (
 	"time"
 
-	"github.com/EscapeBearSecond/curescan/server/global"
-	"github.com/EscapeBearSecond/curescan/server/model/common/response"
-	systemRes "github.com/EscapeBearSecond/curescan/server/model/system/response"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/common/response"
+	systemRes "github.com/EscapeBearSecond/eaglesnest/server/model/system/response"
 	"github.com/gin-gonic/gin"
 	"github.com/mojocn/base64Captcha"
 	"go.uber.org/zap"

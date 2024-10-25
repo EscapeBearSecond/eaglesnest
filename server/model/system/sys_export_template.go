@@ -2,7 +2,7 @@
 package system
 
 import (
-	"github.com/EscapeBearSecond/curescan/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
 )
 
 // 导出模板 结构体  SysExportTemplate

@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/EscapeBearSecond/curescan/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
 	"github.com/mojocn/base64Captcha"
 	"go.uber.org/zap"
 )

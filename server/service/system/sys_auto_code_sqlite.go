@@ -2,8 +2,8 @@ package system
 
 import (
 	"fmt"
-	"github.com/EscapeBearSecond/curescan/server/global"
-	"github.com/EscapeBearSecond/curescan/server/model/system/response"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/system/response"
 	"path/filepath"
 	"strings"
 )

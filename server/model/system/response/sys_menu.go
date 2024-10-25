@@ -1,6 +1,6 @@
 package response
 
-import "github.com/EscapeBearSecond/curescan/server/model/system"
+import "github.com/EscapeBearSecond/eaglesnest/server/model/system"
 
 type SysMenusResponse struct {
 	Menus []system.SysMenu `json:"menus"`

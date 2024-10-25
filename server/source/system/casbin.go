@@ -3,7 +3,7 @@ package system
 import (
 	"context"
 
-	"github.com/EscapeBearSecond/curescan/server/service/system"
+	"github.com/EscapeBearSecond/eaglesnest/server/service/system"
 	adapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"

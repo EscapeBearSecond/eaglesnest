@@ -1,10 +1,10 @@
 package api
 
 import (
-	"github.com/EscapeBearSecond/curescan/server/global"
-	"github.com/EscapeBearSecond/curescan/server/model/common/response"
-{{ if .NeedModel }}	"github.com/EscapeBearSecond/curescan/server/plugin/{{ .Snake}}/model" {{ end }}
-	"github.com/EscapeBearSecond/curescan/server/plugin/{{ .Snake}}/service"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/common/response"
+{{ if .NeedModel }}	"github.com/EscapeBearSecond/eaglesnest/server/plugin/{{ .Snake}}/model" {{ end }}
+	"github.com/EscapeBearSecond/eaglesnest/server/plugin/{{ .Snake}}/service"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )

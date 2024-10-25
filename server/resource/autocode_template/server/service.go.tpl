@@ -1,9 +1,9 @@
 package {{.Package}}
 
 import (
-	"github.com/EscapeBearSecond/curescan/server/global"
-	"github.com/EscapeBearSecond/curescan/server/model/{{.Package}}"
-    {{.Package}}Req "github.com/EscapeBearSecond/curescan/server/model/{{.Package}}/request"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/{{.Package}}"
+    {{.Package}}Req "github.com/EscapeBearSecond/eaglesnest/server/model/{{.Package}}/request"
     {{- if .AutoCreateResource }}
     "gorm.io/gorm"
     {{- end}}

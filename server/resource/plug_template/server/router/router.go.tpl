@@ -1,7 +1,7 @@
 package router
 
 import (
-	"github.com/EscapeBearSecond/curescan/server/plugin/{{ .Snake}}/api"
+	"github.com/EscapeBearSecond/eaglesnest/server/plugin/{{ .Snake}}/api"
 	"github.com/gin-gonic/gin"
 )
 

@@ -8,15 +8,15 @@ import (
 	"strings"
 	"time"
 
-	systemReq "github.com/EscapeBearSecond/curescan/server/model/system/request"
-	"github.com/EscapeBearSecond/curescan/server/utils/ast"
+	systemReq "github.com/EscapeBearSecond/eaglesnest/server/model/system/request"
+	"github.com/EscapeBearSecond/eaglesnest/server/utils/ast"
 
-	"github.com/EscapeBearSecond/curescan/server/model/system/response"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/system/response"
 
-	"github.com/EscapeBearSecond/curescan/server/global"
-	"github.com/EscapeBearSecond/curescan/server/model/common/request"
-	"github.com/EscapeBearSecond/curescan/server/model/system"
-	"github.com/EscapeBearSecond/curescan/server/utils"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/common/request"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/system"
+	"github.com/EscapeBearSecond/eaglesnest/server/utils"
 
 	"go.uber.org/zap"
 )

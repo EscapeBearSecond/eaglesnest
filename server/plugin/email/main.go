@@ -1,8 +1,8 @@
 package email
 
 import (
-	"github.com/EscapeBearSecond/curescan/server/plugin/email/global"
-	"github.com/EscapeBearSecond/curescan/server/plugin/email/router"
+	"github.com/EscapeBearSecond/eaglesnest/server/plugin/email/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/plugin/email/router"
 	"github.com/gin-gonic/gin"
 )
 

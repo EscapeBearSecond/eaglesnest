@@ -12,11 +12,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/EscapeBearSecond/curescan/server/utils"
+	"github.com/EscapeBearSecond/eaglesnest/server/utils"
 
-	"github.com/EscapeBearSecond/curescan/server/global"
-	"github.com/EscapeBearSecond/curescan/server/model/system"
-	"github.com/EscapeBearSecond/curescan/server/service"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/system"
+	"github.com/EscapeBearSecond/eaglesnest/server/service"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )

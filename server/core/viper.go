@@ -3,7 +3,7 @@ package core
 import (
 	"flag"
 	"fmt"
-	"github.com/EscapeBearSecond/curescan/server/core/internal"
+	"github.com/EscapeBearSecond/eaglesnest/server/core/internal"
 	"github.com/gin-gonic/gin"
 	"os"
 	"path/filepath"
@@ -11,8 +11,8 @@ import (
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
 
-	"github.com/EscapeBearSecond/curescan/server/global"
-	_ "github.com/EscapeBearSecond/curescan/server/packfile"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
+	_ "github.com/EscapeBearSecond/eaglesnest/server/packfile"
 )
 
 // Viper //

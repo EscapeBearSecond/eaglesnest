@@ -6,12 +6,12 @@ import (
 	"mime/multipart"
 	"strconv"
 
-	"github.com/EscapeBearSecond/curescan/server/model/example"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/example"
 
-	"github.com/EscapeBearSecond/curescan/server/global"
-	"github.com/EscapeBearSecond/curescan/server/model/common/response"
-	exampleRes "github.com/EscapeBearSecond/curescan/server/model/example/response"
-	"github.com/EscapeBearSecond/curescan/server/utils"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/common/response"
+	exampleRes "github.com/EscapeBearSecond/eaglesnest/server/model/example/response"
+	"github.com/EscapeBearSecond/eaglesnest/server/utils"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )

@@ -11,7 +11,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/EscapeBearSecond/curescan/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
 	"go.uber.org/zap"
 )
 

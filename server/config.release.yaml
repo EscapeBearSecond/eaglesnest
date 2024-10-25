@@ -12,7 +12,7 @@ autocode:
     server-api: /api/v1/%s
     server-plug: /plugin/%s
     server-initialize: /initialize
-    root: /opt/goprojects/src/curescan
+    root: /opt/goprojects/src/eaglesnest
     web-table: /view
     web: /web/src
     server-service: /service/%s
@@ -96,8 +96,8 @@ pgsql:
     prefix: ""
     port: "5432"
     config: sslmode=disable TimeZone=Asia/Shanghai
-    db-name: curescan
-    username: curescan
+    db-name: eaglesnest
+    username: eaglesnest
     password: "H9nWDpM86K"
     path: 127.0.0.1
     engine: ""
@@ -144,7 +144,7 @@ tencent-cos:
     path-prefix: github.com/EscapeBearSecond/curesan/server
 zap:
     level: info
-    prefix: '[curescan]'
+    prefix: '[eaglesnest]'
     format: json
     director: log
     encode-level: LowercaseLevelEncoder

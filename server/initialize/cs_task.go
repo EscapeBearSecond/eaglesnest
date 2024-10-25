@@ -3,13 +3,13 @@ package initialize
 import (
 	"context"
 	"errors"
-	"github.com/EscapeBearSecond/eagleeye/pkg/types"
+	"github.com/EscapeBearSecond/falcon/pkg/types"
 	"strconv"
 	"time"
 
-	"github.com/EscapeBearSecond/curescan/server/global"
-	"github.com/EscapeBearSecond/curescan/server/model/curescan/common"
-	"github.com/EscapeBearSecond/curescan/server/service/curescan"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/eaglesnest/common"
+	"github.com/EscapeBearSecond/eaglesnest/server/service/eaglesnest"
 	"go.uber.org/zap"
 )
 
@@ -54,7 +54,7 @@ func RecoverTask() {
 	}
 }
 
-var taskService = &curescan.TaskService{}
+var taskService = &eaglesnest.TaskService{}
 
 func ExecuteTask() {
 	go func() {

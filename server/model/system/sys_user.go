@@ -1,7 +1,7 @@
 package system
 
 import (
-	"github.com/EscapeBearSecond/curescan/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
 	"github.com/gofrs/uuid/v5"
 )
 

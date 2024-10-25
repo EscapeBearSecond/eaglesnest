@@ -5,10 +5,10 @@ import (
 	"mime/multipart"
 	"strings"
 
-	"github.com/EscapeBearSecond/curescan/server/global"
-	"github.com/EscapeBearSecond/curescan/server/model/common/request"
-	"github.com/EscapeBearSecond/curescan/server/model/example"
-	"github.com/EscapeBearSecond/curescan/server/utils/upload"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/common/request"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/example"
+	"github.com/EscapeBearSecond/eaglesnest/server/utils/upload"
 )
 
 // @author: DingYG

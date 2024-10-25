@@ -2,7 +2,7 @@ package internal
 
 import (
 	"fmt"
-	"github.com/EscapeBearSecond/curescan/server/config"
+	"github.com/EscapeBearSecond/eaglesnest/server/config"
 	"go.uber.org/zap"
 	"gorm.io/gorm/logger"
 )

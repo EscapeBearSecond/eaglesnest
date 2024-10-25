@@ -1,7 +1,7 @@
 package example
 
 import (
-	"github.com/EscapeBearSecond/curescan/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
 )
 
 type ExaFileUploadAndDownload struct {

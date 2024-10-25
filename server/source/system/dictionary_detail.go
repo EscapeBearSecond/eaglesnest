@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	sysModel "github.com/EscapeBearSecond/curescan/server/model/system"
-	"github.com/EscapeBearSecond/curescan/server/service/system"
+	sysModel "github.com/EscapeBearSecond/eaglesnest/server/model/system"
+	"github.com/EscapeBearSecond/eaglesnest/server/service/system"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 )

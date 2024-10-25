@@ -1,8 +1,8 @@
 package utils
 
 import (
-	"github.com/EscapeBearSecond/curescan/server/global"
-	systemReq "github.com/EscapeBearSecond/curescan/server/model/system/request"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
+	systemReq "github.com/EscapeBearSecond/eaglesnest/server/model/system/request"
 	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid/v5"
 	"net"

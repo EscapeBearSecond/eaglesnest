@@ -1,15 +1,15 @@
 package service
 
 import (
-	"github.com/EscapeBearSecond/curescan/server/service/curescan"
-	"github.com/EscapeBearSecond/curescan/server/service/example"
-	"github.com/EscapeBearSecond/curescan/server/service/system"
+	"github.com/EscapeBearSecond/eaglesnest/server/service/eaglesnest"
+	"github.com/EscapeBearSecond/eaglesnest/server/service/example"
+	"github.com/EscapeBearSecond/eaglesnest/server/service/system"
 )
 
 type ServiceGroup struct {
-	SystemServiceGroup   system.ServiceGroup
-	ExampleServiceGroup  example.ServiceGroup
-	CurescanServiceGroup curescan.ServiceGroup
+	SystemServiceGroup     system.ServiceGroup
+	ExampleServiceGroup    example.ServiceGroup
+	EaglesnestServiceGroup eaglesnest.ServiceGroup
 }
 
 var ServiceGroupApp = new(ServiceGroup)

@@ -4,8 +4,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/EscapeBearSecond/curescan/server/global"
-	"github.com/EscapeBearSecond/curescan/server/model/common/request"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/common/request"
 )
 
 // SysAutoCodeHistory 自动迁移代码记录,用于回滚,重放使用

@@ -2,10 +2,10 @@ package core
 
 import (
 	"fmt"
-	"github.com/EscapeBearSecond/curescan/server/core/meta"
-	"github.com/EscapeBearSecond/curescan/server/global"
-	"github.com/EscapeBearSecond/curescan/server/initialize"
-	"github.com/EscapeBearSecond/curescan/server/service/system"
+	"github.com/EscapeBearSecond/eaglesnest/server/core/meta"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/initialize"
+	"github.com/EscapeBearSecond/eaglesnest/server/service/system"
 	"go.uber.org/zap"
 	_ "net/http/pprof"
 )
@@ -38,9 +38,6 @@ func RunWindowsServer() {
 	fmt.Printf(`
 	欢迎使用 DYG漏扫平台
 	当前版本:v%s
-	--------------------------------------版权声明--------------------------------------
-	** 版权所有方：DYG开发团队 **
-	** 版权声明：未经DYG书面许可，任何单位和个人不得以任何形式复制、传播、修改或商业使用本软件。 **
 `, meta.BuildVer)
 	global.GVA_LOG.Error(s.ListenAndServe().Error())
 }

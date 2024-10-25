@@ -2,7 +2,7 @@ package request
 
 import (
 	"fmt"
-	"github.com/EscapeBearSecond/curescan/server/config"
+	"github.com/EscapeBearSecond/eaglesnest/server/config"
 	"os"
 )
 

@@ -12,7 +12,7 @@ autocode:
     server-api: /api/v1/%s
     server-plug: /plugin/%s
     server-initialize: /initialize
-    root: C:\Users\bear\go\src\curesan
+    root: C:\Users\29237\go\src\eaglesnest
     web-table: /view
     web: /web/src
     server-service: /service/%s
@@ -85,13 +85,16 @@ hua-wei-obs:
     access-key: you-access-key
     secret-key: you-secret-key
 jwt:
-    signing-key: f031598b-22ae-4a2b-8679-6db28c777c38
+    signing-key: 0946b30d-74bc-463c-8630-3e5d766301d3
     expires-time: 7d
     buffer-time: 1d
     issuer: qmPlus
 local:
     path: uploads/file
     store-path: uploads/file
+login:
+    attempts: 0
+    disabledDuration: 0
 mongo:
     auth-source: ""
     coll: ""
@@ -111,7 +114,7 @@ pgsql:
     prefix: ""
     port: "5432"
     config: sslmode=disable TimeZone=Asia/Shanghai
-    db-name: curescan
+    db-name: cccc
     username: postgres
     password: "292378"
     path: 127.0.0.1
@@ -138,6 +141,8 @@ redis:
         - 172.21.0.3:7000
         - 172.21.0.4:7001
         - 172.21.0.2:7002
+report:
+    customer: DYG
 system:
     db-type: pgsql
     oss-type: local
@@ -157,7 +162,7 @@ tencent-cos:
     path-prefix: github.com/EscapeBearSecond/curesan/server
 zap:
     level: info
-    prefix: "[DYG]"
+    prefix: '[DYG]'
     format: json
     director: log
     encode-level: LowercaseLevelEncoder
@@ -165,6 +170,3 @@ zap:
     show-line: true
     log-in-console: false
     retention-day: -1
-
-report:
-    customer: "DYG"

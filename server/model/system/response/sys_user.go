@@ -1,7 +1,7 @@
 package response
 
 import (
-	"github.com/EscapeBearSecond/curescan/server/model/system"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/system"
 )
 
 type SysUserResponse struct {

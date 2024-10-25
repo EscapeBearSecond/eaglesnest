@@ -1,6 +1,6 @@
 FROM golang:1.22-alpine AS builder
 
-WORKDIR /opt/goprojects/curescan/server
+WORKDIR /opt/goprojects/eaglesnest/server
 COPY . .
 
 # 安装编译时必要的依赖
@@ -31,11 +31,11 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/re
     && apk update \
     && apk add --no-cache libpcap libpcap-dev
 
-WORKDIR /opt/goprojects/curescan/server
+WORKDIR /opt/goprojects/eaglesnest/server
 
-COPY --from=0 /opt/goprojects/curescan/server/server ./
-COPY --from=0 /opt/goprojects/curescan/server/resource ./resource/
-COPY --from=0 /opt/goprojects/curescan/server/config.docker.yaml ./
+COPY --from=0 /opt/goprojects/eaglesnest/server/server ./
+COPY --from=0 /opt/goprojects/eaglesnest/server/resource ./resource/
+COPY --from=0 /opt/goprojects/eaglesnest/server/config.docker.yaml ./
 
 EXPOSE 8888
 ENTRYPOINT ["./server", "-c", "config.docker.yaml"]

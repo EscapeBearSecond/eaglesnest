@@ -1,4 +1,4 @@
-# /opt/goprojects/curescan/server Global Configuration
+# /opt/goprojects/eaglesnest/server Global Configuration
 
 # jwt configuration
 jwt:
@@ -10,7 +10,7 @@ jwt:
 zap:
   level: info
   format: console
-  prefix: "[curescan]"
+  prefix: "[eaglesnest]"
   director: log
   show-line: true
   encode-level: LowercaseColorLevelEncoder
@@ -72,7 +72,7 @@ captcha:
   open-captcha-timeout: 3600 # open-captcha大于0时才生效
 
 # mysql connect configuration
-# 未初始化之前请勿手动修改数据库信息！！！如果一定要手动初始化请看（https://curescan.com/docs/first_master）
+# 未初始化之前请勿手动修改数据库信息！！！如果一定要手动初始化请看（https://eaglesnest.com/docs/first_master）
 mysql:
   path: ""
   port: ""
@@ -86,13 +86,13 @@ mysql:
   log-zap: false
 
 # pgsql connect configuration
-# 未初始化之前请勿手动修改数据库信息！！！如果一定要手动初始化请看（https://curescan.com/docs/first_master）
+# 未初始化之前请勿手动修改数据库信息！！！如果一定要手动初始化请看（https://eaglesnest.com/docs/first_master）
 pgsql:
   path: "127.0.0.1" # 数据库地址
   port: "5432"
   config: "sslmode=disable TimeZone=Asia/Shanghai"
-  db-name: "curescan" # 数据库名，需要手动初始化创建，页面上初始化的数据库名称须与此处一致
-  username: "curescan" # 数据库用户名，页面上初始化的数据库用户名须与此处一致
+  db-name: "eaglesnest" # 数据库名，需要手动初始化创建，页面上初始化的数据库名称须与此处一致
+  username: "eaglesnest" # 数据库用户名，页面上初始化的数据库用户名须与此处一致
   password: "H9nWDpM86K" # 数据库密码，页面上初始化的数据库密码须与此处一致
   max-idle-conns: 10
   max-open-conns: 100
@@ -164,7 +164,7 @@ tencent-cos:
   secret-id: your-secret-id
   secret-key: your-secret-key
   base-url: https://gin.vue.admin
-  path-prefix: github.com/EscapeBearSecond/curescan/server
+  path-prefix: github.com/EscapeBearSecond/eaglesnest/server
 
 # aws s3 configuration (minio compatible)
 aws-s3:
@@ -176,7 +176,7 @@ aws-s3:
   secret-id: your-secret-id
   secret-key: your-secret-key
   base-url: https://gin.vue.admin
-  path-prefix: github.com/EscapeBearSecond/curescan/server
+  path-prefix: github.com/EscapeBearSecond/eaglesnest/server
 
 # huawei obs configuration
 hua-wei-obs:

@@ -2,9 +2,9 @@ package system
 
 import (
 	"context"
-	system2 "github.com/EscapeBearSecond/curescan/server/model/system"
+	system2 "github.com/EscapeBearSecond/eaglesnest/server/model/system"
 
-	"github.com/EscapeBearSecond/curescan/server/service/system"
+	"github.com/EscapeBearSecond/eaglesnest/server/service/system"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 )
@@ -72,10 +72,10 @@ func (i *initMenu) InitializeData(ctx context.Context) (next context.Context, er
 		{MenuLevel: 0, Hidden: false, ParentId: 15, Path: "autoCodeAdmin", Name: "autoCodeAdmin", Component: "view/systemTools/autoCodeAdmin/index.vue", Sort: 1, Meta: system2.Meta{Title: "自动化代码管理", Icon: "magic-stick"}},
 		{MenuLevel: 0, Hidden: true, ParentId: 15, Path: "autoCodeEdit/:id", Name: "autoCodeEdit", Component: "view/systemTools/autoCode/index.vue", Sort: 0, Meta: system2.Meta{Title: "自动化代码-${id}", Icon: "magic-stick"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 15, Path: "autoPkg", Name: "autoPkg", Component: "view/systemTools/autoPkg/autoPkg.vue", Sort: 0, Meta: system2.Meta{Title: "自动化package", Icon: "folder"}},
-		{MenuLevel: 0, Hidden: true, ParentId: 0, Path: "https://www.curescan.com", Name: "https://www.curescan.com", Component: "/", Sort: 0, Meta: system2.Meta{Title: "官方网站", Icon: "customer-gva"}},
+		{MenuLevel: 0, Hidden: true, ParentId: 0, Path: "https://www.eaglesnest.com", Name: "https://www.eaglesnest.com", Component: "/", Sort: 0, Meta: system2.Meta{Title: "官方网站", Icon: "customer-gva"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "state", Name: "state", Component: "view/system/state.vue", Sort: 8, Meta: system2.Meta{Title: "服务器状态", Icon: "cloudy"}},
 		{MenuLevel: 0, Hidden: true, ParentId: 0, Path: "plugin", Name: "plugin", Component: "view/routerHolder.vue", Sort: 6, Meta: system2.Meta{Title: "插件系统", Icon: "cherry"}},
-		{MenuLevel: 0, Hidden: false, ParentId: 24, Path: "https://plugin.curescan.com/", Name: "https://plugin.curescan.com/", Component: "https://plugin.curescan.com/", Sort: 0, Meta: system2.Meta{Title: "插件市场", Icon: "shop"}},
+		{MenuLevel: 0, Hidden: false, ParentId: 24, Path: "https://plugin.eaglesnest.com/", Name: "https://plugin.eaglesnest.com/", Component: "https://plugin.eaglesnest.com/", Sort: 0, Meta: system2.Meta{Title: "插件市场", Icon: "shop"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 24, Path: "installPlugin", Name: "installPlugin", Component: "view/systemTools/installPlugin/index.vue", Sort: 1, Meta: system2.Meta{Title: "插件安装", Icon: "box"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 24, Path: "autoPlug", Name: "autoPlug", Component: "view/systemTools/autoPlug/autoPlug.vue", Sort: 2, Meta: system2.Meta{Title: "插件模板", Icon: "folder"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 24, Path: "pubPlug", Name: "pubPlug", Component: "view/systemTools/pubPlug/pubPlug.vue", Sort: 3, Meta: system2.Meta{Title: "打包插件", Icon: "files"}},

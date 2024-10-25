@@ -4,7 +4,7 @@ import (
 	"go/token"
 	"strings"
 
-	"github.com/EscapeBearSecond/curescan/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
 )
 
 // AutoCodeStruct 初始版本自动化代码工具

@@ -1,7 +1,7 @@
 package request
 
 import (
-	"github.com/EscapeBearSecond/curescan/server/model/system"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/system"
 )
 
 // Register User register structure

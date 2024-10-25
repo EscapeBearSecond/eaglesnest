@@ -1,6 +1,6 @@
 package response
 
-import "github.com/EscapeBearSecond/curescan/server/model/system"
+import "github.com/EscapeBearSecond/eaglesnest/server/model/system"
 
 type SysAuthorityResponse struct {
 	Authority system.SysAuthority `json:"authority"`

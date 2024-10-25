@@ -58,14 +58,14 @@
 
 ```bash
 set GODEBUG=tlsrsakex=1
-go build -o curescan.exe .\main.go
-./curescan.exe
+go build -o eaglesnest.exe .\main.go
+./eaglesnest.exe
 ```
 
 > Linux Or MasOS
 
 ```bash
-GODEBUG=tlsrsakex=1 go build -o curescan ./main.go
-./curescan
+GODEBUG=tlsrsakex=1 go build -o eaglesnest ./main.go
+./eaglesnest
 ```
 

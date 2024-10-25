@@ -1,8 +1,8 @@
 package request
 
 import (
-	"github.com/EscapeBearSecond/curescan/server/model/common/request"
-	"github.com/EscapeBearSecond/curescan/server/model/system"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/common/request"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/system"
 )
 
 // api分页条件查询及排序结构体

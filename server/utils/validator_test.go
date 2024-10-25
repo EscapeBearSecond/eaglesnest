@@ -2,7 +2,7 @@ package utils
 
 import (
 	"fmt"
-	"github.com/EscapeBearSecond/curescan/server/model/common/request"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/common/request"
 	"testing"
 )
 

@@ -2,7 +2,7 @@
     "swagger": "2.0",
     "info": {
         "description": "使用gin+vue进行极速开发的全栈开发基础平台",
-        "title": "curescan Swagger API接口文档",
+        "title": "eaglesnest Swagger API接口文档",
         "contact": {},
         "version": "v2.6.5"
     },
@@ -5738,7 +5738,7 @@
                     }
                 },
                 "email": {
-                    "$ref": "#/definitions/github_com_flipped-aurora_curescan_server_config.Email"
+                    "$ref": "#/definitions/github_com_flipped-aurora_eaglesnest_server_config.Email"
                 },
                 "excel": {
                     "$ref": "#/definitions/config.Excel"
@@ -6162,7 +6162,7 @@
                 }
             }
         },
-        "github_com_flipped-aurora_curescan_server_config.Email": {
+        "github_com_flipped-aurora_eaglesnest_server_config.Email": {
             "type": "object",
             "properties": {
                 "from": {

@@ -1,14 +1,15 @@
 package main
 
 import (
-	"github.com/EscapeBearSecond/curescan/server/model/system/request"
-	"github.com/EscapeBearSecond/curescan/server/service/system"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/system/request"
+	"github.com/EscapeBearSecond/eaglesnest/server/service/system"
 	_ "go.uber.org/automaxprocs"
 	"go.uber.org/zap"
+	_ "net/http/pprof"
 
-	"github.com/EscapeBearSecond/curescan/server/core"
-	"github.com/EscapeBearSecond/curescan/server/global"
-	"github.com/EscapeBearSecond/curescan/server/initialize"
+	"github.com/EscapeBearSecond/eaglesnest/server/core"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/initialize"
 )
 
 //go:generate go env -w GO111MODULE=on
@@ -16,7 +17,7 @@ import (
 //go:generate go mod tidy
 //go:generate go mod download
 
-// @title                       curescan Swagger API接口文档
+// @title                       eaglesnest Swagger API接口文档
 // @version                     v2.6.5
 // @description                 使用gin+vue进行极速开发的全栈开发基础平台
 // @securityDefinitions.apikey  ApiKeyAuth
@@ -31,7 +32,7 @@ func main() {
 	global.GVA_DB = initialize.Gorm() // gorm连接数据库
 	initialize.Timer()
 	initialize.DBList()
-	initialize.EagleeyeEngine()
+	initialize.FalconEngine()
 
 	if global.GVA_DB != nil {
 		initialize.RegisterTables() // 初始化表

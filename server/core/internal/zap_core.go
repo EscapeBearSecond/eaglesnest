@@ -1,7 +1,7 @@
 package internal
 
 import (
-	"github.com/EscapeBearSecond/curescan/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"os"

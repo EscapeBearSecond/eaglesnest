@@ -2,7 +2,7 @@ package service
 
  {{- if .NeedModel }}
 import (
-   "github.com/EscapeBearSecond/curescan/server/plugin/{{ .Snake}}/model"
+   "github.com/EscapeBearSecond/eaglesnest/server/plugin/{{ .Snake}}/model"
 )
 {{ end }}
 

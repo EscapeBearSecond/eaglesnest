@@ -1,6 +1,6 @@
 package request
 
-import "github.com/EscapeBearSecond/curescan/server/model/common/request"
+import "github.com/EscapeBearSecond/eaglesnest/server/model/common/request"
 
 type SysAutoHistory struct {
 	request.PageInfo

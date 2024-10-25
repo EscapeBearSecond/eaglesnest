@@ -1,9 +1,9 @@
 package initialize
 
 import (
-	_ "github.com/EscapeBearSecond/curescan/server/source/curescan"
-	_ "github.com/EscapeBearSecond/curescan/server/source/example"
-	_ "github.com/EscapeBearSecond/curescan/server/source/system"
+	_ "github.com/EscapeBearSecond/eaglesnest/server/source/eaglesnest"
+	_ "github.com/EscapeBearSecond/eaglesnest/server/source/example"
+	_ "github.com/EscapeBearSecond/eaglesnest/server/source/system"
 )
 
 func init() {

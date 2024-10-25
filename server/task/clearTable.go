@@ -3,7 +3,7 @@ package task
 import (
 	"errors"
 	"fmt"
-	"github.com/EscapeBearSecond/curescan/server/model/common"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/common"
 	"time"
 
 	"gorm.io/gorm"

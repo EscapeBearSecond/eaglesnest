@@ -1,9 +1,9 @@
 package initialize
 
 import (
-	"github.com/EscapeBearSecond/curescan/server/config"
-	"github.com/EscapeBearSecond/curescan/server/global"
-	"github.com/EscapeBearSecond/curescan/server/initialize/internal"
+	"github.com/EscapeBearSecond/eaglesnest/server/config"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/initialize/internal"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

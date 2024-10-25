@@ -2,10 +2,10 @@ package initialize
 
 import (
 	"context"
-	"github.com/EscapeBearSecond/curescan/server/model/curescan"
-	"github.com/EscapeBearSecond/curescan/server/model/example"
-	sysModel "github.com/EscapeBearSecond/curescan/server/model/system"
-	"github.com/EscapeBearSecond/curescan/server/service/system"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/eaglesnest"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/example"
+	sysModel "github.com/EscapeBearSecond/eaglesnest/server/model/system"
+	"github.com/EscapeBearSecond/eaglesnest/server/service/system"
 	adapter "github.com/casbin/gorm-adapter/v3"
 	"gorm.io/gorm"
 )
@@ -60,16 +60,16 @@ func (e *ensureTables) MigrateTable(ctx context.Context) (context.Context, error
 		example.ExaFileChunk{},
 		example.ExaFileUploadAndDownload{},
 
-		curescan.Area{},
-		curescan.Asset{},
-		curescan.Task{},
-		curescan.Policy{},
-		curescan.OnlineCheck{},
-		curescan.PortScan{},
-		curescan.Template{},
-		curescan.JobResultItem{},
-		curescan.Vuln{},
-		curescan.SystemInfo{},
+		eaglesnest.Area{},
+		eaglesnest.Asset{},
+		eaglesnest.Task{},
+		eaglesnest.Policy{},
+		eaglesnest.OnlineCheck{},
+		eaglesnest.PortScan{},
+		eaglesnest.Template{},
+		eaglesnest.JobResultItem{},
+		eaglesnest.Vuln{},
+		eaglesnest.SystemInfo{},
 	}
 	for _, t := range tables {
 		_ = db.AutoMigrate(&t)
@@ -109,16 +109,16 @@ func (e *ensureTables) TableCreated(ctx context.Context) bool {
 		example.ExaFileChunk{},
 		example.ExaFileUploadAndDownload{},
 
-		curescan.Area{},
-		curescan.Asset{},
-		curescan.Task{},
-		curescan.Policy{},
-		curescan.Template{},
-		curescan.PortScan{},
-		curescan.OnlineCheck{},
-		curescan.JobResultItem{},
-		curescan.Vuln{},
-		curescan.SystemInfo{},
+		eaglesnest.Area{},
+		eaglesnest.Asset{},
+		eaglesnest.Task{},
+		eaglesnest.Policy{},
+		eaglesnest.Template{},
+		eaglesnest.PortScan{},
+		eaglesnest.OnlineCheck{},
+		eaglesnest.JobResultItem{},
+		eaglesnest.Vuln{},
+		eaglesnest.SystemInfo{},
 	}
 	yes := true
 	for _, t := range tables {

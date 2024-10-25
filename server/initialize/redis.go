@@ -3,7 +3,7 @@ package initialize
 import (
 	"context"
 
-	"github.com/EscapeBearSecond/curescan/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
 
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"

@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/EscapeBearSecond/curescan/server/plugin/email/utils"
+	"github.com/EscapeBearSecond/eaglesnest/server/plugin/email/utils"
 )
 
 type EmailService struct{}

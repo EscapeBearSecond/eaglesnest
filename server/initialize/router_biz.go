@@ -1,7 +1,7 @@
 package initialize
 
 import (
-	"github.com/EscapeBearSecond/curescan/server/router"
+	"github.com/EscapeBearSecond/eaglesnest/server/router"
 	"github.com/gin-gonic/gin"
 )
 

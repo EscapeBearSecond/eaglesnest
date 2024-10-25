@@ -6,7 +6,7 @@ import (
 	"net/smtp"
 	"strings"
 
-	"github.com/EscapeBearSecond/curescan/server/plugin/email/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/plugin/email/global"
 
 	"github.com/jordan-wright/email"
 )

@@ -1,8 +1,8 @@
 package system
 
 import (
-	v1 "github.com/EscapeBearSecond/curescan/server/api/v1"
-	"github.com/EscapeBearSecond/curescan/server/middleware"
+	v1 "github.com/EscapeBearSecond/eaglesnest/server/api/v1"
+	"github.com/EscapeBearSecond/eaglesnest/server/middleware"
 	"github.com/gin-gonic/gin"
 )
 

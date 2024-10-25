@@ -1,6 +1,6 @@
 package system
 
-import "github.com/EscapeBearSecond/curescan/server/service"
+import "github.com/EscapeBearSecond/eaglesnest/server/service"
 
 type ApiGroup struct {
 	DBApi

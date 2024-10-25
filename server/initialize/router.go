@@ -1,14 +1,14 @@
 package initialize
 
 import (
-	"github.com/EscapeBearSecond/curescan/server/middleware"
+	"github.com/EscapeBearSecond/eaglesnest/server/middleware"
 	"github.com/gin-contrib/pprof"
 	"net/http"
 	"os"
 
-	"github.com/EscapeBearSecond/curescan/server/docs"
-	"github.com/EscapeBearSecond/curescan/server/global"
-	"github.com/EscapeBearSecond/curescan/server/router"
+	"github.com/EscapeBearSecond/eaglesnest/server/docs"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/router"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -44,7 +44,7 @@ func Routers() *gin.Engine {
 
 	systemRouter := router.RouterGroupApp.System
 	exampleRouter := router.RouterGroupApp.Example
-	curescanRouter := router.RouterGroupApp.Curescan
+	eaglesnestRouter := router.RouterGroupApp.Eaglesnest
 	// 如果想要不使用nginx代理前端网页，可以修改 web/.env.production 下的
 	// VUE_APP_BASE_API = /
 	// VUE_APP_BASE_PATH = http://localhost
@@ -99,14 +99,14 @@ func Routers() *gin.Engine {
 		systemRouter.InitSysExportTemplateRouter(PrivateGroup)      // 导出模板
 		exampleRouter.InitCustomerRouter(PrivateGroup)              // 客户路由
 		exampleRouter.InitFileUploadAndDownloadRouter(PrivateGroup) // 文件上传下载功能路由
-		curescanRouter.InitAreaRouter(PrivateGroup)
-		curescanRouter.InitTemplateRouter(PrivateGroup)
-		curescanRouter.InitAssetRouter(PrivateGroup)
-		curescanRouter.InitPolicyRouter(PrivateGroup)
-		curescanRouter.InitOnlineCheckRouter(PrivateGroup)
-		curescanRouter.InitTaskRouter(PrivateGroup)
-		curescanRouter.InitVulnRouter(PrivateGroup)
-		curescanRouter.InitSystemInfoRouter(PublicGroup)
+		eaglesnestRouter.InitAreaRouter(PrivateGroup)
+		eaglesnestRouter.InitTemplateRouter(PrivateGroup)
+		eaglesnestRouter.InitAssetRouter(PrivateGroup)
+		eaglesnestRouter.InitPolicyRouter(PrivateGroup)
+		eaglesnestRouter.InitOnlineCheckRouter(PrivateGroup)
+		eaglesnestRouter.InitTaskRouter(PrivateGroup)
+		eaglesnestRouter.InitVulnRouter(PrivateGroup)
+		eaglesnestRouter.InitSystemInfoRouter(PublicGroup)
 	}
 
 	// 插件路由安装

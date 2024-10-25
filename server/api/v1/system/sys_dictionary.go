@@ -1,9 +1,9 @@
 package system
 
 import (
-	"github.com/EscapeBearSecond/curescan/server/global"
-	"github.com/EscapeBearSecond/curescan/server/model/common/response"
-	"github.com/EscapeBearSecond/curescan/server/model/system"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/common/response"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/system"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )

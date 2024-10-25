@@ -1,8 +1,8 @@
 package router
 
 import (
-	"github.com/EscapeBearSecond/curescan/server/middleware"
-	"github.com/EscapeBearSecond/curescan/server/plugin/email/api"
+	"github.com/EscapeBearSecond/eaglesnest/server/middleware"
+	"github.com/EscapeBearSecond/eaglesnest/server/plugin/email/api"
 	"github.com/gin-gonic/gin"
 )
 

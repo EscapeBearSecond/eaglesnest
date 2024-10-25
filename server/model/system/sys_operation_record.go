@@ -4,7 +4,7 @@ package system
 import (
 	"time"
 
-	"github.com/EscapeBearSecond/curescan/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
 )
 
 // 如果含有time.Time 请自行import time包

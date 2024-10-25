@@ -2,11 +2,11 @@ package initialize
 
 import (
 	"fmt"
-	"github.com/EscapeBearSecond/curescan/server/task"
+	"github.com/EscapeBearSecond/eaglesnest/server/task"
 
 	"github.com/robfig/cron/v3"
 
-	"github.com/EscapeBearSecond/curescan/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
 )
 
 func Timer() {

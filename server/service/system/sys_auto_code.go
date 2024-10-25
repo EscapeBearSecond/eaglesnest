@@ -14,15 +14,15 @@ import (
 	"strings"
 	"text/template"
 
-	ast2 "github.com/EscapeBearSecond/curescan/server/utils/ast"
+	ast2 "github.com/EscapeBearSecond/eaglesnest/server/utils/ast"
 
-	"github.com/EscapeBearSecond/curescan/server/resource/autocode_template/subcontract"
+	"github.com/EscapeBearSecond/eaglesnest/server/resource/autocode_template/subcontract"
 	cp "github.com/otiai10/copy"
 	"go.uber.org/zap"
 
-	"github.com/EscapeBearSecond/curescan/server/global"
-	"github.com/EscapeBearSecond/curescan/server/model/system"
-	"github.com/EscapeBearSecond/curescan/server/utils"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/system"
+	"github.com/EscapeBearSecond/eaglesnest/server/utils"
 
 	"gorm.io/gorm"
 )
@@ -77,7 +77,7 @@ func Init(Package string) {
 		packageServiceName: {
 			path: filepath.Join(global.GVA_CONFIG.AutoCode.Root,
 				global.GVA_CONFIG.AutoCode.Server, "service", "enter.go"),
-			importCodeF:  "github.com/EscapeBearSecond/curescan/server/%s/%s",
+			importCodeF:  "github.com/EscapeBearSecond/eaglesnest/server/%s/%s",
 			packageNameF: "%s",
 			groupName:    "ServiceGroup",
 			structNameF:  "%sServiceGroup",
@@ -85,7 +85,7 @@ func Init(Package string) {
 		packageRouterName: {
 			path: filepath.Join(global.GVA_CONFIG.AutoCode.Root,
 				global.GVA_CONFIG.AutoCode.Server, "router", "enter.go"),
-			importCodeF:  "github.com/EscapeBearSecond/curescan/server/%s/%s",
+			importCodeF:  "github.com/EscapeBearSecond/eaglesnest/server/%s/%s",
 			packageNameF: "%s",
 			groupName:    "RouterGroup",
 			structNameF:  "%s",
@@ -93,7 +93,7 @@ func Init(Package string) {
 		packageAPIName: {
 			path: filepath.Join(global.GVA_CONFIG.AutoCode.Root,
 				global.GVA_CONFIG.AutoCode.Server, "api/v1", "enter.go"),
-			importCodeF:  "github.com/EscapeBearSecond/curescan/server/%s/%s",
+			importCodeF:  "github.com/EscapeBearSecond/eaglesnest/server/%s/%s",
 			packageNameF: "%s",
 			groupName:    "ApiGroup",
 			structNameF:  "%sApiGroup",
@@ -811,7 +811,7 @@ func installation(path string, formPath string, toPath string) error {
 		zap.L().Error("autoPath 已存在同名插件，请自行手动安装", zap.String("to", to))
 		return errors.New(toPath + "已存在同名插件，请自行手动安装")
 	}
-	return cp.Copy(form, to, cp.Options{Skip: skipMacSpecialDocument})
+	return cp.Copy(form, to)
 }
 
 func filterFile(paths []string) []string {

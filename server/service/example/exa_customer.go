@@ -1,11 +1,11 @@
 package example
 
 import (
-	"github.com/EscapeBearSecond/curescan/server/global"
-	"github.com/EscapeBearSecond/curescan/server/model/common/request"
-	"github.com/EscapeBearSecond/curescan/server/model/example"
-	"github.com/EscapeBearSecond/curescan/server/model/system"
-	systemService "github.com/EscapeBearSecond/curescan/server/service/system"
+	"github.com/EscapeBearSecond/eaglesnest/server/global"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/common/request"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/example"
+	"github.com/EscapeBearSecond/eaglesnest/server/model/system"
+	systemService "github.com/EscapeBearSecond/eaglesnest/server/service/system"
 )
 
 type CustomerService struct{}
